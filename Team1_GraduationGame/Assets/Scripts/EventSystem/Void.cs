@@ -1,1 +1,4 @@
-﻿[System.Serializable] public struct Void { }
+﻿namespace Team1_GraduationGame.Events
+{
+    [System.Serializable] public struct Void { }
+}

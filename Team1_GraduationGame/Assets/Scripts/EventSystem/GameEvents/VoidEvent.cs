@@ -1,7 +1,11 @@
 ﻿using UnityEngine;
 
-[CreateAssetMenu(fileName = "New Void Event", menuName = "Game Events/Void Event")]
-public class VoidEvent : BaseGameEvent<Void>
+namespace Team1_GraduationGame.Events
 {
-	public void Raise() => Raise(new Void());
+    [CreateAssetMenu(fileName = "New Void Event", menuName = "Game Events/Void Event")]
+    public class VoidEvent : BaseGameEvent<Void>
+    {
+        public void Raise() => Raise(new Void());
+    }
+
 }

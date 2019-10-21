@@ -1,6 +1,9 @@
 ﻿using UnityEngine;
 
-public interface IGameEventListener<T>
+namespace Team1_GraduationGame.Events
 {
-    void OnEventRaised(T item);
+    public interface IGameEventListener<T>
+    {
+        void OnEventRaised(T item);
+    }
 }

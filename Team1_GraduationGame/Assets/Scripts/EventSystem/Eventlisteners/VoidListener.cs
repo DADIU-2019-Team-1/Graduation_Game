@@ -1,3 +1,8 @@
 ﻿using UnityEngine;
 
-public class VoidListener : BaseGameEventListener<Void, VoidEvent, UnityVoidEvent> { }
+namespace Team1_GraduationGame.Events
+{
+    public class VoidListener : BaseGameEventListener<Void, VoidEvent, UnityVoidEvent>
+    {
+    }
+}

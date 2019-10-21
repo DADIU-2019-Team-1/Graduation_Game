@@ -1,3 +1,8 @@
 ﻿using UnityEngine;
 
-public class IntListener : BaseGameEventListener<int, IntEvent, UnityIntEvent> { }
+namespace Team1_GraduationGame.Events
+{
+    public class IntListener : BaseGameEventListener<int, IntEvent, UnityIntEvent>
+    {
+    }
+}

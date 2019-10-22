@@ -7,10 +7,30 @@ namespace UnityEditor
 {
     public class Pipeline
     {
-        [MenuItem("Pipeline/Build: Android")]
-        public static void BuildAndroid()
+	    private static string workingDirectory;
+	    private static string currentBuildNum = "0";
+
+	    public static void BuildAndroidAutobuild()
+	    {
+			BuildAndroidBase(@"C:\Users\Dadiu student\.jenkins\workspace\Graduation_Game\Autobuild\Team1_GraduationGame");
+	    }
+	    public static void BuildAndroidMaster()
+	    {
+		    BuildAndroidBase(@"C:\Users\Dadiu student\.jenkins\workspace\Graduation_Game\Manual Master\Team1_GraduationGame");
+	    }
+	    public static void BuildAndroidDevelopment()
+	    {
+		    BuildAndroidBase(@"C:\Users\Dadiu student\.jenkins\workspace\Graduation_Game\Manual Development\Team1_GraduationGame");
+	    }
+	    public static void BuildAndroidRelease()
+	    {
+		    BuildAndroidBase(@"C:\Users\Dadiu student\.jenkins\workspace\Graduation_Game\Manual Release\Team1_GraduationGame");
+	    }
+
+        private static void BuildAndroidBase(string workingDir)
         {
-            UpdateBuildNumberIdentifier();
+	        workingDirectory = workingDir;
+            currentBuildNum = UpdateBuildNumberIdentifier();
             Directory.CreateDirectory(pathname);
             var report = BuildPipeline.BuildPlayer(new BuildPlayerOptions
             {
@@ -50,7 +70,7 @@ namespace UnityEditor
         {
             get
             {
-                return (DateTime.Now.ToString("yyyyMMddHHmm") + repoBranchName + ".apk");
+                return (DateTime.Now.ToString("yyyyMMddHHmm") + "_build" + currentBuildNum + "_" + repoBranchName + ".apk");
             }
         }
 
@@ -62,7 +82,8 @@ namespace UnityEditor
                 ProcessStartInfo startInfo = new ProcessStartInfo("git.exe");
 
                 startInfo.UseShellExecute = false;
-                startInfo.WorkingDirectory = @"C:\Users\Dadiu student\.jenkins\workspace\DADIU MP2 by Team 1\All Branches\Detective_Switch";
+                startInfo.WorkingDirectory = workingDirectory;
+                //startInfo.WorkingDirectory = @"C:\Users\Dadiu student\.jenkins\workspace\Graduation_Game\Autobuild\Team1_GraduationGame";
                 startInfo.RedirectStandardInput = true;
                 startInfo.RedirectStandardOutput = true;
                 startInfo.Arguments = "rev-parse --abbrev-ref HEAD";
@@ -76,7 +97,7 @@ namespace UnityEditor
             }
         }
 
-        public static void UpdateBuildNumberIdentifier()
+        public static string UpdateBuildNumberIdentifier()
         {
             int buildNum = 0;
             string text = "";
@@ -124,6 +145,7 @@ namespace UnityEditor
             File.WriteAllLines(buildNumFilePath, debugString);
 
             UnityEngine.Debug.Log("I have updated the build number");
+            return debugString[1];
         }
     }
 }

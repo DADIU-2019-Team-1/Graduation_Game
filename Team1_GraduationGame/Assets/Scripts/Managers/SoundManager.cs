@@ -14,23 +14,132 @@ namespace Team1_GraduationGame.Managers
     {
         public SoundEvent[] soundEvents;
 
-        private void Start()
+        private void Awake()
         {
             if (soundEvents != null)
                 for (int i = 0; i < soundEvents.Length; i++)
                 {
+                    soundEvents[i].soundEventListener = new SoundVoidEventListener();
+                    soundEvents[i].soundEventListener.GameEvent = soundEvents[i].triggerEvent;
                     soundEvents[i].soundEventListener.SoundEventClass = soundEvents[i];
+                    soundEvents[i].soundEventListener.Enable();
+                    soundEvents[i].gameObject = gameObject;
                 }
         }
+    }
 
-        private void Update()
+    #region Sound Event Container
+    [System.Serializable]
+    public class SoundEvent
+    {
+        // Debug stuff:
+        [HideInInspector] public string debugString;
+
+        // Event system:
+        [HideInInspector] public SoundVoidEventListener soundEventListener;
+        [HideInInspector] public VoidEvent triggerEvent;
+
+        // Behavior switching:
+        public enum behaviorEnum
         {
-            // soundEvents[0].soundEventTrigger.RegisterListener(soundEvents[0].soundEventListener);
+            Event,
+            State,
+            Switch,
+            RTPC,
+            Debugger
+        }
+
+        [HideInInspector] public behaviorEnum behaviorSelector;
+
+        // Other:
+        [HideInInspector] public GameObject gameObject;
+
+        // Wwise:
+        private AkEventCallbackMsg EventCallbackMsg = new AkEventCallbackMsg();
+        [HideInInspector] public List<CallbackData> callbacks;
+        [HideInInspector] public AK.Wwise.Event wwiseEvent = new AK.Wwise.Event();
+        [HideInInspector] public AK.Wwise.State wwiseState;
+        [HideInInspector] public AK.Wwise.Switch wwiseSwitch;
+        //public RTPC_SO RTPC_ScriptableObject;
+
+        // Bools:
+        [HideInInspector] public bool useCallbacks = false;
+        [HideInInspector] public bool useActionOnEvent = false;
+
+
+        public void PlayAllSounds() // TODO YYY
+        {
+            Debug.Log("Playing All Sounds");
+            for (int i = 0; i < 1; i++)
+            {
+                // TODO: iterate though all attached, somehow
+            }
+        }
+
+        public void StopAllSounds()
+        {
+            Debug.Log("Stopping All Sounds");
+        }
+
+        public void EventRaised()
+        {
+            switch ((int)behaviorSelector)
+            {
+                case 0:
+                    for (int i = 0; i < callbacks.Count; i++)
+                    {
+                        if (useCallbacks)
+                            wwiseEvent.Post(callbacks[i].GameObject, callbacks[i].Flags, Callback);
+                        else
+                            wwiseEvent.Post(gameObject);
+                    }
+                    break;
+                case 1:
+                    wwiseState.SetValue();
+                    break;
+                case 2:
+                    wwiseSwitch.SetValue(gameObject);
+                    break;
+                case 3:
+                    //
+                    break;
+                case 4:
+                    Debug.Log("SoundManager Responds! - " + debugString);
+                    break;
+                default:
+                    break;
+            }
+            
+        }
+
+        private void Callback(object in_cookie, AkCallbackType in_type, AkCallbackInfo in_info)
+        {
+            EventCallbackMsg.type = in_type;
+            EventCallbackMsg.info = in_info;
+
+            for (var i = 0; i < callbacks.Count; ++i)
+                callbacks[i].CallFunction(EventCallbackMsg);
+        }
+
+        [System.Serializable]
+        public class CallbackData
+        {
+            public AK.Wwise.CallbackFlags Flags;
+            public string FunctionName;
+            public GameObject GameObject;
+
+            public void CallFunction(AkEventCallbackMsg eventCallbackMsg)
+            {
+                if (((uint)eventCallbackMsg.type & Flags.value) != 0 && GameObject)
+                    GameObject.SendMessage(FunctionName, eventCallbackMsg);
+            }
         }
 
     }
+    #endregion
 
-    public abstract class SoundEventListener<T, E, SE> : MonoBehaviour,
+    #region SoundEventListener
+    public abstract class SoundEventListener<T, E, SE> : 
         IGameEventListener<T> where E : BaseGameEvent<T> where SE : SoundEvent
     {
         [SerializeField] private E gameEvent;
@@ -48,25 +157,29 @@ namespace Team1_GraduationGame.Managers
             set { soundEventClass = value; }
         }
 
-        private void OnEnable()
+        public void Enable()
         {
             if (gameEvent == null)
+            {
                 return;
+            }
 
             GameEvent.RegisterListener(this);
         }
 
-        private void OnDisable()
+        public void Disable()
         {
             if (gameEvent == null)
+            {
                 return;
+            }
 
             GameEvent.UnregisterListener(this);
         }
 
         public void OnEventRaised(T item)
         {
-            SoundEventClass.DebugLog();
+            SoundEventClass.EventRaised();
         }
     }
 
@@ -74,32 +187,12 @@ namespace Team1_GraduationGame.Managers
     {
     }
 
-    [System.Serializable]
-    public class SoundEvent
+    public class SoundFloatEventListener : SoundEventListener<int, IntEvent, SoundEvent>
     {
-        public string debugString;
-        public VoidEvent soundEventTrigger;
-
-        //public RTPC_SO RTPC_ScriptableObject;
-
-        public SoundVoidEventListener soundEventListener;
-
-        public void PlayAllSounds() // TODO
-        {
-            Debug.Log("Playing All Sounds");
-            for (int i = 0; i < 1; i++)
-            {
-                DebugLog(); // Only for debugging
-                // TODO: iterate though all attached, somehow
-            }
-        }
-
-        public void DebugLog()
-        {
-            Debug.Log(debugString);
-        }
     }
+    #endregion
 
+    #region CustomEditor
 #if UNITY_EDITOR
     [CustomEditor(typeof(SoundManager))]
     public class SoundManager_Editor : Editor
@@ -114,9 +207,78 @@ namespace Team1_GraduationGame.Managers
             if (script.soundEvents != null)
                 for (int i = 0; i < script.soundEvents.Length; i++)
                 {
-                    if (GUILayout.Button("Play All"))
+                    DrawUILine(true);
+
+                    SerializedProperty triggerEventProp = serializedObject.FindProperty("soundEvents.Array.data[" + i + "].triggerEvent");
+                    EditorGUILayout.PropertyField(triggerEventProp);
+
+                    SerializedProperty behaviorSelectorProp = serializedObject.FindProperty("soundEvents.Array.data[" + i + "].behaviorSelector");
+                    EditorGUILayout.PropertyField(behaviorSelectorProp);
+
+                    DrawUILine(false);
+
+                    if ((int) script.soundEvents[i].behaviorSelector == 0)
+                    {
+
+                        SerializedProperty eventDataProp = serializedObject.FindProperty("soundEvents.Array.data[" + i + "].wwiseEvent");
+                        EditorGUILayout.PropertyField(eventDataProp);
+
+                        script.soundEvents[i].useActionOnEvent = EditorGUILayout.Toggle("Do Action On Event?", script.soundEvents[i].useActionOnEvent);
+                        script.soundEvents[i].useCallbacks = EditorGUILayout.Toggle("Use Callbacks?", script.soundEvents[i].useCallbacks);
+
+                        if (script.soundEvents[i].useActionOnEvent)
+                        {
+                            DrawUILine(false);
+                            // TODO
+                        }
+
+                        if (script.soundEvents[i].useCallbacks)
+                        {
+                            DrawUILine(false);
+
+                            for (int j = 0; j < script.soundEvents[i].callbacks.Count; j++)
+                            {
+                                SerializedProperty callbackFlagProp = serializedObject.FindProperty("soundEvents.Array.data[" + i + "].callbacks.Array.data[" + j + "].Flags");
+                                SerializedProperty callbackObjProp = serializedObject.FindProperty("soundEvents.Array.data[" + i + "].callbacks.Array.data[" + j + "].GameObject");
+                                EditorGUILayout.PropertyField(callbackFlagProp);
+                                EditorGUILayout.PropertyField(callbackObjProp);
+                                script.soundEvents[i].callbacks[j].FunctionName =
+                                    EditorGUILayout.TextField("Function Name:",
+                                        script.soundEvents[i].callbacks[j].FunctionName);
+                            }
+
+                            if (GUILayout.Button("Add"))
+                            {
+                                script.soundEvents[i].callbacks.Add(new SoundEvent.CallbackData());
+                            }
+                            if (GUILayout.Button("Delete"))
+                            {
+                                if (script.soundEvents[i].callbacks.Count != 0)
+                                    script.soundEvents[i].callbacks.RemoveAt(script.soundEvents[i].callbacks.Count - 1);
+                            }
+                        }
+
+                    }
+                    else if ((int) script.soundEvents[i].behaviorSelector == 1)
+                    {
+                        SerializedProperty stateProp = serializedObject.FindProperty("soundEvents.Array.data[" + i + "].wwiseState");
+                        EditorGUILayout.PropertyField(stateProp);
+                    }
+                    else if ((int) script.soundEvents[i].behaviorSelector == 2)
+                    {
+                        SerializedProperty switchProp = serializedObject.FindProperty("soundEvents.Array.data[" + i + "].wwiseSwitch");
+                        EditorGUILayout.PropertyField(switchProp);
+                    }
+
+                    DrawUILine(false);
+
+                    if (GUILayout.Button("Play"))
                     {
                         script.soundEvents[i].PlayAllSounds();
+                    }
+                    if (GUILayout.Button("Stop"))
+                    {
+                        script.soundEvents[i].StopAllSounds();
                     }
 
                 }
@@ -127,8 +289,25 @@ namespace Team1_GraduationGame.Managers
             {
                 EditorUtility.SetDirty(script);
             }
+
+        }
+
+        public static void DrawUILine(bool start)
+        {
+            Color color = new Color(1, 1, 1, 0.3f);
+            int thickness = 1;
+            if (start)
+                thickness = 7;
+            int padding = 8;
+
+            Rect r = EditorGUILayout.GetControlRect(GUILayout.Height(padding + thickness));
+            r.height = thickness;
+            r.y += padding / 2;
+            r.x -= 2;
+            r.width += 6;
+            EditorGUI.DrawRect(r, color);
         }
     }
 #endif
-
+    #endregion
 }

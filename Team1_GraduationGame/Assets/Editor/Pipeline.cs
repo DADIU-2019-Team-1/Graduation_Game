@@ -10,7 +10,8 @@ namespace UnityEditor
 	    private static string workingDirectory;
 	    private static string currentBuildNum = "0";
 
-	    public static void BuildAndroidAutobuild()
+        //[MenuItem("Pipeline/Build: Latest fetch from SCM")]
+        public static void BuildAndroidAutobuild()
 	    {
 			BuildAndroidBase(@"C:\Users\Dadiu student\.jenkins\workspace\Graduation_Game\Autobuild\Team1_GraduationGame");
 	    }
@@ -26,6 +27,11 @@ namespace UnityEditor
 	    {
 		    BuildAndroidBase(@"C:\Users\Dadiu student\.jenkins\workspace\Graduation_Game\Manual Release\Team1_GraduationGame");
 	    }
+        //[MenuItem("Pipeline/Build: Android from Unity")]
+        public static void BuildAndroidPC()
+        {
+            BuildAndroidBase(@"C:\Users\Dadiu student\Documents\GitHub\Graduation_Game\Team1_GraduationGame");
+        }
 
         private static void BuildAndroidBase(string workingDir)
         {
@@ -107,6 +113,10 @@ namespace UnityEditor
             file.Close();
 
             TextAsset buildNRFile = Resources.Load("buildNumbers") as TextAsset;
+            if (buildNRFile == null)
+            {
+                buildNRFile = new TextAsset("The current build number of the project is\n0");
+            }
             string allLines = buildNRFile.text;
             string[] everyLine = new string[2];
             if (allLines.Count<Char>() > 0)

@@ -9,7 +9,7 @@ using UnityEditor;
 
 namespace Team1_GraduationGame.Events
 {
-    [RequireComponent(typeof(VoidEvent))]
+
     public class EventManager : MonoBehaviour
     {
         public ThisEventSystem[] events;
@@ -105,7 +105,6 @@ namespace Team1_GraduationGame.Events
     }
 
     [System.Serializable]
-    [RequireComponent(typeof(ColliderChecker)/*, typeof(Interactable)*/)]
     public class ThisEventSystem
     {
         [HideInInspector]
@@ -404,127 +403,128 @@ namespace Team1_GraduationGame.Events
 
             var script = target as EventManager;
 
-            for (int i = 0; i < script.events.Length; i++)
-            {
-                script.events[i].activeInInspector = EditorGUILayout.Foldout(script.events[i].activeInInspector, script.events[i].eventName);
-
-                EditorGUI.indentLevel = EditorGUI.indentLevel + 1;
-
-                if (script.events[i].activeInInspector)
+            if (script.events != null)
+                for (int i = 0; i < script.events.Length; i++)
                 {
-                    if (GUILayout.Button("Test Fire '" + script.events[i].eventName + "' Event"))
-                    {
-                        script.events[i].eventToFire.Invoke();
-                    }
+                    script.events[i].activeInInspector = EditorGUILayout.Foldout(script.events[i].activeInInspector, script.events[i].eventName);
 
-                    GUILayout.Space(10);
+                    EditorGUI.indentLevel = EditorGUI.indentLevel + 1;
 
-                    script.events[i].eventName = EditorGUILayout.TextField("Event Name:", script.events[i].eventName);
-
-                    SerializedProperty functionProp = serializedObject.FindProperty("events.Array.data[" + i + "].function");
-                    EditorGUILayout.PropertyField(functionProp);
-
-                    script.events[i].delayForFire = EditorGUILayout.FloatField("Fire Delay", script.events[i].delayForFire);
-
-
-                    if ((int)script.events[i].function == 0)
+                    if (script.events[i].activeInInspector)
                     {
-                        // External fire //
-                        EditorGUILayout.LabelField("Fire cooldown, if 0 then can only be fired once:");
-                        script.events[i].fireCooldown = EditorGUILayout.FloatField("Fire Cooldown", script.events[i].fireCooldown);
-                        EditorGUILayout.HelpBox("This is an event you need to call from a script.\n" +
-                            "You simply do that by calling the ExternalFire function in the EventManager script and give the specific event name as argument. " +
-                            "If more events have the same name, they will also be fired. NOTICE, the names are case sensitive!", MessageType.Info);
-                    }
-                    if ((int)script.events[i].function == 1) // if bool is true, show other fields
-                    {
-                        // Collision // 
-                        EditorGUILayout.LabelField("Fire cooldown, if 0 then can only be fired once:");
-                        script.events[i].fireCooldown = EditorGUILayout.FloatField("Fire Cooldown", script.events[i].fireCooldown);
-                        script.events[i].isTrigger = EditorGUILayout.Toggle("Is Trigger?", script.events[i].isTrigger);
-                        script.events[i].thisGameObject = EditorGUILayout.ObjectField("Collider Object", script.events[i].thisGameObject, typeof(GameObject), true) as GameObject;
-                        EditorGUILayout.HelpBox("This fires an event when the selected object collides with anything. Please use 'is trigger' depending on the nature of the collision", MessageType.Info);
-                    }
-                    if ((int)script.events[i].function == 2)
-                    {
-                        // Collision with tag //
-                        EditorGUILayout.LabelField("Fire cooldown, if 0 then can only be fired once:");
-                        script.events[i].fireCooldown = EditorGUILayout.FloatField("Fire Cooldown", script.events[i].fireCooldown);
-                        script.events[i].collisionTag = EditorGUILayout.TextField("Collision Tag Name", script.events[i].collisionTag);
-                        script.events[i].isTrigger = EditorGUILayout.Toggle("Is Trigger?", script.events[i].isTrigger);
-                        script.events[i].thisGameObject = EditorGUILayout.ObjectField("Collider Object", script.events[i].thisGameObject, typeof(GameObject), true) as GameObject;
-                        EditorGUILayout.HelpBox("This fires an event when the selected object collides with a specific tag. NOTICE, the names are case sensitive!. Please use 'is trigger' depending on the nature of the collision.", MessageType.Info);
-                    }
-                    if ((int)script.events[i].function == 3)
-                    {
-                        // Check if object destroyed //
-                        script.events[i].thisGameObject = EditorGUILayout.ObjectField("GameObject", script.events[i].thisGameObject, typeof(GameObject), true) as GameObject;
-                        EditorGUILayout.HelpBox("Attach the GameObject you want to listen to. When this specific object is destroyed, the event will fire.", MessageType.Info);
-                    }
-
-                    if ((int)script.events[i].function == 4)
-                    {
-                        // Timed event //
-                        EditorGUILayout.LabelField("Fire cooldown, if 0 then can only be fired once:");
-                        script.events[i].fireCooldown = EditorGUILayout.FloatField("Fire Cooldown", script.events[i].fireCooldown);
-                        EditorGUILayout.HelpBox("Specify the time interval for when the event should be fired", MessageType.Info);
-                    }
-                    if ((int)script.events[i].function == 5)
-                    {
-                        // Object moving // 
-                        script.events[i].fireCooldown = EditorGUILayout.FloatField("Fire Cooldown", script.events[i].fireCooldown);
-                        script.events[i].thisGameObject = EditorGUILayout.ObjectField("GameObject", script.events[i].thisGameObject, typeof(GameObject), true) as GameObject;
-                        EditorGUILayout.HelpBox("Fires an event when the selected gameobject is moving. Not fully tested yet", MessageType.Warning);
-                    }
-                    if ((int)script.events[i].function == 6)
-                    {
-                        // Objects rotate dir // 
-                        script.events[i].fireCooldown = EditorGUILayout.FloatField("Fire Cooldown", script.events[i].fireCooldown);
-                        script.events[i].gameObjectAmount = EditorGUILayout.IntField("Amount of objects", script.events[i].gameObjectAmount);
-                        if (script.events[i].gameObjectAmount > 0)
+                        if (GUILayout.Button("Test Fire '" + script.events[i].eventName + "' Event"))
                         {
-                            if (script.events[i].gameObjectAmount != script.events[i].theseGameObjects.Length)
-                            {
-                                script.events[i].ObjRotInit(script.events[i].gameObjectAmount);
-                            }
-
-                            for (int j = 0; j < script.events[i].theseGameObjects.Length; j++)
-                            {
-                                script.events[i].theseGameObjects[j] = EditorGUILayout.ObjectField("GameObject", script.events[i].theseGameObjects[j], typeof(GameObject), true) as GameObject;
-                                script.events[i].specificRotations[j] = EditorGUILayout.IntField("Rotation", script.events[i].specificRotations[j]);
-                            }
+                            script.events[i].eventToFire.Invoke();
                         }
-                        EditorGUILayout.HelpBox("Specify the amount of gameobjects you want, and then at what specific rotation they should be triggering. The event will fire when they all are rotated in the specified direction.", MessageType.Info);
-                    }
 
-                    if ((int)script.events[i].function == 7)
-                    {
-                        script.events[i].fireCooldown = EditorGUILayout.FloatField("Fire Cooldown", script.events[i].fireCooldown);
-                        script.events[i].gameObjectAmount = EditorGUILayout.IntField("Amount of objects", script.events[i].gameObjectAmount);
-                        if (script.events[i].gameObjectAmount > 0)
+                        GUILayout.Space(10);
+
+                        script.events[i].eventName = EditorGUILayout.TextField("Event Name:", script.events[i].eventName);
+
+                        SerializedProperty functionProp = serializedObject.FindProperty("events.Array.data[" + i + "].function");
+                        EditorGUILayout.PropertyField(functionProp);
+
+                        script.events[i].delayForFire = EditorGUILayout.FloatField("Fire Delay", script.events[i].delayForFire);
+
+
+                        if ((int)script.events[i].function == 0)
                         {
-                            if (script.events[i].gameObjectAmount != script.events[i].theseGameObjects.Length)
-                            {
-                                script.events[i].ObjRotInit(script.events[i].gameObjectAmount);
-                            }
-
-                            for (int j = 0; j < script.events[i].theseGameObjects.Length; j++)
-                            {
-                                script.events[i].theseGameObjects[j] = EditorGUILayout.ObjectField("Interactable Object", script.events[i].theseGameObjects[j], typeof(GameObject), true) as GameObject;
-                            }
+                            // External fire //
+                            EditorGUILayout.LabelField("Fire cooldown, if 0 then can only be fired once:");
+                            script.events[i].fireCooldown = EditorGUILayout.FloatField("Fire Cooldown", script.events[i].fireCooldown);
+                            EditorGUILayout.HelpBox("This is an event you need to call from a script.\n" +
+                                "You simply do that by calling the ExternalFire function in the EventManager script and give the specific event name as argument. " +
+                                "If more events have the same name, they will also be fired. NOTICE, the names are case sensitive!", MessageType.Info);
                         }
-                        EditorGUILayout.HelpBox("Specify the amount of interactable gameobjects you want to check. The event will fire when they all their states are true.", MessageType.Info);
+                        if ((int)script.events[i].function == 1) // if bool is true, show other fields
+                        {
+                            // Collision // 
+                            EditorGUILayout.LabelField("Fire cooldown, if 0 then can only be fired once:");
+                            script.events[i].fireCooldown = EditorGUILayout.FloatField("Fire Cooldown", script.events[i].fireCooldown);
+                            script.events[i].isTrigger = EditorGUILayout.Toggle("Is Trigger?", script.events[i].isTrigger);
+                            script.events[i].thisGameObject = EditorGUILayout.ObjectField("Collider Object", script.events[i].thisGameObject, typeof(GameObject), true) as GameObject;
+                            EditorGUILayout.HelpBox("This fires an event when the selected object collides with anything. Please use 'is trigger' depending on the nature of the collision", MessageType.Info);
+                        }
+                        if ((int)script.events[i].function == 2)
+                        {
+                            // Collision with tag //
+                            EditorGUILayout.LabelField("Fire cooldown, if 0 then can only be fired once:");
+                            script.events[i].fireCooldown = EditorGUILayout.FloatField("Fire Cooldown", script.events[i].fireCooldown);
+                            script.events[i].collisionTag = EditorGUILayout.TextField("Collision Tag Name", script.events[i].collisionTag);
+                            script.events[i].isTrigger = EditorGUILayout.Toggle("Is Trigger?", script.events[i].isTrigger);
+                            script.events[i].thisGameObject = EditorGUILayout.ObjectField("Collider Object", script.events[i].thisGameObject, typeof(GameObject), true) as GameObject;
+                            EditorGUILayout.HelpBox("This fires an event when the selected object collides with a specific tag. NOTICE, the names are case sensitive!. Please use 'is trigger' depending on the nature of the collision.", MessageType.Info);
+                        }
+                        if ((int)script.events[i].function == 3)
+                        {
+                            // Check if object destroyed //
+                            script.events[i].thisGameObject = EditorGUILayout.ObjectField("GameObject", script.events[i].thisGameObject, typeof(GameObject), true) as GameObject;
+                            EditorGUILayout.HelpBox("Attach the GameObject you want to listen to. When this specific object is destroyed, the event will fire.", MessageType.Info);
+                        }
+
+                        if ((int)script.events[i].function == 4)
+                        {
+                            // Timed event //
+                            EditorGUILayout.LabelField("Fire cooldown, if 0 then can only be fired once:");
+                            script.events[i].fireCooldown = EditorGUILayout.FloatField("Fire Cooldown", script.events[i].fireCooldown);
+                            EditorGUILayout.HelpBox("Specify the time interval for when the event should be fired", MessageType.Info);
+                        }
+                        if ((int)script.events[i].function == 5)
+                        {
+                            // Object moving // 
+                            script.events[i].fireCooldown = EditorGUILayout.FloatField("Fire Cooldown", script.events[i].fireCooldown);
+                            script.events[i].thisGameObject = EditorGUILayout.ObjectField("GameObject", script.events[i].thisGameObject, typeof(GameObject), true) as GameObject;
+                            EditorGUILayout.HelpBox("Fires an event when the selected gameobject is moving. Not fully tested yet", MessageType.Warning);
+                        }
+                        if ((int)script.events[i].function == 6)
+                        {
+                            // Objects rotate dir // 
+                            script.events[i].fireCooldown = EditorGUILayout.FloatField("Fire Cooldown", script.events[i].fireCooldown);
+                            script.events[i].gameObjectAmount = EditorGUILayout.IntField("Amount of objects", script.events[i].gameObjectAmount);
+                            if (script.events[i].gameObjectAmount > 0)
+                            {
+                                if (script.events[i].gameObjectAmount != script.events[i].theseGameObjects.Length)
+                                {
+                                    script.events[i].ObjRotInit(script.events[i].gameObjectAmount);
+                                }
+
+                                for (int j = 0; j < script.events[i].theseGameObjects.Length; j++)
+                                {
+                                    script.events[i].theseGameObjects[j] = EditorGUILayout.ObjectField("GameObject", script.events[i].theseGameObjects[j], typeof(GameObject), true) as GameObject;
+                                    script.events[i].specificRotations[j] = EditorGUILayout.IntField("Rotation", script.events[i].specificRotations[j]);
+                                }
+                            }
+                            EditorGUILayout.HelpBox("Specify the amount of gameobjects you want, and then at what specific rotation they should be triggering. The event will fire when they all are rotated in the specified direction.", MessageType.Info);
+                        }
+
+                        if ((int)script.events[i].function == 7)
+                        {
+                            script.events[i].fireCooldown = EditorGUILayout.FloatField("Fire Cooldown", script.events[i].fireCooldown);
+                            script.events[i].gameObjectAmount = EditorGUILayout.IntField("Amount of objects", script.events[i].gameObjectAmount);
+                            if (script.events[i].gameObjectAmount > 0)
+                            {
+                                if (script.events[i].gameObjectAmount != script.events[i].theseGameObjects.Length)
+                                {
+                                    script.events[i].ObjRotInit(script.events[i].gameObjectAmount);
+                                }
+
+                                for (int j = 0; j < script.events[i].theseGameObjects.Length; j++)
+                                {
+                                    script.events[i].theseGameObjects[j] = EditorGUILayout.ObjectField("Interactable Object", script.events[i].theseGameObjects[j], typeof(GameObject), true) as GameObject;
+                                }
+                            }
+                            EditorGUILayout.HelpBox("Specify the amount of interactable gameobjects you want to check. The event will fire when they all their states are true.", MessageType.Info);
+                        }
+
+                        GUILayout.Space(10);
+
+                        SerializedProperty fireProp = serializedObject.FindProperty("events.Array.data[" + i + "].eventToFire");
+                        EditorGUILayout.PropertyField(fireProp);
+                        serializedObject.ApplyModifiedProperties();
                     }
 
-                    GUILayout.Space(10);
-
-                    SerializedProperty fireProp = serializedObject.FindProperty("events.Array.data[" + i + "].eventToFire");
-                    EditorGUILayout.PropertyField(fireProp);
-                    serializedObject.ApplyModifiedProperties();
+                    EditorGUI.indentLevel = EditorGUI.indentLevel - 1;
                 }
-
-                EditorGUI.indentLevel = EditorGUI.indentLevel - 1;
-            }
 
             if (GUI.changed)
             {

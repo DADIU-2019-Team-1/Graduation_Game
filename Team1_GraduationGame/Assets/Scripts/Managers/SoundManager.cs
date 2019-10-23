@@ -34,9 +34,16 @@ namespace Team1_GraduationGame.Managers
                         soundEvents[i].soundFloatEventListener.Enable();
                     }
 
+                    soundEvents[i].thisSoundManager = this;
+                    soundEvents[i].soundEventId = i;
                     soundEvents[i].gameObject = gameObject;
-                    
                 }
+        }
+
+        public void StartCoroutine(int id)
+        {
+            if (soundEvents[id] != null)
+                StartCoroutine(soundEvents[id].WaitForDelay());
         }
     }
 
@@ -44,8 +51,8 @@ namespace Team1_GraduationGame.Managers
     [System.Serializable]
     public class SoundEvent
     {
-        // Debug stuff:
-        [HideInInspector] public string debugString;
+        [HideInInspector] public SoundManager thisSoundManager;
+        [HideInInspector] public int soundEventId;
 
         // Event system:
         public enum EventTypeEnum
@@ -57,6 +64,7 @@ namespace Team1_GraduationGame.Managers
         [HideInInspector] public EventTypeEnum eventTypeSelector;
         [HideInInspector] public SoundVoidEventListener soundEventListener;
         [HideInInspector] public SoundFloatEventListener soundFloatEventListener;
+        [HideInInspector] public float triggerDelay = 0.0f;
         [HideInInspector] public VoidEvent triggerEvent;
         [HideInInspector] public FloatEvent triggerFloatEvent;
 
@@ -104,6 +112,14 @@ namespace Team1_GraduationGame.Managers
 
         public void EventRaised()
         {
+            if (triggerDelay <= 0)
+                SelectBehavior();
+            else if (triggerDelay > 0)
+                thisSoundManager.StartCoroutine(soundEventId);
+        }
+
+        private void SelectBehavior()
+        {
             switch ((int)behaviorSelector)
             {
                 case 0:
@@ -125,12 +141,11 @@ namespace Team1_GraduationGame.Managers
                     //
                     break;
                 case 4:
-                    Debug.Log("SoundManager Responds! - " + debugString);
+                    Debug.Log("SoundManager Responds!");
                     break;
                 default:
                     break;
             }
-            
         }
 
         private void Callback(object in_cookie, AkCallbackType in_type, AkCallbackInfo in_info)
@@ -140,6 +155,12 @@ namespace Team1_GraduationGame.Managers
 
             for (var i = 0; i < callbacks.Count; ++i)
                 callbacks[i].CallFunction(EventCallbackMsg);
+        }
+
+        public IEnumerator WaitForDelay()
+        {
+            yield return new WaitForSeconds(triggerDelay);
+            SelectBehavior();
         }
 
         [System.Serializable]
@@ -253,6 +274,9 @@ namespace Team1_GraduationGame.Managers
                         SerializedProperty triggerFloatEventProp = serializedObject.FindProperty("soundEvents.Array.data[" + i + "].triggerFloatEvent");
                         EditorGUILayout.PropertyField(triggerFloatEventProp);
                     }
+
+                    script.soundEvents[i].triggerDelay =
+                        EditorGUILayout.FloatField("Trigger Delay", script.soundEvents[i].triggerDelay);
 
                     SerializedProperty behaviorSelectorProp = serializedObject.FindProperty("soundEvents.Array.data[" + i + "].behaviorSelector");
                     EditorGUILayout.PropertyField(behaviorSelectorProp);

@@ -102,6 +102,12 @@ namespace Team1_GraduationGame.Events
         {
             myEvent.Raise();
         }
+
+        public void FireFloatScriptableObjectEvent(FloatEvent myEvent)
+        {
+            float tempFloat = 1;
+            myEvent.Raise(tempFloat);
+        }
     }
 
     [System.Serializable]

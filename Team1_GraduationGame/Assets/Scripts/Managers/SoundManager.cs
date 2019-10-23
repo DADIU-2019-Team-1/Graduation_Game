@@ -19,11 +19,23 @@ namespace Team1_GraduationGame.Managers
             if (soundEvents != null)
                 for (int i = 0; i < soundEvents.Length; i++)
                 {
-                    soundEvents[i].soundEventListener = new SoundVoidEventListener();
-                    soundEvents[i].soundEventListener.GameEvent = soundEvents[i].triggerEvent;
-                    soundEvents[i].soundEventListener.SoundEventClass = soundEvents[i];
-                    soundEvents[i].soundEventListener.Enable();
+                    if ((int) soundEvents[i].eventTypeSelector == 0)
+                    {
+                        soundEvents[i].soundEventListener = new SoundVoidEventListener();
+                        soundEvents[i].soundEventListener.GameEvent = soundEvents[i].triggerEvent;
+                        soundEvents[i].soundEventListener.SoundEventClass = soundEvents[i];
+                        soundEvents[i].soundEventListener.Enable();
+                    } 
+                    else if ((int) soundEvents[i].eventTypeSelector == 1)
+                    {
+                        soundEvents[i].soundFloatEventListener = new SoundFloatEventListener();
+                        soundEvents[i].soundFloatEventListener.GameEvent = soundEvents[i].triggerFloatEvent;
+                        soundEvents[i].soundFloatEventListener.SoundEventClass = soundEvents[i];
+                        soundEvents[i].soundFloatEventListener.Enable();
+                    }
+
                     soundEvents[i].gameObject = gameObject;
+                    
                 }
         }
     }
@@ -36,11 +48,20 @@ namespace Team1_GraduationGame.Managers
         [HideInInspector] public string debugString;
 
         // Event system:
+        public enum EventTypeEnum
+        {
+            Void,
+            Float
+        }
+
+        [HideInInspector] public EventTypeEnum eventTypeSelector;
         [HideInInspector] public SoundVoidEventListener soundEventListener;
+        [HideInInspector] public SoundFloatEventListener soundFloatEventListener;
         [HideInInspector] public VoidEvent triggerEvent;
+        [HideInInspector] public FloatEvent triggerFloatEvent;
 
         // Behavior switching:
-        public enum behaviorEnum
+        public enum BehaviorEnum
         {
             Event,
             State,
@@ -49,7 +70,7 @@ namespace Team1_GraduationGame.Managers
             Debugger
         }
 
-        [HideInInspector] public behaviorEnum behaviorSelector;
+        [HideInInspector] public BehaviorEnum behaviorSelector;
 
         // Other:
         [HideInInspector] public GameObject gameObject;
@@ -179,7 +200,17 @@ namespace Team1_GraduationGame.Managers
 
         public void OnEventRaised(T item)
         {
-            SoundEventClass.EventRaised();
+            if (item.GetType() == typeof(Void))
+            {
+                Debug.Log("Void event raised");
+                SoundEventClass.EventRaised();
+            }
+            else if (item.GetType() == typeof(float))
+            {
+                Debug.Log("Float event raised with float value: " + item);
+                SoundEventClass.EventRaised();
+            }
+
         }
     }
 
@@ -187,7 +218,7 @@ namespace Team1_GraduationGame.Managers
     {
     }
 
-    public class SoundFloatEventListener : SoundEventListener<int, IntEvent, SoundEvent>
+    public class SoundFloatEventListener : SoundEventListener<float, FloatEvent, SoundEvent>
     {
     }
     #endregion
@@ -209,8 +240,19 @@ namespace Team1_GraduationGame.Managers
                 {
                     DrawUILine(true);
 
-                    SerializedProperty triggerEventProp = serializedObject.FindProperty("soundEvents.Array.data[" + i + "].triggerEvent");
-                    EditorGUILayout.PropertyField(triggerEventProp);
+                    SerializedProperty triggerEventSelectorProp = serializedObject.FindProperty("soundEvents.Array.data[" + i + "].eventTypeSelector");
+                    EditorGUILayout.PropertyField(triggerEventSelectorProp);
+
+                    if ((int) script.soundEvents[i].eventTypeSelector == 0)
+                    {
+                        SerializedProperty triggerEventProp = serializedObject.FindProperty("soundEvents.Array.data[" + i + "].triggerEvent");
+                        EditorGUILayout.PropertyField(triggerEventProp);
+                    }
+                    else if ((int) script.soundEvents[i].eventTypeSelector == 1)
+                    {
+                        SerializedProperty triggerFloatEventProp = serializedObject.FindProperty("soundEvents.Array.data[" + i + "].triggerFloatEvent");
+                        EditorGUILayout.PropertyField(triggerFloatEventProp);
+                    }
 
                     SerializedProperty behaviorSelectorProp = serializedObject.FindProperty("soundEvents.Array.data[" + i + "].behaviorSelector");
                     EditorGUILayout.PropertyField(behaviorSelectorProp);

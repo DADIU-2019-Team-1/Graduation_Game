@@ -152,18 +152,23 @@ MonoBehaviour:
   soundEvents:
   - thisSoundManager: {fileID: 0}
     soundEventId: 0
-    eventTypeSelector: 1
+    eventTypeSelector: 0
     triggerDelay: 0
     triggerEvent: {fileID: 11400000, guid: 957381cb3e85de2429d8120bee1f5db6, type: 2}
     triggerFloatEvent: {fileID: 11400000, guid: e6b38c90daf71ba4f9ce07101caac0f3,
       type: 2}
-    behaviorSelector: 0
+    behaviorSelector: 4
     gameObject: {fileID: 0}
-    callbacks: []
+    callbacks:
+    - Flags:
+        value: 128
+      FunctionName: 
+      GameObject: {fileID: 0}
     wwiseEvent:
       idInternal: 0
       valueGuidInternal: 
-      WwiseObjectReference: {fileID: 0}
+      WwiseObjectReference: {fileID: 11400000, guid: 06d1188b9b93a9c448bed387fd91ccb7,
+        type: 2}
     wwiseState:
       idInternal: 0
       valueGuidInternal: 
@@ -175,7 +180,76 @@ MonoBehaviour:
       valueGuidInternal: 
       groupIdInternal: 0
       groupGuidInternal: 
+      WwiseObjectReference: {fileID: 11400000, guid: eac0e505b21b8fe4a83871d429911bd0,
+        type: 2}
+    useCallbacks: 0
+    useActionOnEvent: 0
+  - thisSoundManager: {fileID: 0}
+    soundEventId: 0
+    eventTypeSelector: 0
+    triggerDelay: 0
+    triggerEvent: {fileID: 11400000, guid: 957381cb3e85de2429d8120bee1f5db6, type: 2}
+    triggerFloatEvent: {fileID: 11400000, guid: e6b38c90daf71ba4f9ce07101caac0f3,
+      type: 2}
+    behaviorSelector: 0
+    gameObject: {fileID: 0}
+    callbacks:
+    - Flags:
+        value: 128
+      FunctionName: 
+      GameObject: {fileID: 0}
+    wwiseEvent:
+      idInternal: 0
+      valueGuidInternal: 
+      WwiseObjectReference: {fileID: 11400000, guid: 06d1188b9b93a9c448bed387fd91ccb7,
+        type: 2}
+    wwiseState:
+      idInternal: 0
+      valueGuidInternal: 
+      groupIdInternal: 0
+      groupGuidInternal: 
       WwiseObjectReference: {fileID: 0}
+    wwiseSwitch:
+      idInternal: 0
+      valueGuidInternal: 
+      groupIdInternal: 0
+      groupGuidInternal: 
+      WwiseObjectReference: {fileID: 11400000, guid: eac0e505b21b8fe4a83871d429911bd0,
+        type: 2}
+    useCallbacks: 0
+    useActionOnEvent: 0
+  - thisSoundManager: {fileID: 0}
+    soundEventId: 0
+    eventTypeSelector: 0
+    triggerDelay: 0
+    triggerEvent: {fileID: 11400000, guid: 957381cb3e85de2429d8120bee1f5db6, type: 2}
+    triggerFloatEvent: {fileID: 11400000, guid: e6b38c90daf71ba4f9ce07101caac0f3,
+      type: 2}
+    behaviorSelector: 2
+    gameObject: {fileID: 0}
+    callbacks:
+    - Flags:
+        value: 128
+      FunctionName: 
+      GameObject: {fileID: 0}
+    wwiseEvent:
+      idInternal: 0
+      valueGuidInternal: 
+      WwiseObjectReference: {fileID: 11400000, guid: 06d1188b9b93a9c448bed387fd91ccb7,
+        type: 2}
+    wwiseState:
+      idInternal: 0
+      valueGuidInternal: 
+      groupIdInternal: 0
+      groupGuidInternal: 
+      WwiseObjectReference: {fileID: 0}
+    wwiseSwitch:
+      idInternal: 0
+      valueGuidInternal: 
+      groupIdInternal: 0
+      groupGuidInternal: 
+      WwiseObjectReference: {fileID: 11400000, guid: eac0e505b21b8fe4a83871d429911bd0,
+        type: 2}
     useCallbacks: 0
     useActionOnEvent: 0
 --- !u!4 &476060370
@@ -292,6 +366,21 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8478470163910832014, guid: bffd6909a73269946945f759803e30be,
+        type: 3}
+      propertyPath: Callbacks.Array.size
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8478470163910832014, guid: bffd6909a73269946945f759803e30be,
+        type: 3}
+      propertyPath: useCallbacks
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8478470163910832014, guid: bffd6909a73269946945f759803e30be,
+        type: 3}
+      propertyPath: enableActionOnEvent
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5370165979892479981, guid: bffd6909a73269946945f759803e30be,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -345,21 +434,6 @@ PrefabInstance:
     - target: {fileID: 5370165979892479981, guid: bffd6909a73269946945f759803e30be,
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8478470163910832014, guid: bffd6909a73269946945f759803e30be,
-        type: 3}
-      propertyPath: Callbacks.Array.size
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8478470163910832014, guid: bffd6909a73269946945f759803e30be,
-        type: 3}
-      propertyPath: useCallbacks
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8478470163910832014, guid: bffd6909a73269946945f759803e30be,
-        type: 3}
-      propertyPath: enableActionOnEvent
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []

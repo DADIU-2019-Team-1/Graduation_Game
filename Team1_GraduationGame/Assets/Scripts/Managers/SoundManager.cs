@@ -45,6 +45,22 @@ namespace Team1_GraduationGame.Managers
             if (soundEvents[id] != null)
                 StartCoroutine(soundEvents[id].WaitForDelay());
         }
+
+        public void PlayAll()
+        {
+            for (int i = 0; i < soundEvents.Length; i++)
+            {
+                if (soundEvents[i].wwiseEvent != null)
+                {
+                    soundEvents[i].wwiseEvent.Post(gameObject);
+                }
+            }
+        }
+        public void StopAll()
+        {
+            Debug.Log("Stopping All Sounds");
+            AkSoundEngine.StopAll();
+        }
     }
 
     #region Sound Event Container
@@ -89,25 +105,23 @@ namespace Team1_GraduationGame.Managers
         [HideInInspector] public AK.Wwise.Event wwiseEvent = new AK.Wwise.Event();
         [HideInInspector] public AK.Wwise.State wwiseState;
         [HideInInspector] public AK.Wwise.Switch wwiseSwitch;
-        //public RTPC_SO RTPC_ScriptableObject;
+        [HideInInspector] public FloatVariable rtpcScriptableObject;
 
         // Bools:
         [HideInInspector] public bool useCallbacks = false;
         [HideInInspector] public bool useActionOnEvent = false;
 
 
-        public void PlayAllSounds() // TODO YYY
+        public void PlayWwiseEvent()
         {
-            Debug.Log("Playing All Sounds");
-            for (int i = 0; i < 1; i++)
-            {
-                // TODO: iterate though all attached, somehow
-            }
+            Debug.Log("Playing Wwise Event");
+            wwiseEvent.Post(gameObject);
         }
 
-        public void StopAllSounds()
+        public void StopWwiseEvent()
         {
-            Debug.Log("Stopping All Sounds");
+            wwiseEvent.Stop(gameObject);
+            Debug.Log("Stopping Wwise Event");
         }
 
         public void EventRaised()
@@ -123,12 +137,14 @@ namespace Team1_GraduationGame.Managers
             switch ((int)behaviorSelector)
             {
                 case 0:
-                    for (int i = 0; i < callbacks.Count; i++)
-                    {
-                        if (useCallbacks)
+                    if (useCallbacks)
+                        for (int i = 0; i < callbacks.Count; i++)
+                        {
                             wwiseEvent.Post(callbacks[i].GameObject, callbacks[i].Flags, Callback);
-                        else
-                            wwiseEvent.Post(gameObject);
+                        }
+                    else
+                    {
+                        wwiseEvent.Post(gameObject);
                     }
                     break;
                 case 1:
@@ -340,11 +356,11 @@ namespace Team1_GraduationGame.Managers
 
                     if (GUILayout.Button("Play"))
                     {
-                        script.soundEvents[i].PlayAllSounds();
+                        script.soundEvents[i].PlayWwiseEvent();
                     }
                     if (GUILayout.Button("Stop"))
                     {
-                        script.soundEvents[i].StopAllSounds();
+                        script.soundEvents[i].StopWwiseEvent();
                     }
 
                 }

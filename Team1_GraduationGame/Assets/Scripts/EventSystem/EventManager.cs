@@ -102,6 +102,12 @@ namespace Team1_GraduationGame.Events
         {
             myEvent.Raise();
         }
+
+        public void FireFloatScriptableObjectEvent(FloatEvent myEvent)
+        {
+            float tempFloat = 1;
+            myEvent.Raise(tempFloat);
+        }
     }
 
     [System.Serializable]
@@ -499,21 +505,21 @@ namespace Team1_GraduationGame.Events
 
                         if ((int)script.events[i].function == 7)
                         {
-                            script.events[i].fireCooldown = EditorGUILayout.FloatField("Fire Cooldown", script.events[i].fireCooldown);
-                            script.events[i].gameObjectAmount = EditorGUILayout.IntField("Amount of objects", script.events[i].gameObjectAmount);
-                            if (script.events[i].gameObjectAmount > 0)
-                            {
-                                if (script.events[i].gameObjectAmount != script.events[i].theseGameObjects.Length)
-                                {
-                                    script.events[i].ObjRotInit(script.events[i].gameObjectAmount);
-                                }
+                            //script.events[i].fireCooldown = EditorGUILayout.FloatField("Fire Cooldown", script.events[i].fireCooldown);
+                            //script.events[i].gameObjectAmount = EditorGUILayout.IntField("Amount of objects", script.events[i].gameObjectAmount);
+                            //if (script.events[i].gameObjectAmount > 0)
+                            //{
+                            //    if (script.events[i].gameObjectAmount != script.events[i].theseGameObjects.Length)
+                            //    {
+                            //        script.events[i].ObjRotInit(script.events[i].gameObjectAmount);
+                            //    }
 
-                                for (int j = 0; j < script.events[i].theseGameObjects.Length; j++)
-                                {
-                                    script.events[i].theseGameObjects[j] = EditorGUILayout.ObjectField("Interactable Object", script.events[i].theseGameObjects[j], typeof(GameObject), true) as GameObject;
-                                }
-                            }
-                            EditorGUILayout.HelpBox("Specify the amount of interactable gameobjects you want to check. The event will fire when they all their states are true.", MessageType.Info);
+                            //    for (int j = 0; j < script.events[i].theseGameObjects.Length; j++)
+                            //    {
+                            //        script.events[i].theseGameObjects[j] = EditorGUILayout.ObjectField("Interactable Object", script.events[i].theseGameObjects[j], typeof(GameObject), true) as GameObject;
+                            //    }
+                            //}
+                            EditorGUILayout.HelpBox("This option is currently disabled"/*"Specify the amount of interactable gameobjects you want to check. The event will fire when they all their states are true."*/, MessageType.Info);
                         }
 
                         GUILayout.Space(10);

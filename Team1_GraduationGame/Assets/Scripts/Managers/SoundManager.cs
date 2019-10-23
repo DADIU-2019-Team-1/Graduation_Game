@@ -19,12 +19,47 @@ namespace Team1_GraduationGame.Managers
             if (soundEvents != null)
                 for (int i = 0; i < soundEvents.Length; i++)
                 {
-                    soundEvents[i].soundEventListener = new SoundVoidEventListener();
-                    soundEvents[i].soundEventListener.GameEvent = soundEvents[i].triggerEvent;
-                    soundEvents[i].soundEventListener.SoundEventClass = soundEvents[i];
-                    soundEvents[i].soundEventListener.Enable();
+                    if ((int) soundEvents[i].eventTypeSelector == 0)
+                    {
+                        soundEvents[i].soundEventListener = new SoundVoidEventListener();
+                        soundEvents[i].soundEventListener.GameEvent = soundEvents[i].triggerEvent;
+                        soundEvents[i].soundEventListener.SoundEventClass = soundEvents[i];
+                        soundEvents[i].soundEventListener.Enable();
+                    } 
+                    else if ((int) soundEvents[i].eventTypeSelector == 1)
+                    {
+                        soundEvents[i].soundFloatEventListener = new SoundFloatEventListener();
+                        soundEvents[i].soundFloatEventListener.GameEvent = soundEvents[i].triggerFloatEvent;
+                        soundEvents[i].soundFloatEventListener.SoundEventClass = soundEvents[i];
+                        soundEvents[i].soundFloatEventListener.Enable();
+                    }
+
+                    soundEvents[i].thisSoundManager = this;
+                    soundEvents[i].soundEventId = i;
                     soundEvents[i].gameObject = gameObject;
                 }
+        }
+
+        public void StartCoroutine(int id)
+        {
+            if (soundEvents[id] != null)
+                StartCoroutine(soundEvents[id].WaitForDelay());
+        }
+
+        public void PlayAll()
+        {
+            for (int i = 0; i < soundEvents.Length; i++)
+            {
+                if (soundEvents[i].wwiseEvent != null)
+                {
+                    soundEvents[i].wwiseEvent.Post(gameObject);
+                }
+            }
+        }
+        public void StopAll()
+        {
+            Debug.Log("Stopping All Sounds");
+            AkSoundEngine.StopAll();
         }
     }
 
@@ -32,15 +67,25 @@ namespace Team1_GraduationGame.Managers
     [System.Serializable]
     public class SoundEvent
     {
-        // Debug stuff:
-        [HideInInspector] public string debugString;
+        [HideInInspector] public SoundManager thisSoundManager;
+        [HideInInspector] public int soundEventId;
 
         // Event system:
+        public enum EventTypeEnum
+        {
+            Void,
+            Float
+        }
+
+        [HideInInspector] public EventTypeEnum eventTypeSelector;
         [HideInInspector] public SoundVoidEventListener soundEventListener;
+        [HideInInspector] public SoundFloatEventListener soundFloatEventListener;
+        [HideInInspector] public float triggerDelay = 0.0f;
         [HideInInspector] public VoidEvent triggerEvent;
+        [HideInInspector] public FloatEvent triggerFloatEvent;
 
         // Behavior switching:
-        public enum behaviorEnum
+        public enum BehaviorEnum
         {
             Event,
             State,
@@ -49,7 +94,7 @@ namespace Team1_GraduationGame.Managers
             Debugger
         }
 
-        [HideInInspector] public behaviorEnum behaviorSelector;
+        [HideInInspector] public BehaviorEnum behaviorSelector;
 
         // Other:
         [HideInInspector] public GameObject gameObject;
@@ -60,38 +105,46 @@ namespace Team1_GraduationGame.Managers
         [HideInInspector] public AK.Wwise.Event wwiseEvent = new AK.Wwise.Event();
         [HideInInspector] public AK.Wwise.State wwiseState;
         [HideInInspector] public AK.Wwise.Switch wwiseSwitch;
-        //public RTPC_SO RTPC_ScriptableObject;
+        [HideInInspector] public FloatVariable rtpcScriptableObject;
 
         // Bools:
         [HideInInspector] public bool useCallbacks = false;
         [HideInInspector] public bool useActionOnEvent = false;
 
 
-        public void PlayAllSounds() // TODO YYY
+        public void PlayWwiseEvent()
         {
-            Debug.Log("Playing All Sounds");
-            for (int i = 0; i < 1; i++)
-            {
-                // TODO: iterate though all attached, somehow
-            }
+            Debug.Log("Playing Wwise Event");
+            wwiseEvent.Post(gameObject);
         }
 
-        public void StopAllSounds()
+        public void StopWwiseEvent()
         {
-            Debug.Log("Stopping All Sounds");
+            wwiseEvent.Stop(gameObject);
+            Debug.Log("Stopping Wwise Event");
         }
 
         public void EventRaised()
         {
+            if (triggerDelay <= 0)
+                SelectBehavior();
+            else if (triggerDelay > 0)
+                thisSoundManager.StartCoroutine(soundEventId);
+        }
+
+        private void SelectBehavior()
+        {
             switch ((int)behaviorSelector)
             {
                 case 0:
-                    for (int i = 0; i < callbacks.Count; i++)
-                    {
-                        if (useCallbacks)
+                    if (useCallbacks)
+                        for (int i = 0; i < callbacks.Count; i++)
+                        {
                             wwiseEvent.Post(callbacks[i].GameObject, callbacks[i].Flags, Callback);
-                        else
-                            wwiseEvent.Post(gameObject);
+                        }
+                    else
+                    {
+                        wwiseEvent.Post(gameObject);
                     }
                     break;
                 case 1:
@@ -104,12 +157,11 @@ namespace Team1_GraduationGame.Managers
                     //
                     break;
                 case 4:
-                    Debug.Log("SoundManager Responds! - " + debugString);
+                    Debug.Log("SoundManager Responds!");
                     break;
                 default:
                     break;
             }
-            
         }
 
         private void Callback(object in_cookie, AkCallbackType in_type, AkCallbackInfo in_info)
@@ -119,6 +171,12 @@ namespace Team1_GraduationGame.Managers
 
             for (var i = 0; i < callbacks.Count; ++i)
                 callbacks[i].CallFunction(EventCallbackMsg);
+        }
+
+        public IEnumerator WaitForDelay()
+        {
+            yield return new WaitForSeconds(triggerDelay);
+            SelectBehavior();
         }
 
         [System.Serializable]
@@ -179,7 +237,17 @@ namespace Team1_GraduationGame.Managers
 
         public void OnEventRaised(T item)
         {
-            SoundEventClass.EventRaised();
+            if (item.GetType() == typeof(Void))
+            {
+                Debug.Log("Void event raised");
+                SoundEventClass.EventRaised();
+            }
+            else if (item.GetType() == typeof(float))
+            {
+                Debug.Log("Float event raised with float value: " + item);
+                SoundEventClass.EventRaised();
+            }
+
         }
     }
 
@@ -187,7 +255,7 @@ namespace Team1_GraduationGame.Managers
     {
     }
 
-    public class SoundFloatEventListener : SoundEventListener<int, IntEvent, SoundEvent>
+    public class SoundFloatEventListener : SoundEventListener<float, FloatEvent, SoundEvent>
     {
     }
     #endregion
@@ -209,8 +277,22 @@ namespace Team1_GraduationGame.Managers
                 {
                     DrawUILine(true);
 
-                    SerializedProperty triggerEventProp = serializedObject.FindProperty("soundEvents.Array.data[" + i + "].triggerEvent");
-                    EditorGUILayout.PropertyField(triggerEventProp);
+                    SerializedProperty triggerEventSelectorProp = serializedObject.FindProperty("soundEvents.Array.data[" + i + "].eventTypeSelector");
+                    EditorGUILayout.PropertyField(triggerEventSelectorProp);
+
+                    if ((int) script.soundEvents[i].eventTypeSelector == 0)
+                    {
+                        SerializedProperty triggerEventProp = serializedObject.FindProperty("soundEvents.Array.data[" + i + "].triggerEvent");
+                        EditorGUILayout.PropertyField(triggerEventProp);
+                    }
+                    else if ((int) script.soundEvents[i].eventTypeSelector == 1)
+                    {
+                        SerializedProperty triggerFloatEventProp = serializedObject.FindProperty("soundEvents.Array.data[" + i + "].triggerFloatEvent");
+                        EditorGUILayout.PropertyField(triggerFloatEventProp);
+                    }
+
+                    script.soundEvents[i].triggerDelay =
+                        EditorGUILayout.FloatField("Trigger Delay", script.soundEvents[i].triggerDelay);
 
                     SerializedProperty behaviorSelectorProp = serializedObject.FindProperty("soundEvents.Array.data[" + i + "].behaviorSelector");
                     EditorGUILayout.PropertyField(behaviorSelectorProp);
@@ -274,11 +356,11 @@ namespace Team1_GraduationGame.Managers
 
                     if (GUILayout.Button("Play"))
                     {
-                        script.soundEvents[i].PlayAllSounds();
+                        script.soundEvents[i].PlayWwiseEvent();
                     }
                     if (GUILayout.Button("Stop"))
                     {
-                        script.soundEvents[i].StopAllSounds();
+                        script.soundEvents[i].StopWwiseEvent();
                     }
 
                 }

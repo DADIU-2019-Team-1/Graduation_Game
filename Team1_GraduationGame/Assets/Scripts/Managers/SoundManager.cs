@@ -36,7 +36,7 @@ namespace Team1_GraduationGame.Managers
 
                     soundEvents[i].thisSoundManager = this;
                     soundEvents[i].soundEventId = i;
-                    soundEvents[i].gameObject = gameObject;
+                    soundEvents[i].SoundManagerGameObject = gameObject;
                 }
         }
 
@@ -50,16 +50,18 @@ namespace Team1_GraduationGame.Managers
         {
             for (int i = 0; i < soundEvents.Length; i++)
             {
-                if (soundEvents[i].wwiseEvent != null)
-                {
-                    soundEvents[i].wwiseEvent.Post(gameObject);
-                }
+                if (soundEvents[i].wwiseEvent != null && (int)soundEvents[i].eventTypeSelector == 0)
+                    soundEvents[i].PlayWwiseEvent();
             }
         }
         public void StopAll()
         {
             Debug.Log("Stopping All Sounds");
-            AkSoundEngine.StopAll();
+            for (int i = 0; i < soundEvents.Length; i++)
+            {
+                if (soundEvents[i].wwiseEvent != null && (int)soundEvents[i].eventTypeSelector == 0)
+                    soundEvents[i].StopWwiseEvent();
+            }
         }
     }
 
@@ -96,8 +98,9 @@ namespace Team1_GraduationGame.Managers
 
         [HideInInspector] public BehaviorEnum behaviorSelector;
 
-        // Other:
-        [HideInInspector] public GameObject gameObject;
+        // GameObjects:
+        [HideInInspector] public GameObject SoundManagerGameObject;
+        [HideInInspector] public GameObject targetGameObject;
 
         // Wwise:
         private AkEventCallbackMsg EventCallbackMsg = new AkEventCallbackMsg();
@@ -105,6 +108,7 @@ namespace Team1_GraduationGame.Managers
         [HideInInspector] public AK.Wwise.Event wwiseEvent = new AK.Wwise.Event();
         [HideInInspector] public AK.Wwise.State wwiseState;
         [HideInInspector] public AK.Wwise.Switch wwiseSwitch;
+        [HideInInspector] public AK.Wwise.RTPC WwiseRTPC;
         [HideInInspector] public FloatVariable rtpcScriptableObject;
 
         // Bools:
@@ -114,14 +118,26 @@ namespace Team1_GraduationGame.Managers
 
         public void PlayWwiseEvent()
         {
-            Debug.Log("Playing Wwise Event");
-            wwiseEvent.Post(gameObject);
+            if (wwiseEvent != null && (int) eventTypeSelector == 0)
+            {
+                Debug.Log("Playing Wwise Event");
+                if (targetGameObject == null)
+                    wwiseEvent.Post(SoundManagerGameObject);
+                else
+                    wwiseEvent.Post(targetGameObject);
+            }
         }
 
         public void StopWwiseEvent()
         {
-            wwiseEvent.Stop(gameObject);
-            Debug.Log("Stopping Wwise Event");
+            if (wwiseEvent != null && (int) eventTypeSelector == 0)
+            {
+                Debug.Log("Stopping Wwise Event");
+                if (targetGameObject == null)
+                    wwiseEvent.Stop(SoundManagerGameObject);
+                else
+                    wwiseEvent.Stop(targetGameObject);
+            }
         }
 
         public void EventRaised()
@@ -144,14 +160,14 @@ namespace Team1_GraduationGame.Managers
                         }
                     else
                     {
-                        wwiseEvent.Post(gameObject);
+                        PlayWwiseEvent();
                     }
                     break;
                 case 1:
                     wwiseState.SetValue();
                     break;
                 case 2:
-                    wwiseSwitch.SetValue(gameObject);
+                    wwiseSwitch.SetValue(SoundManagerGameObject);
                     break;
                 case 3:
                     //
@@ -272,6 +288,16 @@ namespace Team1_GraduationGame.Managers
 
             var script = target as SoundManager;
 
+            if (GUILayout.Button("Play All"))
+            {
+                script.PlayAll();
+            }
+
+            if (GUILayout.Button("Stop All"))
+            {
+                script.StopAll();
+            }
+
             if (script.soundEvents != null)
                 for (int i = 0; i < script.soundEvents.Length; i++)
                 {
@@ -301,6 +327,8 @@ namespace Team1_GraduationGame.Managers
 
                     if ((int) script.soundEvents[i].behaviorSelector == 0)
                     {
+                        SerializedProperty targetGameObjectProp = serializedObject.FindProperty("soundEvents.Array.data[" + i + "].targetGameObject");
+                        EditorGUILayout.PropertyField(targetGameObjectProp);
 
                         SerializedProperty eventDataProp = serializedObject.FindProperty("soundEvents.Array.data[" + i + "].wwiseEvent");
                         EditorGUILayout.PropertyField(eventDataProp);
@@ -340,6 +368,17 @@ namespace Team1_GraduationGame.Managers
                             }
                         }
 
+                        DrawUILine(false);
+
+                        if (GUILayout.Button("Play"))
+                        {
+                            script.soundEvents[i].PlayWwiseEvent();
+                        }
+                        if (GUILayout.Button("Stop"))
+                        {
+                            script.soundEvents[i].StopWwiseEvent();
+                        }
+
                     }
                     else if ((int) script.soundEvents[i].behaviorSelector == 1)
                     {
@@ -350,17 +389,6 @@ namespace Team1_GraduationGame.Managers
                     {
                         SerializedProperty switchProp = serializedObject.FindProperty("soundEvents.Array.data[" + i + "].wwiseSwitch");
                         EditorGUILayout.PropertyField(switchProp);
-                    }
-
-                    DrawUILine(false);
-
-                    if (GUILayout.Button("Play"))
-                    {
-                        script.soundEvents[i].PlayWwiseEvent();
-                    }
-                    if (GUILayout.Button("Stop"))
-                    {
-                        script.soundEvents[i].StopWwiseEvent();
                     }
 
                 }

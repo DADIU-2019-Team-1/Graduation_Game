@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
 using Team1_GraduationGame.Events;
 using UnityEngine;
 using UnityEngine.Events;
@@ -46,14 +47,6 @@ namespace Team1_GraduationGame.Managers
                 StartCoroutine(soundEvents[id].WaitForDelay());
         }
 
-        public void PlayAll()
-        {
-            for (int i = 0; i < soundEvents.Length; i++)
-            {
-                if (soundEvents[i].wwiseEvent != null && (int)soundEvents[i].triggerTypeSelector == 0)
-                    soundEvents[i].PlayWwiseEvent();
-            }
-        }
         public void StopAll()
         {
             Debug.Log("Stopping All Sounds");
@@ -69,6 +62,7 @@ namespace Team1_GraduationGame.Managers
     [System.Serializable]
     public class SoundEvent
     {
+        #region Class Variables
         [HideInInspector] public SoundManager thisSoundManager;
         [HideInInspector] public int soundEventId;
 
@@ -88,9 +82,9 @@ namespace Team1_GraduationGame.Managers
         [HideInInspector] public VoidEvent triggerEvent;
         [HideInInspector] public FloatEvent triggerFloatEvent;
         [HideInInspector] public bool fromScriptableObjToRtpc;
-        private bool eventFired = false;
-        private float parsedValue = 0;
-        [HideInInspector] public float customValue = 0;
+        private bool _eventFired = false;
+        private float _parsedValue = 0;
+        [HideInInspector] public float customValue, transitionDuration = 0.0f;
 
         // Behavior switching:
         public enum BehaviorEnum
@@ -99,14 +93,13 @@ namespace Team1_GraduationGame.Managers
             State,
             Switch,
             RTPC,
-            Debugger
+            Ambient
         }
 
         [HideInInspector] public BehaviorEnum behaviorSelector;
 
         // GameObjects:
-        [HideInInspector] public GameObject soundManagerGameObject;
-        [HideInInspector] public GameObject targetGameObject;
+        [HideInInspector] public GameObject soundManagerGameObject, targetGameObject;
 
         // Wwise:
         private AkEventCallbackMsg EventCallbackMsg = new AkEventCallbackMsg();
@@ -116,12 +109,14 @@ namespace Team1_GraduationGame.Managers
         [HideInInspector] public AK.Wwise.Switch wwiseSwitch;
         [HideInInspector] public AK.Wwise.RTPC wwiseRTPC;
         [HideInInspector] public FloatVariable rtpcScriptableObject;
+        [HideInInspector] public AkActionOnEventType actionOnEventType = AkActionOnEventType.AkActionOnEventType_Stop;
+        [HideInInspector] public AkCurveInterpolation curveInterpolation = AkCurveInterpolation.AkCurveInterpolation_Linear;
 
         // Bools:
         [HideInInspector] public bool useCallbacks, useActionOnEvent, rtpcGlobal, runOnce, useOtherGameObject, setCustomRtpcFloat, isActive;
+        #endregion
 
-
-
+        #region Wwise play/stop events
         public void PlayWwiseEvent()
         {
             if (wwiseEvent != null && (int) triggerTypeSelector == 0)
@@ -149,12 +144,13 @@ namespace Team1_GraduationGame.Managers
                     wwiseEvent.Stop(targetGameObject);
             }
         }
+        #endregion
 
         public void EventRaised(float value)
         {
-            parsedValue = value;
+            _parsedValue = value;
 
-            if (!eventFired)
+            if (!_eventFired)
             {
                 if (triggerDelay <= 0)
                     SelectBehavior();
@@ -164,7 +160,7 @@ namespace Team1_GraduationGame.Managers
 
             if (runOnce)
             {
-                eventFired = true;
+                _eventFired = true;
             }
         }
 
@@ -173,15 +169,7 @@ namespace Team1_GraduationGame.Managers
             switch ((int)behaviorSelector)
             {
                 case 0:
-                    if (useCallbacks)
-                        for (int i = 0; i < callbacks.Count; i++)
-                        {
-                            wwiseEvent.Post(callbacks[i].GameObject, callbacks[i].Flags, Callback);
-                        }
-                    else
-                    {
-                        PlayWwiseEvent();
-                    }
+                    eventHandler();
                     break;
                 case 1:
                     wwiseState.SetValue();
@@ -200,6 +188,22 @@ namespace Team1_GraduationGame.Managers
             }
         }
 
+        #region Event (Wwise event) Handler
+        private void eventHandler()
+        {
+            if (useCallbacks)
+                for (int i = 0; i < callbacks.Count; i++)
+                {
+                    wwiseEvent.Post(callbacks[i].GameObject, callbacks[i].Flags, Callback);
+                }
+            else
+            {
+                PlayWwiseEvent();
+            }
+        }
+        #endregion
+
+        #region RTPC Handler
         private void RTPCHandler()
         {
             if (rtpcScriptableObject != null && wwiseRTPC != null)
@@ -246,6 +250,7 @@ namespace Team1_GraduationGame.Managers
                 Debug.Log("SoundManager Error - Scriptable object or RTPC is null!");
             }
         }
+        #endregion
 
         private void Callback(object in_cookie, AkCallbackType in_type, AkCallbackInfo in_info)
         {
@@ -354,20 +359,17 @@ namespace Team1_GraduationGame.Managers
             if (headerStyle == null)
             {
                 headerStyle = new GUIStyle();
-                headerStyle.fontSize = 14;
-                headerStyle.fontStyle = FontStyle.Bold;
-                headerStyle.onActive.textColor = Color.green;
+                headerStyle.fontSize = 11;
+                headerStyle.normal.textColor = Color.white;
+                headerStyle.border = new RectOffset(5, 5, 20, 12);
+                headerStyle.alignment = TextAnchor.MiddleCenter;
+                headerStyle.normal.background = EditorGUIUtility.Load("builtin skins/darkskin/images/flow background.png") as Texture2D;
             }
 
             EditorGUILayout.HelpBox("Note: This requires Wwise to work", MessageType.None);
             DrawDefaultInspector(); // for other non-HideInInspector fields
 
             var script = target as SoundManager;
-
-            if (GUILayout.Button("Play All"))
-            {
-                script.PlayAll();
-            }
 
             if (GUILayout.Button("Stop All"))
             {
@@ -377,14 +379,24 @@ namespace Team1_GraduationGame.Managers
             if (script.soundEvents != null)
                 for (int i = 0; i < script.soundEvents.Length; i++)
                 {
-                    if (GUILayout.Button("Test", headerStyle))
+
+                    EditorGUILayout.Space();
+                    string tempTitleText =  script.soundEvents[i].triggerTypeSelector + " | " + script.soundEvents[i].behaviorSelector;
+
+                    if (script.soundEvents[i].isActive)
+                        headerStyle.fontStyle = FontStyle.Bold;
+                    else
+                        headerStyle.fontStyle = FontStyle.Normal;
+
+
+                    if (GUILayout.Button(tempTitleText, headerStyle))
                     {
                         script.soundEvents[i].isActive = !script.soundEvents[i].isActive;
                     }
 
                     if (script.soundEvents[i].isActive)
                     {
-                        DrawUILine(true);
+                        DrawUILine(false);
 
                         SerializedProperty triggerEventSelectorProp = serializedObject.FindProperty("soundEvents.Array.data[" + i + "].triggerTypeSelector");
                         EditorGUILayout.PropertyField(triggerEventSelectorProp);
@@ -410,9 +422,13 @@ namespace Team1_GraduationGame.Managers
 
                         DrawUILine(false);
 
+                        EditorGUI.indentLevel = EditorGUI.indentLevel + 2;
+
+                        ////// BEHAVIORS: //////
+                        #region ///// 0 Event Behavior //////
                         if ((int)script.soundEvents[i].behaviorSelector == 0)
                         {
-                            script.soundEvents[i].useOtherGameObject = EditorGUILayout.Toggle("Use other GameObject?",
+                            script.soundEvents[i].useOtherGameObject = EditorGUILayout.Toggle("Use other GameObj?",
                                 script.soundEvents[i].useOtherGameObject);
 
                             if (script.soundEvents[i].useOtherGameObject)
@@ -430,7 +446,14 @@ namespace Team1_GraduationGame.Managers
                             if (script.soundEvents[i].useActionOnEvent)
                             {
                                 DrawUILine(false);
-                                // TODO use action on event
+
+                                SerializedProperty actionOnEventTypeProp = serializedObject.FindProperty("soundEvents.Array.data[" + i + "].actionOnEventType");
+                                EditorGUILayout.PropertyField(actionOnEventTypeProp);
+
+                                SerializedProperty curveInterpolationProp = serializedObject.FindProperty("soundEvents.Array.data[" + i + "].curveInterpolation");
+                                EditorGUILayout.PropertyField(curveInterpolationProp);
+
+                                script.soundEvents[i].transitionDuration = EditorGUILayout.Slider("Fade Time (secs):", script.soundEvents[i].transitionDuration, 0.0f, 20.0f); // Note: standard was up to 60 sec. 120 might not work?
                             }
 
                             if (script.soundEvents[i].useCallbacks)
@@ -471,23 +494,29 @@ namespace Team1_GraduationGame.Managers
                             }
 
                         }
+                        #endregion
+                        #region ///// 1 State Behavior //////
                         else if ((int)script.soundEvents[i].behaviorSelector == 1)
                         {
                             SerializedProperty stateProp = serializedObject.FindProperty("soundEvents.Array.data[" + i + "].wwiseState");
                             EditorGUILayout.PropertyField(stateProp);
                         }
+                        #endregion
+                        #region ///// 2 Switch Behavior /////
                         else if ((int)script.soundEvents[i].behaviorSelector == 2)
                         {
                             SerializedProperty switchProp = serializedObject.FindProperty("soundEvents.Array.data[" + i + "].wwiseSwitch");
                             EditorGUILayout.PropertyField(switchProp);
                         }
+                        #endregion
+                        #region ///// 3 RTPC Behavior /////
                         else if ((int)script.soundEvents[i].behaviorSelector == 3)
                         {
 
                             SerializedProperty rtpcProp = serializedObject.FindProperty("soundEvents.Array.data[" + i + "].wwiseRTPC");
                             EditorGUILayout.PropertyField(rtpcProp);
 
-                            script.soundEvents[i].useOtherGameObject = EditorGUILayout.Toggle("Use other GameObject?",
+                            script.soundEvents[i].useOtherGameObject = EditorGUILayout.Toggle("Use other GameObj?",
                                 script.soundEvents[i].useOtherGameObject);
 
                             if (script.soundEvents[i].useOtherGameObject)
@@ -526,9 +555,15 @@ namespace Team1_GraduationGame.Managers
                         }
 
                     }
+
+                    #endregion
+
+                    DrawUILine(true);
                 }
 
-                    serializedObject.ApplyModifiedProperties();
+            EditorGUI.indentLevel = EditorGUI.indentLevel - 2;
+
+            serializedObject.ApplyModifiedProperties();
 
             if (GUI.changed)
             {
@@ -537,6 +572,7 @@ namespace Team1_GraduationGame.Managers
 
         }
 
+        #region DrawUILine function
         public static void DrawUILine(bool start)
         {
             Color color = new Color(1, 1, 1, 0.3f);
@@ -552,6 +588,7 @@ namespace Team1_GraduationGame.Managers
             r.width += 6;
             EditorGUI.DrawRect(r, color);
         }
+        #endregion
     }
 #endif
     #endregion

@@ -274,7 +274,8 @@ MonoBehaviour:
       type: 2}
     fromScriptableObjToRtpc: 1
     customValue: 5
-    behaviorSelector: 0
+    transitionDuration: 1.76
+    behaviorSelector: 4
     soundManagerGameObject: {fileID: 0}
     targetGameObject: {fileID: 126508124}
     callbacks:
@@ -306,13 +307,17 @@ MonoBehaviour:
       WwiseObjectReference: {fileID: 0}
     rtpcScriptableObject: {fileID: 11400000, guid: 6f04acf1fc8e6a24791f3fdc75e797ea,
       type: 2}
+    actionOnEventType: 0
+    curveInterpolation: 4
+    multiPositionType: 1
+    multiPosTypeLabel: 0
     useCallbacks: 0
     useActionOnEvent: 0
     rtpcGlobal: 0
     runOnce: 0
     useOtherGameObject: 1
     setCustomRtpcFloat: 0
-    isActive: 1
+    isActive: 0
   - thisSoundManager: {fileID: 0}
     soundEventId: 0
     triggerTypeSelector: 0
@@ -322,6 +327,7 @@ MonoBehaviour:
       type: 2}
     fromScriptableObjToRtpc: 1
     customValue: 5
+    transitionDuration: 0
     behaviorSelector: 3
     soundManagerGameObject: {fileID: 0}
     targetGameObject: {fileID: 0}
@@ -354,6 +360,10 @@ MonoBehaviour:
       WwiseObjectReference: {fileID: 0}
     rtpcScriptableObject: {fileID: 11400000, guid: 6f04acf1fc8e6a24791f3fdc75e797ea,
       type: 2}
+    actionOnEventType: 0
+    curveInterpolation: 4
+    multiPositionType: 1
+    multiPosTypeLabel: 0
     useCallbacks: 0
     useActionOnEvent: 0
     rtpcGlobal: 0
@@ -678,13 +688,58 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8478470163910832014, guid: bffd6909a73269946945f759803e30be,
         type: 3}
+      propertyPath: Callbacks.Array.size
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8478470163910832014, guid: bffd6909a73269946945f759803e30be,
+        type: 3}
       propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8478470163910832014, guid: bffd6909a73269946945f759803e30be,
+        type: 3}
+      propertyPath: enableActionOnEvent
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8478470163910832014, guid: bffd6909a73269946945f759803e30be,
+        type: 3}
+      propertyPath: transitionDuration
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8478470163910832014, guid: bffd6909a73269946945f759803e30be,
+        type: 3}
+      propertyPath: useCallbacks
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -1156599439631400727, guid: bffd6909a73269946945f759803e30be,
+        type: 3}
+      propertyPath: Callbacks.Array.size
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -1156599439631400727, guid: bffd6909a73269946945f759803e30be,
+        type: 3}
+      propertyPath: triggerList.Array.size
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -1156599439631400727, guid: bffd6909a73269946945f759803e30be,
         type: 3}
       propertyPath: m_Enabled
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -1156599439631400727, guid: bffd6909a73269946945f759803e30be,
+        type: 3}
+      propertyPath: enableActionOnEvent
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -1156599439631400727, guid: bffd6909a73269946945f759803e30be,
+        type: 3}
+      propertyPath: useCallbacks
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -1156599439631400727, guid: bffd6909a73269946945f759803e30be,
+        type: 3}
+      propertyPath: triggerList.Array.data[1]
+      value: -358577003
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: bffd6909a73269946945f759803e30be, type: 3}

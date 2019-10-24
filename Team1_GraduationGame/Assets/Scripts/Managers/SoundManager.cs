@@ -9,6 +9,8 @@ using UnityEngine.Events;
 using UnityEditor;
 #endif
 
+// NOTE: This script requires Wwise to work //
+
 namespace Team1_GraduationGame.Managers
 {
     public class SoundManager : MonoBehaviour
@@ -111,6 +113,8 @@ namespace Team1_GraduationGame.Managers
         [HideInInspector] public FloatVariable rtpcScriptableObject;
         [HideInInspector] public AkActionOnEventType actionOnEventType = AkActionOnEventType.AkActionOnEventType_Stop;
         [HideInInspector] public AkCurveInterpolation curveInterpolation = AkCurveInterpolation.AkCurveInterpolation_Linear;
+        [HideInInspector] public AkMultiPositionType multiPositionType = AkMultiPositionType.MultiPositionType_MultiSources;
+        [HideInInspector] public MultiPositionTypeLabel multiPosTypeLabel = MultiPositionTypeLabel.Simple_Mode;
 
         // Bools:
         [HideInInspector] public bool useCallbacks, useActionOnEvent, rtpcGlobal, runOnce, useOtherGameObject, setCustomRtpcFloat, isActive;
@@ -181,16 +185,41 @@ namespace Team1_GraduationGame.Managers
                     RTPCHandler();
                     break;
                 case 4:
-                    Debug.Log("SoundManager Responds!");
+                    AmbientHandler();
                     break;
                 default:
                     break;
             }
         }
 
+        private void AmbientHandler()   // TODO
+        {
+
+        }
+
+        private float GetDistanceBetweenObjects()
+        {
+            float distance = Vector3.Distance(targetGameObject.transform.position, soundManagerGameObject.transform.position);
+            return distance;
+        }
+
         #region Event (Wwise event) Handler
         private void eventHandler()
         {
+            if (useActionOnEvent)
+            {
+                if (targetGameObject == null || !useOtherGameObject)
+                {
+                    wwiseEvent.ExecuteAction(soundManagerGameObject, actionOnEventType, (int)transitionDuration * 1000, curveInterpolation);
+                    if (targetGameObject == null && useOtherGameObject)
+                        Debug.LogWarning("SoundManager: Target GameObject is not set! - Using default object instead");
+                }
+                else
+                    wwiseEvent.ExecuteAction(targetGameObject, actionOnEventType, (int)transitionDuration * 1000, curveInterpolation);
+
+                return;
+            }
+
             if (useCallbacks)
                 for (int i = 0; i < callbacks.Count; i++)
                 {
@@ -200,6 +229,7 @@ namespace Team1_GraduationGame.Managers
             {
                 PlayWwiseEvent();
             }
+
         }
         #endregion
 
@@ -220,7 +250,7 @@ namespace Team1_GraduationGame.Managers
                         {
                             wwiseRTPC.SetValue(soundManagerGameObject, rtpcScriptableObject.value);
                             if (targetGameObject == null && useOtherGameObject)
-                                Debug.LogError("SoundManager: Target GameObject is not set! - Using default object instead");
+                                Debug.LogWarning("SoundManager: Target GameObject is not set! - Using default object instead");
                         }
                         else
                             wwiseRTPC.SetValue(targetGameObject, rtpcScriptableObject.value);
@@ -238,7 +268,7 @@ namespace Team1_GraduationGame.Managers
                         {
                             rtpcScriptableObject.value = wwiseRTPC.GetValue(targetGameObject);
                             if (targetGameObject == null && useOtherGameObject)
-                                Debug.LogError("SoundManager: Target GameObject is not set! - Using default object instead");
+                                Debug.LogWarning("SoundManager: Target GameObject is not set! - Using default object instead");
                         }
                         else
                             rtpcScriptableObject.value = wwiseRTPC.GetValue(soundManagerGameObject);
@@ -247,11 +277,12 @@ namespace Team1_GraduationGame.Managers
             }
             else
             {
-                Debug.Log("SoundManager Error - Scriptable object or RTPC is null!");
+                Debug.LogError("SoundManager Error: Scriptable object or RTPC is null!");
             }
         }
         #endregion
 
+        #region Callbacks
         private void Callback(object in_cookie, AkCallbackType in_type, AkCallbackInfo in_info)
         {
             EventCallbackMsg.type = in_type;
@@ -259,12 +290,6 @@ namespace Team1_GraduationGame.Managers
 
             for (var i = 0; i < callbacks.Count; ++i)
                 callbacks[i].CallFunction(EventCallbackMsg);
-        }
-
-        public IEnumerator WaitForDelay()
-        {
-            yield return new WaitForSeconds(triggerDelay);
-            SelectBehavior();
         }
 
         [System.Serializable]
@@ -279,6 +304,13 @@ namespace Team1_GraduationGame.Managers
                 if (((uint)eventCallbackMsg.type & Flags.value) != 0 && GameObject)
                     GameObject.SendMessage(FunctionName, eventCallbackMsg);
             }
+        }
+        #endregion
+
+        public IEnumerator WaitForDelay()
+        {
+            yield return new WaitForSeconds(triggerDelay);
+            SelectBehavior();
         }
     }
     #endregion
@@ -353,9 +385,11 @@ namespace Team1_GraduationGame.Managers
     public class SoundManager_Editor : Editor
     {
         private GUIStyle headerStyle; // TODO: Set this
+        private int soundEventLength;
 
         public override void OnInspectorGUI()
         {
+            #region Header Style
             if (headerStyle == null)
             {
                 headerStyle = new GUIStyle();
@@ -365,6 +399,7 @@ namespace Team1_GraduationGame.Managers
                 headerStyle.alignment = TextAnchor.MiddleCenter;
                 headerStyle.normal.background = EditorGUIUtility.Load("builtin skins/darkskin/images/flow background.png") as Texture2D;
             }
+            #endregion
 
             EditorGUILayout.HelpBox("Note: This requires Wwise to work", MessageType.None);
             DrawDefaultInspector(); // for other non-HideInInspector fields
@@ -381,7 +416,7 @@ namespace Team1_GraduationGame.Managers
                 {
 
                     EditorGUILayout.Space();
-                    string tempTitleText =  script.soundEvents[i].triggerTypeSelector + " | " + script.soundEvents[i].behaviorSelector;
+                    string tempTitleText = script.soundEvents[i].behaviorSelector + " | " + script.soundEvents[i].triggerTypeSelector;
 
                     if (script.soundEvents[i].isActive)
                         headerStyle.fontStyle = FontStyle.Bold;
@@ -425,8 +460,8 @@ namespace Team1_GraduationGame.Managers
                         EditorGUI.indentLevel = EditorGUI.indentLevel + 2;
 
                         ////// BEHAVIORS: //////
-                        #region ///// 0 Event Behavior //////
-                        if ((int)script.soundEvents[i].behaviorSelector == 0)
+                        #region ///// 0 Event Behavior & 4 Ambient Behavior //////
+                        if ((int)script.soundEvents[i].behaviorSelector == 0 || (int)script.soundEvents[i].behaviorSelector == 4)
                         {
                             script.soundEvents[i].useOtherGameObject = EditorGUILayout.Toggle("Use other GameObj?",
                                 script.soundEvents[i].useOtherGameObject);
@@ -480,6 +515,17 @@ namespace Team1_GraduationGame.Managers
                                     if (script.soundEvents[i].callbacks.Count != 0)
                                         script.soundEvents[i].callbacks.RemoveAt(script.soundEvents[i].callbacks.Count - 1);
                                 }
+                            }
+
+                            if ((int) script.soundEvents[i].behaviorSelector == 4)
+                            {
+                                DrawUILine(false);
+
+                                SerializedProperty multiPositionTypeProp = serializedObject.FindProperty("soundEvents.Array.data[" + i + "].multiPositionType");
+                                EditorGUILayout.PropertyField(multiPositionTypeProp);
+
+                                SerializedProperty multiPosTypeLabelProp = serializedObject.FindProperty("soundEvents.Array.data[" + i + "].multiPosTypeLabel");
+                                EditorGUILayout.PropertyField(multiPosTypeLabelProp);
                             }
 
                             DrawUILine(false);
@@ -553,9 +599,7 @@ namespace Team1_GraduationGame.Managers
                                 EditorGUILayout.HelpBox("Make sure to use 'float events' if you want a value parsed from the event. Otherwise you can also set a custom value.", MessageType.Info);
                             }
                         }
-
                     }
-
                     #endregion
 
                     DrawUILine(true);

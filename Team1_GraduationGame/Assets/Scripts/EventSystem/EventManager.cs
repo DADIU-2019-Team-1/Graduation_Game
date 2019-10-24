@@ -105,7 +105,7 @@ namespace Team1_GraduationGame.Events
 
         public void FireFloatScriptableObjectEvent(FloatEvent myEvent)
         {
-            float tempFloat = 1;
+            float tempFloat = 1.374f;
             myEvent.Raise(tempFloat);
         }
     }
@@ -142,7 +142,7 @@ namespace Team1_GraduationGame.Events
         public myFuncEnum function;
 
         [HideInInspector]
-        public float delayForFire = 0f;
+        public float delayForFire = 0.0f;
 
         [HideInInspector]
         public GameObject thisGameObject;
@@ -155,7 +155,7 @@ namespace Team1_GraduationGame.Events
         [HideInInspector]
         public bool isTrigger = true;
         [HideInInspector]
-        public float fireCooldown = 0f;
+        public float fireCooldown = 0.0f;
         [HideInInspector]
         public int[] specificRotations;
 

@@ -8,11 +8,11 @@ public class IntReference
     public bool UseUnique = true;
     public int UniqueValue;
 
-    public IntVariable variable;
+    public IntVariable Variable;
 
-    public int value 
+    public int Value 
     {
         get{ return UseUnique ? UniqueValue :
-                                    variable.value; }
+                                    Variable.value; }
     }
 }

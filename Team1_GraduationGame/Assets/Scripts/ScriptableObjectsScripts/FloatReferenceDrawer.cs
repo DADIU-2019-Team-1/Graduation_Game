@@ -51,9 +51,13 @@ public class FloatReferenceDrawer : PropertyDrawer
             property.FindPropertyRelative("UniqueValue").floatValue = value;
         }
         // If Variable is chosen
+        
         else {
             EditorGUI.ObjectField(position, property.FindPropertyRelative("Variable"), GUIContent.none);
-            EditorGUI.LabelField(position, value.ToString()); 
+            // Add a labelfield to display the current Value in the Scriptable Object.
+            // GUILayout.Space(20);
+            //EditorGUI.LabelField(new Rect(new Vector2(position.x, position.y +20), Vector2.one * 150), "Variable value is: " + property.FindPropertyRelative("Variable").type); 
+            
         }
 
         

@@ -1,0 +1,239 @@
+fileFormatVersion: 2
+guid: 9b6b6d032866c994ab5244127d3982fd
+ScriptedImporter:
+  internalIDToNameTable: []
+  externalObjects: {}
+  serializedVersion: 2
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+  script: {fileID: 232528478, guid: 43a8bbf65be290d44ba52b94476242b9, type: 3}
+  version: 23
+  mGraphInstanceData:
+  - graphLabel: Ground
+    prototypeName: Ground
+    graphDescIndex: 0
+    generateAllOutputs: 0
+    generateMipMaps: 1
+    preset: " <sbspreset pkgurl=\"pkg://Ground\" label=\"\" >\n  <presetinput identifier=\"$outputsize\"
+      uid=\"2527831057\" type=\"8\" value=\"10,10\" />\n  <presetinput identifier=\"$randomseed\"
+      uid=\"3252269635\" type=\"4\" value=\"219\" />\n  <presetinput identifier=\"disorder\"
+      uid=\"4248203128\" type=\"0\" value=\"0.384\" />\n  <presetinput identifier=\"AmountOfStones\"
+      uid=\"4248199918\" type=\"0\" value=\"0.743\" />\n  <presetinput identifier=\"NormalStrength\"
+      uid=\"4248213292\" type=\"0\" value=\"5.92\" />\n  <presetinput identifier=\"outputcolor\"
+      uid=\"4248268871\" type=\"3\" value=\"0.415094,0.302585,0.252581,1\" />\n </sbspreset>\n"
+    shaderName: Standard
+    materialProperties:
+      shader: {fileID: 46, guid: 0000000000000000f000000000000000, type: 0}
+      shaderKeywords: _MAINTEX _METALLICGLOSSMAP _NORMALMAP _OCCLUSIONMAP _PARALLAXMAP
+      lightmapFlags: 4
+      texEnvs:
+      - name: _BumpMap
+        texture: {fileID: 8766549171324001077, guid: 9b6b6d032866c994ab5244127d3982fd,
+          type: 3}
+        scale: {x: 1, y: 1}
+        offset: {x: 0, y: 0}
+      - name: _DetailAlbedoMap
+        texture: {instanceID: 0}
+        scale: {x: 1, y: 1}
+        offset: {x: 0, y: 0}
+      - name: _DetailMask
+        texture: {instanceID: 0}
+        scale: {x: 1, y: 1}
+        offset: {x: 0, y: 0}
+      - name: _DetailNormalMap
+        texture: {instanceID: 0}
+        scale: {x: 1, y: 1}
+        offset: {x: 0, y: 0}
+      - name: _EmissionMap
+        texture: {instanceID: 0}
+        scale: {x: 1, y: 1}
+        offset: {x: 0, y: 0}
+      - name: _MainTex
+        texture: {fileID: -1083666499780969614, guid: 9b6b6d032866c994ab5244127d3982fd,
+          type: 3}
+        scale: {x: 1, y: 1}
+        offset: {x: 0, y: 0}
+      - name: _MetallicGlossMap
+        texture: {fileID: -791381385131254503, guid: 9b6b6d032866c994ab5244127d3982fd,
+          type: 3}
+        scale: {x: 1, y: 1}
+        offset: {x: 0, y: 0}
+      - name: _OcclusionMap
+        texture: {fileID: -8170657448627913109, guid: 9b6b6d032866c994ab5244127d3982fd,
+          type: 3}
+        scale: {x: 1, y: 1}
+        offset: {x: 0, y: 0}
+      - name: _ParallaxMap
+        texture: {fileID: -3186906722063086908, guid: 9b6b6d032866c994ab5244127d3982fd,
+          type: 3}
+        scale: {x: 1, y: 1}
+        offset: {x: 0, y: 0}
+      floats:
+      - name: _BumpScale
+        float: 1
+      - name: _Cutoff
+        float: 0.5
+      - name: _DetailNormalMapScale
+        float: 1
+      - name: _DstBlend
+        float: 0
+      - name: _GlossMapScale
+        float: 1
+      - name: _Glossiness
+        float: 0.5
+      - name: _GlossyReflections
+        float: 1
+      - name: _Metallic
+        float: 0
+      - name: _Mode
+        float: 0
+      - name: _OcclusionStrength
+        float: 1
+      - name: _Parallax
+        float: 0.02
+      - name: _SmoothnessTextureChannel
+        float: 0
+      - name: _SpecularHighlights
+        float: 1
+      - name: _SrcBlend
+        float: 1
+      - name: _UVSec
+        float: 0
+      - name: _ZWrite
+        float: 1
+      colors:
+      - name: _Color
+        color: {r: 1, g: 1, b: 1, a: 1}
+      - name: _EmissionColor
+        color: {r: 0, g: 0, b: 0, a: 1}
+    outputDescList:
+    - outputName: baseColor
+      identifier: basecolor
+      usageName: baseColor
+      channelStr: baseColor
+      label: Base Color
+      usage: 1
+      bImage: 1
+      bNumerical: 0
+      bLinear: 0
+    - outputName: normal
+      identifier: normal
+      usageName: normal
+      channelStr: normal
+      label: Normal
+      usage: 7
+      bImage: 1
+      bNumerical: 0
+      bLinear: 1
+    - outputName: roughness
+      identifier: roughness
+      usageName: roughness
+      channelStr: roughness
+      label: Roughness
+      usage: 15
+      bImage: 1
+      bNumerical: 0
+      bLinear: 1
+    - outputName: metallic
+      identifier: metallic
+      usageName: metallic
+      channelStr: metallic
+      label: Metallic
+      usage: 28
+      bImage: 1
+      bNumerical: 0
+      bLinear: 1
+    - outputName: height
+      identifier: height
+      usageName: height
+      channelStr: height
+      label: Height
+      usage: 9
+      bImage: 1
+      bNumerical: 0
+      bLinear: 1
+    - outputName: ambientOcclusion
+      identifier: ambientocclusion
+      usageName: ambientOcclusion
+      channelStr: ambientOcclusion
+      label: Ambient Occlusion
+      usage: 5
+      bImage: 1
+      bNumerical: 0
+      bLinear: 1
+    texturePackingList:
+    - targetName: baseColor
+      components:
+      - sourceName: baseColor
+        from: 0
+        to: 3
+    - targetName: normal
+      components:
+      - sourceName: normal
+        from: 0
+        to: 3
+    - targetName: roughness
+      components:
+      - sourceName: roughness
+        from: 0
+        to: 3
+    - targetName: metallic
+      components:
+      - sourceName: smoothness
+        from: 0
+        to: 3
+    - targetName: height
+      components:
+      - sourceName: height
+        from: 0
+        to: 3
+    - targetName: ambientOcclusion
+      components:
+      - sourceName: ambientOcclusion
+        from: 0
+        to: 3
+    textureParameters:
+    - textureName: Ground - baseColor
+      wrapMode: 0
+      filterMode: 1
+      aniso: 1
+    - textureName: Ground - normal
+      wrapMode: 0
+      filterMode: 1
+      aniso: 1
+    - textureName: Ground - roughness
+      wrapMode: 0
+      filterMode: 1
+      aniso: 1
+    - textureName: Ground - metallic
+      wrapMode: 0
+      filterMode: 1
+      aniso: 1
+    - textureName: Ground - height
+      wrapMode: 0
+      filterMode: 1
+      aniso: 1
+    - textureName: Ground - ambientOcclusion
+      wrapMode: 0
+      filterMode: 1
+      aniso: 1
+    colorSpaceList: []
+    inputTextureMap: []
+    targetSettingList:
+    - label: Default
+      bOverride: 0
+      bLockRatio: 1
+      textureWidth: 1024
+      textureHeight: 1024
+      textureFormatMode: 0
+      normalCompressed: 0
+      bGenerateOnLoad: 1
+    material: {fileID: 6795462705980167066, guid: 9b6b6d032866c994ab5244127d3982fd,
+      type: 3}
+    generatedTextures:
+    - {fileID: -1083666499780969614, guid: 9b6b6d032866c994ab5244127d3982fd, type: 3}
+    - {fileID: 8766549171324001077, guid: 9b6b6d032866c994ab5244127d3982fd, type: 3}
+    - {fileID: -791381385131254503, guid: 9b6b6d032866c994ab5244127d3982fd, type: 3}
+    - {fileID: -3186906722063086908, guid: 9b6b6d032866c994ab5244127d3982fd, type: 3}
+    - {fileID: -8170657448627913109, guid: 9b6b6d032866c994ab5244127d3982fd, type: 3}

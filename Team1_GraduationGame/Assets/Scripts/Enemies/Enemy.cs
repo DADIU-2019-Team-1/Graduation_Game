@@ -6,7 +6,12 @@ namespace Team1_GraduationGame.Enemies
     using System.Collections.Generic;
     using UnityEngine;
 
-    [RequireComponent(typeof(SphereCollider))]
+#if UNITY_EDITOR
+    using UnityEditor;
+
+#endif
+
+    [RequireComponent(typeof(SphereCollider), typeof(NavMeshAgent))]
     public class Enemy : MonoBehaviour
     {
         // Scriptable Object References:
@@ -14,7 +19,9 @@ namespace Team1_GraduationGame.Enemies
 
         // Public variables:
         public Transform[] wayPoints;
-        [Tooltip("How close the enemy should be to the waypoint for it to switch to the next")] public float wayPointReachRange = 1;
+
+        [Tooltip("How close the enemy should be to the waypoint for it to switch to the next")]
+        public float wayPointReachRange = 1;
 
         // Private variables:
         private bool _active;
@@ -24,7 +31,7 @@ namespace Team1_GraduationGame.Enemies
         private SphereCollider _thisCollider;
         private int currentWayPoint = 0;
 
-        void Start()
+        void Awake()
         {
             _player = GameObject.FindGameObjectWithTag("Player");
 
@@ -44,16 +51,13 @@ namespace Team1_GraduationGame.Enemies
                 }
             }
 
+            _navMeshAgent = GetComponent<NavMeshAgent>();
+
             if (GetComponent<NavMeshAgent>() != null)
             {
-                _navMeshAgent = GetComponent<NavMeshAgent>();
                 _navMeshAgent.speed = thisEnemy.speed;
                 _navMeshAgent.angularSpeed = thisEnemy.turnSpeed;
                 //_navMeshAgent.acceleration = thisEnemy.accelerationTime;
-            }
-            else
-            {
-                Debug.LogError("Enemy Error: Please attach Nav Mesh Agent component to enemy for pathfinding to work");
             }
         }
 
@@ -61,9 +65,10 @@ namespace Team1_GraduationGame.Enemies
         {
             if (wayPoints != null)
             {
-                // transform.position = Vector3.Lerp(_lastPos.position, wayPoints[currentWayPoint].position, thisEnemy.speed * Time.fixedDeltaTime);
-                transform.position += (wayPoints[currentWayPoint].position - transform.position).normalized *
-                                      thisEnemy.speed * Time.fixedDeltaTime;
+                //transform.position += (wayPoints[currentWayPoint].position - transform.position).normalized *
+                //                      thisEnemy.speed * Time.fixedDeltaTime;
+
+                _navMeshAgent.SetDestination(wayPoints[currentWayPoint].position);
 
                 if (Vector3.Distance(transform.position, wayPoints[currentWayPoint].position) < wayPointReachRange)
                 {
@@ -99,6 +104,20 @@ namespace Team1_GraduationGame.Enemies
             _lastSighting = position;
         }
 
-    }
+#if UNITY_EDITOR
+        private void OnDrawGizmos()
+        {
+            if (wayPoints != null)
+            {
+                Gizmos.color = Color.yellow;
+                for (int i = 0; i < wayPoints.Length; i++)
+                {
+                    Gizmos.DrawWireSphere(wayPoints[i].position, 0.2f);
+                }
+            }
 
+        }
+#endif
+
+    }
 }

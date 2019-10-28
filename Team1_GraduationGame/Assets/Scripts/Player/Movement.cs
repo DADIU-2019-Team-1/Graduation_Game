@@ -14,6 +14,7 @@ public class Movement : MonoBehaviour
     public Transform stick;
     public Transform stickLimit;
     public FloatReference movementSpeed;
+    public Camera cam;
 
     public FloatReference sneakSpeed;
 
@@ -30,7 +31,7 @@ public class Movement : MonoBehaviour
     {
         // Needs checker to only move while on left side of screen. 
         if(Input.GetMouseButtonDown(0)) {
-            initTouchPos = Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, Camera.main.transform.position.z));
+            initTouchPos = cam.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, cam.transform.position.z));
 
             // Needs to be screenspace, not world space? Not true, needs to be in worldspace, in relation to the camera. 
             // Use a canvas to spawn Joystick UI in Rect space? Keeps relative to camera, enables 2 panels, one for action, one for movement too.
@@ -52,7 +53,7 @@ public class Movement : MonoBehaviour
         if(Input.GetMouseButton(0)) {
             
             touchStart = true;
-            currTouchPos = Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, Camera.main.transform.position.z));
+            currTouchPos = cam.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, cam.transform.position.z));
         }
         else {
             touchStart = false;

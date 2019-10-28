@@ -52,11 +52,7 @@ namespace Team1_GraduationGame.Managers
         public void StopAll()
         {
             Debug.Log("Stopping All Sounds");
-            for (int i = 0; i < soundEvents.Length; i++)
-            {
-                if (soundEvents[i].wwiseEvent != null && (int)soundEvents[i].triggerTypeSelector == 0)
-                    soundEvents[i].StopWwiseEvent();
-            }
+            AkSoundEngine.StopAll();
         }
     }
 
@@ -123,6 +119,7 @@ namespace Team1_GraduationGame.Managers
         #region Wwise play/stop events
         public void PlayWwiseEvent()
         {
+
             if (wwiseEvent != null && (int) triggerTypeSelector == 0)
             {
                 Debug.Log("Playing Wwise Event");
@@ -384,8 +381,7 @@ namespace Team1_GraduationGame.Managers
     [CustomEditor(typeof(SoundManager))]
     public class SoundManager_Editor : Editor
     {
-        private GUIStyle headerStyle; // TODO: Set this
-        private int soundEventLength;
+        private GUIStyle headerStyle;
 
         public override void OnInspectorGUI()
         {
@@ -414,6 +410,10 @@ namespace Team1_GraduationGame.Managers
             if (script.soundEvents != null)
                 for (int i = 0; i < script.soundEvents.Length; i++)
                 {
+                    if (Application.isEditor && script.soundEvents[i].soundManagerGameObject != script.gameObject)
+                    {
+                        script.soundEvents[i].soundManagerGameObject = script.gameObject;
+                    }
 
                     EditorGUILayout.Space();
                     string tempTitleText = script.soundEvents[i].behaviorSelector + " | " + script.soundEvents[i].triggerTypeSelector;

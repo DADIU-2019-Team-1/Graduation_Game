@@ -282,6 +282,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 66cf44fb066f7904cb2846ab1f856813, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  attachCollider: 0
   soundEvents:
   - thisSoundManager: {fileID: 0}
     soundEventId: 0
@@ -290,12 +291,13 @@ MonoBehaviour:
     triggerEvent: {fileID: 11400000, guid: 957381cb3e85de2429d8120bee1f5db6, type: 2}
     triggerFloatEvent: {fileID: 11400000, guid: e6b38c90daf71ba4f9ce07101caac0f3,
       type: 2}
-    fromScriptableObjToRtpc: 1
+    rtpcRoleBool: 1
     customValue: 5
     transitionDuration: 1.76
     behaviorSelector: 0
     soundManagerGameObject: {fileID: 476060368}
     targetGameObject: {fileID: 126508124}
+    secondGameObject: {fileID: 0}
     callbacks:
     - Flags:
         value: 2048
@@ -336,6 +338,10 @@ MonoBehaviour:
     useOtherGameObject: 0
     setCustomRtpcFloat: 0
     isActive: 1
+    objDistanceToRtpc: 0
+    checkForTag: 0
+    useValueFromEvent: 0
+    tag: 
 --- !u!4 &476060370
 Transform:
   m_ObjectHideFlags: 0

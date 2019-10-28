@@ -2,23 +2,21 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[ExecuteInEditMode]
-public class CameraFollow : MonoBehaviour
+public class CameraLook : MonoBehaviour
 {
+    [Tooltip("If no player is defined, the GameObject with the tag \"Player\" will be used.")]
     public Transform player;
-    public Transform cam;
+    public Vector3 offset = new Vector3(0.0f,0.0f,0.0f);
 
     void Start()
     {
         if (player == null)
             player = GameObject.FindGameObjectWithTag("Player").transform;
-        if (cam == null)
-            cam = GameObject.FindGameObjectWithTag("MainCamera").transform;
     }
 
     // Update is called once per frame
     void Update()
     {
-        transform.position = new Vector3(player.position.x, cam.position.y, cam.position.z);
+        transform.position = player.position + offset;
     }
 }

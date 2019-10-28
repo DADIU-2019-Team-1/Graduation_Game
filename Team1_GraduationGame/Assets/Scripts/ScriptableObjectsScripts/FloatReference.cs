@@ -8,7 +8,8 @@ public class FloatReference
     public bool UseUnique = true;
     public float UniqueValue;
 
-    public FloatVariable variable;
+    public FloatVariable Variable;
 
-    public float value => UseUnique ? UniqueValue : variable.value;
+    public float value => UseUnique ? UniqueValue : Variable.value;
+
 }

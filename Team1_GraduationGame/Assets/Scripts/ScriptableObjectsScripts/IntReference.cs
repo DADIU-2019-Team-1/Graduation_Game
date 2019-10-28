@@ -3,16 +3,16 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [System.Serializable]
-public class IntReference : MonoBehaviour
+public class IntReference
 {
-    public bool UseConstant = true;
-    public int ConstantValue;
+    public bool UseUnique = true;
+    public int UniqueValue;
 
-    public IntVariable variable;
+    public IntVariable Variable;
 
     public int value 
     {
-        get{ return UseConstant ? ConstantValue :
-                                    variable.value; }
+        get{ return UseUnique ? UniqueValue :
+                                    Variable.value; }
     }
 }

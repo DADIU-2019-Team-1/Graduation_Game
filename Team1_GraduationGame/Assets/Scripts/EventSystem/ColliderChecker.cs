@@ -4,7 +4,6 @@ using UnityEngine;
 
 namespace Team1_GraduationGame.Events
 {
-    [RequireComponent(typeof(EventManager))]
     public class ColliderChecker : MonoBehaviour
     {
         bool isActive = false;

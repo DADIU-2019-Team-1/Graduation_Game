@@ -11,10 +11,10 @@ public class Movement : MonoBehaviour
 
     private Vector3 joystickPos;
 
+    public Camera cam;
     public Transform stick;
     public Transform stickLimit;
     public FloatReference movementSpeed;
-    public Camera cam;
 
     public FloatReference sneakSpeed;
 
@@ -31,8 +31,9 @@ public class Movement : MonoBehaviour
     {
         // Needs checker to only move while on left side of screen. 
         if(Input.GetMouseButtonDown(0)) {
-            initTouchPos = cam.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, cam.transform.position.z));
-
+            // Getting the touch from Screen to world coordinates. - the z rotation of the camera for displacement. Otherwise controls don't work when rotating it. 
+            initTouchPos = cam.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, cam.transform.position.z - cam.transform.rotation.z));
+            
             // Needs to be screenspace, not world space? Not true, needs to be in worldspace, in relation to the camera. 
             // Use a canvas to spawn Joystick UI in Rect space? Keeps relative to camera, enables 2 panels, one for action, one for movement too.
 
@@ -53,6 +54,7 @@ public class Movement : MonoBehaviour
         if(Input.GetMouseButton(0)) {
             
             touchStart = true;
+            // No displacement here, since this is the joystick movement, if this was displaced it goes in the wrong direction.
             currTouchPos = cam.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, cam.transform.position.z));
         }
         else {
@@ -91,7 +93,7 @@ public class Movement : MonoBehaviour
                 
             //movePlayer(direction * -1, movementSpeed.value);
             //if(Vector2.Distance(Input.mousePosition, stickLimit.transform.position) < dragDist)
-            stick.transform.position = joyDiff + new Vector2(stickLimit.transform.position.x, stickLimit.transform.position.y);/* Input.mousePosition */ /* Vector2.ClampMagnitude(Input.mousePosition, 1100) */;/* new Vector3(initTouchPos.x + direction.x, initTouchPos.z + direction.z) * -1; */
+            stick.transform.position = joyDiff + new Vector2(stickLimit.transform.position.x, stickLimit.transform.position.y);/* Input.mousePosition */ /* Vector2.ClampMagnitude(Input.mousePosition, 1100) *//* new Vector3(initTouchPos.x + direction.x, initTouchPos.z + direction.z) * -1; */
         }
         else {
             stick.gameObject.SetActive(false);

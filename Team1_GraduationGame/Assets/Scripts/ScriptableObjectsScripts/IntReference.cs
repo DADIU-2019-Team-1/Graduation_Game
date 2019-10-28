@@ -10,7 +10,7 @@ public class IntReference
 
     public IntVariable Variable;
 
-    public int Value 
+    public int value 
     {
         get{ return UseUnique ? UniqueValue :
                                     Variable.value; }

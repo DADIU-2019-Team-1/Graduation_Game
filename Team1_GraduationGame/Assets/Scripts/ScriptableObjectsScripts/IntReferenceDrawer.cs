@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
-
+ #if UNITY_EDITOR
 [CustomPropertyDrawer(typeof(IntReference))]
 public class IntReferenceDrawer : PropertyDrawer
 {
@@ -69,3 +69,4 @@ public override void OnGUI(Rect position, SerializedProperty property, GUIConten
         property.serializedObject.ApplyModifiedProperties();
     }
 }
+#endif

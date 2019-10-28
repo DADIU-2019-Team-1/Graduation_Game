@@ -41,6 +41,7 @@ public class Movement : MonoBehaviour
 
             stickLimit.transform.position = Input.mousePosition; /* initTouchPos * -1; */
             stick.transform.position = Input.mousePosition;  /* initTouchPos * -1; */
+            // If the anchor point for Joystick is on the left side of the screen, allow movement.
             if(stickLimit.transform.position.x < Screen.width/2) {
                 canMove = true;
                 stick.gameObject.SetActive(true);

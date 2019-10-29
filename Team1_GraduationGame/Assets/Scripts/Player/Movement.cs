@@ -27,6 +27,8 @@ public class Movement : MonoBehaviour
 
     public FloatReference rotationSpeed;
     public IntReference radius;
+
+    public List<Touchlocation> touches = new List<Touchlocation>();
     void Start()
     {
         playerRB = GetComponent<Rigidbody>();
@@ -34,6 +36,19 @@ public class Movement : MonoBehaviour
 
     void Update()
     {
+        int i = 0;
+        while(i < Input.touchCount){
+            Touch t = Input.GetTouch(i);
+            if(t.phase == TouchPhase.Began) {
+                touches.Add(new Touchlocation(t.fingerId, initTouchPos));
+            } else if(t.phase == TouchPhase.Ended) {
+                Touchlocation thisTouch = touches.Find(Touchlocation => Touchlocation.touchID == t.fingerId);
+                touches.RemoveAt(touches.IndexOf(thisTouch));
+            } else if(t.phase == TouchPhase.Moved){
+                Touchlocation thisTouch = touches.Find(Touchlocation => Touchlocation.touchID == t.fingerId);
+                //thisTouch.stick.transform.position = t.position;
+            }
+        }
         if(Input.GetMouseButtonDown(0)) {
             initTouchPos = Input.mousePosition;
 
@@ -50,9 +65,9 @@ public class Movement : MonoBehaviour
                 stickLimit.gameObject.SetActive(true);                
             }
 
-/*             if(isGrounded && Input.mousePosition.x > Screen.width/2) {
+            if(/* isGrounded &&  */Input.mousePosition.x > Screen.width/2) {
                 playerJump(Vector3.up, jumpHeight.value);
-            } */
+            }
 
         }
         if(Input.GetMouseButton(0)) {
@@ -107,7 +122,9 @@ public class Movement : MonoBehaviour
     }
 
     private void playerJump(Vector3 direction, float jumpHeight) {
-        playerRB.AddForce(Vector3.up * jumpHeight);
+        playerRB.AddForce(direction * jumpHeight);
+        Debug.Log("Jumped");
         isGrounded = false;
     }
+
 }

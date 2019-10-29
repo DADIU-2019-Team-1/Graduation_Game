@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 public class CameraMovement : MonoBehaviour
 {
+    // --- Public
     [Tooltip("If Camera Target is not set, object with tag \"CamLookAt\" will be used instead. \n\"Player\" will be used as a fallback.")]
     public Transform camTarget;
     [Tooltip("If Player Target is not set, object with tag \"Player\" will be used instead.")]
@@ -9,8 +10,8 @@ public class CameraMovement : MonoBehaviour
     [Tooltip("If Camera Rail is not set, object with tag \"RailCamera\" will be used instead.")]
     public Transform camRail;
 
-    [TagSelector]
-    public string[] tagsToFocus;
+    // --- Inspector
+    [TagSelector] [SerializeField] private string[] tagsToFocus;
 
     [Tooltip("This value is used to determine the height when the target is far away.")] 
     [SerializeField] private FloatReference heightDistanceFactor;
@@ -20,11 +21,12 @@ public class CameraMovement : MonoBehaviour
     [SerializeField] private FloatReference camMoveTime;
     [Tooltip("Range from player .")]
     [SerializeField] private FloatReference focusRange;
+
+    // --- Private
+    [SerializeField] private List<GameObject> focusObjects; // TODO: Remove SerializeField when feature is approved
+    [SerializeField] private List<float> focusPointWeights; // Includes the player, so start at 1  // TODO: Remove SerializeField when feature is approved
     private float heightIncrease;
     private Vector3 camMovement, lookPosition;
-    [SerializeField] private List<GameObject> focusObjects;
-
-    [SerializeField] private List<float> focusPointWeights; // Includes the player, so start at 1
 
     void Start()
     {

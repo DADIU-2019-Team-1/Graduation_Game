@@ -10,9 +10,15 @@ public class CameraMovement : MonoBehaviour
     public Transform player;
     [Tooltip("If Camera Rail is not set, object with tag \"RailCamera\" will be used instead.")]
     public Transform camRail;
-    [Tooltip("This value is used to determine the height when the target is far away.")]
-    public float heightDistanceFactor = 0.2f;
+
+    [Tooltip("This value is used to determine the height when the target is far away.")] 
+    [SerializeField] private FloatReference heightDistanceFactor;
+    [Tooltip("A higher value makes the camera LookAt more aggressive.")]
+    [SerializeField] private FloatReference camLookSpeed;
+    [Tooltip("A lower value makes the camera move to the desired position faster.")]
+    [SerializeField] private FloatReference camMoveTime;
     private float heightIncrease;
+    private Vector3 camMovement;
 
     void Start()
     {
@@ -28,10 +34,16 @@ public class CameraMovement : MonoBehaviour
             camRail = GameObject.FindGameObjectWithTag("RailCamera").transform;
     }
 
-    void Update()
+    void LateUpdate()
     {
-        heightIncrease = Vector3.Distance(player.position, new Vector3(player.position.x, camRail.position.y, camRail.position.z)) * heightDistanceFactor;
-        transform.position = new Vector3(camTarget.position.x, camRail.position.y + heightIncrease, camRail.position.z);
-        transform.LookAt(camTarget); // TODO: Apply smoothing to the LookAt
+        // Position update
+        heightIncrease = Vector3.Distance(player.position, new Vector3(player.position.x, camRail.position.y, camRail.position.z)) * heightDistanceFactor.value;
+        transform.position = Vector3.SmoothDamp(transform.position, new Vector3(camTarget.position.x, camRail.position.y + heightIncrease, camRail.position.z),
+            ref camMovement, camMoveTime.value * Time.deltaTime);
+
+        // Rotation update
+        Quaternion targetRotation = (camTarget.position - transform.position != Vector3.zero)
+            ? Quaternion.LookRotation(camTarget.position - transform.position) : Quaternion.identity;
+        transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, camLookSpeed.value * Time.deltaTime);
     }
 }

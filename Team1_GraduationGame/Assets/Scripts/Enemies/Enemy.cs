@@ -30,10 +30,10 @@ namespace Team1_GraduationGame.Enemies
         // Private variables:
         private bool _active, _useTimer, _timerRunning, _destinationSet, _isRotating, _isAggro, _isHugging;
         private NavMeshAgent _navMeshAgent;
-        private Vector3 _lastSighting, _fieldOfView;
+        private Vector3 _lastSighting;
         private GameObject _player;
         private SphereCollider _thisCollider;
-        private int currentWayPoint = 0;
+        private int _currentWayPoint = 0, _state = 0;
 
         void Awake()
         {
@@ -55,7 +55,6 @@ namespace Team1_GraduationGame.Enemies
             if (_active)
             {
                 _thisCollider = gameObject.GetComponent<SphereCollider>();
-                _fieldOfView = new Vector3(0, 0, thisEnemy.viewAngleRange);
 
                 if (_thisCollider != null)
                 {
@@ -67,9 +66,8 @@ namespace Team1_GraduationGame.Enemies
                 if (GetComponent<NavMeshAgent>() != null)
                 {
                     _navMeshAgent = GetComponent<NavMeshAgent>();
-                    _navMeshAgent.speed = thisEnemy.speed;
-                    _navMeshAgent.angularSpeed = thisEnemy.turnSpeed;
-                    _navMeshAgent.updateRotation = true;
+                    _navMeshAgent.speed = thisEnemy.walkSpeed;
+                    _navMeshAgent.angularSpeed = thisEnemy.walkTurnSpeed;
                 }
                 else
                 {
@@ -85,20 +83,49 @@ namespace Team1_GraduationGame.Enemies
             }
         }
 
+        /// <summary>
+        /// 0 = Walking, 1 = Running
+        /// </summary>
+        public void SwitchState(int state)
+        {
+            if (_navMeshAgent != null && thisEnemy != null)
+            {
+                if (!thisEnemy.canRun)
+                    return;
+
+                switch (state)
+                {
+                    case 0:
+                        _navMeshAgent.speed = thisEnemy.walkSpeed;
+                        _navMeshAgent.angularSpeed = thisEnemy.walkTurnSpeed;
+                        break;
+                    case 1:
+                        _navMeshAgent.speed = thisEnemy.runSpeed;
+                        _navMeshAgent.angularSpeed = thisEnemy.runTurnSpeed;
+                        break;
+                    default:
+                        Debug.LogError("Enemy Error: trying to switch to state that doesn't exist!'");
+                        break;
+                }
+
+            }
+        }
+
         private void FixedUpdate()
         {
             if (_active)
             {
                 if (!_isAggro && wayPoints != null && wayPoints.Count != 0)
                 {
+                    SwitchState(0); // Switch to walking
 
-                    if (Vector3.Distance(transform.position, wayPoints[currentWayPoint].position) < wayPointReachRange)
+                    if (Vector3.Distance(transform.position, wayPoints[_currentWayPoint].position) < wayPointReachRange)
                     {
                         _isRotating = false;
 
                         if (!_useTimer)
                         {
-                            currentWayPoint = (currentWayPoint + 1) % wayPoints.Count;
+                            _currentWayPoint = (_currentWayPoint + 1) % wayPoints.Count;
                             _destinationSet = false;
                         }
                         else if (_useTimer && !_timerRunning)
@@ -111,20 +138,22 @@ namespace Team1_GraduationGame.Enemies
 
                     if (!_destinationSet)
                     {
-                        _navMeshAgent.SetDestination(wayPoints[currentWayPoint].position);
+                        _navMeshAgent.SetDestination(wayPoints[_currentWayPoint].position);
                         _destinationSet = true;
                         _isRotating = true;
                     }
-
                 }
 
                 if (_isAggro)
                 {
+                    if (!_isHugging)
+                        SwitchState(1); // Switch to running
+
                     _navMeshAgent.SetDestination(_lastSighting);
                     _isRotating = true;
 
                     if (Vector3.Distance(transform.position, _player.transform.position) <
-                        wayPointReachRange)
+                        thisEnemy.embraceDistance)
                     {
                         if (!_isHugging)
                             StartCoroutine(EnemyHug());
@@ -136,8 +165,13 @@ namespace Team1_GraduationGame.Enemies
 
                 if (_isRotating)
                 {
+                    float turnSpeed = 1;
+                    if (_state == 0)
+                        turnSpeed = thisEnemy.walkTurnSpeed;
+                    else if (_state == 1)
+                        turnSpeed = thisEnemy.runTurnSpeed;
                     Quaternion lookRotation = _navMeshAgent.velocity.normalized != Vector3.zero ? Quaternion.LookRotation(_navMeshAgent.velocity.normalized) : transform.rotation; // Avoid LookRotation zero-errors 
-                    transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, thisEnemy.turnSpeed * Time.fixedDeltaTime);
+                    transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, thisEnemy.walkTurnSpeed);
                 }
             }
             
@@ -145,34 +179,36 @@ namespace Team1_GraduationGame.Enemies
 
         private void OnTriggerStay(Collider col)
         {
-            if (col.tag == _player.tag)
-            {
-                Vector3 dir = _player.transform.position - transform.position;
-                float enemyToPlayerAngle = Vector3.Angle(transform.forward, dir);
-
-                if (enemyToPlayerAngle < thisEnemy.viewAngleRange / 2)
+            if (_active)
+                if (col.tag == _player.tag)
                 {
-                    RaycastHit hit;
+                    Vector3 dir = _player.transform.position - transform.position;
+                    float enemyToPlayerAngle = Vector3.Angle(transform.forward, dir);
 
-                    if (Physics.Raycast(transform.position + transform.up, dir, out hit, thisEnemy.viewDistance))
-                        if (hit.collider.gameObject == _player)
-                        {
-                            _lastSighting = _player.transform.position;
-                            if (!_isAggro)
-                                StartCoroutine(EnemyAggro());
-                        }
-                } else if (_isAggro)
-                {
-                    _lastSighting = _player.transform.position;
+                    if (enemyToPlayerAngle < thisEnemy.fieldOfView / 2)
+                    {
+                        RaycastHit hit;
+
+                        if (Physics.Raycast(transform.position + transform.up, dir, out hit, thisEnemy.viewDistance))
+                            if (hit.collider.gameObject == _player)
+                            {
+                                _lastSighting = _player.transform.position;
+                                if (!_isAggro)
+                                    StartCoroutine(EnemyAggro());
+                            }
+                    }
+                    else if (_isAggro)
+                    {
+                        _lastSighting = _player.transform.position;
+                    }
+
                 }
-
-            }
         }
 
         private IEnumerator WaitTimer()
         {
             yield return new WaitForSeconds(waitTime);
-            currentWayPoint = (currentWayPoint + 1) % wayPoints.Count;
+            _currentWayPoint = (_currentWayPoint + 1) % wayPoints.Count;
             _destinationSet = false;
             _timerRunning = false;
         }
@@ -180,10 +216,10 @@ namespace Team1_GraduationGame.Enemies
         private IEnumerator EnemyAggro()
         {
             _isAggro = true;
-            yield return new WaitForSeconds(aggroTime);
+            yield return new WaitForSeconds(thisEnemy.aggroTime);
             _isAggro = false;
 
-            yield return new WaitForSeconds(0.3f);
+            yield return new WaitForSeconds(0.2f);
             if (!_isAggro)
                 _destinationSet = false;
         }
@@ -191,10 +227,37 @@ namespace Team1_GraduationGame.Enemies
         private IEnumerator EnemyHug()
         {
             _isHugging = true;
-            yield return new WaitForSeconds(attackTime);
+            SwitchState(2);
+            yield return new WaitForSeconds(thisEnemy.embraceDelay);
             _isHugging = false;
             _isAggro = false;
             Debug.Log("THE PLAYER DIED");
+        }
+
+        public void PushDown()
+        {
+            if (thisEnemy != null && _active)
+            {
+                _active = false;
+                StartCoroutine(PushDownDelay());
+            }
+
+        }
+
+        private IEnumerator PushDownDelay()
+        {
+            yield return new WaitForSeconds(thisEnemy.pushedDownDuration);
+            _active = true;
+        }
+
+        public void SetIsActive(bool isActive)
+        {
+            _active = isActive;
+        }
+
+        public bool GetIsActive()
+        {
+            return _active;
         }
 
 #if UNITY_EDITOR
@@ -224,8 +287,6 @@ namespace Team1_GraduationGame.Enemies
                         {
                             Gizmos.color = Color.red;
                             Gizmos.DrawLine(transform.position, transform.forward * thisEnemy.viewDistance + transform.position);
-                            //Gizmos.DrawLine(transform.position, (transform.forward) * thisEnemy.viewDistance + transform.position);
-                            //Debug.Log(transform.forward + " / " + (transform.forward + _fieldOfView.normalized / 2) * thisEnemy.viewDistance + transform.position);
                         }
                     }
                 }

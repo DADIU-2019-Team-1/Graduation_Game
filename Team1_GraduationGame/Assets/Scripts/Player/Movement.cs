@@ -74,18 +74,18 @@ public class Movement : MonoBehaviour
                 //Debug.Log("Touch pos is " + t.position);
                 if(dragDist < radius.value * sneakThreshold) {
                     movePlayer(direction, sneakSpeed.value);
-                    Debug.Log("Is sneaking with speed " + playerRB.velocity.magnitude);
+                    //Debug.Log("Is sneaking with speed " + playerRB.velocity.magnitude);
                     
                 }
                 if(dragDist > radius.value * sneakThreshold && dragDist < radius.value * runThreshold) {
                     movePlayer(direction, movementSpeed.value);
-                    Debug.Log("Is walking with speed " + playerRB.velocity.magnitude);
+                    //Debug.Log("Is walking with speed " + playerRB.velocity.magnitude);
                 }
                     
 
                 if(dragDist > radius.value * runThreshold) {
                     movePlayer(direction, runSpeed.value);
-                    Debug.Log("Is running with speed " + playerRB.velocity.magnitude);
+                    //Debug.Log("Is running with speed " + playerRB.velocity.magnitude);
                 }
                 stick.transform.position = joyDiff + new Vector2(stickLimit.transform.position.x, stickLimit.transform.position.y);
                 // t.deltaPosition; is a Vector2 of the difference between the last frame to its position this frame. 
@@ -187,7 +187,7 @@ public class Movement : MonoBehaviour
 
     private void playerJump(Vector3 direction, float jumpHeight) {
         playerRB.AddForce(direction * jumpHeight);
-        Debug.Log("Jumped");
+        //Debug.Log("Jumped");
         isGrounded = false;
     }
 

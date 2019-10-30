@@ -5,7 +5,7 @@ using UnityEngine;
 public class Movement : MonoBehaviour
 {
     private Rigidbody playerRB;
-    private bool touchStart = false, canMove = false, isGrounded;
+    private bool touchStart = false, canMove = false, canJump = false, canAttack;
     private Vector3 initTouchPos;
     private Vector3 currTouchPos;
 
@@ -58,11 +58,11 @@ public class Movement : MonoBehaviour
                 }
 
 
-                else if (t.position.x > Screen.width /2 ) {
+                else if (t.position.x > Screen.width /2 && canJump) {
                     playerJump(Vector3.up, jumpHeight.value);
                 }
 
-            } else if((t.phase == TouchPhase.Moved || t.phase == TouchPhase.Stationary)  && leftTouch == t.fingerId ){
+            } else if((t.phase == TouchPhase.Moved || t.phase == TouchPhase.Stationary)  && leftTouch == t.fingerId  && canMove){
 
                 Vector3 offset = new Vector3(t.position.x - stickLimit.transform.position.x, 0,  t.position.y-stickLimit.transform.position.y);
                 Vector3 direction = Vector3.ClampMagnitude(offset, 1.0f);
@@ -128,7 +128,7 @@ public class Movement : MonoBehaviour
                 //stickLimit.gameObject.SetActive(true);                
             }
 
-            if(/* isGrounded &&  */Input.mousePosition.x > Screen.width/2) {
+            if(/* isGrounded &&  */Input.mousePosition.x > Screen.width/2 && canJump) {
                 playerJump(Vector3.up, jumpHeight.value);
             }
 
@@ -188,7 +188,7 @@ public class Movement : MonoBehaviour
     private void playerJump(Vector3 direction, float jumpHeight) {
         playerRB.AddForce(direction * jumpHeight);
         //Debug.Log("Jumped");
-        isGrounded = false;
+        //canJump = false;
     }
 
 

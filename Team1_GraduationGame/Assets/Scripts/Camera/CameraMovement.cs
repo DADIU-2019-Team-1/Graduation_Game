@@ -59,7 +59,7 @@ public class CameraMovement : MonoBehaviour
         // Position update
         heightIncrease = Vector3.Distance(player.position, new Vector3(player.position.x, camRail.position.y, camRail.position.z)) * heightDistanceFactor.value;
         lookPosition = CalculateLookPosition(player.position, camTarget.position, focusRange.value, focusObjects);
-        if (camRail.position.x >= 0)
+        //if (camRail.position.x >= 0)
         transform.position = Vector3.SmoothDamp(transform.position, new Vector3(camTarget.position.x, camRail.position.y + heightIncrease, camRail.position.z),
             ref camMovement, camMoveTime.value * Time.deltaTime);
 

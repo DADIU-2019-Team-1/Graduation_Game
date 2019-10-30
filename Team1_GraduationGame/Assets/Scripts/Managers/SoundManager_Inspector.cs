@@ -11,7 +11,7 @@ namespace Team1_GraduationGame.Managers
 
 #if UNITY_EDITOR
     [CustomEditor(typeof(SoundManager))]
-    public class SoundManager_Inspector : Editor
+    public class SoundManager_Inspector : UnityEditor.Editor
     {
         private GUIStyle headerStyle;
 

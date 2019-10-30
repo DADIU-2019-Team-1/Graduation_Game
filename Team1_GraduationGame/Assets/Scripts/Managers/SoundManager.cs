@@ -5,10 +5,6 @@ using Team1_GraduationGame.Events;
 using UnityEngine;
 using UnityEngine.Events;
 
-#if UNITY_EDITOR
-using UnityEditor;
-#endif
-
 // NOTE: This script requires Wwise to work //
 
 namespace Team1_GraduationGame.Managers

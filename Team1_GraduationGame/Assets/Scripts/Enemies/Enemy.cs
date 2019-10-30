@@ -1,11 +1,10 @@
-﻿using UnityEngine.AI;
-using UnityEngine.UIElements;
-
-namespace Team1_GraduationGame.Enemies
+﻿namespace Team1_GraduationGame.Enemies
 {
     using System.Collections;
     using System.Collections.Generic;
     using UnityEngine;
+    using Team1_GraduationGame.Events;
+    using UnityEngine.AI;
 
 #if UNITY_EDITOR
     using UnityEditor;
@@ -17,6 +16,7 @@ namespace Team1_GraduationGame.Enemies
     {
         // Scriptable Object References:
         public BaseEnemy thisEnemy;
+        public VoidEvent playerDiedEvent;
 
         // Public variables:
         [Tooltip("How close the enemy should be to the waypoint for it to switch to the next")]
@@ -84,7 +84,7 @@ namespace Team1_GraduationGame.Enemies
         }
 
         /// <summary>
-        /// 0 = Walking, 1 = Running
+        /// 0 = Walking, 1 = Running, 2 = Attacking
         /// </summary>
         public void SwitchState(int state)
         {
@@ -102,6 +102,10 @@ namespace Team1_GraduationGame.Enemies
                     case 1:
                         _navMeshAgent.speed = thisEnemy.runSpeed;
                         _navMeshAgent.angularSpeed = thisEnemy.runTurnSpeed;
+                        break;
+                    case 2:
+                        _navMeshAgent.speed = 0;
+                        _active = false;
                         break;
                     default:
                         Debug.LogError("Enemy Error: trying to switch to state that doesn't exist!'");
@@ -190,7 +194,7 @@ namespace Team1_GraduationGame.Enemies
                         RaycastHit hit;
 
                         if (Physics.Raycast(transform.position + transform.up, dir, out hit, thisEnemy.viewDistance))
-                            if (hit.collider.gameObject == _player)
+                            if (hit.collider.tag == _player.tag)
                             {
                                 _lastSighting = _player.transform.position;
                                 if (!_isAggro)
@@ -227,11 +231,25 @@ namespace Team1_GraduationGame.Enemies
         private IEnumerator EnemyHug()
         {
             _isHugging = true;
-            SwitchState(2);
+            SwitchState(2); // Switch to attacking
             yield return new WaitForSeconds(thisEnemy.embraceDelay);
-            _isHugging = false;
-            _isAggro = false;
-            Debug.Log("THE PLAYER DIED");
+
+            if (Vector3.Distance(transform.position, _player.transform.position) <
+                thisEnemy.embraceDistance)
+            {
+                Debug.Log("THE PLAYER DIED");
+
+                if (playerDiedEvent != null)
+                {
+                    playerDiedEvent.Raise();
+                }
+            }
+            else
+            {
+                _active = true;
+                _isHugging = false;
+                _isAggro = false;
+            }
         }
 
         public void PushDown()
@@ -286,7 +304,7 @@ namespace Team1_GraduationGame.Enemies
                         if (thisEnemy != null)
                         {
                             Gizmos.color = Color.red;
-                            Gizmos.DrawLine(transform.position, transform.forward * thisEnemy.viewDistance + transform.position);
+                            Gizmos.DrawLine(transform.position + transform.up, transform.forward * thisEnemy.viewDistance + (transform.position + transform.up));
                         }
                     }
                 }
@@ -315,6 +333,8 @@ namespace Team1_GraduationGame.Enemies
                 _style.fontSize = 14;
                 _runOnce = true;
             }
+
+            EditorGUILayout.HelpBox("Enemies MUST NOT have the same name or be copied!", MessageType.Warning);
 
             DrawDefaultInspector(); // for other non-HideInInspector fields
 
@@ -351,6 +371,8 @@ namespace Team1_GraduationGame.Enemies
                 {
                     script.parentWayPoint = new GameObject(script.gameObject.name + "_Waypoints");
                     _parentWayPoint = script.parentWayPoint;
+                    _parentWayPoint.AddComponent<WayPoint>();
+                    _parentWayPoint.GetComponent<WayPoint>().isParent = true;
                 }
                 else
                 {
@@ -362,7 +384,12 @@ namespace Team1_GraduationGame.Enemies
                     script.wayPoints = new List<Transform>();
                 }
 
-                tempWayPointObj = new GameObject("WayPoint" + script.wayPoints.Count);
+                tempWayPointObj = new GameObject("WayPoint" + (script.wayPoints.Count + 1));
+                tempWayPointObj.AddComponent<WayPoint>();
+                WayPoint tempWayPointScript = tempWayPointObj.GetComponent<WayPoint>();
+                tempWayPointScript.wayPointId = script.wayPoints.Count + 1;
+                tempWayPointScript.parentEnemy = script.gameObject;
+                tempWayPointScript.parentWayPoint = _parentWayPoint;
 
                 tempWayPointObj.transform.position = tempWayPointObj.transform.up;
                 tempWayPointObj.transform.parent = _parentWayPoint.transform;
@@ -375,12 +402,7 @@ namespace Team1_GraduationGame.Enemies
                     if (script.wayPoints.Count > 0)
                     {
                         DestroyImmediate(script.wayPoints[script.wayPoints.Count - 1].gameObject);
-                        script.wayPoints.RemoveAt(script.wayPoints.Count - 1);
 
-                        if (script.wayPoints.Count < 1 && script.parentWayPoint != null)
-                        {
-                            DestroyImmediate(script.parentWayPoint);
-                        }
                     }
             }
 

@@ -56,9 +56,8 @@ public class CameraMovement : MonoBehaviour
         // Init position and rotation
         heightIncrease = Vector3.Distance(player.position, new Vector3(player.position.x, camRail.position.y, camRail.position.z)) * heightDistanceFactor.value;
         lookPosition = CalculateLookPosition(player.position, camTarget.position, focusRange.value, focusObjects);
-        transform.position = new Vector3(camTarget.position.x, camRail.position.y + heightIncrease, camRail.position.z);
-        targetRotation = (lookPosition - transform.position != Vector3.zero) ? Quaternion.LookRotation(lookPosition - transform.position) : Quaternion.identity;
-        transform.rotation = targetRotation;
+        transform.position = new Vector3(player.position.x, camRail.position.y + heightIncrease, camRail.position.z);
+        transform.LookAt(player);
     }
 
     void LateUpdate()

@@ -2,10 +2,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
-
+#if UNITY_EDITOR
 [CustomPropertyDrawer(typeof(FloatReference))]
 public class FloatReferenceDrawer : PropertyDrawer
 {
+    
     // private bool propertyUI, showMenu = false;
     public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
     {   
@@ -84,3 +85,4 @@ public class FloatReferenceDrawer : PropertyDrawer
             return textures[0];
     } */
 }
+#endif

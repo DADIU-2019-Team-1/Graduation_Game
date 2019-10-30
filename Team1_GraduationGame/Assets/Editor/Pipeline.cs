@@ -8,7 +8,6 @@ namespace UnityEditor
     public class Pipeline
     {
 	    private static string workingDirectory;
-	    private static string currentBuildNum = "0";
 
         //[MenuItem("Pipeline/Build: Latest fetch from SCM")]
         public static void BuildAndroidAutobuild()
@@ -36,7 +35,6 @@ namespace UnityEditor
         private static void BuildAndroidBase(string workingDir)
         {
 	        workingDirectory = workingDir;
-            currentBuildNum = UpdateBuildNumberIdentifier();
             Directory.CreateDirectory(pathname);
             var report = BuildPipeline.BuildPlayer(new BuildPlayerOptions
             {
@@ -76,7 +74,7 @@ namespace UnityEditor
         {
             get
             {
-                return (DateTime.Now.ToString("yyyyMMddHHmm") + "_build" + currentBuildNum + "_" + repoBranchName + ".apk");
+                return (DateTime.Now.ToString("yyyy-MM-dd-HH-mm") + /*"_build" + currentBuildNum + */"_" + repoBranchName + ".apk");
             }
         }
 
@@ -89,7 +87,6 @@ namespace UnityEditor
 
                 startInfo.UseShellExecute = false;
                 startInfo.WorkingDirectory = workingDirectory;
-                //startInfo.WorkingDirectory = @"C:\Users\Dadiu student\.jenkins\workspace\Graduation_Game\Autobuild\Team1_GraduationGame";
                 startInfo.RedirectStandardInput = true;
                 startInfo.RedirectStandardOutput = true;
                 startInfo.Arguments = "rev-parse --abbrev-ref HEAD";
@@ -102,10 +99,9 @@ namespace UnityEditor
                 return branchname;
             }
         }
-
+        // Unused, since the method does not update the build number in the git
         public static string UpdateBuildNumberIdentifier()
         {
-            int buildNum = 0;
             string text = "";
             string number = "";
             string buildNumFilePath = Application.dataPath + "/Resources/buildNumbers.txt";
@@ -119,43 +115,25 @@ namespace UnityEditor
             }
             string allLines = buildNRFile.text;
             string[] everyLine = new string[2];
-            if (allLines.Count<Char>() > 0)
+            if (allLines.Any())
             {
                 everyLine = allLines.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None);
             }
-            //string[] everyLine = File.ReadAllLines(buildNumFilePath);
             if (everyLine.Length > 0)
             {
                 UnityEngine.Debug.Log("The build number file contains: \n" + everyLine[0] + " " + everyLine[1]);
-                text = everyLine[0];
-                number = everyLine[1];
             }
-            try
-            {
-                buildNum = int.Parse(number);
-            }
-            catch (Exception e)
-            {
+            int curBuildNum = int.Parse(everyLine[1]) + 1;
 
-            }
-
-            int curBuildNum = buildNum + 1;
-
-            if (number == "")
-            {
-                buildNum = 1;
-            }
-
-            string[] debugString = new string[2];
-            debugString[0] = "The current build number of the project is";
-            debugString[1] = curBuildNum.ToString();
+            everyLine[0] = "The current build number of the project is";
+            everyLine[1] = curBuildNum.ToString();
 
             UnityEngine.Debug.Log("Cur build nr = " + curBuildNum);
 
-            File.WriteAllLines(buildNumFilePath, debugString);
+            File.WriteAllLines(buildNumFilePath, everyLine);
 
             UnityEngine.Debug.Log("I have updated the build number");
-            return debugString[1];
+            return everyLine[1];
         }
     }
 }

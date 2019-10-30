@@ -163,7 +163,7 @@ public class Movement : MonoBehaviour
             }
                 
 
-            if(dragDist > radius.value * 0.8) {
+            if(dragDist > radius.value * 0.6) {
                 movePlayer(direction, runSpeed.value);
                 Debug.Log("Is running with speed " + playerRB.velocity.magnitude);
             }

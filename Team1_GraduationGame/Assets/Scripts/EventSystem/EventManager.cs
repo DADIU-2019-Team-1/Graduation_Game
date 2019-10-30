@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
-
+using UnityEngine.SceneManagement;
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
@@ -107,6 +107,12 @@ namespace Team1_GraduationGame.Events
         {
             float tempFloat = 0;
             myEvent.Raise(tempFloat);
+        }
+
+        public void ResetScene()
+        {
+            Debug.Log("EventManager: Reset Scene");
+            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
         }
     }
 
@@ -400,7 +406,7 @@ namespace Team1_GraduationGame.Events
 
 #if UNITY_EDITOR
     [CustomEditor(typeof(EventManager))]
-    public class EventManager_Editor : Editor
+    public class EventManager_Editor : UnityEditor.Editor
     {
         public override void OnInspectorGUI()
         {

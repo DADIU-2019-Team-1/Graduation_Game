@@ -1,13 +1,18 @@
 ﻿using UnityEngine;
-
+using System.Collections.Generic;
 public class CameraMovement : MonoBehaviour
 {
-    [Tooltip("If Camera Target is not set, object with tag \"CamLookAt\" will be used instead. \n\"Player\" will be used as a fallback.")]
+    // --- Public
+    [Tooltip("If Camera Target is not set, object with tag \"CamLookAt\" will be used instead. \"Player\" will be used as a fallback.")]
     public Transform camTarget;
     [Tooltip("If Player Target is not set, object with tag \"Player\" will be used instead.")]
     public Transform player;
     [Tooltip("If Camera Rail is not set, object with tag \"RailCamera\" will be used instead.")]
     public Transform camRail;
+
+    // --- Inspector
+    [Tooltip("Use to create an array of tags that will be used as focus points. Each object with a tag in this array will be counted as a focus point, if within the focus range.")]
+    [TagSelector] [SerializeField] private string[] tagsToFocus;
 
     [Tooltip("This value is used to determine the height when the target is far away.")] 
     [SerializeField] private FloatReference heightDistanceFactor;
@@ -15,8 +20,14 @@ public class CameraMovement : MonoBehaviour
     [SerializeField] private FloatReference camLookSpeed;
     [Tooltip("A lower value makes the camera move to the desired position faster.")]
     [SerializeField] private FloatReference camMoveTime;
+    [Tooltip("Range from player .")]
+    [SerializeField] private FloatReference focusRange;
+
+    // --- Private
+    private List<GameObject> focusObjects;
     private float heightIncrease;
-    private Vector3 camMovement;
+    private Vector3 camMovement, lookPosition;
+    private Quaternion targetRotation;
 
     void Start()
     {
@@ -30,18 +41,64 @@ public class CameraMovement : MonoBehaviour
         }
         if (camRail == null)
             camRail = GameObject.FindGameObjectWithTag("RailCamera").transform;
+
+        focusObjects = new List<GameObject>();
+        for (int i = 0; i < tagsToFocus.Length; i++)
+            focusObjects.AddRange(GameObject.FindGameObjectsWithTag(tagsToFocus[i]));
+
+        // Init position and rotation
+        heightIncrease = Vector3.Distance(player.position, new Vector3(player.position.x, camRail.position.y, camRail.position.z)) * heightDistanceFactor.value;
+        lookPosition = CalculateLookPosition(player.position, camTarget.position, focusRange.value, focusObjects);
+        transform.position = new Vector3(camTarget.position.x, camRail.position.y + heightIncrease, camRail.position.z);
+        targetRotation = (lookPosition - transform.position != Vector3.zero) ? Quaternion.LookRotation(lookPosition - transform.position) : Quaternion.identity;
+        transform.rotation = targetRotation;
     }
 
     void LateUpdate()
     {
         // Position update
         heightIncrease = Vector3.Distance(player.position, new Vector3(player.position.x, camRail.position.y, camRail.position.z)) * heightDistanceFactor.value;
+        lookPosition = CalculateLookPosition(player.position, camTarget.position, focusRange.value, focusObjects);
+        //if (camRail.position.x >= 0)
         transform.position = Vector3.SmoothDamp(transform.position, new Vector3(camTarget.position.x, camRail.position.y + heightIncrease, camRail.position.z),
             ref camMovement, camMoveTime.value * Time.deltaTime);
 
         // Rotation update
-        Quaternion targetRotation = (camTarget.position - transform.position != Vector3.zero)
-            ? Quaternion.LookRotation(camTarget.position - transform.position) : Quaternion.identity;
+        targetRotation = (lookPosition - transform.position != Vector3.zero)
+            ? Quaternion.LookRotation(lookPosition - transform.position) : Quaternion.identity;
         transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, camLookSpeed.value * Time.deltaTime);
+    }
+
+    private void OnDrawGizmos()
+    {
+        Gizmos.color = Color.cyan;
+        Gizmos.DrawWireSphere(lookPosition, 0.5f);
+    }
+
+    /// <summary>
+    /// Returns a position which represent the center of mass of a system, where the mass is a value from 0-1,
+    /// based on the proximity to the target. Takes a main target which serves as the focus of the system, a list of objects
+    /// in the system, and an empty reference list of floats, used to calculate the point weights.
+    /// </summary>
+    /// <param name="systemCenter">The target for the system to be centered around.</param>
+    /// <param name="currentTarget">The current look target, which should be weighted 1 regardless. Can be the same as the system center.</param>
+    /// <param name="systemRadius">The radius around the target for the system to be created around.</param>
+    /// <param name="objects">The objects that, if within the radius of the target, are included in the system.</param>
+    /// <returns></returns>
+    private Vector3 CalculateLookPosition(Vector3 systemCenter, Vector3 currentTarget, float systemRadius, List<GameObject> objects)
+    {
+        Vector3 focusWithWeights = currentTarget;
+        float totalWeight = 1; // Starts at 1 because the currentTarget has a weight of 1
+        for (int i = 0; i < objects.Count; i++)
+        {
+            if (Vector3.Distance(systemCenter, objects[i].transform.position) <= systemRadius)
+            {
+                float weight = (systemRadius - Vector3.Distance(systemCenter, objects[i].transform.position)) / systemRadius;
+                totalWeight += weight;
+
+                focusWithWeights += objects[i].transform.position * weight;
+            }
+        }
+        return focusWithWeights / totalWeight;
     }
 }

@@ -36,7 +36,7 @@
 
 #if UNITY_EDITOR
     [CustomEditor(typeof(BaseEnemy))]
-    public class BaseEnemy_Inspector : Editor
+    public class BaseEnemy_Inspector : UnityEditor.Editor
     {
         private GUIStyle _style = new GUIStyle();
         private GameObject _parentWayPoint;
@@ -94,6 +94,7 @@
         script.embraceDistance = EditorGUILayout.FloatField("Embrace Distance", script.embraceDistance);
         script.embraceDelay = EditorGUILayout.FloatField("Embrace Delay", script.embraceDelay);
 
+            DrawUILine(true);
 
             serializedObject.ApplyModifiedProperties();
 

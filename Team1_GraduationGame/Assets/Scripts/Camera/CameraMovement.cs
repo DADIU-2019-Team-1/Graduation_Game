@@ -4,7 +4,6 @@ using Cinemachine;
 
 public class CameraMovement : MonoBehaviour
 {
-
     // --- References
     [Tooltip("If Camera Target is not set, object with tag \"CamLookAt\" will be used instead. \"Player\" will be used as a fallback.")]
     public Transform camTarget;
@@ -18,7 +17,6 @@ public class CameraMovement : MonoBehaviour
     // --- Inspector
     [Tooltip("Use to create an array of tags that will be used as focus points. Each object with a tag in this array will be counted as a focus point, if within the focus range.")]
     [TagSelector] [SerializeField] private string[] tagsToFocus;
-
     [Tooltip("This value is used to determine the height when the target is far away.")] 
     [SerializeField] private FloatReference heightDistanceFactor;
     [Tooltip("A higher value makes the camera LookAt more aggressive.")]
@@ -30,9 +28,9 @@ public class CameraMovement : MonoBehaviour
 
     // --- Private
     private List<GameObject> focusObjects;
-    private float heightIncrease, trackX;
-    private Vector3 camMovement, lookPosition;
     private Quaternion targetRotation;
+    private Vector3 camMovement, lookPosition;
+    private float heightIncrease, trackX;
 
     void Start()
     {
@@ -55,7 +53,6 @@ public class CameraMovement : MonoBehaviour
 
         // Init position and rotation
         heightIncrease = Vector3.Distance(player.position, new Vector3(player.position.x, camRail.position.y, camRail.position.z)) * heightDistanceFactor.value;
-        lookPosition = CalculateLookPosition(player.position, camTarget.position, focusRange.value, focusObjects);
         transform.position = new Vector3(player.position.x, camRail.position.y + heightIncrease, camRail.position.z);
         transform.LookAt(player);
     }

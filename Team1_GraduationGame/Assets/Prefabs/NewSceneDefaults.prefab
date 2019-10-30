@@ -144,10 +144,6 @@ MonoBehaviour:
     UseUnique: 0
     UniqueValue: 0
     Variable: {fileID: 11400000, guid: 3999ce15becbdb94ba845827c2594c03, type: 2}
-  hillAssist:
-    UseUnique: 1
-    UniqueValue: 0
-    Variable: {fileID: 0}
   rotationSpeed:
     UseUnique: 0
     UniqueValue: 0
@@ -156,6 +152,8 @@ MonoBehaviour:
     UseUnique: 0
     UniqueValue: 0
     Variable: {fileID: 11400000, guid: 2ba7ed972f6e3a740b27636fabad48e7, type: 2}
+  sneakThreshold: 0
+  runThreshold: 0
 --- !u!114 &7648211996843181835
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -343,7 +341,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Path: {fileID: 7402701510758800487}
-  m_PathPosition: -1200.2
+  m_PathPosition: -1294.2
   m_PositionUnits: 0
   m_PathOffset: {x: 0, y: 0, z: 0}
   m_XDamping: 0
@@ -652,7 +650,7 @@ GameObject:
   - component: {fileID: 3792123483559476517}
   - component: {fileID: 7402701510758800487}
   m_Layer: 0
-  m_Name: DollyTrack
+  m_Name: RailTrack
   m_TagString: Untagged
   m_Icon: {fileID: -964228994112308473, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
@@ -792,7 +790,7 @@ MonoBehaviour:
   camTarget: {fileID: 8082768568984631419}
   player: {fileID: 7020747481704675806}
   camRail: {fileID: 6151845711399001596}
-  track: {fileID: 0}
+  track: {fileID: 7402701510758800487}
   tagsToFocus: []
   heightDistanceFactor:
     UseUnique: 0

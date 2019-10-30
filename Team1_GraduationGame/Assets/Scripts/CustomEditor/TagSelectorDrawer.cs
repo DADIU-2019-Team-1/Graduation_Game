@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿#if UNITY_EDITOR
+using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
@@ -73,3 +74,4 @@ namespace Team1_GraduationGame.Editor
         }
     }
 }
+#endif

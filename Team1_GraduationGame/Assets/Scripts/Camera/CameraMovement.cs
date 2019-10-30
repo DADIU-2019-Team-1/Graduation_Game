@@ -27,6 +27,7 @@ public class CameraMovement : MonoBehaviour
     private List<GameObject> focusObjects;
     private float heightIncrease;
     private Vector3 camMovement, lookPosition;
+    private Quaternion targetRotation;
 
     void Start()
     {
@@ -44,6 +45,13 @@ public class CameraMovement : MonoBehaviour
         focusObjects = new List<GameObject>();
         for (int i = 0; i < tagsToFocus.Length; i++)
             focusObjects.AddRange(GameObject.FindGameObjectsWithTag(tagsToFocus[i]));
+
+        // Init position and rotation
+        heightIncrease = Vector3.Distance(player.position, new Vector3(player.position.x, camRail.position.y, camRail.position.z)) * heightDistanceFactor.value;
+        lookPosition = CalculateLookPosition(player.position, camTarget.position, focusRange.value, focusObjects);
+        transform.position = new Vector3(camTarget.position.x, camRail.position.y + heightIncrease, camRail.position.z);
+        targetRotation = (lookPosition - transform.position != Vector3.zero) ? Quaternion.LookRotation(lookPosition - transform.position) : Quaternion.identity;
+        transform.rotation = targetRotation;
     }
 
     void LateUpdate()
@@ -55,7 +63,7 @@ public class CameraMovement : MonoBehaviour
             ref camMovement, camMoveTime.value * Time.deltaTime);
 
         // Rotation update
-        Quaternion targetRotation = (lookPosition - transform.position != Vector3.zero)
+        targetRotation = (lookPosition - transform.position != Vector3.zero)
             ? Quaternion.LookRotation(lookPosition - transform.position) : Quaternion.identity;
         transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, camLookSpeed.value * Time.deltaTime);
     }

@@ -1,6 +1,6 @@
-﻿using UnityEngine;
+﻿#if UNITY_EDITOR
+using UnityEngine;
 using UnityEditor;
-
 namespace Team1_GraduationGame.Editor
 {
     [CustomPropertyDrawer(typeof(ScriptableObject), true)]
@@ -37,3 +37,4 @@ namespace Team1_GraduationGame.Editor
         }
     }
 }
+#endif

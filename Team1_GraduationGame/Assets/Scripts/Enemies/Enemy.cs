@@ -334,7 +334,7 @@
                 _runOnce = true;
             }
 
-            EditorGUILayout.HelpBox("Enemies MUST NOT have the same name or be copied!", MessageType.Warning);
+            EditorGUILayout.HelpBox("Enemies must have different gameobject names and should not be copied. Also, deleting the enemy object does not remove its waypoints.", MessageType.Info);
 
             DrawDefaultInspector(); // for other non-HideInInspector fields
 

@@ -400,7 +400,7 @@ namespace Team1_GraduationGame.Events
 
 #if UNITY_EDITOR
     [CustomEditor(typeof(EventManager))]
-    public class EventManager_Editor : Editor
+    public class EventManager_Editor : UnityEditor.Editor
     {
         public override void OnInspectorGUI()
         {

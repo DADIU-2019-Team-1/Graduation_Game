@@ -11,8 +11,12 @@ public class Movement : MonoBehaviour
 
     private Vector3 joystickPos;
 
+    private Vector3 stickLimitPos;
+[Tooltip("Put the main camera here!")]
     public Camera cam;
+[Tooltip("Put the joystick here")]
     public Transform stick;
+[Tooltip("Put the joystick border here")]
     public Transform stickLimit;
     public FloatReference movementSpeed;
 
@@ -23,32 +27,91 @@ public class Movement : MonoBehaviour
 
     public FloatReference jumpHeight;
 
-    public FloatReference hillAssist;
-
     public FloatReference rotationSpeed;
     public IntReference radius;
 
-    public List<Touchlocation> touches = new List<Touchlocation>();
+    private int leftTouch = 99;
+
+[SerializeField]
+    private float sneakThreshold, runThreshold;
+    //public List<Touchlocation> touches = new List<Touchlocation>();
     void Start()
     {
         playerRB = GetComponent<Rigidbody>();
     }
 
-    void Update()
+    void FixedUpdate()
     {
+        // Making sure touches only run on Android
+        #if UNITY_ANDROID
         int i = 0;
         while(i < Input.touchCount){
             Touch t = Input.GetTouch(i);
             if(t.phase == TouchPhase.Began) {
-                touches.Add(new Touchlocation(t.fingerId, initTouchPos));
-            } else if(t.phase == TouchPhase.Ended) {
-                Touchlocation thisTouch = touches.Find(Touchlocation => Touchlocation.touchID == t.fingerId);
-                touches.RemoveAt(touches.IndexOf(thisTouch));
-            } else if(t.phase == TouchPhase.Moved){
-                Touchlocation thisTouch = touches.Find(Touchlocation => Touchlocation.touchID == t.fingerId);
-                //thisTouch.stick.transform.position = t.position;
-            }
+                if(t.position.x < Screen.width / 2) {
+                    stick.gameObject.SetActive(true);
+                    stickLimit.gameObject.SetActive(true);  
+                    leftTouch = t.fingerId;
+                    stickLimit.transform.position = t.position;
+                    canMove = true;
+                                       
+                }
+
+
+                else if (t.position.x > Screen.width /2 ) {
+                    playerJump(Vector3.up, jumpHeight.value);
+                }
+
+            } else if((t.phase == TouchPhase.Moved || t.phase == TouchPhase.Stationary)  && leftTouch == t.fingerId ){
+
+                Vector3 offset = new Vector3(t.position.x - stickLimit.transform.position.x, 0,  t.position.y-stickLimit.transform.position.y);
+                Vector3 direction = Vector3.ClampMagnitude(offset, 1.0f);
+                float dragDist = Vector2.Distance(stick.transform.position, stickLimit.transform.position);
+                Vector2 joyDiff = t.position - new Vector2(stickLimit.transform.position.x, stickLimit.transform.position.y);
+                // Need new clamping.
+                joyDiff = Vector2.ClampMagnitude(joyDiff, radius.value);
+                //Debug.Log("Mouse pos is: " + Input.mousePosition);
+                //Debug.Log("Touch pos is " + t.position);
+                if(dragDist < radius.value * sneakThreshold) {
+                    movePlayer(direction, sneakSpeed.value);
+                    Debug.Log("Is sneaking with speed " + playerRB.velocity.magnitude);
+                    
+                }
+                if(dragDist > radius.value * sneakThreshold && dragDist < radius.value * runThreshold) {
+                    movePlayer(direction, movementSpeed.value);
+                    Debug.Log("Is walking with speed " + playerRB.velocity.magnitude);
+                }
+                    
+
+                if(dragDist > radius.value * runThreshold) {
+                    movePlayer(direction, runSpeed.value);
+                    Debug.Log("Is running with speed " + playerRB.velocity.magnitude);
+                }
+                stick.transform.position = joyDiff + new Vector2(stickLimit.transform.position.x, stickLimit.transform.position.y);
+                // t.deltaPosition; is a Vector2 of the difference between the last frame to its position this frame. 
+                if(stickLimit.transform.position.x < Screen.width /2) {
+                    stick.gameObject.SetActive(true);
+                    stickLimit.gameObject.SetActive(true);
+                    
+                }
+                else if(t.position.x > Screen.width /2) {
+                    // Swipe movement? Maybe use t.deltaPosition to check change for swiping. 
+                    // Could use TouchPhase.Stationary for just jumping?
+                }
+                
+            } else if(t.phase == TouchPhase.Ended && leftTouch == t.fingerId) {
+                leftTouch = 99;
+                stick.gameObject.SetActive(false);
+                stickLimit.gameObject.SetActive(false);
+                if(canMove)  
+                    canMove = false;  
+            }    
+            ++i;
         }
+        #endif
+
+        // Making sure Mouse only runs on PC.
+        #if UNITY_EDITOR
         if(Input.GetMouseButtonDown(0)) {
             initTouchPos = Input.mousePosition;
 
@@ -61,8 +124,8 @@ public class Movement : MonoBehaviour
             // If the anchor point for Joystick is on the left side of the screen, allow movement.
             if(stickLimit.transform.position.x < Screen.width/2) {
                 canMove = true;
-                stick.gameObject.SetActive(true);
-                stickLimit.gameObject.SetActive(true);                
+                //stick.gameObject.SetActive(true);
+                //stickLimit.gameObject.SetActive(true);                
             }
 
             if(/* isGrounded &&  */Input.mousePosition.x > Screen.width/2) {
@@ -78,9 +141,10 @@ public class Movement : MonoBehaviour
         else {
             touchStart = false;
         }
+        #endif
     }
 
-    void FixedUpdate() {
+/*     void FixedUpdate() {
         if(touchStart && canMove){
 
             Vector3 offset = new Vector3(currTouchPos.x-initTouchPos.x, 0, currTouchPos.y - initTouchPos.y);
@@ -111,7 +175,7 @@ public class Movement : MonoBehaviour
             stickLimit.gameObject.SetActive(false);
             canMove = false;
         }
-    }
+    } */
 
     private void movePlayer(Vector3 direction, float speedMove) {
         Quaternion rotation = direction != Vector3.zero
@@ -126,5 +190,6 @@ public class Movement : MonoBehaviour
         Debug.Log("Jumped");
         isGrounded = false;
     }
+
 
 }

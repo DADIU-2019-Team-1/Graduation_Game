@@ -70,7 +70,7 @@ public class CameraMovement : MonoBehaviour
         trackX = track.gameObject.transform.position.x;
         if (transform.position.x >= (track.m_Waypoints[0].position.x + trackX) 
             && transform.position.x <= track.m_Waypoints[track.m_Waypoints.Length - 1].position.x + trackX)
-            transform.position = Vector3.SmoothDamp(transform.position, new Vector3(camTarget.position.x, camRail.position.y + heightIncrease, camRail.position.z),
+            transform.position = Vector3.SmoothDamp(transform.position, new Vector3(player.position.x, camRail.position.y + heightIncrease, camRail.position.z),
             ref camMovement, camMoveTime.value * Time.deltaTime);
         else
             transform.position = Vector3.SmoothDamp(transform.position, new Vector3(camRail.position.x, camRail.position.y + heightIncrease, camRail.position.z),

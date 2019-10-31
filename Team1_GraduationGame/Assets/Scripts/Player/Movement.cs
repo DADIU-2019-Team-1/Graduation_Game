@@ -18,26 +18,28 @@ public class Movement : MonoBehaviour
     public Transform stick;
 [Tooltip("Put the joystick border here")]
     public Transform stickLimit;
-    public FloatReference movementSpeed;
-
 
     public FloatReference sneakSpeed;
-
+    public FloatReference walkSpeed;
     public FloatReference runSpeed;
-
-    public FloatReference jumpHeight;
-
     public FloatReference rotationSpeed;
+    public FloatReference jumpHeight;
     public IntReference radius;
+
+    public FloatVariable currentSpeed;
 
     public FloatReference fallMultiplier;
 
     //public FloatReference floatingWeight;
 
     private int leftTouch = 99;
-
-[SerializeField]
-    private float sneakThreshold, runThreshold;
+    private Vector3 _previousPosition = Vector3.zero;
+    
+    [Header("Sneak threshold must be smaller than run threshold!")]
+    [SerializeField] [Range(0.0f,1.0f)]
+    private float sneakThreshold;
+    [SerializeField] [Range(0.0f, 1.0f)] 
+    private float runThreshold;
     //public List<Touchlocation> touches = new List<Touchlocation>();
     void Start()
     {
@@ -46,6 +48,7 @@ public class Movement : MonoBehaviour
 
     void FixedUpdate()
     {
+        _previousPosition = transform.position;
         // Making sure touches only run on Android
         #if UNITY_ANDROID
         int i = 0;
@@ -76,20 +79,18 @@ public class Movement : MonoBehaviour
                 joyDiff = Vector2.ClampMagnitude(joyDiff, radius.value);
                 //Debug.Log("Mouse pos is: " + Input.mousePosition);
                 //Debug.Log("Touch pos is " + t.position);
-                if(dragDist < radius.value * sneakThreshold) {
-                    movePlayer(direction, sneakSpeed.value);
-                    //Debug.Log("Is sneaking with speed " + playerRB.velocity.magnitude);
-                    
-                }
-                if(dragDist > radius.value * sneakThreshold && dragDist < radius.value * runThreshold) {
-                    movePlayer(direction, movementSpeed.value);
-                    //Debug.Log("Is walking with speed " + playerRB.velocity.magnitude);
-                }
-                    
 
-                if(dragDist > radius.value * runThreshold) {
+                if (dragDist <= radius.value * sneakThreshold)
+                {
+                    movePlayer(direction, sneakSpeed.value);
+                }
+                else if (dragDist > radius.value * sneakThreshold && dragDist < radius.value * runThreshold)
+                {
+                    movePlayer(direction, walkSpeed.value);
+                }
+                else if (dragDist >= radius.value * runThreshold)
+                {
                     movePlayer(direction, runSpeed.value);
-                    //Debug.Log("Is running with speed " + playerRB.velocity.magnitude);
                 }
                 stick.transform.position = joyDiff + new Vector2(stickLimit.transform.position.x, stickLimit.transform.position.y);
                 // t.deltaPosition; is a Vector2 of the difference between the last frame to its position this frame. 
@@ -153,20 +154,15 @@ public class Movement : MonoBehaviour
             float dragDist = Vector2.Distance(stick.transform.position, stickLimit.transform.position);
             Vector2 joyDiff = Input.mousePosition - stickLimit.transform.position;
             joyDiff = Vector2.ClampMagnitude(joyDiff, radius.value);
-            if(dragDist < radius.value * 0.25) {
-                movePlayer(direction, sneakSpeed.value);
-                //Debug.Log("Is sneaking with speed " + playerRB.velocity.magnitude);
-                
-            }
-            if(dragDist > radius.value * 0.25 && dragDist < radius.value * 0.8f) {
-                movePlayer(direction, movementSpeed.value);
-                //Debug.Log("Is walking with speed " + playerRB.velocity.magnitude);
-            }
-                
 
-            if(dragDist > radius.value * 0.6) {
+            if(dragDist <= radius.value * sneakThreshold) {
+                movePlayer(direction, sneakSpeed.value);
+            }
+            else if(dragDist > radius.value * sneakThreshold && dragDist < radius.value * runThreshold) {
+                movePlayer(direction, walkSpeed.value);
+            }
+            else if(dragDist >= radius.value * runThreshold) {
                 movePlayer(direction, runSpeed.value);
-                //Debug.Log("Is running with speed " + playerRB.velocity.magnitude);
             }
                 
             stick.transform.position = joyDiff + new Vector2(stickLimit.transform.position.x, stickLimit.transform.position.y);
@@ -193,7 +189,7 @@ public class Movement : MonoBehaviour
                 
             }
             if(dragDist > radius.value * 0.25 && dragDist < radius.value * 0.8f) {
-                movePlayer(direction, movementSpeed.value);
+                movePlayer(direction, walkSpeed.value);
                 Debug.Log("Is walking with speed " + playerRB.velocity.magnitude);
             }
                 
@@ -217,7 +213,7 @@ public class Movement : MonoBehaviour
             ? Quaternion.LookRotation(direction) : Quaternion.identity; // Shorthand if : else
         transform.rotation = Quaternion.Slerp(transform.rotation, rotation, Time.deltaTime * rotationSpeed.value);
         playerRB.MovePosition(transform.position + (direction * speedMove * Time.deltaTime));
-
+        currentSpeed.value = speedMove * direction.magnitude;
     }
 
     private void playerJump(Vector3 direction, float jumpHeight) {
@@ -231,6 +227,7 @@ public class Movement : MonoBehaviour
 
     public float GetSpeed()
     {
-        return movementSpeed.value;
+        currentSpeed.value = Vector3.Distance(transform.position, _previousPosition) / Time.fixedDeltaTime;
+        return currentSpeed.value;
     }
 }

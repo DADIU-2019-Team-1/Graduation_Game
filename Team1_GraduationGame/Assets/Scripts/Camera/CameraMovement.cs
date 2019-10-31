@@ -31,6 +31,7 @@ public class CameraMovement : MonoBehaviour
     private Quaternion targetRotation;
     private Vector3 camMovement, lookPosition;
     private float heightIncrease, trackX;
+    private bool _endOfRail;
 
     void Start()
     {
@@ -59,20 +60,29 @@ public class CameraMovement : MonoBehaviour
 
     void LateUpdate()
     {
-        // Position update
         heightIncrease = Vector3.Distance(player.position, new Vector3(player.position.x, camRail.position.y, camRail.position.z)) * heightDistanceFactor.value;
-        lookPosition = CalculateLookPosition(player.position, camTarget.position, focusRange.value, focusObjects);
-        
+
+        // Check if camera has passed the end of the track
         trackX = track.gameObject.transform.position.x;
-        if (transform.position.x >= (track.m_Waypoints[0].position.x + trackX) 
-            && transform.position.x <= track.m_Waypoints[track.m_Waypoints.Length - 1].position.x + trackX)
+        if (!_endOfRail)
+        {
+            // Position update
             transform.position = Vector3.SmoothDamp(transform.position, new Vector3(player.position.x, camRail.position.y + heightIncrease, camRail.position.z),
-            ref camMovement, camMoveTime.value * Time.deltaTime);
-        else
-            transform.position = Vector3.SmoothDamp(transform.position, new Vector3(camRail.position.x, camRail.position.y + heightIncrease, camRail.position.z),
                 ref camMovement, camMoveTime.value * Time.deltaTime);
+            if (transform.position.x < (track.m_Waypoints[0].position.x + trackX) || transform.position.x > track.m_Waypoints[track.m_Waypoints.Length - 1].position.x + trackX)
+                _endOfRail = true;
+        }
+        else
+        {
+            // Y and Z update
+            transform.position = Vector3.SmoothDamp(transform.position, new Vector3(transform.position.x, camRail.position.y + heightIncrease, camRail.position.z),
+                ref camMovement, camMoveTime.value * Time.deltaTime);
+            if (player.position.x >= (track.m_Waypoints[0].position.x + trackX) && player.position.x <= track.m_Waypoints[track.m_Waypoints.Length - 1].position.x + trackX)
+                _endOfRail = false;
+        }
 
         // Rotation update
+        lookPosition = CalculateLookPosition(player.position, camTarget.position, focusRange.value, focusObjects);
         targetRotation = (lookPosition - transform.position != Vector3.zero)
             ? Quaternion.LookRotation(lookPosition - transform.position) : Quaternion.identity;
         transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, camLookSpeed.value * Time.deltaTime);

@@ -30,6 +30,10 @@ public class Movement : MonoBehaviour
     public FloatReference rotationSpeed;
     public IntReference radius;
 
+    public FloatReference fallMultiplier;
+
+    //public FloatReference floatingWeight;
+
     private int leftTouch = 99;
 
 [SerializeField]
@@ -186,7 +190,10 @@ public class Movement : MonoBehaviour
     }
 
     private void playerJump(Vector3 direction, float jumpHeight) {
-        playerRB.AddForce(direction * jumpHeight);
+        if(playerRB.velocity.y < 0) {
+            //playerRB.mass * fallMultiplier.value;
+        }
+        playerRB.AddForce(direction * jumpHeight, ForceMode.Impulse);
         //Debug.Log("Jumped");
         //canJump = false;
     }

@@ -191,5 +191,8 @@ public class Movement : MonoBehaviour
         //canJump = false;
     }
 
-
+    public float GetSpeed()
+    {
+        return movementSpeed.value;
+    }
 }

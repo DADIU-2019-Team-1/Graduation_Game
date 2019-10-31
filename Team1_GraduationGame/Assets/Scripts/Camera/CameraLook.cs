@@ -5,6 +5,8 @@ public class CameraLook : MonoBehaviour
     [Tooltip("If no player is defined, the GameObject with the tag \"Player\" will be used.")]
     public Transform player;
     public Vector3 offset = new Vector3(0.0f,0.0f,0.0f);
+    [Tooltip("Control the amount that the players direction influences the camera.")] [Range(0.0f,1.0f)]
+    [SerializeField] private float lookDirFactor = 0.5f;
 
     private Movement playerMovement;
     private Vector3 moveDir;
@@ -20,10 +22,18 @@ public class CameraLook : MonoBehaviour
             Debug.LogError("The player does not have a movement script attached!", player);
     }
 
-    // Update is called once per frame
+    private void OnDrawGizmos()
+    {
+        if (Application.isPlaying)
+        {
+            Gizmos.color = Color.cyan;
+            Gizmos.DrawLine(transform.position, transform.position + moveDir);
+        }
+    }
+
     void Update()
     {
-        moveDir = player.forward * playerMovement.GetSpeed();
-        transform.position = player.position + offset;
+        moveDir = player.forward * playerMovement.GetSpeed() * lookDirFactor;
+        transform.position = player.position + offset + moveDir;
     }
 }

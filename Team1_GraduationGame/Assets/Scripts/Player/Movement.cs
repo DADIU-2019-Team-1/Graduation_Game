@@ -213,7 +213,6 @@ public class Movement : MonoBehaviour
             ? Quaternion.LookRotation(direction) : Quaternion.identity; // Shorthand if : else
         transform.rotation = Quaternion.Slerp(transform.rotation, rotation, Time.deltaTime * rotationSpeed.value);
         playerRB.MovePosition(transform.position + (direction * speedMove * Time.deltaTime));
-        currentSpeed.value = speedMove * direction.magnitude;
     }
 
     private void playerJump(Vector3 direction, float jumpHeight) {

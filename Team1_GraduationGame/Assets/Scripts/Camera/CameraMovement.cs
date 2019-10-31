@@ -1,14 +1,19 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
+using Cinemachine;
+
 public class CameraMovement : MonoBehaviour
 {
-    // --- Public
+
+    // --- References
     [Tooltip("If Camera Target is not set, object with tag \"CamLookAt\" will be used instead. \"Player\" will be used as a fallback.")]
     public Transform camTarget;
     [Tooltip("If Player Target is not set, object with tag \"Player\" will be used instead.")]
     public Transform player;
     [Tooltip("If Camera Rail is not set, object with tag \"RailCamera\" will be used instead.")]
     public Transform camRail;
+    [Tooltip("If the Camera Track is not set, object with he script \"Cinemachine Smooth Path\" will be used instead")]
+    public CinemachineSmoothPath track;
 
     // --- Inspector
     [Tooltip("Use to create an array of tags that will be used as focus points. Each object with a tag in this array will be counted as a focus point, if within the focus range.")]
@@ -25,7 +30,7 @@ public class CameraMovement : MonoBehaviour
 
     // --- Private
     private List<GameObject> focusObjects;
-    private float heightIncrease;
+    private float heightIncrease, trackX;
     private Vector3 camMovement, lookPosition;
     private Quaternion targetRotation;
 
@@ -41,6 +46,8 @@ public class CameraMovement : MonoBehaviour
         }
         if (camRail == null)
             camRail = GameObject.FindGameObjectWithTag("RailCamera").transform;
+        if (track == null)
+            track = FindObjectOfType<CinemachineSmoothPath>();
 
         focusObjects = new List<GameObject>();
         for (int i = 0; i < tagsToFocus.Length; i++)
@@ -49,9 +56,8 @@ public class CameraMovement : MonoBehaviour
         // Init position and rotation
         heightIncrease = Vector3.Distance(player.position, new Vector3(player.position.x, camRail.position.y, camRail.position.z)) * heightDistanceFactor.value;
         lookPosition = CalculateLookPosition(player.position, camTarget.position, focusRange.value, focusObjects);
-        transform.position = new Vector3(camTarget.position.x, camRail.position.y + heightIncrease, camRail.position.z);
-        targetRotation = (lookPosition - transform.position != Vector3.zero) ? Quaternion.LookRotation(lookPosition - transform.position) : Quaternion.identity;
-        transform.rotation = targetRotation;
+        transform.position = new Vector3(player.position.x, camRail.position.y + heightIncrease, camRail.position.z);
+        transform.LookAt(player);
     }
 
     void LateUpdate()
@@ -59,9 +65,15 @@ public class CameraMovement : MonoBehaviour
         // Position update
         heightIncrease = Vector3.Distance(player.position, new Vector3(player.position.x, camRail.position.y, camRail.position.z)) * heightDistanceFactor.value;
         lookPosition = CalculateLookPosition(player.position, camTarget.position, focusRange.value, focusObjects);
-        //if (camRail.position.x >= 0)
-        transform.position = Vector3.SmoothDamp(transform.position, new Vector3(camTarget.position.x, camRail.position.y + heightIncrease, camRail.position.z),
+        
+        trackX = track.gameObject.transform.position.x;
+        if (transform.position.x >= (track.m_Waypoints[0].position.x + trackX) 
+            && transform.position.x <= track.m_Waypoints[track.m_Waypoints.Length - 1].position.x + trackX)
+            transform.position = Vector3.SmoothDamp(transform.position, new Vector3(player.position.x, camRail.position.y + heightIncrease, camRail.position.z),
             ref camMovement, camMoveTime.value * Time.deltaTime);
+        else
+            transform.position = Vector3.SmoothDamp(transform.position, new Vector3(camRail.position.x, camRail.position.y + heightIncrease, camRail.position.z),
+                ref camMovement, camMoveTime.value * Time.deltaTime);
 
         // Rotation update
         targetRotation = (lookPosition - transform.position != Vector3.zero)

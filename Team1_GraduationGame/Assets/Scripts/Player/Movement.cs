@@ -75,18 +75,18 @@ public class Movement : MonoBehaviour
             joyDiff = Vector2.ClampMagnitude(joyDiff, radius.value);
             if(dragDist < radius.value * 0.25) {
                 movePlayer(direction, sneakSpeed.value);
-                Debug.Log("Is sneaking with speed " + playerRB.velocity.magnitude);
+                //Debug.Log("Is sneaking with speed " + playerRB.velocity.magnitude);
                 
             }
             if(dragDist > radius.value * 0.25 && dragDist < radius.value * 0.8f) {
                 movePlayer(direction, movementSpeed.value);
-                Debug.Log("Is walking with speed " + playerRB.velocity.magnitude);
+                //Debug.Log("Is walking with speed " + playerRB.velocity.magnitude);
             }
                 
 
             if(dragDist > radius.value * 0.8) {
                 movePlayer(direction, runSpeed.value);
-                Debug.Log("Is running with speed " + playerRB.velocity.magnitude);
+                //Debug.Log("Is running with speed " + playerRB.velocity.magnitude);
             }
                 
             stick.transform.position = joyDiff + new Vector2(stickLimit.transform.position.x, stickLimit.transform.position.y);

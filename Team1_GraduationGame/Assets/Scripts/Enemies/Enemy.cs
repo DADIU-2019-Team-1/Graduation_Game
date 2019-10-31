@@ -19,9 +19,10 @@
         public BaseEnemy thisEnemy;
         public VoidEvent playerDiedEvent;
         public Light viewConeLight;
+        private Rigidbody _playerRigidBody;
 
         // Public variables:
-        public float wayPointReachRange = 1.0f, aggroTime = 5.0f, attackTime = 0.25f;
+        public float wayPointReachRange = 1.0f;
         public bool drawGizmos = true, useWaitTime, rotateAtWaypoints, loopWaypointRoutine = true;
         public Color normalConeColor = Color.yellow, aggroConeColor = Color.red;
         [HideInInspector] public bool useGlobalWaitTime = true;
@@ -30,7 +31,8 @@
         [HideInInspector] public GameObject parentWayPoint;
 
         // Private variables:
-        private bool _active, _timerRunning, _destinationSet, _isRotating, _isAggro, _isHugging, _rotatingAtWp;
+        private bool _active, _timerRunning, _destinationSet, _isRotating, _isAggro, 
+            _isHugging, _rotatingAtWp, _inTriggerZone, _accelerating, _hearingDisabled;
         private NavMeshAgent _navMeshAgent;
         private NavMeshPath _path;
         private Vector3 _lastSighting;
@@ -39,6 +41,7 @@
         private SphereCollider _thisCollider;
         private int _currentWayPoint = 0, _state = 0;
         private float[] _waitTimes;
+        private float _targetSpeed;
 
         #endregion
 
@@ -50,10 +53,19 @@
 
             if (_player != null && thisEnemy != null)
             {
+                if (_player.GetComponent<Rigidbody>() != null)
+                {
+                    _playerRigidBody = _player.GetComponent<Rigidbody>();
+                }
+                else
+                {
+                    _hearingDisabled = true;
+                    Debug.Log("Enemy hearing disabled: Player does not have a rigid body attached");
+                }
                 _active = true;
             }
             else
-                Debug.LogError("Enemy Error: Player not found or scriptable object not attached!");
+                Debug.LogError("Enemy disabled: Player not found or scriptable object not attached!");
 
 
             if (_active)
@@ -97,39 +109,6 @@
                             _wayPointRotations[i] = new Vector3(0, wayPoints[i].GetComponent<WayPoint>().enemyLookDirection, 0);
                     }
                 }
-            }
-        }
-
-        #endregion
-
-        /// <summary>
-        /// 0 = Walking, 1 = Running, 2 = Attacking
-        /// </summary>
-        public void SwitchState(int state)
-        {
-            if (_navMeshAgent != null && thisEnemy != null)
-            {
-                if (!thisEnemy.canRun)
-                    return;
-
-                switch (state)
-                {
-                    case 0:
-                        _navMeshAgent.speed = thisEnemy.walkSpeed;
-                        _navMeshAgent.angularSpeed = thisEnemy.walkTurnSpeed;
-                        break;
-                    case 1:
-                        _navMeshAgent.speed = thisEnemy.runSpeed;
-                        _navMeshAgent.angularSpeed = thisEnemy.runTurnSpeed;
-                        break;
-                    case 2:
-                        _navMeshAgent.speed = 0;
-                        _active = false;
-                        break;
-                    default:
-                        Debug.LogError("Enemy Error: trying to switch to state that doesn't exist!'");
-                        break;
-                }
 
                 if (viewConeLight != null)
                 {
@@ -140,16 +119,59 @@
             }
         }
 
+        #endregion
+
+        /// <summary>
+        /// 0 = Walking, 1 = Running, 2 = Attacking
+        /// </summary>
+        public void SwitchState(int state)
+        {
+            _state = state;
+
+            if (_accelerating)
+                _accelerating = false;
+            
+
+            switch (state)
+            {
+                case 0:
+                    _targetSpeed = thisEnemy.walkSpeed;
+                    //_navMeshAgent.speed = thisEnemy.walkSpeed;
+                    _navMeshAgent.angularSpeed = thisEnemy.walkTurnSpeed;
+                    break;
+                case 1:
+                    if (!thisEnemy.canRun)
+                        return;
+                    _targetSpeed = thisEnemy.runSpeed;
+                    //_navMeshAgent.speed = thisEnemy.runSpeed;
+                    _navMeshAgent.angularSpeed = thisEnemy.runTurnSpeed;
+                    break;
+                case 2:
+                    _targetSpeed = 0;
+                    _navMeshAgent.speed = 0;
+                    _active = false;
+                    break;
+                default:
+                    Debug.LogError("Enemy Error: trying to switch to state that doesn't exist!'");
+                    break;
+            }
+
+            _accelerating = true; // Enables accelerating in the update loop to desired state
+
+        }
+
         private void FixedUpdate()
         {
+
             if (_active)
             {
                 if (!_isAggro && wayPoints != null && wayPoints.Count != 0)
                 {
-                    SwitchState(0); // Switch to walking
+                    if (_state != 0)
+                        SwitchState(0); // Switch to walking
 
                     if (Vector3.Distance(transform.position, wayPoints[_currentWayPoint].transform.position) < wayPointReachRange)
-                    {
+                    {   
                         if (!rotateAtWaypoints)
                             _isRotating = false;
                         else
@@ -169,7 +191,7 @@
 
                 if (_isAggro)
                 {
-                    if (!_isHugging)
+                    if (!_isHugging && _state != 1)
                         SwitchState(1); // Switch to running
 
                     _navMeshAgent.SetDestination(_lastSighting);
@@ -181,36 +203,51 @@
                         if (!_isHugging)
                             StartCoroutine(EnemyHug());
                     }
-                    else
-                    if (_isHugging)
-                        StopCoroutine(EnemyHug());
+
+                    if (Vector3.Distance(transform.position, _lastSighting) < thisEnemy.embraceDistance)
+                    {
+                        _destinationSet = false;
+                        _isAggro = false;
+                    }
                 }
 
                 if (_isRotating)
                 {
                     Quaternion lookRotation;
-                    float turnSpeed = 1;
-
-                    if (_state == 0)
-                        turnSpeed = thisEnemy.walkTurnSpeed;
-                    else if (_state == 1)
-                        turnSpeed = thisEnemy.runTurnSpeed;
 
                     if (!_rotatingAtWp)
                         lookRotation = _navMeshAgent.velocity.normalized != Vector3.zero ? Quaternion.LookRotation(_navMeshAgent.velocity.normalized) : transform.rotation;
                     else
                         lookRotation = Quaternion.Euler(_wayPointRotations[_currentWayPoint]) != Quaternion.identity ? Quaternion.Euler(_wayPointRotations[_currentWayPoint]) : transform.rotation;
 
-                    transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, turnSpeed);
+                    transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, _navMeshAgent.angularSpeed);
 
                 }
 
-                ViewLightConeControl(); 
+                if (_accelerating && _state != 2)
+                {
+                    if (_navMeshAgent.speed < _targetSpeed)
+                    {
+                        _navMeshAgent.speed += thisEnemy.AccelerationTime * Time.fixedDeltaTime;
+                        if (_navMeshAgent.speed >= _targetSpeed)
+                            _accelerating = false;
+                    }
+                    else if (_navMeshAgent.speed > _targetSpeed)
+                    {
+                        _navMeshAgent.speed -= thisEnemy.DeAccelerationTime * Time.fixedDeltaTime;
+                        if (_navMeshAgent.speed <= _targetSpeed)
+                            _accelerating = false;
+                    }
+                }
+
+                ViewLightConeControl();
+
             }
         }
 
         private void UpdatePathRoutine()
         {
+            Debug.Log("Updating PATH ROUTINE");
             if (!useWaitTime)
             {
                 if (loopWaypointRoutine)
@@ -252,16 +289,34 @@
                                     StartCoroutine(EnemyAggro());
                             }
                     }
-                    else if (HearingPathLength() < thisEnemy.hearingDistance /* && _player.  - TODO: Get player state if walking/sneaking*/)
+                    else if (!_hearingDisabled)
                     {
-                        _lastSighting = _player.transform.position;
-                        if (!_isAggro)
-                            StartCoroutine(EnemyAggro());
+                        if (HearingPathLength() < thisEnemy.hearingDistance // &&
+                            /*_playerRigidBody.velocity.magnitude > 0.05f*/) // TODO: Use the state of the player (walking, sneaking etc.)
+                        {
+                            // Debug.Log(_playerRigidBody.velocity.magnitude);
+                            _lastSighting = _player.transform.position;
+
+                            if (!_isAggro)
+                                StartCoroutine(EnemyAggro());
+                        }
+                        
                     }
                     else if (_isAggro)
                     {
                         _lastSighting = _player.transform.position;
                     }
+
+                    _inTriggerZone = true;
+                }
+        }
+
+        private void OnTriggerExit(Collider col)
+        {
+            if (_active)
+                if (col.tag == _player.tag)
+                {
+                    _inTriggerZone = false;
                 }
         }
 
@@ -283,9 +338,9 @@
         {
             _isAggro = true;
             yield return new WaitForSeconds(thisEnemy.aggroTime);
-            _isAggro = false;   // TODO: Make a better solution
+            if (!_inTriggerZone)
+                _isAggro = false;
 
-            yield return new WaitForSeconds(0.2f);
             if (!_isAggro)
                 _destinationSet = false;
         }
@@ -338,37 +393,32 @@
             {
                 if (_isAggro && viewConeLight.color != aggroConeColor)
                     viewConeLight.color = aggroConeColor;
-                else if (viewConeLight.color != normalConeColor)
+                else if (!_isAggro && viewConeLight.color != normalConeColor)
                     viewConeLight.color = normalConeColor;
             }
         }
 
         private float HearingPathLength()
         {
-            if (_navMeshAgent != null)
+            _navMeshAgent.CalculatePath(_player.transform.position, _path);
+
+            Vector3[] allPathPoints = new Vector3[_path.corners.Length + 2];
+            allPathPoints[0] = transform.position;
+            allPathPoints[allPathPoints.Length - 1] = _player.transform.position;
+
+            for (int i = 0; i < _path.corners.Length; i++)
             {
-                _navMeshAgent.CalculatePath(_player.transform.position, _path);
-
-                Vector3[] allPathPoints = new Vector3[_path.corners.Length + 2];
-                allPathPoints[0] = transform.position;
-                allPathPoints[allPathPoints.Length - 1] = _player.transform.position;
-
-                for (int i = 0; i < _path.corners.Length; i++)
-                {
-                    allPathPoints[i + 1] = _path.corners[i];
-                }
-
-                float tempPathLength = 0.0f;
-
-                for (int i = 0; i < allPathPoints.Length - 1; i++)
-                {
-                    tempPathLength += Vector3.Distance(allPathPoints[i], allPathPoints[i + 1]);
-                }
-
-                return tempPathLength;
+                allPathPoints[i + 1] = _path.corners[i];
             }
 
-            return 0;
+            float tempPathLength = 0.0f;
+
+            for (int i = 0; i < allPathPoints.Length - 1; i++)
+            {
+                tempPathLength += Vector3.Distance(allPathPoints[i], allPathPoints[i + 1]);
+            }
+
+            return tempPathLength;
         }
 
         #region Setter and Getters

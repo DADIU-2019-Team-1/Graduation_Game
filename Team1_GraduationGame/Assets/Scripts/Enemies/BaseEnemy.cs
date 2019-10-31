@@ -15,13 +15,11 @@
         public bool canRun = true;
         public float walkSpeed;
         public float walkTurnSpeed;
-        public float walkAccelerationTime;
-        public float walkDeAccelerationTime;
 
         public float runSpeed;
         public float runTurnSpeed;
-        public float runAccelerationTime;
-        public float runDeAccelerationTime;
+        public float AccelerationTime;
+        public float DeAccelerationTime;
 
         public float fieldOfView;
         public float viewDistance;
@@ -67,8 +65,6 @@
 
             script.walkSpeed = EditorGUILayout.FloatField("Walk Speed", script.walkSpeed);
             script.walkTurnSpeed = EditorGUILayout.FloatField("Walk Turn Speed", script.walkTurnSpeed);
-            script.walkAccelerationTime = EditorGUILayout.FloatField("Walk Acceleration", script.walkAccelerationTime);
-            script.walkDeAccelerationTime = EditorGUILayout.FloatField("Walk DeAcceleration", script.walkDeAccelerationTime);
 
             DrawUILine(true);
 
@@ -79,8 +75,8 @@
 
                 script.runSpeed = EditorGUILayout.FloatField("Run Speed", script.runSpeed);
                 script.runTurnSpeed = EditorGUILayout.FloatField("Run Turn Speed", script.runTurnSpeed);
-                script.runAccelerationTime = EditorGUILayout.FloatField("Run Acceleration", script.runAccelerationTime);
-                script.runDeAccelerationTime = EditorGUILayout.FloatField("Run DeAcceleration", script.runDeAccelerationTime);
+                script.AccelerationTime = EditorGUILayout.FloatField("Acceleration", script.AccelerationTime);
+                script.DeAccelerationTime = EditorGUILayout.FloatField("DeAcceleration", script.DeAccelerationTime);
 
                 DrawUILine(true);
             }

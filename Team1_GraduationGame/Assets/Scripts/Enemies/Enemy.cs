@@ -23,7 +23,7 @@
 
         // Public variables:
         public float wayPointReachRange = 1.0f;
-        public bool drawGizmos = true, useWaitTime, rotateAtWaypoints, loopWaypointRoutine = true;
+        public bool drawGizmos = true, useWaitTime, rotateAtWaypoints, loopWaypointRoutine = true, alwaysAggro;
         public Color normalConeColor = Color.yellow, aggroConeColor = Color.red;
         [HideInInspector] public bool useGlobalWaitTime = true;
         [HideInInspector] public float waitTime = 0.0f;
@@ -116,6 +116,9 @@
                     viewConeLight.color = normalConeColor;
                     viewConeLight.spotAngle = thisEnemy.fieldOfView;
                 }
+
+                if (alwaysAggro)
+                    _isAggro = true;
             }
         }
 
@@ -189,6 +192,11 @@
                     }
                 }
 
+                if (alwaysAggro)
+                {
+                    _lastSighting = _player.transform.position;
+                }
+
                 if (_isAggro)
                 {
                     if (!_isHugging && _state != 1)
@@ -247,7 +255,6 @@
 
         private void UpdatePathRoutine()
         {
-            Debug.Log("Updating PATH ROUTINE");
             if (!useWaitTime)
             {
                 if (loopWaypointRoutine)
@@ -271,7 +278,7 @@
 
         private void OnTriggerStay(Collider col)
         {
-            if (_active)
+            if (_active && !alwaysAggro)
                 if (col.tag == _player.tag)
                 {
                     Vector3 dir = _player.transform.position - transform.position;

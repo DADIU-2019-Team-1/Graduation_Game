@@ -25,6 +25,7 @@
 
         public float fieldOfView;
         public float viewDistance;
+        public float hearingDistance;
         [Tooltip("In seconds")] public float aggroTime;
 
         [Tooltip("0 means they cannot be pushed down")]
@@ -89,7 +90,8 @@
 
         script.fieldOfView = EditorGUILayout.FloatField("Field Of View", script.fieldOfView);
         script.viewDistance = EditorGUILayout.FloatField("View Distance", script.viewDistance);
-        script.aggroTime = EditorGUILayout.FloatField("Aggro Time (sec)", script.aggroTime);
+        script.hearingDistance = EditorGUILayout.FloatField("Hearing Distance", script.hearingDistance);
+            script.aggroTime = EditorGUILayout.FloatField("Aggro Time (sec)", script.aggroTime);
         script.pushedDownDuration = EditorGUILayout.FloatField("Pushed Down Duration", script.pushedDownDuration);
         script.embraceDistance = EditorGUILayout.FloatField("Embrace Distance", script.embraceDistance);
         script.embraceDelay = EditorGUILayout.FloatField("Embrace Delay", script.embraceDelay);

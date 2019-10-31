@@ -13,13 +13,17 @@
     [RequireComponent(typeof(SphereCollider), typeof(NavMeshAgent))]
     public class Enemy : MonoBehaviour
     {
-        // Scriptable Object References:
+        #region Variables
+
+        // References:
         public BaseEnemy thisEnemy;
         public VoidEvent playerDiedEvent;
+        public Light viewConeLight;
 
         // Public variables:
         public float wayPointReachRange = 1.0f, aggroTime = 5.0f, attackTime = 0.25f;
-        public bool drawGizmos = true, useWaitTime, rotateAtWaypoints;
+        public bool drawGizmos = true, useWaitTime, rotateAtWaypoints, loopWaypointRoutine = true;
+        public Color normalConeColor = Color.yellow, aggroConeColor = Color.red;
         [HideInInspector] public bool useGlobalWaitTime = true;
         [HideInInspector] public float waitTime = 0.0f;
         [HideInInspector] public List<GameObject> wayPoints;
@@ -28,12 +32,17 @@
         // Private variables:
         private bool _active, _timerRunning, _destinationSet, _isRotating, _isAggro, _isHugging, _rotatingAtWp;
         private NavMeshAgent _navMeshAgent;
+        private NavMeshPath _path;
         private Vector3 _lastSighting;
         private Vector3[] _wayPointRotations;
         private GameObject _player;
         private SphereCollider _thisCollider;
         private int _currentWayPoint = 0, _state = 0;
         private float[] _waitTimes;
+
+        #endregion
+
+        #region Awake
 
         void Awake()
         {
@@ -62,6 +71,7 @@
                     _navMeshAgent = GetComponent<NavMeshAgent>();
                     _navMeshAgent.speed = thisEnemy.walkSpeed;
                     _navMeshAgent.angularSpeed = thisEnemy.walkTurnSpeed;
+                    _path = new NavMeshPath();
                 }
                 else
                 {
@@ -85,12 +95,12 @@
                         _waitTimes[i] = wayPoints[i].GetComponent<WayPoint>().specificWaitTime;
                         if (rotateAtWaypoints)
                             _wayPointRotations[i] = new Vector3(0, wayPoints[i].GetComponent<WayPoint>().enemyLookDirection, 0);
-
-                        Debug.Log(_wayPointRotations[i]);
                     }
                 }
             }
         }
+
+        #endregion
 
         /// <summary>
         /// 0 = Walking, 1 = Running, 2 = Attacking
@@ -120,6 +130,13 @@
                         Debug.LogError("Enemy Error: trying to switch to state that doesn't exist!'");
                         break;
                 }
+
+                if (viewConeLight != null)
+                {
+                    viewConeLight.range = thisEnemy.viewDistance;
+                    viewConeLight.color = normalConeColor;
+                    viewConeLight.spotAngle = thisEnemy.fieldOfView;
+                }
             }
         }
 
@@ -138,19 +155,10 @@
                         else
                             _rotatingAtWp = true;
 
-                        if (!useWaitTime)
-                        {
-                            _currentWayPoint = (_currentWayPoint + 1) % wayPoints.Count;
-                            _destinationSet = false;
-                        }
-                        else if (useWaitTime && !_timerRunning)
-                        {
-                            StartCoroutine(WaitTimer());
-                            _timerRunning = true;
-                        }
+                        UpdatePathRoutine();
                     }
 
-                    if (!_destinationSet)
+                    if (!_destinationSet)   // If no destination set
                     {
                         _navMeshAgent.SetDestination(wayPoints[_currentWayPoint].transform.position);
                         _rotatingAtWp = false;
@@ -196,6 +204,31 @@
                     transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, turnSpeed);
 
                 }
+
+                ViewLightConeControl(); 
+            }
+        }
+
+        private void UpdatePathRoutine()
+        {
+            if (!useWaitTime)
+            {
+                if (loopWaypointRoutine)
+                    _currentWayPoint = (_currentWayPoint + 1) % wayPoints.Count;
+                else
+                {
+                    if (_currentWayPoint + 1 > wayPoints.Count)
+                        _currentWayPoint = 0;
+                    else
+                        _currentWayPoint = (_currentWayPoint + 1);
+                }
+
+                _destinationSet = false;
+            }
+            else if (useWaitTime && !_timerRunning)
+            {
+                StartCoroutine(WaitTimer());
+                _timerRunning = true;
             }
         }
 
@@ -219,12 +252,20 @@
                                     StartCoroutine(EnemyAggro());
                             }
                     }
+                    else if (HearingPathLength() < thisEnemy.hearingDistance /* && _player.  - TODO: Get player state if walking/sneaking*/)
+                    {
+                        _lastSighting = _player.transform.position;
+                        if (!_isAggro)
+                            StartCoroutine(EnemyAggro());
+                    }
                     else if (_isAggro)
                     {
                         _lastSighting = _player.transform.position;
                     }
                 }
         }
+
+        #region Co-Routines
 
         private IEnumerator WaitTimer()
         {
@@ -242,7 +283,7 @@
         {
             _isAggro = true;
             yield return new WaitForSeconds(thisEnemy.aggroTime);
-            _isAggro = false;
+            _isAggro = false;   // TODO: Make a better solution
 
             yield return new WaitForSeconds(0.2f);
             if (!_isAggro)
@@ -274,6 +315,14 @@
             }
         }
 
+        private IEnumerator PushDownDelay()
+        {
+            yield return new WaitForSeconds(thisEnemy.pushedDownDuration);
+            _active = true;
+        }
+
+        #endregion
+
         public void PushDown()
         {
             if (thisEnemy != null && _active)
@@ -283,12 +332,46 @@
             }
         }
 
-        private IEnumerator PushDownDelay()
+        private void ViewLightConeControl()
         {
-            yield return new WaitForSeconds(thisEnemy.pushedDownDuration);
-            _active = true;
+            if (viewConeLight != null)
+            {
+                if (_isAggro && viewConeLight.color != aggroConeColor)
+                    viewConeLight.color = aggroConeColor;
+                else if (viewConeLight.color != normalConeColor)
+                    viewConeLight.color = normalConeColor;
+            }
         }
 
+        private float HearingPathLength()
+        {
+            if (_navMeshAgent != null)
+            {
+                _navMeshAgent.CalculatePath(_player.transform.position, _path);
+
+                Vector3[] allPathPoints = new Vector3[_path.corners.Length + 2];
+                allPathPoints[0] = transform.position;
+                allPathPoints[allPathPoints.Length - 1] = _player.transform.position;
+
+                for (int i = 0; i < _path.corners.Length; i++)
+                {
+                    allPathPoints[i + 1] = _path.corners[i];
+                }
+
+                float tempPathLength = 0.0f;
+
+                for (int i = 0; i < allPathPoints.Length - 1; i++)
+                {
+                    tempPathLength += Vector3.Distance(allPathPoints[i], allPathPoints[i + 1]);
+                }
+
+                return tempPathLength;
+            }
+
+            return 0;
+        }
+
+        #region Setter and Getters
         public void SetIsActive(bool isActive)
         {
             _active = isActive;
@@ -297,6 +380,55 @@
         public bool GetIsActive()
         {
             return _active;
+        }
+        #endregion
+
+        #region WayPoint System
+        public void AddWayPoint()
+        {
+            GameObject tempWayPointObj;
+
+            if (!GameObject.Find("EnemyWaypoints"))
+                new GameObject("EnemyWaypoints");
+
+            if (!GameObject.Find(gameObject.name + "_Waypoints"))
+            {
+                parentWayPoint = new GameObject(gameObject.name + "_Waypoints");
+
+                parentWayPoint.AddComponent<WayPoint>();
+                parentWayPoint.GetComponent<WayPoint>().isParent = true;
+                parentWayPoint.transform.parent =
+                    GameObject.Find("EnemyWaypoints").transform;
+            }
+            else
+            {
+                parentWayPoint = GameObject.Find(gameObject.name + "_Waypoints");
+            }
+
+            if (wayPoints == null)
+            {
+                wayPoints = new List<GameObject>();
+            }
+
+            tempWayPointObj = new GameObject("WayPoint" + (wayPoints.Count + 1));
+            tempWayPointObj.AddComponent<WayPoint>();
+            WayPoint tempWayPointScript = tempWayPointObj.GetComponent<WayPoint>();
+            tempWayPointScript.wayPointId = wayPoints.Count + 1;
+            tempWayPointScript.parentEnemy = gameObject;
+            tempWayPointScript.parentWayPoint = parentWayPoint;
+
+            tempWayPointObj.transform.position = gameObject.transform.position;
+            tempWayPointObj.transform.parent = parentWayPoint.transform;
+            wayPoints.Add(tempWayPointObj);
+        }
+
+        public void RemoveWayPoint()
+        {
+            if (wayPoints != null)
+                if (wayPoints.Count > 0)
+                {
+                    DestroyImmediate(wayPoints[wayPoints.Count - 1].gameObject);
+                }
         }
 
 #if UNITY_EDITOR
@@ -332,6 +464,7 @@
                 }
         }
 #endif
+        #endregion
     }
 
     #region Custom Inspector
@@ -392,50 +525,12 @@
 
             if (GUILayout.Button("Add WayPoint"))
             {
-                GameObject tempWayPointObj;
-
-                if (!GameObject.Find("EnemyWaypoints"))
-                    new GameObject("EnemyWaypoints");
-
-                if (!GameObject.Find(script.gameObject.name + "_Waypoints"))
-                {
-                    script.parentWayPoint = new GameObject(script.gameObject.name + "_Waypoints");
-                    _parentWayPoint = script.parentWayPoint;
-                    _parentWayPoint.AddComponent<WayPoint>();
-                    _parentWayPoint.GetComponent<WayPoint>().isParent = true;
-                    _parentWayPoint.transform.parent =
-                        GameObject.Find("EnemyWaypoints").transform;
-                }
-                else
-                {
-                    _parentWayPoint = GameObject.Find(script.gameObject.name + "_Waypoints");
-                }
-
-                if (script.wayPoints == null)
-                {
-                    script.wayPoints = new List<GameObject>();
-                }
-
-                tempWayPointObj = new GameObject("WayPoint" + (script.wayPoints.Count + 1));
-                tempWayPointObj.AddComponent<WayPoint>();
-                WayPoint tempWayPointScript = tempWayPointObj.GetComponent<WayPoint>();
-                tempWayPointScript.wayPointId = script.wayPoints.Count + 1;
-                tempWayPointScript.parentEnemy = script.gameObject;
-                tempWayPointScript.parentWayPoint = _parentWayPoint;
-
-                tempWayPointObj.transform.position = script.gameObject.transform.position;
-                tempWayPointObj.transform.parent = _parentWayPoint.transform;
-                script.wayPoints.Add(tempWayPointObj);
+                script.AddWayPoint();
             }
 
             if (GUILayout.Button("Remove WayPoint"))
             {
-                if (script.wayPoints != null)
-                    if (script.wayPoints.Count > 0)
-                    {
-                        DestroyImmediate(script.wayPoints[script.wayPoints.Count - 1].gameObject);
-
-                    }
+                script.RemoveWayPoint();
             }
 
             serializedObject.ApplyModifiedProperties();

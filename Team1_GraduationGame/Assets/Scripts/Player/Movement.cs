@@ -128,13 +128,13 @@ public class Movement : MonoBehaviour
             // If the anchor point for Joystick is on the left side of the screen, allow movement.
             if(stickLimit.transform.position.x < Screen.width/2) {
                 canMove = true;
-                //stick.gameObject.SetActive(true);
-                //stickLimit.gameObject.SetActive(true);                
+                stick.gameObject.SetActive(true);
+                stickLimit.gameObject.SetActive(true);                
             }
 
-            if(/* isGrounded &&  */Input.mousePosition.x > Screen.width/2 && canJump) {
+/*             if(Input.mousePosition.x > Screen.width/2 && canJump) {
                 playerJump(Vector3.up, jumpHeight.value);
-            }
+            } */
 
         }
         if(Input.GetMouseButton(0)) {
@@ -144,6 +144,37 @@ public class Movement : MonoBehaviour
         }
         else {
             touchStart = false;
+        }
+
+        if(touchStart && canMove){
+
+            Vector3 offset = new Vector3(currTouchPos.x-initTouchPos.x, 0, currTouchPos.y - initTouchPos.y);
+            Vector3 direction = Vector3.ClampMagnitude(offset, 1.0f);
+            float dragDist = Vector2.Distance(stick.transform.position, stickLimit.transform.position);
+            Vector2 joyDiff = Input.mousePosition - stickLimit.transform.position;
+            joyDiff = Vector2.ClampMagnitude(joyDiff, radius.value);
+            if(dragDist < radius.value * 0.25) {
+                movePlayer(direction, sneakSpeed.value);
+                //Debug.Log("Is sneaking with speed " + playerRB.velocity.magnitude);
+                
+            }
+            if(dragDist > radius.value * 0.25 && dragDist < radius.value * 0.8f) {
+                movePlayer(direction, movementSpeed.value);
+                //Debug.Log("Is walking with speed " + playerRB.velocity.magnitude);
+            }
+                
+
+            if(dragDist > radius.value * 0.6) {
+                movePlayer(direction, runSpeed.value);
+                //Debug.Log("Is running with speed " + playerRB.velocity.magnitude);
+            }
+                
+            stick.transform.position = joyDiff + new Vector2(stickLimit.transform.position.x, stickLimit.transform.position.y);
+        }
+        else {
+            stick.gameObject.SetActive(false);
+            stickLimit.gameObject.SetActive(false);
+            canMove = false;
         }
         #endif
     }

@@ -15,16 +15,15 @@
         public bool canRun = true;
         public float walkSpeed;
         public float walkTurnSpeed;
-        public float walkAccelerationTime;
-        public float walkDeAccelerationTime;
 
         public float runSpeed;
         public float runTurnSpeed;
-        public float runAccelerationTime;
-        public float runDeAccelerationTime;
+        public float AccelerationTime;
+        public float DeAccelerationTime;
 
         public float fieldOfView;
         public float viewDistance;
+        public float hearingDistance;
         [Tooltip("In seconds")] public float aggroTime;
 
         [Tooltip("0 means they cannot be pushed down")]
@@ -36,7 +35,7 @@
 
 #if UNITY_EDITOR
     [CustomEditor(typeof(BaseEnemy))]
-    public class BaseEnemy_Inspector : Editor
+    public class BaseEnemy_Inspector : UnityEditor.Editor
     {
         private GUIStyle _style = new GUIStyle();
         private GameObject _parentWayPoint;
@@ -66,8 +65,6 @@
 
             script.walkSpeed = EditorGUILayout.FloatField("Walk Speed", script.walkSpeed);
             script.walkTurnSpeed = EditorGUILayout.FloatField("Walk Turn Speed", script.walkTurnSpeed);
-            script.walkAccelerationTime = EditorGUILayout.FloatField("Walk Acceleration", script.walkAccelerationTime);
-            script.walkDeAccelerationTime = EditorGUILayout.FloatField("Walk DeAcceleration", script.walkDeAccelerationTime);
 
             DrawUILine(true);
 
@@ -78,8 +75,8 @@
 
                 script.runSpeed = EditorGUILayout.FloatField("Run Speed", script.runSpeed);
                 script.runTurnSpeed = EditorGUILayout.FloatField("Run Turn Speed", script.runTurnSpeed);
-                script.runAccelerationTime = EditorGUILayout.FloatField("Run Acceleration", script.runAccelerationTime);
-                script.runDeAccelerationTime = EditorGUILayout.FloatField("Run DeAcceleration", script.runDeAccelerationTime);
+                script.AccelerationTime = EditorGUILayout.FloatField("Acceleration", script.AccelerationTime);
+                script.DeAccelerationTime = EditorGUILayout.FloatField("DeAcceleration", script.DeAccelerationTime);
 
                 DrawUILine(true);
             }
@@ -89,11 +86,13 @@
 
         script.fieldOfView = EditorGUILayout.FloatField("Field Of View", script.fieldOfView);
         script.viewDistance = EditorGUILayout.FloatField("View Distance", script.viewDistance);
-        script.aggroTime = EditorGUILayout.FloatField("Aggro Time (sec)", script.aggroTime);
+        script.hearingDistance = EditorGUILayout.FloatField("Hearing Distance", script.hearingDistance);
+            script.aggroTime = EditorGUILayout.FloatField("Aggro Time (sec)", script.aggroTime);
         script.pushedDownDuration = EditorGUILayout.FloatField("Pushed Down Duration", script.pushedDownDuration);
         script.embraceDistance = EditorGUILayout.FloatField("Embrace Distance", script.embraceDistance);
         script.embraceDelay = EditorGUILayout.FloatField("Embrace Delay", script.embraceDelay);
 
+            DrawUILine(true);
 
             serializedObject.ApplyModifiedProperties();
 

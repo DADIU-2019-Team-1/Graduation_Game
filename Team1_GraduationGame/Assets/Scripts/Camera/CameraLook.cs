@@ -24,7 +24,10 @@ public class CameraLook : MonoBehaviour
 
     void Update()
     {
-        moveDir = player.forward * playerMovement.GetSpeed() * lookDirFactor;
-        transform.position = player.position + offset + moveDir;
+        if (player != null)
+        {
+            moveDir = player.forward * playerMovement.GetSpeed() * lookDirFactor;
+            transform.position = player.position + offset + moveDir;
+        }
     }
 }

@@ -6,7 +6,7 @@ namespace Team1_GraduationGame.Editor
     [CustomPropertyDrawer(typeof(ScriptableObject), true)]
     public class ScriptableObjectDrawer : PropertyDrawer
     {
-        // Cached scriptable object editor
+        //Cached scriptable object editor
         private UnityEditor.Editor editor = null;
 
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)

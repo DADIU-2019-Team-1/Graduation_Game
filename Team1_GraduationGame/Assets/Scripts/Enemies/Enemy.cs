@@ -19,8 +19,8 @@
         public BaseEnemy thisEnemy;
         public VoidEvent playerDiedEvent;
         public Light viewConeLight;
+        public IntVariable playerMoveState;
         private GameObject _player;
-        private Movement _movement;
 
         // Public variables:
         public float wayPointReachRange = 1.0f;
@@ -54,9 +54,10 @@
 
             if (_player != null && thisEnemy != null)
             {
-                if (_player.GetComponent<Movement>() != null)
+                if (playerMoveState == null)
                 {
-                    _movement = _player.GetComponent<Movement>();
+                    _hearingDisabled = true;
+                    Debug.LogError("Enemy hearing and light FOV disabled: Player move state scriptable object not attached");
                 }
 
                 _active = true;
@@ -112,6 +113,8 @@
                     viewConeLight.range = thisEnemy.viewDistance;
                     viewConeLight.color = normalConeColor;
                     viewConeLight.spotAngle = thisEnemy.fieldOfView;
+                    if (_hearingDisabled)
+                        viewConeLight.gameObject.SetActive(false);
                 }
 
                 if (alwaysAggro)
@@ -163,6 +166,7 @@
 
             if (_active)
             {
+
                 if (!_isAggro && wayPoints != null && wayPoints.Count != 0)
                 {
                     if (_state != 0)
@@ -307,10 +311,9 @@
                     }
                     else if (!_hearingDisabled)
                     {
-                        if (HearingPathLength() < thisEnemy.hearingDistance // &&
-                            /*_playerRigidBody.velocity.magnitude > 0.05f*/) // TODO: Use the state of the player (walking, sneaking etc.)
+                        if (HearingPathLength() < thisEnemy.hearingDistance && playerMoveState.value != 0)
                         {
-                            // Debug.Log(_playerRigidBody.velocity.magnitude);
+
                             _lastSighting = _player.transform.position;
 
                             if (!_isAggro)
@@ -373,7 +376,7 @@
             {
                 Debug.Log("THE PLAYER DIED");
                 // _player TODO freeze player for animation
-                if (_movement != null)
+                if (_player.GetComponent<Movement>() != null)
                 {
                     
                 }
@@ -385,7 +388,7 @@
             }
             else
             {
-                //_active = true;
+                _active = true;
                 _isHugging = false;
                 if (!alwaysAggro)
                     _isAggro = false;
@@ -412,18 +415,27 @@
             if (thisEnemy != null && _active)
             {
                 _active = false;
+                // TODO: play lie down/knocked down animation
                 StartCoroutine(PushDownDelay());
             }
         }
 
         private void ViewLightConeControl()
         {
-            if (viewConeLight != null)
+            if (viewConeLight != null && playerMoveState != null)
             {
                 if (_isAggro && viewConeLight.color != aggroConeColor)
                     viewConeLight.color = aggroConeColor;
                 else if (!_isAggro && viewConeLight.color != normalConeColor)
                     viewConeLight.color = normalConeColor;
+
+                if (playerMoveState.value == 0 || playerMoveState.value == 1)
+                {
+                    if (!viewConeLight.gameObject.activeSelf)
+                        viewConeLight.gameObject.SetActive(true);
+                }
+                else if (viewConeLight.gameObject.activeSelf)
+                    viewConeLight.gameObject.SetActive(false);
             }
         }
 

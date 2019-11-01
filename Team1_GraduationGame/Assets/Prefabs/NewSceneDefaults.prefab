@@ -125,35 +125,39 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 57f10f26dc2bfb048b505753cd7efe99, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cam: {fileID: 3858903073085410831}
   stick: {fileID: 4670351513292053977}
   stickLimit: {fileID: 4670351513541716107}
-  movementSpeed:
-    UseUnique: 0
-    UniqueValue: 0
-    Variable: {fileID: 11400000, guid: 72987dbff0efcb344bd7e5ef71736dab, type: 2}
   sneakSpeed:
     UseUnique: 0
     UniqueValue: 0
     Variable: {fileID: 11400000, guid: beaa666bd53abc04ba6dbb8907186ed4, type: 2}
+  walkSpeed:
+    UseUnique: 0
+    UniqueValue: 0
+    Variable: {fileID: 11400000, guid: 72987dbff0efcb344bd7e5ef71736dab, type: 2}
   runSpeed:
     UseUnique: 0
     UniqueValue: 0
     Variable: {fileID: 11400000, guid: ca822172e7d5f314aaee0844346375f0, type: 2}
-  jumpHeight:
-    UseUnique: 0
-    UniqueValue: 0
-    Variable: {fileID: 11400000, guid: 3999ce15becbdb94ba845827c2594c03, type: 2}
   rotationSpeed:
     UseUnique: 0
     UniqueValue: 0
     Variable: {fileID: 11400000, guid: c6005f997cbf1974ea2c928175f551f7, type: 2}
+  jumpHeight:
+    UseUnique: 0
+    UniqueValue: 0
+    Variable: {fileID: 11400000, guid: 3999ce15becbdb94ba845827c2594c03, type: 2}
   radius:
     UseUnique: 0
     UniqueValue: 0
     Variable: {fileID: 11400000, guid: 2ba7ed972f6e3a740b27636fabad48e7, type: 2}
-  sneakThreshold: 0
-  runThreshold: 0
+  currentSpeed: {fileID: 11400000, guid: 6f04acf1fc8e6a24791f3fdc75e797ea, type: 2}
+  fallMultiplier:
+    UseUnique: 0
+    UniqueValue: 0
+    Variable: {fileID: 11400000, guid: aaf15d79fe870524a81070406eb46d86, type: 2}
+  sneakThreshold: 0.25
+  runThreshold: 0.6
 --- !u!114 &7648211996843181835
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -341,7 +345,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Path: {fileID: 7402701510758800487}
-  m_PathPosition: -1294.2
+  m_PathPosition: -1952.2
   m_PositionUnits: 0
   m_PathOffset: {x: 0, y: 0, z: 0}
   m_XDamping: 0
@@ -639,6 +643,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   player: {fileID: 7020747481704675806}
   offset: {x: 0, y: 0, z: 5}
+  lookDirFactor: 0.5
 --- !u!1 &7877415379597357470
 GameObject:
   m_ObjectHideFlags: 0
@@ -815,11 +820,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 5483937188614877533}
     m_Modifications:
-    - target: {fileID: 921742750582883387, guid: c8d97037f69919949a0ba5f06d242b31,
-        type: 3}
-      propertyPath: m_Name
-      value: UI_Canvas
-      objectReference: {fileID: 0}
     - target: {fileID: 921742750582883335, guid: c8d97037f69919949a0ba5f06d242b31,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -924,6 +924,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Pivot.y
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 921742750582883387, guid: c8d97037f69919949a0ba5f06d242b31,
+        type: 3}
+      propertyPath: m_Name
+      value: UI_Canvas
       objectReference: {fileID: 0}
     - target: {fileID: 921742750582883334, guid: c8d97037f69919949a0ba5f06d242b31,
         type: 3}

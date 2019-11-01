@@ -22,15 +22,6 @@ public class CameraLook : MonoBehaviour
             Debug.LogError("The player does not have a movement script attached!", player);
     }
 
-    private void OnDrawGizmos()
-    {
-        if (Application.isPlaying)
-        {
-            Gizmos.color = Color.cyan;
-            Gizmos.DrawLine(transform.position, transform.position + moveDir);
-        }
-    }
-
     void Update()
     {
         moveDir = player.forward * playerMovement.GetSpeed() * lookDirFactor;

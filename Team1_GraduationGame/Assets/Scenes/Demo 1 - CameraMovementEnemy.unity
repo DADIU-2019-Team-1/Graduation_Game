@@ -1112,6 +1112,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: TestFriend (4)
       objectReference: {fileID: 0}
+    - target: {fileID: 4456813836948738216, guid: 05f9fe18599d12546bfaafa6b92e23c8,
+        type: 3}
+      propertyPath: m_TagString
+      value: Enemy
+      objectReference: {fileID: 0}
     - target: {fileID: 9171046653398836518, guid: 05f9fe18599d12546bfaafa6b92e23c8,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -1460,6 +1465,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: TestFriend (3)
+      objectReference: {fileID: 0}
+    - target: {fileID: 4456813836948738216, guid: 05f9fe18599d12546bfaafa6b92e23c8,
+        type: 3}
+      propertyPath: m_TagString
+      value: Enemy
       objectReference: {fileID: 0}
     - target: {fileID: 9171046653398836518, guid: 05f9fe18599d12546bfaafa6b92e23c8,
         type: 3}
@@ -2045,6 +2055,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: TestFriend (2)
+      objectReference: {fileID: 0}
+    - target: {fileID: 4456813836948738216, guid: 05f9fe18599d12546bfaafa6b92e23c8,
+        type: 3}
+      propertyPath: m_TagString
+      value: Enemy
       objectReference: {fileID: 0}
     - target: {fileID: 9171046653398836518, guid: 05f9fe18599d12546bfaafa6b92e23c8,
         type: 3}
@@ -3699,6 +3714,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: TestFriend (1)
       objectReference: {fileID: 0}
+    - target: {fileID: 4456813836948738216, guid: 05f9fe18599d12546bfaafa6b92e23c8,
+        type: 3}
+      propertyPath: m_TagString
+      value: Enemy
+      objectReference: {fileID: 0}
     - target: {fileID: 9171046653398836518, guid: 05f9fe18599d12546bfaafa6b92e23c8,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -4749,7 +4769,8 @@ MonoBehaviour:
   player: {fileID: 1721784002}
   camRail: {fileID: 8194826370944137963}
   track: {fileID: 4782204825982270320}
-  tagsToFocus: []
+  tagsToFocus:
+  - Enemy
   heightDistanceFactor:
     UseUnique: 0
     UniqueValue: 0
@@ -4777,6 +4798,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: TestFriend
+      objectReference: {fileID: 0}
+    - target: {fileID: 4456813836948738216, guid: 05f9fe18599d12546bfaafa6b92e23c8,
+        type: 3}
+      propertyPath: m_TagString
+      value: Enemy
       objectReference: {fileID: 0}
     - target: {fileID: 9171046653398836518, guid: 05f9fe18599d12546bfaafa6b92e23c8,
         type: 3}
@@ -5145,5 +5171,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bceff3ba87df70c469be368fab67656c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  player: {fileID: 0}
+  player: {fileID: 1721784002}
   offset: {x: 0, y: 0, z: 5}
+  lookDirFactor: 0.5

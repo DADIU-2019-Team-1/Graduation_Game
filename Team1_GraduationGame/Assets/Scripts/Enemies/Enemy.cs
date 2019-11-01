@@ -19,7 +19,8 @@
         public BaseEnemy thisEnemy;
         public VoidEvent playerDiedEvent;
         public Light viewConeLight;
-        private Rigidbody _playerRigidBody;
+        private GameObject _player;
+        private Movement _movement;
 
         // Public variables:
         public float wayPointReachRange = 1.0f;
@@ -37,7 +38,6 @@
         private NavMeshPath _path;
         private Vector3 _lastSighting;
         private Vector3[] _wayPointRotations;
-        private GameObject _player;
         private SphereCollider _thisCollider;
         private int _currentWayPoint = 0, _state = 0, _layerMask;
         private float[] _waitTimes;
@@ -54,15 +54,11 @@
 
             if (_player != null && thisEnemy != null)
             {
-                if (_player.GetComponent<Rigidbody>() != null)
+                if (_player.GetComponent<Movement>() != null)
                 {
-                    _playerRigidBody = _player.GetComponent<Rigidbody>();
+                    _movement = _player.GetComponent<Movement>();
                 }
-                else
-                {
-                    _hearingDisabled = true;
-                    Debug.Log("Enemy hearing disabled: Player does not have a rigid body attached");
-                }
+
                 _active = true;
             }
             else
@@ -222,7 +218,7 @@
                 {
                     Quaternion lookRotation;
 
-                    if (!_rotatingAtWp)
+                    if (!_rotatingAtWp || _isAggro)
                         lookRotation = _navMeshAgent.velocity.normalized != Vector3.zero ? Quaternion.LookRotation(_navMeshAgent.velocity.normalized) : transform.rotation;
                     else
                         lookRotation = Quaternion.Euler(_wayPointRotations[_currentWayPoint]) != Quaternion.identity ? Quaternion.Euler(_wayPointRotations[_currentWayPoint]) : transform.rotation;
@@ -377,6 +373,10 @@
             {
                 Debug.Log("THE PLAYER DIED");
                 // _player TODO freeze player for animation
+                if (_movement != null)
+                {
+                    
+                }
 
                 if (playerDiedEvent != null)
                 {
@@ -385,7 +385,7 @@
             }
             else
             {
-                _active = true;
+                //_active = true;
                 _isHugging = false;
                 if (!alwaysAggro)
                     _isAggro = false;

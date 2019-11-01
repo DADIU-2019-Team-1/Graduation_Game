@@ -1,18 +1,22 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
+using Cinemachine;
+
 public class CameraMovement : MonoBehaviour
 {
-    // --- Public
-    [Tooltip("If Camera Target is not set, object with tag \"CamLookAt\" will be used instead. \n\"Player\" will be used as a fallback.")]
+    // --- References
+    [Tooltip("If Camera Target is not set, object with tag \"CamLookAt\" will be used instead. \"Player\" will be used as a fallback.")]
     public Transform camTarget;
     [Tooltip("If Player Target is not set, object with tag \"Player\" will be used instead.")]
     public Transform player;
     [Tooltip("If Camera Rail is not set, object with tag \"RailCamera\" will be used instead.")]
     public Transform camRail;
+    [Tooltip("If the Camera Track is not set, object with he script \"Cinemachine Smooth Path\" will be used instead")]
+    public CinemachineSmoothPath track;
 
     // --- Inspector
+    [Tooltip("Use to create an array of tags that will be used as focus points. Each object with a tag in this array will be counted as a focus point, if within the focus range.")]
     [TagSelector] [SerializeField] private string[] tagsToFocus;
-
     [Tooltip("This value is used to determine the height when the target is far away.")] 
     [SerializeField] private FloatReference heightDistanceFactor;
     [Tooltip("A higher value makes the camera LookAt more aggressive.")]
@@ -23,10 +27,11 @@ public class CameraMovement : MonoBehaviour
     [SerializeField] private FloatReference focusRange;
 
     // --- Private
-    [SerializeField] private List<GameObject> focusObjects; // TODO: Remove SerializeField when feature is approved
-    [SerializeField] private List<float> focusPointWeights; // Includes the player, so start at 1  // TODO: Remove SerializeField when feature is approved
-    private float heightIncrease;
+    private List<GameObject> focusObjects;
+    private Quaternion targetRotation;
     private Vector3 camMovement, lookPosition;
+    private float heightIncrease, trackX;
+    private bool _endOfRail;
 
     void Start()
     {
@@ -40,23 +45,45 @@ public class CameraMovement : MonoBehaviour
         }
         if (camRail == null)
             camRail = GameObject.FindGameObjectWithTag("RailCamera").transform;
+        if (track == null)
+            track = FindObjectOfType<CinemachineSmoothPath>();
 
         focusObjects = new List<GameObject>();
-        focusPointWeights = new List<float>();
         for (int i = 0; i < tagsToFocus.Length; i++)
             focusObjects.AddRange(GameObject.FindGameObjectsWithTag(tagsToFocus[i]));
+
+        // Init position and rotation
+        heightIncrease = Vector3.Distance(player.position, new Vector3(player.position.x, camRail.position.y, camRail.position.z)) * heightDistanceFactor.value;
+        transform.position = new Vector3(player.position.x, camRail.position.y + heightIncrease, camRail.position.z);
+        transform.LookAt(player);
     }
 
     void LateUpdate()
     {
-        // Position update
         heightIncrease = Vector3.Distance(player.position, new Vector3(player.position.x, camRail.position.y, camRail.position.z)) * heightDistanceFactor.value;
-        lookPosition = CalculateLookPosition(camTarget.position, focusRange.value, focusObjects, ref focusPointWeights);
-        transform.position = Vector3.SmoothDamp(transform.position, new Vector3(camTarget.position.x, camRail.position.y + heightIncrease, camRail.position.z),
-            ref camMovement, camMoveTime.value * Time.deltaTime);
+
+        // Check if camera has passed the end of the track
+        trackX = track.gameObject.transform.position.x;
+        if (!_endOfRail)
+        {
+            // Position update
+            transform.position = Vector3.SmoothDamp(transform.position, new Vector3(player.position.x, camRail.position.y + heightIncrease, camRail.position.z),
+                ref camMovement, camMoveTime.value * Time.deltaTime);
+            if (transform.position.x < (track.m_Waypoints[0].position.x + trackX) || transform.position.x > track.m_Waypoints[track.m_Waypoints.Length - 1].position.x + trackX)
+                _endOfRail = true;
+        }
+        else
+        {
+            // Y and Z update
+            transform.position = Vector3.SmoothDamp(transform.position, new Vector3(transform.position.x, camRail.position.y + heightIncrease, camRail.position.z),
+                ref camMovement, camMoveTime.value * Time.deltaTime);
+            if (player.position.x >= (track.m_Waypoints[0].position.x + trackX) && player.position.x <= track.m_Waypoints[track.m_Waypoints.Length - 1].position.x + trackX)
+                _endOfRail = false;
+        }
 
         // Rotation update
-        Quaternion targetRotation = (lookPosition - transform.position != Vector3.zero)
+        lookPosition = CalculateLookPosition(player.position, camTarget.position, focusRange.value, focusObjects);
+        targetRotation = (lookPosition - transform.position != Vector3.zero)
             ? Quaternion.LookRotation(lookPosition - transform.position) : Quaternion.identity;
         transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, camLookSpeed.value * Time.deltaTime);
     }
@@ -72,35 +99,25 @@ public class CameraMovement : MonoBehaviour
     /// based on the proximity to the target. Takes a main target which serves as the focus of the system, a list of objects
     /// in the system, and an empty reference list of floats, used to calculate the point weights.
     /// </summary>
-    /// <param name="target">The target for the system to be created around.</param>
+    /// <param name="systemCenter">The target for the system to be centered around.</param>
+    /// <param name="currentTarget">The current look target, which should be weighted 1 regardless. Can be the same as the system center.</param>
     /// <param name="systemRadius">The radius around the target for the system to be created around.</param>
     /// <param name="objects">The objects that, if within the radius of the target, are included in the system.</param>
-    /// <param name="pointWeights">A reference list of floats to hold the weights for each object in the system.</param>
     /// <returns></returns>
-    private Vector3 CalculateLookPosition(Vector3 target, float systemRadius, List<GameObject> objects, ref List<float> pointWeights)
+    private Vector3 CalculateLookPosition(Vector3 systemCenter, Vector3 currentTarget, float systemRadius, List<GameObject> objects)
     {
-        pointWeights.Clear();
-        float avgFocusX = target.x;
-        float avgFocusY = target.y;
-        float avgFocusZ = target.z;
+        Vector3 focusWithWeights = currentTarget;
+        float totalWeight = 1; // Starts at 1 because the currentTarget has a weight of 1
         for (int i = 0; i < objects.Count; i++)
         {
-            if (Vector3.Distance(target, objects[i].transform.position) <= systemRadius)
+            if (Vector3.Distance(systemCenter, objects[i].transform.position) <= systemRadius)
             {
-                float weight = (systemRadius - Vector3.Distance(target, objects[i].transform.position)) / systemRadius;
-                pointWeights.Add(weight);
+                float weight = (systemRadius - Vector3.Distance(systemCenter, objects[i].transform.position)) / systemRadius;
+                totalWeight += weight;
 
-                avgFocusX += objects[i].transform.position.x * weight;
-                avgFocusY += objects[i].transform.position.y * weight;
-                avgFocusZ += objects[i].transform.position.z * weight;
+                focusWithWeights += objects[i].transform.position * weight;
             }
         }
-
-        float totalWeight = 1; // Starts at 1 because the target has a weight of 1
-
-        for (int i = 0; i < pointWeights.Count; i++)
-            totalWeight += pointWeights[i];
-
-        return new Vector3(avgFocusX / totalWeight, avgFocusY / totalWeight, avgFocusZ / totalWeight);
+        return focusWithWeights / totalWeight;
     }
 }

@@ -59,10 +59,8 @@ public class Movement : MonoBehaviour
             //playerRB.mass * fallMultiplier.value;
                 
                 playerRB.velocity += Vector3.up * Physics.gravity.y * (fallMultiplier.value -1) * Time.deltaTime;
-                Debug.Log("Velocity is: " + playerRB.velocity.y);
                 
                 if(Physics.Raycast(leftFootPos.transform.position, Vector3.down, 0.10f) || Physics.Raycast(rightFootPos.transform.position, Vector3.down, 0.10f)) {
-                    Debug.Log("Is on ground");
                     isJumping = false;
                 }
             }
@@ -95,8 +93,6 @@ public class Movement : MonoBehaviour
                 Vector2 joyDiff = t.position - new Vector2(stickLimit.transform.position.x, stickLimit.transform.position.y);
                 // Need new clamping.
                 joyDiff = Vector2.ClampMagnitude(joyDiff, radius.value);
-                //Debug.Log("Mouse pos is: " + Input.mousePosition);
-                //Debug.Log("Touch pos is " + t.position);
 
                 if(dragDist <= radius.value * idleThreshold) {
                     //movePlayer(direction,0);
@@ -224,13 +220,11 @@ public class Movement : MonoBehaviour
 
     private void playerJump(Vector3 direction, float jumpHeight) {
         if(!isJumping && (Physics.Raycast(leftFootPos.transform.position, Vector3.down, 0.10f) || Physics.Raycast(rightFootPos.transform.position, Vector3.down, 0.10f))) {
-            //Debug.Log("Velocity before: " + playerRB.velocity.y);
             playerRB.AddForce(direction * jumpHeight, ForceMode.Impulse);
-            //Debug.Log("Velocity after: " + playerRB.velocity.y);
 /*         if(playerRB.velocity.y <= 0) {
             //playerRB.mass * fallMultiplier.value;
             playerRB.velocity += Vector3.up * Physics.gravity.y * (fallMultiplier.value -1) * Time.deltaTime;
-            Debug.Log("Velocity is: " + playerRB.velocity.y);
+
         } */
         // If the feet are atleast 10 cm away from the ground. 
             isJumping = true;
@@ -238,7 +232,6 @@ public class Movement : MonoBehaviour
         }
         
         
-        //Debug.Log("Jumped");
         //canJump = false;
     }
 

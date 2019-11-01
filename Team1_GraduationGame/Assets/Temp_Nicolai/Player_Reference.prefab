@@ -107,21 +107,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 57f10f26dc2bfb048b505753cd7efe99, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cam: {fileID: 0}
   stick: {fileID: 0}
   stickLimit: {fileID: 0}
-  movementSpeed:
-    UseUnique: 0
-    UniqueValue: 0
-    Variable: {fileID: 11400000, guid: 72987dbff0efcb344bd7e5ef71736dab, type: 2}
   sneakSpeed:
     UseUnique: 0
     UniqueValue: 0
     Variable: {fileID: 11400000, guid: beaa666bd53abc04ba6dbb8907186ed4, type: 2}
+  walkSpeed:
+    UseUnique: 0
+    UniqueValue: 0
+    Variable: {fileID: 11400000, guid: 72987dbff0efcb344bd7e5ef71736dab, type: 2}
   runSpeed:
     UseUnique: 0
     UniqueValue: 0
     Variable: {fileID: 11400000, guid: ca822172e7d5f314aaee0844346375f0, type: 2}
+  rotationSpeed:
+    UseUnique: 0
+    UniqueValue: 0
+    Variable: {fileID: 11400000, guid: c6005f997cbf1974ea2c928175f551f7, type: 2}
   jumpHeight:
     UseUnique: 0
     UniqueValue: 0
@@ -130,6 +133,15 @@ MonoBehaviour:
     UseUnique: 0
     UniqueValue: 0
     Variable: {fileID: 11400000, guid: 2ba7ed972f6e3a740b27636fabad48e7, type: 2}
+  currentSpeed: {fileID: 11400000, guid: 6f04acf1fc8e6a24791f3fdc75e797ea, type: 2}
+  fallMultiplier:
+    UseUnique: 0
+    UniqueValue: 0
+    Variable: {fileID: 11400000, guid: aaf15d79fe870524a81070406eb46d86, type: 2}
+  moveState: {fileID: 11400000, guid: 064acbb0600eace4e969fd76909dcac8, type: 2}
+  idleThreshold: 0.1
+  sneakThreshold: 0
+  runThreshold: 0
 --- !u!54 &3781292225541080262
 Rigidbody:
   m_ObjectHideFlags: 0

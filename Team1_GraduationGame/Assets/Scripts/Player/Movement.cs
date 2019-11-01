@@ -6,7 +6,7 @@ using UnityEngine;
 public class Movement : MonoBehaviour
 {
     private Rigidbody playerRB;
-    private bool touchStart = false, canMove = false, canJump = false, canAttack, isJumping = false;
+    private bool touchStart = false, canMove = false, canJump = true, canAttack, isJumping = false;
     private Vector3 initTouchPos;
     private Vector3 currTouchPos;
 
@@ -32,6 +32,8 @@ public class Movement : MonoBehaviour
     public IntVariable moveState;
     private RaycastHit[] hit;
 
+    public GameObject leftFootPos, rightFootPos;
+
     //public FloatReference floatingWeight;
 
     private int leftTouch = 99;
@@ -53,6 +55,17 @@ public class Movement : MonoBehaviour
 
     void FixedUpdate()
     {
+        if(playerRB.velocity.y <= 0 && isJumping) {
+            //playerRB.mass * fallMultiplier.value;
+                
+                playerRB.velocity += Vector3.up * Physics.gravity.y * (fallMultiplier.value -1) * Time.deltaTime;
+                Debug.Log("Velocity is: " + playerRB.velocity.y);
+                
+                if(Physics.Raycast(leftFootPos.transform.position, Vector3.down, 0.10f) || Physics.Raycast(rightFootPos.transform.position, Vector3.down, 0.10f)) {
+                    Debug.Log("Is on ground");
+                    isJumping = false;
+                }
+            }
         _previousPosition = transform.position;
         // Making sure touches only run on Android
         #if UNITY_ANDROID
@@ -86,22 +99,23 @@ public class Movement : MonoBehaviour
                 //Debug.Log("Touch pos is " + t.position);
 
                 if(dragDist <= radius.value * idleThreshold) {
-                    moveState.value = 0;
+                    //movePlayer(direction,0);
+                    //moveState.value = 0;
                 }
                 else if (dragDist > radius.value * idleThreshold && dragDist <= radius.value * sneakThreshold)
                 {
                     movePlayer(direction, sneakSpeed.value);
-                    moveState.value = 1;
+                    //moveState.value = 1;
                 }
                 else if (dragDist > radius.value * sneakThreshold && dragDist < radius.value * runThreshold)
                 {
                     movePlayer(direction, walkSpeed.value);
-                    moveState.value = 2;
+                    //moveState.value = 2;
                 }
                 else if (dragDist >= radius.value * runThreshold)
                 {
                     movePlayer(direction, runSpeed.value);
-                    moveState.value = 3;
+                    //moveState.value = 3;
                 }
                 stick.transform.position = joyDiff + new Vector2(stickLimit.transform.position.x, stickLimit.transform.position.y);
                 // t.deltaPosition; is a Vector2 of the difference between the last frame to its position this frame. 
@@ -167,19 +181,20 @@ public class Movement : MonoBehaviour
             joyDiff = Vector2.ClampMagnitude(joyDiff, radius.value);
 
             if(dragDist <= radius.value * idleThreshold) {
-                moveState.value = 0;
+                //movePlayer(direction, 0);
+                //moveState.value = 0;
             }
             else if(dragDist <= radius.value * sneakThreshold) {
                 movePlayer(direction, sneakSpeed.value);
-                moveState.value = 1;
+                //moveState.value = 1;
             }
             else if(dragDist > radius.value * sneakThreshold && dragDist < radius.value * runThreshold) {
                 movePlayer(direction, walkSpeed.value);
-                moveState.value = 2;
+                //moveState.value = 2;
             }
             else if(dragDist >= radius.value * runThreshold) {
                 movePlayer(direction, runSpeed.value);
-                moveState.value = 3;
+                //moveState.value = 3;
             }
 
 
@@ -193,50 +208,12 @@ public class Movement : MonoBehaviour
         }
         #endif
 
-            if(playerRB.velocity.y <= 0 && isJumping) {
-            //playerRB.mass * fallMultiplier.value;
-                playerRB.velocity += Vector3.up * Physics.gravity.y * (fallMultiplier.value -1) * Time.deltaTime;
-                Debug.Log("Velocity is: " + playerRB.velocity.y);
-            }
-            else /* if(!isGrounded) */{
-                isJumping = false;
-            }
+            
 
             SetState();
     }
 
-/*     void FixedUpdate() {
-        if(touchStart && canMove){
 
-            Vector3 offset = new Vector3(currTouchPos.x-initTouchPos.x, 0, currTouchPos.y - initTouchPos.y);
-            Vector3 direction = Vector3.ClampMagnitude(offset, 1.0f);
-            float dragDist = Vector2.Distance(stick.transform.position, stickLimit.transform.position);
-            Vector2 joyDiff = Input.mousePosition - stickLimit.transform.position;
-            joyDiff = Vector2.ClampMagnitude(joyDiff, radius.value);
-            if(dragDist < radius.value * 0.25) {
-                movePlayer(direction, sneakSpeed.value);
-                Debug.Log("Is sneaking with speed " + playerRB.velocity.magnitude);
-                
-            }
-            if(dragDist > radius.value * 0.25 && dragDist < radius.value * 0.8f) {
-                movePlayer(direction, walkSpeed.value);
-                Debug.Log("Is walking with speed " + playerRB.velocity.magnitude);
-            }
-                
-
-            if(dragDist > radius.value * 0.6) {
-                movePlayer(direction, runSpeed.value);
-                Debug.Log("Is running with speed " + playerRB.velocity.magnitude);
-            }
-                
-            stick.transform.position = joyDiff + new Vector2(stickLimit.transform.position.x, stickLimit.transform.position.y);
-        }
-        else {
-            stick.gameObject.SetActive(false);
-            stickLimit.gameObject.SetActive(false);
-            canMove = false;
-        }
-    } */
 
     private void movePlayer(Vector3 direction, float speedMove) {
         Quaternion rotation = direction != Vector3.zero
@@ -246,15 +223,18 @@ public class Movement : MonoBehaviour
     }
 
     private void playerJump(Vector3 direction, float jumpHeight) {
-        playerRB.AddForce(direction * jumpHeight, ForceMode.Impulse);
+        if(!isJumping && (Physics.Raycast(leftFootPos.transform.position, Vector3.down, 0.10f) || Physics.Raycast(rightFootPos.transform.position, Vector3.down, 0.10f))) {
+            //Debug.Log("Velocity before: " + playerRB.velocity.y);
+            playerRB.AddForce(direction * jumpHeight, ForceMode.Impulse);
+            //Debug.Log("Velocity after: " + playerRB.velocity.y);
 /*         if(playerRB.velocity.y <= 0) {
             //playerRB.mass * fallMultiplier.value;
             playerRB.velocity += Vector3.up * Physics.gravity.y * (fallMultiplier.value -1) * Time.deltaTime;
             Debug.Log("Velocity is: " + playerRB.velocity.y);
         } */
-
-        if(Physics.Raycast(new Vector3(transform.position.x/2, transform.position.y - transform.position.y, transform.position.z), Vector3.down, 0.10f)) {
+        // If the feet are atleast 10 cm away from the ground. 
             isJumping = true;
+
         }
         
         

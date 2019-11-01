@@ -32,14 +32,14 @@
 
         // Private variables:
         private bool _active, _timerRunning, _destinationSet, _isRotating, _isAggro, 
-            _isHugging, _rotatingAtWp, _inTriggerZone, _accelerating, _hearingDisabled;
+            _isHugging, _rotatingAtWp, _inTriggerZone, _accelerating, _hearingDisabled, _goingReversePath;
         private NavMeshAgent _navMeshAgent;
         private NavMeshPath _path;
         private Vector3 _lastSighting;
         private Vector3[] _wayPointRotations;
         private GameObject _player;
         private SphereCollider _thisCollider;
-        private int _currentWayPoint = 0, _state = 0;
+        private int _currentWayPoint = 0, _state = 0, _layerMask;
         private float[] _waitTimes;
         private float _targetSpeed;
 
@@ -50,6 +50,7 @@
         void Awake()
         {
             _player = GameObject.FindGameObjectWithTag("Player");
+            _layerMask = ~LayerMask.GetMask("Enemies");
 
             if (_player != null && thisEnemy != null)
             {
@@ -230,6 +231,10 @@
 
                     transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, _navMeshAgent.angularSpeed);
 
+                    #if UNITY_EDITOR
+                    Vector3 fwd = lookRotation * Vector3.forward;
+                    Debug.DrawRay(transform.position, fwd, Color.magenta, 0f, true);
+                    #endif
                 }
 
                 if (_accelerating && _state != 2)
@@ -261,10 +266,20 @@
                     _currentWayPoint = (_currentWayPoint + 1) % wayPoints.Count;
                 else
                 {
-                    if (_currentWayPoint + 1 > wayPoints.Count)
-                        _currentWayPoint = 0;
-                    else
-                        _currentWayPoint = (_currentWayPoint + 1);
+                    if (!_goingReversePath)
+                    {
+                        if (_currentWayPoint + 1 > wayPoints.Count - 1)
+                            _goingReversePath = true;
+                        else
+                            _currentWayPoint = (_currentWayPoint + 1);
+                    }
+                    else if (_goingReversePath)
+                    {
+                        if (_currentWayPoint - 1 < 0)
+                            _goingReversePath = false;
+                        else
+                            _currentWayPoint = (_currentWayPoint - 1);
+                    }
                 }
 
                 _destinationSet = false;
@@ -288,7 +303,7 @@
                     {
                         RaycastHit hit;
 
-                        if (Physics.Raycast(transform.position + transform.up, dir, out hit, thisEnemy.viewDistance))
+                        if (Physics.Raycast(transform.position + transform.up, dir, out hit, thisEnemy.viewDistance, _layerMask))
                             if (hit.collider.tag == _player.tag)
                             {
                                 _lastSighting = _player.transform.position;
@@ -345,6 +360,7 @@
         {
             _isAggro = true;
             yield return new WaitForSeconds(thisEnemy.aggroTime);
+            Debug.Log("Is AGGRO");
             if (!_inTriggerZone)
                 _isAggro = false;
 
@@ -373,7 +389,10 @@
             {
                 _active = true;
                 _isHugging = false;
-                _isAggro = false;
+                if (!alwaysAggro)
+                    _isAggro = false;
+                else
+                    _isAggro = true;
             }
         }
 
@@ -381,6 +400,11 @@
         {
             yield return new WaitForSeconds(thisEnemy.pushedDownDuration);
             _active = true;
+
+            if (!alwaysAggro)
+                _destinationSet = false;
+            else
+                _isAggro = true;
         }
 
         #endregion
@@ -507,7 +531,7 @@
                             Gizmos.DrawLine(wayPoints[i].transform.position, wayPoints[i + 1].transform.position);
 
                         }
-                        else if (i == wayPoints.Count - 1 && wayPoints.Count > 1)
+                        else if (i == wayPoints.Count - 1 && wayPoints.Count > 1 && loopWaypointRoutine)
                         {
                             Gizmos.DrawLine(wayPoints[wayPoints.Count - 1].transform.position, wayPoints[0].transform.position);
                         }
@@ -516,6 +540,7 @@
                         {
                             Gizmos.color = Color.red;
                             Gizmos.DrawLine(transform.position + transform.up, transform.forward * thisEnemy.viewDistance + (transform.position + transform.up));
+
                         }
                     }
                 }
@@ -543,7 +568,7 @@
                 _runOnce = true;
             }
 
-            EditorGUILayout.HelpBox("Please only use the 'Add WayPoint' button to create new waypoints. They can then be found in the 'WayPoints' object in the hierarchy.", MessageType.Info);
+            EditorGUILayout.HelpBox("Please only use the 'Add WayPoint' button to create new waypoints. They can then be found in the 'WayPoints' object in the hierarchy.\nAlso make sure that every enemy is on the 'Enemies' layer", MessageType.Info);
 
             DrawDefaultInspector(); // for other non-HideInInspector fields
 

@@ -10,13 +10,11 @@ public class Movement : MonoBehaviour
     private Vector3 currTouchPos;
 
     private Vector3 joystickPos;
-
     private Vector3 stickLimitPos;
-[Tooltip("Put the main camera here!")]
-    public Camera cam;
-[Tooltip("Put the joystick here")]
+
+    [Tooltip("Put the joystick here")]
     public Transform stick;
-[Tooltip("Put the joystick border here")]
+    [Tooltip("Put the joystick border here")]
     public Transform stickLimit;
 
     public FloatReference sneakSpeed;

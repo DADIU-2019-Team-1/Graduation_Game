@@ -5,7 +5,7 @@ using UnityEngine;
 public class Movement : MonoBehaviour
 {
     private Rigidbody playerRB;
-    private bool touchStart = false, canMove = false, canJump = false, canAttack;
+    private bool touchStart = false, canMove = false, canJump = true, canAttack;
     private Vector3 initTouchPos;
     private Vector3 currTouchPos;
 
@@ -133,9 +133,9 @@ public class Movement : MonoBehaviour
                 stickLimit.gameObject.SetActive(true);                
             }
 
-/*             if(Input.mousePosition.x > Screen.width/2 && canJump) {
+             if(Input.mousePosition.x > Screen.width/2 && canJump) {
                 playerJump(Vector3.up, jumpHeight.value);
-            } */
+            } 
 
         }
         if(Input.GetMouseButton(0)) {
@@ -218,6 +218,7 @@ public class Movement : MonoBehaviour
     private void playerJump(Vector3 direction, float jumpHeight) {
         if(playerRB.velocity.y < 0) {
             //playerRB.mass * fallMultiplier.value;
+            playerRB.velocity += Vector3.up * Physics.gravity.y * (fallMultiplier.value -1) * Time.deltaTime;
         }
         playerRB.AddForce(direction * jumpHeight, ForceMode.Impulse);
         //Debug.Log("Jumped");

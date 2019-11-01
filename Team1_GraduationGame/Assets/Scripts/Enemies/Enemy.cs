@@ -41,7 +41,7 @@
         private SphereCollider _thisCollider;
         private int _currentWayPoint = 0, _state = 0, _layerMask;
         private float[] _waitTimes;
-        private float _targetSpeed;
+        private float _targetSpeed, _hearingDistance;
 
         #endregion
 
@@ -205,7 +205,7 @@
                     _isRotating = true;
 
                     if (Vector3.Distance(transform.position, _player.transform.position) <
-                        thisEnemy.embraceDistance)
+                        thisEnemy.embraceDistance && _isAggro)
                     {
                         if (!_isHugging)
                             StartCoroutine(EnemyHug());
@@ -311,7 +311,12 @@
                     }
                     else if (!_hearingDisabled)
                     {
-                        if (HearingPathLength() < thisEnemy.hearingDistance && playerMoveState.value != 0)
+                        _hearingDistance = thisEnemy.hearingDistance;
+                        if (playerMoveState.value == 2)
+                            _hearingDistance = thisEnemy.hearingDistance * 2.0f;
+
+                        if (HearingPathLength() < thisEnemy.hearingDistance && playerMoveState.value != 0 && playerMoveState.value != 1
+                            || Vector3.Distance(transform.position, _player.transform.position) < 2.0f) // If very very close the enemy will hear the player no matter what
                         {
 
                             _lastSighting = _player.transform.position;
@@ -369,16 +374,18 @@
         {
             _isHugging = true;
             SwitchState(2); // Switch to attacking
+
+            transform.LookAt(_player.transform.position);
+
             yield return new WaitForSeconds(thisEnemy.embraceDelay);
 
             if (Vector3.Distance(transform.position, _player.transform.position) <
                 thisEnemy.embraceDistance)
             {
                 Debug.Log("THE PLAYER DIED");
-                // _player TODO freeze player for animation
                 if (_player.GetComponent<Movement>() != null)
                 {
-                    
+                    // TODO: freeze player and play animation
                 }
 
                 if (playerDiedEvent != null)

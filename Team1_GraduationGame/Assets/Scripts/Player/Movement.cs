@@ -1,11 +1,12 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+
 [RequireComponent(typeof(Rigidbody))]
 public class Movement : MonoBehaviour
 {
     private Rigidbody playerRB;
-    private bool touchStart = false, canMove = false, canJump = true, canAttack;
+    private bool touchStart = false, canMove = false, canJump = false, canAttack, isJumping = false;
     private Vector3 initTouchPos;
     private Vector3 currTouchPos;
 
@@ -28,11 +29,17 @@ public class Movement : MonoBehaviour
 
     public FloatReference fallMultiplier;
 
+    public IntVariable moveState;
+    private RaycastHit[] hit;
+
     //public FloatReference floatingWeight;
 
     private int leftTouch = 99;
     private Vector3 _previousPosition = Vector3.zero;
-    
+    [Header("Idle until this has been reached must be smaller than sneak threshold!")]
+    [SerializeField] [Range(0.0f, 1.0f)]
+    private float idleThreshold = 0.1f;
+
     [Header("Sneak threshold must be smaller than run threshold!")]
     [SerializeField] [Range(0.0f,1.0f)]
     private float sneakThreshold;
@@ -78,17 +85,23 @@ public class Movement : MonoBehaviour
                 //Debug.Log("Mouse pos is: " + Input.mousePosition);
                 //Debug.Log("Touch pos is " + t.position);
 
-                if (dragDist <= radius.value * sneakThreshold)
+                if(dragDist <= radius.value * idleThreshold) {
+                    moveState.value = 0;
+                }
+                else if (dragDist > radius.value * idleThreshold && dragDist <= radius.value * sneakThreshold)
                 {
                     movePlayer(direction, sneakSpeed.value);
+                    moveState.value = 1;
                 }
                 else if (dragDist > radius.value * sneakThreshold && dragDist < radius.value * runThreshold)
                 {
                     movePlayer(direction, walkSpeed.value);
+                    moveState.value = 2;
                 }
                 else if (dragDist >= radius.value * runThreshold)
                 {
                     movePlayer(direction, runSpeed.value);
+                    moveState.value = 3;
                 }
                 stick.transform.position = joyDiff + new Vector2(stickLimit.transform.position.x, stickLimit.transform.position.y);
                 // t.deltaPosition; is a Vector2 of the difference between the last frame to its position this frame. 
@@ -153,15 +166,23 @@ public class Movement : MonoBehaviour
             Vector2 joyDiff = Input.mousePosition - stickLimit.transform.position;
             joyDiff = Vector2.ClampMagnitude(joyDiff, radius.value);
 
-            if(dragDist <= radius.value * sneakThreshold) {
+            if(dragDist <= radius.value * idleThreshold) {
+                moveState.value = 0;
+            }
+            else if(dragDist <= radius.value * sneakThreshold) {
                 movePlayer(direction, sneakSpeed.value);
+                moveState.value = 1;
             }
             else if(dragDist > radius.value * sneakThreshold && dragDist < radius.value * runThreshold) {
                 movePlayer(direction, walkSpeed.value);
+                moveState.value = 2;
             }
             else if(dragDist >= radius.value * runThreshold) {
                 movePlayer(direction, runSpeed.value);
+                moveState.value = 3;
             }
+
+
                 
             stick.transform.position = joyDiff + new Vector2(stickLimit.transform.position.x, stickLimit.transform.position.y);
         }
@@ -171,6 +192,17 @@ public class Movement : MonoBehaviour
             canMove = false;
         }
         #endif
+
+            if(playerRB.velocity.y <= 0 && isJumping) {
+            //playerRB.mass * fallMultiplier.value;
+                playerRB.velocity += Vector3.up * Physics.gravity.y * (fallMultiplier.value -1) * Time.deltaTime;
+                Debug.Log("Velocity is: " + playerRB.velocity.y);
+            }
+            else /* if(!isGrounded) */{
+                isJumping = false;
+            }
+
+            SetState();
     }
 
 /*     void FixedUpdate() {
@@ -214,11 +246,18 @@ public class Movement : MonoBehaviour
     }
 
     private void playerJump(Vector3 direction, float jumpHeight) {
-        if(playerRB.velocity.y < 0) {
+        playerRB.AddForce(direction * jumpHeight, ForceMode.Impulse);
+/*         if(playerRB.velocity.y <= 0) {
             //playerRB.mass * fallMultiplier.value;
             playerRB.velocity += Vector3.up * Physics.gravity.y * (fallMultiplier.value -1) * Time.deltaTime;
+            Debug.Log("Velocity is: " + playerRB.velocity.y);
+        } */
+
+        if(Physics.Raycast(new Vector3(transform.position.x/2, transform.position.y - transform.position.y, transform.position.z), Vector3.down, 0.10f)) {
+            isJumping = true;
         }
-        playerRB.AddForce(direction * jumpHeight, ForceMode.Impulse);
+        
+        
         //Debug.Log("Jumped");
         //canJump = false;
     }
@@ -227,5 +266,26 @@ public class Movement : MonoBehaviour
     {
         currentSpeed.value = Vector3.Distance(transform.position, _previousPosition) / Time.fixedDeltaTime;
         return currentSpeed.value;
+    }
+
+    public void SetState()
+    {
+        if(currentSpeed.value <= 0.01f) {
+            moveState.value = 0;
+            
+        }
+        else if(currentSpeed.value <= sneakSpeed.value + 0.05f) {
+            moveState.value = 1;
+            
+        }
+        else if(currentSpeed.value <= walkSpeed.value + 0.05f) {
+            moveState.value = 2;
+            
+        }
+        else {
+            moveState.value = 3;
+        }
+        
+        
     }
 }

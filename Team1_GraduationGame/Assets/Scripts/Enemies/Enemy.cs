@@ -140,14 +140,12 @@
             {
                 case 0:
                     _targetSpeed = thisEnemy.walkSpeed;
-                    //_navMeshAgent.speed = thisEnemy.walkSpeed;
                     _navMeshAgent.angularSpeed = thisEnemy.walkTurnSpeed;
                     break;
                 case 1:
                     if (!thisEnemy.canRun)
                         return;
                     _targetSpeed = thisEnemy.runSpeed;
-                    //_navMeshAgent.speed = thisEnemy.runSpeed;
                     _navMeshAgent.angularSpeed = thisEnemy.runTurnSpeed;
                     break;
                 case 2:

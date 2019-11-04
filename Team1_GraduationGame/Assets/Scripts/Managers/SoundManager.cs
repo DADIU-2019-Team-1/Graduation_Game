@@ -169,6 +169,17 @@ namespace Team1_GraduationGame.Managers
             soundEvents[soundEvents.Length] = null;
         }
 
+        public void ExternalRaise()
+        {
+            for (int i = 0; i < soundEvents.Length; i++)
+            {
+                if ((int)soundEvents[i].triggerTypeSelector == 5)
+                {
+                    soundEvents[i].EventRaised(0);
+                }
+            }
+        }
+
     }
 
     #region Sound Event Container
@@ -186,7 +197,8 @@ namespace Team1_GraduationGame.Managers
             FloatEvent,
             OnTriggerEnter,
             OnTriggerExit,
-            Start
+            Start,
+            ExternalRaise
         }
         [HideInInspector] public EventTypeEnum triggerTypeSelector;
         [HideInInspector] public SoundVoidEventListener soundEventListener;

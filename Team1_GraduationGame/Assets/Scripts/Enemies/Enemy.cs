@@ -4,6 +4,7 @@
     using System.Collections.Generic;
     using UnityEngine;
     using Team1_GraduationGame.Events;
+    using Team1_GraduationGame.Interaction;
     using UnityEngine.AI;
 
 #if UNITY_EDITOR
@@ -14,27 +15,27 @@
     public class Enemy : MonoBehaviour
     {
         #region Variables
-
         // References:
         public BaseEnemy thisEnemy;
         public VoidEvent playerDiedEvent;
         public Light viewConeLight;
         public IntVariable playerMoveState;
         private GameObject _player;
+        private GameObject[] _interactableObjects;  // TODO: populate this and use it for hearing
+        private NavMeshAgent _navMeshAgent;
+        [HideInInspector] public List<GameObject> wayPoints;
+        [HideInInspector] public GameObject parentWayPoint;
 
         // Public variables:
-        public float wayPointReachRange = 1.0f;
+        public float wayPointReachRange = 1.0f, hearingSensitivity = 2.0f, minimumAlwaysDetectRange = 1.3f;
         public bool drawGizmos = true, useWaitTime, rotateAtWaypoints, loopWaypointRoutine = true, alwaysAggro;
         public Color normalConeColor = Color.yellow, aggroConeColor = Color.red;
         [HideInInspector] public bool useGlobalWaitTime = true;
         [HideInInspector] public float waitTime = 0.0f;
-        [HideInInspector] public List<GameObject> wayPoints;
-        [HideInInspector] public GameObject parentWayPoint;
 
         // Private variables:
         private bool _active, _timerRunning, _destinationSet, _isRotating, _isAggro, 
             _isHugging, _rotatingAtWp, _inTriggerZone, _accelerating, _hearingDisabled, _goingReversePath;
-        private NavMeshAgent _navMeshAgent;
         private NavMeshPath _path;
         private Vector3 _lastSighting;
         private Vector3[] _wayPointRotations;
@@ -59,12 +60,23 @@
                     _hearingDisabled = true;
                     Debug.LogError("Enemy hearing and light FOV disabled: Player move state scriptable object not attached");
                 }
-
                 _active = true;
             }
             else
                 Debug.LogError("Enemy disabled: Player not found or scriptable object not attached!");
 
+            if (!_hearingDisabled)  // TODO YYY
+            {
+                //if (GameObject.FindObjectsOfType<Interactable>().Length != 0)
+                //{
+                //    _interactableObjects = new GameObject[GameObject.FindObjectsOfType<Interactable>()];
+                //    _interactableObjects = GameObject.FindObjectsOfType<Interactable>();
+                //}
+                //for (int i = 0; i < GameObject.FindObjectsOfType<Interactable>().Length; i++)
+                //{
+                    
+                //}
+            }
 
             if (_active)
             {
@@ -90,9 +102,8 @@
                 }
 
                 if (wayPoints == null)
-                {
                     wayPoints = new List<GameObject>();
-                }
+                
 
                 if (rotateAtWaypoints)
                     _wayPointRotations = new Vector3[wayPoints.Count];
@@ -121,7 +132,6 @@
                     _isAggro = true;
             }
         }
-
         #endregion
 
         /// <summary>
@@ -134,7 +144,6 @@
             if (_accelerating)
                 _accelerating = false;
             
-
             switch (state)
             {
                 case 0:
@@ -163,7 +172,6 @@
 
         private void FixedUpdate()
         {
-
             if (_active)
             {
 
@@ -251,6 +259,18 @@
                     }
                 }
 
+                if (!_hearingDisabled)
+                {
+                    _hearingDistance = thisEnemy.hearingDistance;
+                    if (playerMoveState.value == 2)
+                        _hearingDistance = thisEnemy.hearingDistance * hearingSensitivity;
+
+                    if (HearingPathLength() < thisEnemy.hearingDistance && playerMoveState.value != 0 && playerMoveState.value != 1)
+                        PlayerHeard();
+                    else if (Vector3.Distance(transform.position, _player.transform.position) < minimumAlwaysDetectRange) // If very very close the enemy will hear the player no matter what
+                        PlayerHeard();
+                }
+
                 ViewLightConeControl();
 
             }
@@ -309,23 +329,6 @@
                                     StartCoroutine(EnemyAggro());
                             }
                     }
-                    else if (!_hearingDisabled)
-                    {
-                        _hearingDistance = thisEnemy.hearingDistance;
-                        if (playerMoveState.value == 2)
-                            _hearingDistance = thisEnemy.hearingDistance * 2.0f;
-
-                        if (HearingPathLength() < thisEnemy.hearingDistance && playerMoveState.value != 0 && playerMoveState.value != 1
-                            || Vector3.Distance(transform.position, _player.transform.position) < 2.0f) // If very very close the enemy will hear the player no matter what
-                        {
-
-                            _lastSighting = _player.transform.position;
-
-                            if (!_isAggro)
-                                StartCoroutine(EnemyAggro());
-                        }
-                        
-                    }
                     else if (_isAggro)
                     {
                         _lastSighting = _player.transform.position;
@@ -342,6 +345,71 @@
                 {
                     _inTriggerZone = false;
                 }
+        }
+
+        private void PlayerHeard()
+        {
+            _lastSighting = _player.transform.position;
+
+            if (!_isAggro)
+                StartCoroutine(EnemyAggro());
+        }
+
+        public void PushDown()
+        {
+            if (thisEnemy != null && _active)
+            {
+                _active = false;
+                _navMeshAgent.isStopped = true;
+
+                // TODO: play lie down/knocked down animation
+                viewConeLight.gameObject.SetActive(true);
+                viewConeLight.color = Color.green;
+
+                StartCoroutine(PushDownDelay());
+            }
+        }
+
+        private void ViewLightConeControl()
+        {
+            if (viewConeLight != null && playerMoveState != null)
+            {
+                if (_isAggro && viewConeLight.color != aggroConeColor)
+                    viewConeLight.color = aggroConeColor;
+                else if (!_isAggro && viewConeLight.color != normalConeColor)
+                    viewConeLight.color = normalConeColor;
+
+                if (playerMoveState.value == 0 || playerMoveState.value == 1)
+                {
+                    if (!viewConeLight.gameObject.activeSelf)
+                        viewConeLight.gameObject.SetActive(true);
+                }
+                else if (viewConeLight.gameObject.activeSelf)
+                    viewConeLight.gameObject.SetActive(false);
+            }
+        }
+
+        private float HearingPathLength()
+        {
+            _navMeshAgent.CalculatePath(_player.transform.position, _path);
+
+            Vector3[] allPathPoints = new Vector3[_path.corners.Length + 2];
+            allPathPoints[0] = transform.position;
+            allPathPoints[allPathPoints.Length - 1] = _player.transform.position;
+
+            for (int i = 0; i < _path.corners.Length; i++)
+            {
+                allPathPoints[i + 1] = _path.corners[i];
+            }
+
+            float tempPathLength = 0.0f;
+
+            for (int i = 0; i < allPathPoints.Length - 1; i++)
+            {
+                tempPathLength += Vector3.Distance(allPathPoints[i], allPathPoints[i + 1]);
+            }
+
+            return tempPathLength;
         }
 
         #region Co-Routines
@@ -408,6 +476,8 @@
         {
             yield return new WaitForSeconds(thisEnemy.pushedDownDuration);
             _active = true;
+            _navMeshAgent.isStopped = false;
+            viewConeLight.color = normalConeColor;
 
             if (!alwaysAggro)
                 _destinationSet = false;
@@ -416,58 +486,6 @@
         }
 
         #endregion
-
-        public void PushDown()
-        {
-            if (thisEnemy != null && _active)
-            {
-                _active = false;
-                // TODO: play lie down/knocked down animation
-                StartCoroutine(PushDownDelay());
-            }
-        }
-
-        private void ViewLightConeControl()
-        {
-            if (viewConeLight != null && playerMoveState != null)
-            {
-                if (_isAggro && viewConeLight.color != aggroConeColor)
-                    viewConeLight.color = aggroConeColor;
-                else if (!_isAggro && viewConeLight.color != normalConeColor)
-                    viewConeLight.color = normalConeColor;
-
-                if (playerMoveState.value == 0 || playerMoveState.value == 1)
-                {
-                    if (!viewConeLight.gameObject.activeSelf)
-                        viewConeLight.gameObject.SetActive(true);
-                }
-                else if (viewConeLight.gameObject.activeSelf)
-                    viewConeLight.gameObject.SetActive(false);
-            }
-        }
-
-        private float HearingPathLength()
-        {
-            _navMeshAgent.CalculatePath(_player.transform.position, _path);
-
-            Vector3[] allPathPoints = new Vector3[_path.corners.Length + 2];
-            allPathPoints[0] = transform.position;
-            allPathPoints[allPathPoints.Length - 1] = _player.transform.position;
-
-            for (int i = 0; i < _path.corners.Length; i++)
-            {
-                allPathPoints[i + 1] = _path.corners[i];
-            }
-
-            float tempPathLength = 0.0f;
-
-            for (int i = 0; i < allPathPoints.Length - 1; i++)
-            {
-                tempPathLength += Vector3.Distance(allPathPoints[i], allPathPoints[i + 1]);
-            }
-
-            return tempPathLength;
-        }
 
         #region Setter and Getters
         public void SetIsActive(bool isActive)

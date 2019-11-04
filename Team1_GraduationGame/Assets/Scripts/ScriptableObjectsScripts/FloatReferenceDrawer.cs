@@ -1,8 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEditor;
 #if UNITY_EDITOR
+using UnityEditor;
 [CustomPropertyDrawer(typeof(FloatReference))]
 public class FloatReferenceDrawer : PropertyDrawer
 {

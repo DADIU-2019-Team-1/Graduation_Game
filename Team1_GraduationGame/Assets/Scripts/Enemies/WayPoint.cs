@@ -1,19 +1,22 @@
-﻿#if UNITY_EDITOR
-
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using Team1_GraduationGame.Editor;
+﻿using UnityEngine;
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 
 namespace Team1_GraduationGame.Enemies
 {
     [ExecuteInEditMode]
     public class WayPoint : MonoBehaviour
     {
-        public GameObject parentEnemy;
-        public GameObject parentWayPoint;
-        public bool isParent = false;
+        [HideInInspector] public GameObject parentEnemy;
+        [HideInInspector] public GameObject parentWayPoint;
+        [HideInInspector] public bool isParent = false;
+        [Range(0.0f, 20.0f)] public float specificWaitTime = 0.0f;
+        [Range(0.0f, 359.0f)] public float enemyLookDirection = 0.0f;
         public int wayPointId;
+
+
+#if UNITY_EDITOR
 
         void OnDestroy()
         {
@@ -27,17 +30,12 @@ namespace Team1_GraduationGame.Enemies
 
                     for (int i = 0; i < tempEnemy.wayPoints.Count; i++)
                     {
-                        if (tempEnemy.wayPoints[i].gameObject.GetComponent<WayPoint>() != null)
+                        if (tempEnemy.wayPoints[i].GetComponent<WayPoint>() != null)
                         {
-                            tempEnemy.wayPoints[i].gameObject.GetComponent<WayPoint>().wayPointId = i + 1;
+                            tempEnemy.wayPoints[i].GetComponent<WayPoint>().wayPointId = i + 1;
                             tempEnemy.wayPoints[i].name = "WayPoint" + (i + 1);
                         }
                     }
-
-                    //if (tempEnemy.wayPoints.Count == 0 && parentWayPoint != null)
-                    //{
-                    //    DestroyImmediate(parentWayPoint);
-                    //}
                 }
             }
         }
@@ -52,7 +50,27 @@ namespace Team1_GraduationGame.Enemies
                 }
             }
         }
+#endif
     }
 
-}
+#if UNITY_EDITOR
+    [CustomEditor(typeof(WayPoint))]
+    public class WayPoint_Inspector : UnityEditor.Editor
+    {
+        public override void OnInspectorGUI()
+        {
+            var script = target as WayPoint;
+
+            if (!script.isParent)
+            {
+                DrawDefaultInspector(); // for other non-HideInInspector fields
+            }
+            else
+            {
+                EditorGUILayout.LabelField("//// THIS IS A PARENT WAYPOINT ////");
+            }
+
+        }
+    }
 #endif
+}

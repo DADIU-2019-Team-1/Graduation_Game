@@ -4,7 +4,6 @@ using Cinemachine;
 
 public class CameraMovement : MonoBehaviour
 {
-
     // --- References
     [Tooltip("If Camera Target is not set, object with tag \"CamLookAt\" will be used instead. \"Player\" will be used as a fallback.")]
     public Transform camTarget;
@@ -18,7 +17,6 @@ public class CameraMovement : MonoBehaviour
     // --- Inspector
     [Tooltip("Use to create an array of tags that will be used as focus points. Each object with a tag in this array will be counted as a focus point, if within the focus range.")]
     [TagSelector] [SerializeField] private string[] tagsToFocus;
-
     [Tooltip("This value is used to determine the height when the target is far away.")] 
     [SerializeField] private FloatReference heightDistanceFactor;
     [Tooltip("A higher value makes the camera LookAt more aggressive.")]
@@ -30,9 +28,10 @@ public class CameraMovement : MonoBehaviour
 
     // --- Private
     private List<GameObject> focusObjects;
-    private float heightIncrease, trackX;
-    private Vector3 camMovement, lookPosition;
     private Quaternion targetRotation;
+    private Vector3 camMovement, lookPosition;
+    private float heightIncrease, trackX;
+    private bool _endOfRail;
 
     void Start()
     {
@@ -55,27 +54,35 @@ public class CameraMovement : MonoBehaviour
 
         // Init position and rotation
         heightIncrease = Vector3.Distance(player.position, new Vector3(player.position.x, camRail.position.y, camRail.position.z)) * heightDistanceFactor.value;
-        lookPosition = CalculateLookPosition(player.position, camTarget.position, focusRange.value, focusObjects);
         transform.position = new Vector3(player.position.x, camRail.position.y + heightIncrease, camRail.position.z);
         transform.LookAt(player);
     }
 
     void LateUpdate()
     {
-        // Position update
         heightIncrease = Vector3.Distance(player.position, new Vector3(player.position.x, camRail.position.y, camRail.position.z)) * heightDistanceFactor.value;
-        lookPosition = CalculateLookPosition(player.position, camTarget.position, focusRange.value, focusObjects);
-        
+
+        // Check if camera has passed the end of the track
         trackX = track.gameObject.transform.position.x;
-        if (transform.position.x >= (track.m_Waypoints[0].position.x + trackX) 
-            && transform.position.x <= track.m_Waypoints[track.m_Waypoints.Length - 1].position.x + trackX)
+        if (!_endOfRail)
+        {
+            // Position update
             transform.position = Vector3.SmoothDamp(transform.position, new Vector3(player.position.x, camRail.position.y + heightIncrease, camRail.position.z),
-            ref camMovement, camMoveTime.value * Time.deltaTime);
-        else
-            transform.position = Vector3.SmoothDamp(transform.position, new Vector3(camRail.position.x, camRail.position.y + heightIncrease, camRail.position.z),
                 ref camMovement, camMoveTime.value * Time.deltaTime);
+            if (transform.position.x < (track.m_Waypoints[0].position.x + trackX) || transform.position.x > track.m_Waypoints[track.m_Waypoints.Length - 1].position.x + trackX)
+                _endOfRail = true;
+        }
+        else
+        {
+            // Y and Z update
+            transform.position = Vector3.SmoothDamp(transform.position, new Vector3(transform.position.x, camRail.position.y + heightIncrease, camRail.position.z),
+                ref camMovement, camMoveTime.value * Time.deltaTime);
+            if (player.position.x >= (track.m_Waypoints[0].position.x + trackX) && player.position.x <= track.m_Waypoints[track.m_Waypoints.Length - 1].position.x + trackX)
+                _endOfRail = false;
+        }
 
         // Rotation update
+        lookPosition = CalculateLookPosition(player.position, camTarget.position, focusRange.value, focusObjects);
         targetRotation = (lookPosition - transform.position != Vector3.zero)
             ? Quaternion.LookRotation(lookPosition - transform.position) : Quaternion.identity;
         transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, camLookSpeed.value * Time.deltaTime);

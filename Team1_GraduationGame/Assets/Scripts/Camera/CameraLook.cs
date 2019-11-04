@@ -1,9 +1,7 @@
 ﻿// Code owner: Jannik Neerdal
 using UnityEngine;
-using System.Collections.Generic;
 using Cinemachine;
 
-[ExecuteInEditMode]
 public class CameraLook : MonoBehaviour
 {
     // --- Inspector
@@ -18,18 +16,24 @@ public class CameraLook : MonoBehaviour
 
     [Tooltip("Control the amount that the players direction influences the camera.")]
     [Range(0.0f, 1.0f)] [SerializeField] private float lookDirFactor = 0.5f;
-
-    [Tooltip("Determines how long it should take for the offset to update. 1 is instant.")]
-    [Range(0.01f, 1.0f)] [SerializeField] private float offsetLerpTime = 0.05f;
-
     public CameraOffset[] offsetTrack;
 
     // --- Hidden
     [HideInInspector] public Vector3 camTarget;
     private Movement playerMovement;
+    private CinemachineSmoothPath cmPath;
+    private Camera cam;
     private Vector3 moveDir;
     private Vector3 offset;
-    private CinemachineSmoothPath cmPath;
+    private float offsetLerpTime, startingFOV;
+
+    private void Awake()
+    {
+        if (GetComponent<CinemachineSmoothPath>() != null)
+            cmPath = GetComponent<CinemachineSmoothPath>();
+        else
+            Debug.LogError("The DollyTrack is missing its track!", gameObject);
+    }
 
     void Start()
     {
@@ -43,11 +47,19 @@ public class CameraLook : MonoBehaviour
 
         if (camMovement == null)
             camMovement = FindObjectOfType<CameraMovement>();
+        cam = camMovement.GetComponent<Camera>();
+        startingFOV = cam.fieldOfView;
+    }
 
-        if (GetComponent<CinemachineSmoothPath>() != null)
-            cmPath = GetComponent<CinemachineSmoothPath>();
-        else
-            Debug.LogError("The DollyTrack is missing its track!", gameObject);
+    public void OnArrayChanged() // Called in a custom inspector
+    {
+        if (cmPath == null)
+        {
+            if (GetComponent<CinemachineSmoothPath>() != null)
+                cmPath = GetComponent<CinemachineSmoothPath>();
+            else
+                Debug.LogError("The DollyTrack is missing its track!", gameObject);
+        }
 
         if (cmPath.m_Waypoints.Length != offsetTrack.Length)
         {
@@ -57,12 +69,11 @@ public class CameraLook : MonoBehaviour
                 temp[i] = new CameraOffset(offsetTrack[i].GetPos(), offsetTrack[i].GetFOV());
             }
             offsetTrack = new CameraOffset[cmPath.m_Waypoints.Length];
-            for (int i = 0; i < temp.Length; i++)
+            for (int i = 0; i < cmPath.m_Waypoints.Length && i < temp.Length; i++)
             {
-                offsetTrack[i] = temp[i]; // TODO: Move to OnValidate or similar
+                offsetTrack[i] = temp[i];
             }
         }
-
     }
 
     private void OnDrawGizmos()
@@ -77,7 +88,14 @@ public class CameraLook : MonoBehaviour
         {
             moveDir = player.forward * playerMovement.GetSpeed() * lookDirFactor;
         }
-        offset = Vector3.Lerp(offset, (defaultOffset + offsetTrack[camMovement.previousTrackIndex].GetPos() + offsetTrack[camMovement.nextTrackIndex].GetPos()) / 2, offsetLerpTime);
+
+        if (camMovement != null)
+        {
+            offsetLerpTime = (camMovement.camRail.position.x - cmPath.m_Waypoints[camMovement.previousTrackIndex].position.x - camMovement.trackX) /
+                             (cmPath.m_Waypoints[camMovement.nextTrackIndex].position.x - cmPath.m_Waypoints[camMovement.previousTrackIndex].position.x);
+            offset = Vector3.Lerp(offsetTrack[camMovement.previousTrackIndex].GetPos(), offsetTrack[camMovement.nextTrackIndex].GetPos(), offsetLerpTime);
+            cam.fieldOfView = Mathf.Lerp(startingFOV + offsetTrack[camMovement.previousTrackIndex].GetFOV(), startingFOV + offsetTrack[camMovement.nextTrackIndex].GetFOV(), offsetLerpTime);
+        }
         camTarget = player.position + offset + moveDir;
     }
 }

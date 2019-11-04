@@ -15,7 +15,7 @@ public class CameraMovement : MonoBehaviour
     public GameObject track;
     private CinemachineSmoothPath _trackPath;
     private CameraLook _cameraLook;
-    private Camera thisCam;
+    [HideInInspector] public Camera thisCam;
 
     // --- Inspector
     [Tooltip("Use to create an array of tags that will be used as focus points. Each object with a tag in this array will be counted as a focus point, if within the focus range.")]
@@ -35,18 +35,22 @@ public class CameraMovement : MonoBehaviour
     private List<GameObject> focusObjects;
     private Quaternion targetRotation;
     private Vector3 camMovement, lookPosition;
-    private float heightIncrease, trackX, startingFOV, currentFOV;
+    private float heightIncrease, startingFOV, currentFOV;
     private bool _endOfRail;
     [HideInInspector] public int previousTrackIndex, nextTrackIndex;
+    [HideInInspector] public float trackX;
 
-    void Start()
+    private void Awake()
     {
         if (GetComponent<Camera>() != null)
             thisCam = GetComponent<Camera>();
         else
             Debug.LogError("This script is not attached to an object with a Camera!");
         startingFOV = thisCam.fieldOfView;
+    }
 
+    void Start()
+    {
         if (player == null)
             player = GameObject.FindGameObjectWithTag("Player").transform;
         if (track == null)
@@ -125,9 +129,6 @@ public class CameraMovement : MonoBehaviour
         targetRotation = (lookPosition - transform.position != Vector3.zero)
             ? Quaternion.LookRotation(lookPosition - transform.position) : Quaternion.identity;
         transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, camLookSpeed.value * Time.deltaTime);
-
-        // FOV Update
-        thisCam.fieldOfView = Mathf.Lerp(thisCam.fieldOfView, startingFOV + Mathf.Abs(_cameraLook.offsetTrack[nextTrackIndex].GetFOV() - _cameraLook.offsetTrack[previousTrackIndex].GetFOV()) / 2, fovUpdateTime);
     }
 
     /// <summary>

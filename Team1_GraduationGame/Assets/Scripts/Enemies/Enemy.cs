@@ -488,15 +488,12 @@
         #endregion
 
         #region Setter and Getters
-        public void SetIsActive(bool isActive)
-        {
-            _active = isActive;
-        }
-
-        public bool GetIsActive()
-        {
-            return _active;
-        }
+        public void SetIsActive(bool isActive) { _active = isActive; }
+        public bool GetIsActive() { return _active; }
+        public bool GetHearing() { return _hearingDisabled; }
+        public NavMeshAgent getNavMeshAgent() { return _navMeshAgent; }
+        public void SetAggro(bool _aggro) { _isAggro = _aggro; }
+        public void SetLastSighting(Vector3 location) { _lastSighting = location; }
         #endregion
 
         #region WayPoint System

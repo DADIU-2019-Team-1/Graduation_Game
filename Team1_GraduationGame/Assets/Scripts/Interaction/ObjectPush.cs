@@ -29,46 +29,40 @@ namespace Team1_GraduationGame.Interaction
             _player = GameObject.FindGameObjectWithTag("Player");
             _thisRigidBody = GetComponent<Rigidbody>();
             _interactable = GetComponent<Interactable>();
+
+            _thisRigidBody.mass = 100;
             
             if (wayPoints == null)
                 wayPoints = new List<GameObject>();
 
-            _thisRigidBody.constraints = RigidbodyConstraints.FreezeAll;    // TODO find better solution
         }
 
         /// <summary>
         /// Pushes an object using add force.
         /// </summary>
         /// <param name="ignoreWaypoints">If TRUE the object will be pushed in direction of forward vector instead of waypoint.</param>
-        public void Push(bool ignoreWaypoints)
+        public void Push(bool ignoreWaypoints, int dir)
         {
             if (_player != null && _thisRigidBody != null)
             {
-                _thisRigidBody.constraints = RigidbodyConstraints.None;
-
                 if (ignoreWaypoints)
-                    _thisRigidBody.AddForce(transform.forward * thrustAmount, ForceMode.Impulse);
-                else if (wayPoints != null && wayPoints.Count > 1)
+                    _thisRigidBody.AddForce(transform.forward * thrustAmount * 135, ForceMode.Impulse);
+                else if (wayPoints != null && wayPoints.Count >= 2)
                 {
-                    // if (_player) // Checks which side the player is standing to the object
-                    _thisRigidBody.AddForce((wayPoints[wayPoints.Count - 1].transform.position - transform.position) * thrustAmount, ForceMode.Impulse);
-                    Debug.Log("YEET " + gameObject.name);
-                    // else if (_player)
-                    // _thisRigidBody.AddForce((wayPoints[wayPoints.Count - 1].transform.position - transform.position) * thrustAmount, ForceMode.Impulse);
+                    if (dir == 2) // Checks which side the player is standing to the object
+                        _thisRigidBody.AddForce((wayPoints[1].transform.position - transform.position).normalized * thrustAmount * 400, ForceMode.Impulse);
+                    else if (dir == 1)
+                        _thisRigidBody.AddForce((wayPoints[0].transform.position - transform.position).normalized * thrustAmount * 400, ForceMode.Impulse);
                 }
             }
         }
 
-        //private void OnCollisionEnter(Collision col)
-        //{
-        //    if (col.collider.tag == "Player" || col.collider.tag == "Enemy")
-        //        _thisRigidBody.constraints = RigidbodyConstraints.FreezeAll;
-        //}
-
-
         #region Waypoint System
         public void AddWayPoint()
         {
+            if (wayPoints.Count >= 2)
+                return;
+
             GameObject tempWayPointObj;
 
             if (!GameObject.Find("ObjectMovingWaypoints"))
@@ -178,12 +172,12 @@ namespace Team1_GraduationGame.Interaction
                     _style.normal.textColor = Color.green;
                 }
 
-                EditorGUILayout.LabelField(script.wayPoints.Count.ToString() + " waypoints", _style);
+                EditorGUILayout.LabelField(script.wayPoints.Count.ToString() + "/2 waypoints", _style);
             }
             else
             {
                 _style.normal.textColor = Color.red;
-                EditorGUILayout.LabelField("0 waypoints", _style);
+                EditorGUILayout.LabelField("0/2 waypoints", _style);
             }
 
             EditorGUILayout.Space();

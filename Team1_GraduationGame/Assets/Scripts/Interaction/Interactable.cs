@@ -1,5 +1,6 @@
 ﻿using Team1_GraduationGame.Enemies;
 using UnityEngine;
+using UnityEngine.AI;
 using UnityEngine.Events;
 
 #if UNITY_EDITOR
@@ -11,8 +12,8 @@ namespace Team1_GraduationGame.Interaction
     public class Interactable : MonoBehaviour
     {
         // References:
-        private Movement _movement;
         public Enemy thisEnemy;
+        private Enemy[] _allEnemies;
         private GameObject _player;
         private Animator _animator;
         private ObjectPush _objectPush;
@@ -20,9 +21,9 @@ namespace Team1_GraduationGame.Interaction
         public FloatVariable interactionAngle;
 
         // Public:
-        public float minDistance = 2.0f, angle = 75.0f;
+        public float minDistance = 2.0f, angle = 90.0f, soundEmitDistance;
         public bool interactableOnce, pushable, useEvents, useAnimation, switchBetweenAnimations, animationState, 
-            interactConditions = true, checkForObstructions;
+            interactConditions = true, checkForObstructions, emitSound = true;
         public UnityEvent eventOnInteraction;
         public string animationDefault, animationAction;
 
@@ -30,22 +31,20 @@ namespace Team1_GraduationGame.Interaction
         private bool _isEnemy, _interacted;
         private int _layerMask;
 
-
         private void Awake()
         {
             _player = GameObject.FindGameObjectWithTag("Player");
             _layerMask = ~LayerMask.GetMask("Enemies");
 
-
-            if (_player != null)
-                if (_player.GetComponent<Movement>() != null)
-                    _movement = _player.GetComponent<Movement>();
-
             if (GetComponent<Enemy>() != null)
             {
                 _isEnemy = true;
+                emitSound = false;
                 thisEnemy = GetComponent<Enemy>();
             }
+            else
+                _allEnemies = FindObjectsOfType<Enemy>();
+            
 
             if (GetComponent<Animator>() != null)
             {
@@ -72,56 +71,69 @@ namespace Team1_GraduationGame.Interaction
         {
             if (!_interacted)
             {
-
                 if (!interactConditions)
                 {
-                    DoAction();
+                    DoAction(0);
                 }
-                else
+                else if (_objectPush.wayPoints.Count <= 2)
                 {
                     Vector3 dir = _player.transform.position - transform.position;
-                    float thisToPlayerAngle = Vector3.Angle(transform.forward, dir);
+                    float thisToPlayerAngle1 = Vector3.Angle(_objectPush.wayPoints[0].transform.position - _objectPush.wayPoints[1].transform.position, dir);
+                    float thisToPlayerAngle2 = Vector3.Angle(_objectPush.wayPoints[1].transform.position - _objectPush.wayPoints[0].transform.position, dir);
                     RaycastHit hit;
 
-                    if (pushable && thisEnemy == null && checkForObstructions)
+                    if (pushable && thisEnemy == null)
                     {
-                        if (Vector3.Distance(transform.position, _player.transform.position) < minDistance 
-                            && thisToPlayerAngle < angle / 2 && Physics.Raycast(transform.position + transform.up, dir, out hit, minDistance, _layerMask))
-                        {   // TODO Make this work the other direction also
-                            DoAction();
-                        }
-                    }
-                    else if (pushable && thisEnemy == null && !checkForObstructions)
-                    {
-                        if (Vector3.Distance(transform.position, _player.transform.position) < minDistance
-                            && thisToPlayerAngle < angle / 2)   // TODO Make this work the other direction also
+                        if (checkForObstructions)
                         {
-                            DoAction();
+                            if (Vector3.Distance(transform.position, _player.transform.position) < minDistance 
+                                && Physics.Raycast(transform.position + transform.up, dir, out hit, minDistance, _layerMask))
+                            {
+                                if (thisToPlayerAngle1 < angle / 2)
+                                    DoAction(2);
+                                else if (thisToPlayerAngle2 < angle / 2)
+                                    DoAction(1);
+                            }
                         }
-                    }
-                    else if (checkForObstructions)
-                    {
-                        if (Vector3.Distance(transform.position, _player.transform.position) < minDistance
-                            && Physics.Raycast(transform.position + transform.up, dir, out hit, minDistance,
-                                _layerMask))
+                        else
                         {
-                            DoAction();
+                            if (Vector3.Distance(transform.position, _player.transform.position) < minDistance)
+                            {
+                                if (thisToPlayerAngle1 < angle / 2)
+                                    DoAction(2);
+                                else if (thisToPlayerAngle2 < angle / 2)
+                                    DoAction(1);
+                            }
                         }
                     }
-                    else if (!checkForObstructions)
+                    else if (thisEnemy != null)
                     {
-                        if (Vector3.Distance(transform.position, _player.transform.position) < minDistance)
+                        if (checkForObstructions)
                         {
-                            DoAction();
+                            if (Vector3.Distance(transform.position, _player.transform.position) < minDistance
+                                && Physics.Raycast(transform.position + transform.up, dir, out hit, minDistance,
+                                    _layerMask))
+                            {
+                                DoAction(0);
+                            }
+                        }
+                        else
+                        {
+                            if (Vector3.Distance(transform.position, _player.transform.position) < minDistance)
+                            {
+                                DoAction(0);
+                            }
                         }
                     }
-
                 }
-                
             }
         }
 
-        private void DoAction()
+        /// <summary>
+        /// Do interaction action - Must be called from Interact()
+        /// </summary>
+        /// <param name="dir">0 = No direction, 1 = forward, 2 = backwards</param>
+        private void DoAction(int dir)
         {
             if (useEvents)
                 eventOnInteraction.Invoke();
@@ -132,11 +144,11 @@ namespace Team1_GraduationGame.Interaction
                     thisEnemy.PushDown();
                 else if (_objectPush != null && interactConditions)
                 {
-                    _objectPush.Push(false);
+                    _objectPush.Push(false, dir);
                 }
                 else if (!interactConditions && _objectPush != null)
                 {
-                    _objectPush.Push(true);
+                    _objectPush.Push(true, dir);
                 }
             }
 
@@ -157,10 +169,43 @@ namespace Team1_GraduationGame.Interaction
                 Debug.LogError("Interaction Error: Animator missing on " + gameObject.name);
             }
 
+            if (emitSound)
+                HearingCheck();
+
             if (interactableOnce)
                 _interacted = true;
         }
 
+        private void HearingCheck()
+        {
+            for (int i = 0; i < _allEnemies.Length; i++)
+            {
+                NavMeshPath path = new NavMeshPath();
+                _allEnemies[i].getNavMeshAgent().CalculatePath(transform.position, path);
+
+                Vector3[] allPathPoints = new Vector3[path.corners.Length + 2];
+                allPathPoints[0] = _allEnemies[i].gameObject.transform.position;
+                allPathPoints[allPathPoints.Length - 1] = transform.position;
+
+                for (int j = 0; j < path.corners.Length; j++)
+                {
+                    allPathPoints[j + 1] = path.corners[j];
+                }
+
+                float tempPathLength = 0.0f;
+
+                for (int j = 0; j < allPathPoints.Length - 1; j++)
+                {
+                    tempPathLength += Vector3.Distance(allPathPoints[j], allPathPoints[j + 1]);
+                }
+
+                if (tempPathLength < soundEmitDistance && soundEmitDistance > 0.0f)
+                {
+                    _allEnemies[i].SetLastSighting(_player.transform.position);
+                    _allEnemies[i].SetAggro(true);
+                }
+            }
+        }
     }
 
     #region Custom Inspector
@@ -186,6 +231,17 @@ namespace Team1_GraduationGame.Interaction
 
             // Bools:
             script.interactableOnce = EditorGUILayout.Toggle("Run Once?", script.interactableOnce);
+
+            // Sound emit:
+            DrawUILine(false);
+            if (script.thisEnemy == null)
+            {
+                EditorGUILayout.HelpBox("Use the 'sound manager' script if you want to play actual sounds", MessageType.None);
+                script.emitSound = EditorGUILayout.Toggle("Emit Sound on Use?", script.emitSound);
+
+                if (script.emitSound)
+                    script.soundEmitDistance = EditorGUILayout.FloatField("Sound Distance", script.soundEmitDistance);
+            }
 
             // Conditions:
             DrawUILine(false);

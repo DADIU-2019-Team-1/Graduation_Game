@@ -397,9 +397,8 @@ public class Movement : MonoBehaviour
         return currentSpeed.value;
     }
 
-    public void SetCanMove(bool move) 
+    public void Frozen(bool move) 
     {
-        canJump = move;
         moveFrozen = move;
     }
 

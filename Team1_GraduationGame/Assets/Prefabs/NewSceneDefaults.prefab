@@ -28,7 +28,6 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 5367966049562853421}
-  - {fileID: 8827393318103546561}
   - {fileID: 4470566394412941215}
   - {fileID: 3135696852482012630}
   - {fileID: 6914520011180613446}
@@ -564,7 +563,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 8218415646297780189}
-  m_RootOrder: 3
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &4410941865688739487
 MonoBehaviour:
@@ -599,52 +598,6 @@ MonoBehaviour:
   m_CameraActivatedEvent:
     m_PersistentCalls:
       m_Calls: []
---- !u!1 &6997950339517790263
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 8827393318103546561}
-  - component: {fileID: 5768797580419882562}
-  m_Layer: 8
-  m_Name: CamLookAt
-  m_TagString: CamLookAt
-  m_Icon: {fileID: -1412012063857583412, guid: 0000000000000000d000000000000000, type: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &8827393318103546561
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6997950339517790263}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 8218415646297780189}
-  m_RootOrder: 1
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &5768797580419882562
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6997950339517790263}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bceff3ba87df70c469be368fab67656c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  player: {fileID: 0}
-  offset: {x: 0, y: 0, z: 5}
-  lookDirFactor: 0.5
 --- !u!1 &7491953249514943268
 GameObject:
   m_ObjectHideFlags: 0
@@ -655,6 +608,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4470566394412941215}
   - component: {fileID: 7787108077470490333}
+  - component: {fileID: 8505779139235560461}
   m_Layer: 0
   m_Name: RailTrack
   m_TagString: Untagged
@@ -674,7 +628,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 8218415646297780189}
-  m_RootOrder: 2
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &7787108077470490333
 MonoBehaviour:
@@ -697,6 +651,24 @@ MonoBehaviour:
   m_Waypoints:
   - position: {x: 0, y: 0, z: 0}
     roll: 0
+--- !u!114 &8505779139235560461
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7491953249514943268}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bceff3ba87df70c469be368fab67656c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  player: {fileID: 0}
+  camMovement: {fileID: 0}
+  defaultOffset: {x: 0, y: 0, z: 0}
+  lookDirFactor: 0.5
+  offsetTrack: []
+  camTarget: {x: 0, y: 0, z: 0}
 --- !u!1 &7569344727797215166
 GameObject:
   m_ObjectHideFlags: 0
@@ -727,7 +699,7 @@ Transform:
   m_Children:
   - {fileID: 2833663293353789237}
   m_Father: {fileID: 8218415646297780189}
-  m_RootOrder: 4
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &2330165308596888650
 MonoBehaviour:
@@ -747,7 +719,7 @@ MonoBehaviour:
   m_StreamingVersion: 20170927
   m_Priority: 10
   m_StandbyUpdate: 2
-  m_LookAt: {fileID: 8827393318103546561}
+  m_LookAt: {fileID: 0}
   m_Follow: {fileID: 0}
   m_Lens:
     FieldOfView: 40
@@ -860,10 +832,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f28a4068b96247043b0e65608782c2ed, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  camTarget: {fileID: 8827393318103546561}
   player: {fileID: 0}
   camRail: {fileID: 6914520011180613446}
-  track: {fileID: 7787108077470490333}
+  track: {fileID: 0}
+  thisCam: {fileID: 0}
   tagsToFocus: []
   heightDistanceFactor:
     UseUnique: 0
@@ -881,6 +853,10 @@ MonoBehaviour:
     UseUnique: 0
     UniqueValue: 0
     Variable: {fileID: 11400000, guid: 0b0405ea76f7c494b87ebaf278d69805, type: 2}
+  fovUpdateTime: 0.05
+  previousTrackIndex: 0
+  nextTrackIndex: 0
+  trackX: 0
 --- !u!1001 &249590972215394409
 PrefabInstance:
   m_ObjectHideFlags: 0

@@ -114,7 +114,6 @@ Transform:
   m_Children:
   - {fileID: 3394997056434239903}
   - {fileID: 6511006840784730732}
-  - {fileID: 7684361301801713792}
   - {fileID: 3328092938023044574}
   - {fileID: 4296818029789024151}
   - {fileID: 5751142659889669383}
@@ -150,7 +149,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 7073127426096027036}
-  m_RootOrder: 4
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &3248140787725571294
 MonoBehaviour:
@@ -281,10 +280,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f28a4068b96247043b0e65608782c2ed, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  camTarget: {fileID: 7684361301801713792}
   player: {fileID: 0}
   camRail: {fileID: 5751142659889669383}
-  track: {fileID: 8949843360007693468}
+  track: {fileID: 0}
+  thisCam: {fileID: 0}
   tagsToFocus: []
   heightDistanceFactor:
     UseUnique: 0
@@ -302,51 +301,10 @@ MonoBehaviour:
     UseUnique: 0
     UniqueValue: 0
     Variable: {fileID: 11400000, guid: 0b0405ea76f7c494b87ebaf278d69805, type: 2}
---- !u!1 &8158499793628922486
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 7684361301801713792}
-  - component: {fileID: 4623934862496031747}
-  m_Layer: 8
-  m_Name: CamLookAt
-  m_TagString: CamLookAt
-  m_Icon: {fileID: -1412012063857583412, guid: 0000000000000000d000000000000000, type: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &7684361301801713792
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8158499793628922486}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 7073127426096027036}
-  m_RootOrder: 2
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &4623934862496031747
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8158499793628922486}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bceff3ba87df70c469be368fab67656c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  player: {fileID: 0}
-  offset: {x: 0, y: 0, z: 5}
+  fovUpdateTime: 0.05
+  previousTrackIndex: 0
+  nextTrackIndex: 0
+  trackX: 0
 --- !u!1 &8637241486510541157
 GameObject:
   m_ObjectHideFlags: 0
@@ -357,6 +315,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3328092938023044574}
   - component: {fileID: 8949843360007693468}
+  - component: {fileID: 170750924206327835}
   m_Layer: 0
   m_Name: RailTrack
   m_TagString: Untagged
@@ -376,7 +335,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 7073127426096027036}
-  m_RootOrder: 3
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &8949843360007693468
 MonoBehaviour:
@@ -399,6 +358,24 @@ MonoBehaviour:
   m_Waypoints:
   - position: {x: 0, y: 0, z: 0}
     roll: 0
+--- !u!114 &170750924206327835
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8637241486510541157}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bceff3ba87df70c469be368fab67656c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  player: {fileID: 0}
+  camMovement: {fileID: 0}
+  defaultOffset: {x: 0, y: 0, z: 0}
+  lookDirFactor: 0.5
+  offsetTrack: []
+  camTarget: {x: 0, y: 0, z: 0}
 --- !u!1 &8732145954205308415
 GameObject:
   m_ObjectHideFlags: 0
@@ -429,7 +406,7 @@ Transform:
   m_Children:
   - {fileID: 3996477752675614068}
   m_Father: {fileID: 7073127426096027036}
-  m_RootOrder: 5
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &3491151279022579211
 MonoBehaviour:
@@ -449,7 +426,7 @@ MonoBehaviour:
   m_StreamingVersion: 20170927
   m_Priority: 10
   m_StandbyUpdate: 2
-  m_LookAt: {fileID: 7684361301801713792}
+  m_LookAt: {fileID: 0}
   m_Follow: {fileID: 0}
   m_Lens:
     FieldOfView: 40

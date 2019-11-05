@@ -7,7 +7,7 @@ using UnityEngine;
 public class Movement : MonoBehaviour
 {
     private Rigidbody playerRB;
-    private bool touchStart = false, canMove = false, canJump = true, canPush, isJumping = false;
+    private bool touchStart = false, canMove = false, canJump = true, canPush, isJumping = false, moveFrozen = false;
 
     private float swipeTimeThreshold = 0.3f, swipeTimeTimer;
     private Vector3 initTouchPos;
@@ -45,13 +45,7 @@ public class Movement : MonoBehaviour
 
     public GameObject leftFootPos, rightFootPos;
 
-    private SphereCollider playerTrigger;
-
-    public LayerMask interactableLayers;
-
-    private GameObject[] enemyReferences;
-
-    private GameObject[] interactableReferences;
+    //private SphereCollider playerTrigger;
 
     //public FloatReference floatingWeight;
 
@@ -71,19 +65,24 @@ public class Movement : MonoBehaviour
     [Range(0.0f, 1.0f)]
     private float runThreshold;
     //public List<Touchlocation> touches = new List<Touchlocation>();
+
+    [TagSelector] [SerializeField] private string[] tagsToInteractWith;
+    [SerializeField] private List<GameObject> interactableObjects;
+
     void Start()
     {
         playerRB = GetComponent<Rigidbody>();
-        enemyReferences = GameObject.FindGameObjectsWithTag("Enemy");
-        interactableReferences = GameObject.FindGameObjectsWithTag("Interactable");
-        Debug.Log("Length of interactables in scene: " + interactableReferences.Length + "Enemies in scene: " + enemyReferences.Length);
+
+        interactableObjects = new List<GameObject>();
+        for (int i = 0; i < tagsToInteractWith.Length; i++)
+            interactableObjects.AddRange(GameObject.FindGameObjectsWithTag(tagsToInteractWith[i]));
     }
 
     void Awake()
     {
-        playerTrigger = GetComponent<SphereCollider>();
+/*         playerTrigger = GetComponent<SphereCollider>();
         playerTrigger.radius = attackRange.value;
-        playerTrigger.isTrigger = true;
+        playerTrigger.isTrigger = true; */
     }
 
     void FixedUpdate()
@@ -106,7 +105,7 @@ public class Movement : MonoBehaviour
         while (i < Input.touchCount)
         {
             Touch t = Input.GetTouch(i);
-            if (t.phase == TouchPhase.Began)
+            if (t.phase == TouchPhase.Began && !moveFrozen)
             {
                 if (t.position.x < Screen.width / 2)
                 {
@@ -136,7 +135,7 @@ public class Movement : MonoBehaviour
                 }
 
             }
-            else if ((t.phase == TouchPhase.Moved || t.phase == TouchPhase.Stationary) && leftTouch == t.fingerId && canMove)
+            else if ((t.phase == TouchPhase.Moved || t.phase == TouchPhase.Stationary) && leftTouch == t.fingerId && canMove && !moveFrozen)
             {
 
                 Vector3 offset = new Vector3(t.position.x - stickLimit.transform.position.x, 0, t.position.y - stickLimit.transform.position.y);
@@ -204,11 +203,11 @@ public class Movement : MonoBehaviour
                 if (swipeOffSet.magnitude > swipePixelDistance.value)
                 {
                     //Debug.Log("Swipe");
-                    Debug.DrawLine(swipeStartPos, swipeStartPos + swipeDirection * 300, Color.red, 5);
-                    Debug.DrawLine(playerRB.transform.position, playerRB.transform.position + worldDirection * 5, Color.green, 5);
+                    //Debug.DrawLine(swipeStartPos, swipeStartPos + swipeDirection * 300, Color.red, 5);
+
                     playerAttack(worldDirection);
                 }
-                else if (swipeTimeTimer + swipeTimeThreshold >= Time.time)
+                else if (swipeTimeTimer + swipeTimeThreshold >= Time.time && !moveFrozen)
                 {
                     playerJump(Vector3.up, jumpHeight.value);
                     //Debug.Log("Jump");
@@ -223,7 +222,7 @@ public class Movement : MonoBehaviour
 
         // Making sure Mouse only runs on PC.
         // If this says && !UNITY_ANDROID, delete it. This is used to test on Unity Remote
-#if UNITY_EDITOR && !UNITY_ANDROID
+#if UNITY_EDITOR
         if (Input.GetMouseButtonDown(0))
         {
             initTouchPos = Input.mousePosition;
@@ -235,7 +234,7 @@ public class Movement : MonoBehaviour
             stickLimit.transform.position = Input.mousePosition;
             stick.transform.position = Input.mousePosition;
             // If the anchor point for Joystick is on the left side of the screen, allow movement.
-            if (stickLimit.transform.position.x < Screen.width / 2)
+            if (stickLimit.transform.position.x < Screen.width / 2 && !moveFrozen)
             {
                 canMove = true;
                 stick.gameObject.SetActive(true);
@@ -268,22 +267,23 @@ public class Movement : MonoBehaviour
             swipeDirection = swipeOffSet.normalized;
             Vector3 worldDirection = new Vector3(swipeDirection.x, 0, swipeDirection.y);
             //Debug.Log("End phase: " + Time.time);
-            if (swipeOffSet.magnitude > swipePixelDistance.value)
+            if (swipeOffSet.magnitude > swipePixelDistance.value && Input.mousePosition.x > Screen.width /2 && !canMove)
             {
+                playerAttack(worldDirection);
                 //Debug.Log("Swipe");
-                Debug.DrawLine(swipeStartPos, swipeStartPos + swipeDirection * 300, Color.red, 5);
-                Debug.DrawLine(playerRB.transform.position, playerRB.transform.position + worldDirection * 5, Color.green, 5);
+                //Debug.DrawLine(swipeStartPos, swipeStartPos + swipeDirection * 300, Color.red, 5);
+                //Debug.DrawLine(playerRB.transform.position, playerRB.transform.position + worldDirection * 5, Color.green, 5);
 
 
             }
-            else if (swipeTimeTimer + swipeTimeThreshold >= Time.time)
+            else if (swipeTimeTimer + swipeTimeThreshold >= Time.time && !moveFrozen)
             {
                 playerJump(Vector3.up, jumpHeight.value);
                 //Debug.Log("Jump");
             }
         }
 
-        if (touchStart && canMove)
+        if (touchStart && canMove && !moveFrozen)
         {
 
             Vector3 offset = new Vector3(currTouchPos.x - initTouchPos.x, 0, currTouchPos.y - initTouchPos.y);
@@ -329,7 +329,7 @@ public class Movement : MonoBehaviour
 
         SetState();
     }
-    
+
 
     private void movePlayer(Vector3 direction, float speedMove)
     {
@@ -358,14 +358,49 @@ public class Movement : MonoBehaviour
         //canJump = false;
     }
 
-    private void playerAttack(Vector3 direction) {
-        Debug.Log("Attack direction: " + direction);
+    private void playerAttack(Vector3 direction)
+    {
+
+        float angle = ((float)attackDegree.value * Mathf.Deg2Rad) / 2;
+        for (float j = -angle; j <= angle; j += 0.02f)
+        {
+            float x = direction.x * Mathf.Cos(j) - direction.z * Mathf.Sin(j);
+            float z = direction.z * Mathf.Cos(j) + direction.x * Mathf.Sin(j);
+            Vector3 newPoint = new Vector3(x, 0, z);
+            Debug.DrawLine(playerRB.transform.position, playerRB.transform.position + newPoint * attackRange.value, Color.magenta, 0.5f);
+        }
+
+        // check all objects
+        for (int i = 0; i < interactableObjects.Count; i++)
+        {
+            // if in range
+            float refDistance = Vector3.Distance(interactableObjects[i].transform.position, transform.position);
+            if (refDistance <= attackRange.value)
+            {
+                // and in attack degree
+                Vector3 temp = interactableObjects[i].transform.position - transform.position;
+                temp.y = 0;
+                float angleToObject = Vector3.Angle(temp, direction);
+                if (angleToObject <= attackDegree.value / 2)
+                {
+                    // interact
+                    Debug.Log("INTERACT!!!!!");
+                    //interactableObjects[i].interact();
+                }
+            }
+        }
     }
 
     public float GetSpeed()
     {
         currentSpeed.value = Vector3.Distance(transform.position, _previousPosition) / Time.fixedDeltaTime;
         return currentSpeed.value;
+    }
+
+    public void SetCanMove(bool move) 
+    {
+        canJump = move;
+        moveFrozen = move;
     }
 
     public void SetState()

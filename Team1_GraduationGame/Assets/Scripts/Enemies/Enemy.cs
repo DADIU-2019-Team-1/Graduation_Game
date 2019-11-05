@@ -353,6 +353,7 @@
                 _navMeshAgent.isStopped = true;
 
                 // TODO - YYY play lie down/knocked down animation
+
                 viewConeLight.gameObject.SetActive(true);
                 viewConeLight.color = Color.green;
 
@@ -360,7 +361,7 @@
 
                 if (_movement != null)
                 {
-                    // _movement.Frozen(false);  // TODO: Make this happen
+                    _movement.Frozen(false);
                 }
 
                 StartCoroutine(PushDownDelay());
@@ -444,7 +445,7 @@
 
             if (_movement != null)
             {
-                // _movement.Frozen(true);  // TODO: Make this happen
+                _movement.Frozen(true);
             }
 
             yield return new WaitForSeconds(thisEnemy.embraceDelay);

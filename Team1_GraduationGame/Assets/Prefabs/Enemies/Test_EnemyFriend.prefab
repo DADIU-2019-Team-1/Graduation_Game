@@ -15,6 +15,7 @@ GameObject:
   - component: {fileID: 8066833904473486993}
   - component: {fileID: 8066833904473486998}
   - component: {fileID: 8066833904473486999}
+  - component: {fileID: 7732374153253258348}
   m_Layer: 9
   m_Name: Test_EnemyFriend
   m_TagString: Untagged
@@ -149,7 +150,11 @@ MonoBehaviour:
   playerDiedEvent: {fileID: 11400000, guid: a91b977e02bad9345b91ce4665a3b978, type: 2}
   viewConeLight: {fileID: 8066833905602222348}
   playerMoveState: {fileID: 11400000, guid: 064acbb0600eace4e969fd76909dcac8, type: 2}
+  wayPoints: []
+  parentWayPoint: {fileID: 0}
   wayPointReachRange: 1
+  hearingSensitivity: 2
+  minimumAlwaysDetectRange: 1.3
   drawGizmos: 1
   useWaitTime: 0
   rotateAtWaypoints: 0
@@ -159,8 +164,40 @@ MonoBehaviour:
   aggroConeColor: {r: 1, g: 0, b: 0, a: 1}
   useGlobalWaitTime: 1
   waitTime: 0
-  wayPoints: []
-  parentWayPoint: {fileID: 0}
+--- !u!114 &7732374153253258348
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8066833904473486996}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d583f01c9de102f4f84d190400a6dd82, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  thisEnemy: {fileID: 8066833904473486999}
+  interactionDistance: {fileID: 0}
+  interactionAngle: {fileID: 0}
+  minDistance: 2
+  angle: 90
+  soundEmitDistance: 0
+  interactCooldown: 1.5
+  interactableOnce: 0
+  pushable: 0
+  useEvents: 0
+  useAnimation: 0
+  switchBetweenAnimations: 0
+  animationState: 0
+  interactConditions: 0
+  checkForObstructions: 0
+  emitSound: 1
+  useCooldown: 0
+  eventOnInteraction:
+    m_PersistentCalls:
+      m_Calls: []
+  animationDefault: 
+  animationAction: 
 --- !u!1 &8066833905602222354
 GameObject:
   m_ObjectHideFlags: 0
@@ -264,6 +301,7 @@ GameObject:
   - component: {fileID: 7965216924487471954}
   - component: {fileID: 7725602379154238850}
   - component: {fileID: 3623066887443310330}
+  - component: {fileID: 6731612087388894719}
   m_Layer: 0
   m_Name: Cube
   m_TagString: Untagged
@@ -344,3 +382,19 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &6731612087388894719
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8451927590230836802}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6d07ce676d7afda4dabb3b0f7dd5e654, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_OverrideArea: 0
+  m_Area: 0
+  m_IgnoreFromBuild: 1
+  m_AffectedAgents: ffffffff

@@ -21,7 +21,7 @@
         public Light viewConeLight;
         public IntVariable playerMoveState;
         private GameObject _player;
-        private GameObject[] _interactableObjects;  // TODO: populate this and use it for hearing
+        private Movement _movement;
         private NavMeshAgent _navMeshAgent;
         [HideInInspector] public List<GameObject> wayPoints;
         [HideInInspector] public GameObject parentWayPoint;
@@ -65,22 +65,12 @@
             else
                 Debug.LogError("Enemy disabled: Player not found or scriptable object not attached!");
 
-            if (!_hearingDisabled)  // TODO YYY
-            {
-                //if (GameObject.FindObjectsOfType<Interactable>().Length != 0)
-                //{
-                //    _interactableObjects = new GameObject[GameObject.FindObjectsOfType<Interactable>()];
-                //    _interactableObjects = GameObject.FindObjectsOfType<Interactable>();
-                //}
-                //for (int i = 0; i < GameObject.FindObjectsOfType<Interactable>().Length; i++)
-                //{
-                    
-                //}
-            }
-
             if (_active)
             {
                 _thisCollider = gameObject.GetComponent<SphereCollider>();
+
+                if (_player.GetComponent<Movement>() != null)
+                    _movement = _player.GetComponent<Movement>();
 
                 if (_thisCollider != null)
                 {
@@ -362,9 +352,16 @@
                 _active = false;
                 _navMeshAgent.isStopped = true;
 
-                // TODO: play lie down/knocked down animation
+                // TODO - YYY play lie down/knocked down animation
                 viewConeLight.gameObject.SetActive(true);
                 viewConeLight.color = Color.green;
+
+                StopCoroutine(EnemyHug());  // Stop hug if hugging
+
+                if (_movement != null)
+                {
+                    // _movement.Frozen(false);  // TODO: Make this happen
+                }
 
                 StartCoroutine(PushDownDelay());
             }
@@ -445,16 +442,17 @@
 
             transform.LookAt(_player.transform.position);
 
+            if (_movement != null)
+            {
+                // _movement.Frozen(true);  // TODO: Make this happen
+            }
+
             yield return new WaitForSeconds(thisEnemy.embraceDelay);
 
             if (Vector3.Distance(transform.position, _player.transform.position) <
                 thisEnemy.embraceDistance)
             {
                 Debug.Log("THE PLAYER DIED");
-                if (_player.GetComponent<Movement>() != null)
-                {
-                    // TODO: freeze player and play animation
-                }
 
                 if (playerDiedEvent != null)
                 {

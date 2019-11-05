@@ -1,4 +1,5 @@
-﻿using Team1_GraduationGame.Enemies;
+﻿using System.Collections;
+using Team1_GraduationGame.Enemies;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.Events;
@@ -21,9 +22,9 @@ namespace Team1_GraduationGame.Interaction
         public FloatVariable interactionAngle;
 
         // Public:
-        public float minDistance = 2.0f, angle = 90.0f, soundEmitDistance;
+        public float minDistance = 2.0f, angle = 90.0f, soundEmitDistance, interactCooldown = 1.5f;
         public bool interactableOnce, pushable, useEvents, useAnimation, switchBetweenAnimations, animationState, 
-            interactConditions = true, checkForObstructions, emitSound = true;
+            interactConditions = true, checkForObstructions, emitSound, useCooldown;
         public UnityEvent eventOnInteraction;
         public string animationDefault, animationAction;
 
@@ -71,6 +72,7 @@ namespace Team1_GraduationGame.Interaction
         {
             if (!_interacted)
             {
+
                 if (!interactConditions)
                 {
                     DoAction(0);
@@ -126,6 +128,11 @@ namespace Team1_GraduationGame.Interaction
                         }
                     }
                 }
+
+                if (useCooldown && !interactableOnce)
+                {
+                    StartCoroutine(InteractionCooldown());
+                }
             }
         }
 
@@ -135,6 +142,7 @@ namespace Team1_GraduationGame.Interaction
         /// <param name="dir">0 = No direction, 1 = forward, 2 = backwards</param>
         private void DoAction(int dir)
         {
+
             if (useEvents)
                 eventOnInteraction.Invoke();
 
@@ -180,31 +188,41 @@ namespace Team1_GraduationGame.Interaction
         {
             for (int i = 0; i < _allEnemies.Length; i++)
             {
-                NavMeshPath path = new NavMeshPath();
-                _allEnemies[i].getNavMeshAgent().CalculatePath(transform.position, path);
-
-                Vector3[] allPathPoints = new Vector3[path.corners.Length + 2];
-                allPathPoints[0] = _allEnemies[i].gameObject.transform.position;
-                allPathPoints[allPathPoints.Length - 1] = transform.position;
-
-                for (int j = 0; j < path.corners.Length; j++)
+                if (!_allEnemies[i].GetHearing() && !_allEnemies[i].alwaysAggro)
                 {
-                    allPathPoints[j + 1] = path.corners[j];
-                }
+                    NavMeshPath path = new NavMeshPath();
+                    _allEnemies[i].getNavMeshAgent().CalculatePath(transform.position, path);
 
-                float tempPathLength = 0.0f;
+                    Vector3[] allPathPoints = new Vector3[path.corners.Length + 2];
+                    allPathPoints[0] = _allEnemies[i].gameObject.transform.position;
+                    allPathPoints[allPathPoints.Length - 1] = transform.position;
 
-                for (int j = 0; j < allPathPoints.Length - 1; j++)
-                {
-                    tempPathLength += Vector3.Distance(allPathPoints[j], allPathPoints[j + 1]);
-                }
+                    for (int j = 0; j < path.corners.Length; j++)
+                    {
+                        allPathPoints[j + 1] = path.corners[j];
+                    }
 
-                if (tempPathLength < soundEmitDistance && soundEmitDistance > 0.0f)
-                {
-                    _allEnemies[i].SetLastSighting(_player.transform.position);
-                    _allEnemies[i].SetAggro(true);
+                    float tempPathLength = 0.0f;
+
+                    for (int j = 0; j < allPathPoints.Length - 1; j++)
+                    {
+                        tempPathLength += Vector3.Distance(allPathPoints[j], allPathPoints[j + 1]);
+                    }
+
+                    if (tempPathLength < soundEmitDistance && soundEmitDistance > 0.0f)
+                    {
+                        _allEnemies[i].SetLastSighting(_player.transform.position);
+                        _allEnemies[i].SetAggro(true);
+                    }
                 }
             }
+        }
+
+        private IEnumerator InteractionCooldown()
+        {
+            _interacted = true;
+            yield return new WaitForSeconds(interactCooldown);
+            _interacted = false;
         }
     }
 
@@ -229,8 +247,21 @@ namespace Team1_GraduationGame.Interaction
                 }
             }
 
+            if (script.gameObject.GetComponent<Enemy>() == null && script.GetComponent<NavMeshObstacle>() == null)
+            {
+                NavMeshObstacle tempNavMeshObs = script.gameObject.AddComponent<NavMeshObstacle>();
+                tempNavMeshObs.carving = true;
+                tempNavMeshObs.carveOnlyStationary = false;
+            }
+
             // Bools:
             script.interactableOnce = EditorGUILayout.Toggle("Run Once?", script.interactableOnce);
+            if (!script.interactableOnce)
+            {
+                script.useCooldown = EditorGUILayout.Toggle("Use Cooldown?", script.useCooldown);
+                if (script.useCooldown)
+                    script.interactCooldown = EditorGUILayout.FloatField("Time (sec)", script.interactCooldown);
+            }
 
             // Sound emit:
             DrawUILine(false);

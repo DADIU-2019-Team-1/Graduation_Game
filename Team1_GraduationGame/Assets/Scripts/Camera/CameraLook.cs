@@ -90,7 +90,7 @@ public class CameraLook : MonoBehaviour
         }
 
         if (camMovement != null)
-        {
+        {   
             offsetLerpTime = (camMovement.camRail.position.x - cmPath.m_Waypoints[camMovement.previousTrackIndex].position.x - camMovement.trackX) /
                              (cmPath.m_Waypoints[camMovement.nextTrackIndex].position.x - cmPath.m_Waypoints[camMovement.previousTrackIndex].position.x);
             offset = Vector3.Lerp(offsetTrack[camMovement.previousTrackIndex].GetPos(), offsetTrack[camMovement.nextTrackIndex].GetPos(), offsetLerpTime);

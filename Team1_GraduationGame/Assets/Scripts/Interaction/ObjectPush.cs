@@ -60,6 +60,9 @@ namespace Team1_GraduationGame.Interaction
         #region Waypoint System
         public void AddWayPoint()
         {
+            if (wayPoints == null)
+                wayPoints = new List<GameObject>();
+
             if (wayPoints.Count >= 2)
                 return;
 

@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Team1_GraduationGame.Interaction;
 
 [RequireComponent(typeof(Rigidbody), typeof(SphereCollider))]
 
@@ -391,6 +392,7 @@ public class Movement : MonoBehaviour
                 if (angleToObject <= attackDegree.value / 2)
                 {
                     // interact
+                    interactableObjects[i].GetComponent<Interactable>().Interact();
                     Debug.Log("INTERACT!!!!!");
                     //interactableObjects[i].interact();
                 }

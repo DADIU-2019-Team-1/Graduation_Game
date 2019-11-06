@@ -11,7 +11,7 @@
     using UnityEditor;
 #endif
 
-    [RequireComponent(typeof(SphereCollider), typeof(NavMeshAgent))]
+    [RequireComponent(typeof(SphereCollider), typeof(NavMeshAgent), typeof(Interactable))]
     public class Enemy : MonoBehaviour
     {
         #region Variables

@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Team1_GraduationGame.Interaction;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.SceneManagement;
@@ -113,6 +114,11 @@ namespace Team1_GraduationGame.Events
         {
             Debug.Log("EventManager: Reset Scene");
             SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        }
+
+        public void ExitGame()
+        {
+            Application.Quit();
         }
     }
 
@@ -286,54 +292,54 @@ namespace Team1_GraduationGame.Events
             }
         }
 
-        public IEnumerator OnInteractablesToggle()  // TODO: Enable this again if needed, otherwise delete. (Depending on Interactable script)
+        public IEnumerator OnInteractablesToggle()
         {
-            //Interactable tempIntScript;
-            //bool loop = false;
-            //if (theseGameObjects != null)
-            //{
-            //    for (int j = 0; j < theseGameObjects.Length; j++)
-            //    {
-            //        if (theseGameObjects[j].GetComponent<Interactable>() == null)
-            //            break;
-            //        loop = true;
-            //    }           
-            //}
+            Interactable tempIntScript;
+            bool loop = false;
+            if (theseGameObjects != null)
+            {
+                for (int j = 0; j < theseGameObjects.Length; j++)
+                {
+                    if (theseGameObjects[j].GetComponent<Interactable>() == null)
+                        break;
+                    loop = true;
+                }
+            }
 
-            //if (loop == false)
-            //{
-            //    Debug.LogError("EventManager Error: array null or interactable script missing from some objects!");
-            //}
+            if (loop == false)
+            {
+                Debug.LogError("EventManager Error: array null or interactable script missing from some objects!");
+            }
 
-            //while (loop)
-            //{
-            //    yield return new WaitForSeconds(0.3f);
+            while (loop)
+            {
+                yield return new WaitForSeconds(0.3f);
 
-            //    int j = 0;
-            //    for (int i = 0; i < theseGameObjects.Length; i++)
-            //    {
-            //        tempIntScript = theseGameObjects[i].GetComponent<Interactable>();
-            //        if (tempIntScript.toggleState == false)
-            //        {
-            //            break;
-            //        }
-            //        j++;
-            //    }
+                int j = 0;
+                for (int i = 0; i < theseGameObjects.Length; i++)
+                {
+                    tempIntScript = theseGameObjects[i].GetComponent<Interactable>();
+                    if (tempIntScript.toggleState == false)
+                    {
+                        break;
+                    }
+                    j++;
+                }
 
-            //    if (j == theseGameObjects.Length)
-            //    {
-            //        yield return new WaitForSeconds(delayForFire);
-            //        eventToFire.Invoke();
-            //        Debug.Log(eventName + " event fired!");
-            //        yield return new WaitForSeconds(fireCooldown);
+                if (j == theseGameObjects.Length)
+                {
+                    yield return new WaitForSeconds(delayForFire);
+                    eventToFire.Invoke();
+                    Debug.Log(eventName + " event fired!");
+                    yield return new WaitForSeconds(fireCooldown);
 
-            //        if (fireCooldown == 0)
-            //        {
-            //            loop = false;
-            //        }
-            //    }
-            //}
-            return null;
+                    if (fireCooldown == 0)
+                    {
+                        loop = false;
+                    }
+                }
+            }
+
         }
 
         public IEnumerator OnObjectMoving()
@@ -511,21 +517,21 @@ namespace Team1_GraduationGame.Events
 
                         if ((int)script.events[i].function == 7)
                         {
-                            //script.events[i].fireCooldown = EditorGUILayout.FloatField("Fire Cooldown", script.events[i].fireCooldown);
-                            //script.events[i].gameObjectAmount = EditorGUILayout.IntField("Amount of objects", script.events[i].gameObjectAmount);
-                            //if (script.events[i].gameObjectAmount > 0)
-                            //{
-                            //    if (script.events[i].gameObjectAmount != script.events[i].theseGameObjects.Length)
-                            //    {
-                            //        script.events[i].ObjRotInit(script.events[i].gameObjectAmount);
-                            //    }
+                            script.events[i].fireCooldown = EditorGUILayout.FloatField("Fire Cooldown", script.events[i].fireCooldown);
+                            script.events[i].gameObjectAmount = EditorGUILayout.IntField("Amount of objects", script.events[i].gameObjectAmount);
+                            if (script.events[i].gameObjectAmount > 0)
+                            {
+                                if (script.events[i].gameObjectAmount != script.events[i].theseGameObjects.Length)
+                                {
+                                    script.events[i].ObjRotInit(script.events[i].gameObjectAmount);
+                                }
 
-                            //    for (int j = 0; j < script.events[i].theseGameObjects.Length; j++)
-                            //    {
-                            //        script.events[i].theseGameObjects[j] = EditorGUILayout.ObjectField("Interactable Object", script.events[i].theseGameObjects[j], typeof(GameObject), true) as GameObject;
-                            //    }
-                            //}
-                            EditorGUILayout.HelpBox("This option is currently disabled"/*"Specify the amount of interactable gameobjects you want to check. The event will fire when they all their states are true."*/, MessageType.Info);
+                                for (int j = 0; j < script.events[i].theseGameObjects.Length; j++)
+                                {
+                                    script.events[i].theseGameObjects[j] = EditorGUILayout.ObjectField("Interactable Object", script.events[i].theseGameObjects[j], typeof(GameObject), true) as GameObject;
+                                }
+                            }
+                            EditorGUILayout.HelpBox("Specify the amount of interactable gameobjects you want to check. The event will fire when they all their states are true.", MessageType.Info);
                         }
 
                         GUILayout.Space(10);

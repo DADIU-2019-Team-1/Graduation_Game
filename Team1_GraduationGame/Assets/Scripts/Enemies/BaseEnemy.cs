@@ -1,10 +1,6 @@
 ﻿namespace Team1_GraduationGame.Enemies
 {
-
-    using System.Collections;
-    using System.Collections.Generic;
     using UnityEngine;
-
 #if UNITY_EDITOR
     using UnityEditor;
 #endif
@@ -30,7 +26,6 @@
         public float pushedDownDuration; // If 0, they cannot be pushed down
         public float embraceDistance;
         public float embraceDelay;
-
     }
 
 #if UNITY_EDITOR

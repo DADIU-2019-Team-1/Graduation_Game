@@ -32,11 +32,6 @@ namespace Team1_GraduationGame.Events
 
         }
 
-        void Update()
-        {
-            // Not used atm.
-        }
-
         public void Fire(string eventName)
         {
             bool isFound = false;
@@ -125,15 +120,12 @@ namespace Team1_GraduationGame.Events
     [System.Serializable]
     public class ThisEventSystem
     {
-        [HideInInspector]
-        public GameObject attachedManager;
+        [HideInInspector] public GameObject attachedManager;
 
         private bool hasFired = false;
-        [HideInInspector]
-        public bool activeInInspector = false;
+        [HideInInspector] public bool activeInInspector = false;
 
-        [HideInInspector]
-        public string eventName = "";
+        [HideInInspector] public string eventName = "";
 
         public enum myFuncEnum
         {
@@ -147,29 +139,19 @@ namespace Team1_GraduationGame.Events
             OnInteractablesToggle
         };
 
-        [HideInInspector]
-        public UnityEvent eventToFire;
+        [HideInInspector] public UnityEvent eventToFire;
 
-        [HideInInspector]
-        public myFuncEnum function;
+        [HideInInspector] public myFuncEnum function;
 
-        [HideInInspector]
-        public float delayForFire = 0.0f;
+        [HideInInspector] public float delayForFire = 0.0f;
 
-        [HideInInspector]
-        public GameObject thisGameObject;
-        [HideInInspector]
-        public int gameObjectAmount = 0;
-        [HideInInspector]
-        public GameObject[] theseGameObjects;
-        [HideInInspector]
-        public string collisionTag = "";
-        [HideInInspector]
-        public bool isTrigger = true;
-        [HideInInspector]
-        public float fireCooldown = 0.0f;
-        [HideInInspector]
-        public int[] specificRotations;
+        [HideInInspector] public GameObject thisGameObject;
+        [HideInInspector] public int gameObjectAmount = 0;
+        [HideInInspector] public GameObject[] theseGameObjects;
+        [HideInInspector] public string collisionTag = "";
+        [HideInInspector] public bool isTrigger = true;
+        [HideInInspector] public float fireCooldown = 0.0f;
+        [HideInInspector] public int[] specificRotations;
 
         public void OnCollisionWithTag()
         {
@@ -410,6 +392,7 @@ namespace Team1_GraduationGame.Events
 
     }
 
+    #region Custom Editor
 #if UNITY_EDITOR
     [CustomEditor(typeof(EventManager))]
     public class EventManager_Editor : UnityEditor.Editor
@@ -551,4 +534,5 @@ namespace Team1_GraduationGame.Events
         }
     }
 #endif
+    #endregion
 }

@@ -13,23 +13,8 @@ namespace Team1_GraduationGame.SaveLoadSystem
 
         // References:
         private GameObject _player;
-        //private GameObject[] _enemies;
+        private GameObject[] _enemies;
 
-
-        private void Awake()
-        {
-            _player = GameObject.FindWithTag("Player");
-            //_enemies = GameObject.FindGameObjectsWithTag("Enemy");
-        }
-
-        private void Start()
-        {
-            if (PlayerPrefs.GetInt("loadGameOnAwake") == 1)
-            {
-                PlayerPrefs.SetInt("loadGameOnAwake", 0);
-                LoadGame();
-            }
-        }
 
 #if UNITY_EDITOR
         private void Update()
@@ -70,6 +55,7 @@ namespace Team1_GraduationGame.SaveLoadSystem
         public void SaveGame()
         {
             string tempSaveString = "";
+            _player = GameObject.FindWithTag("Player");
 
             //// Player save: ////
             if (_player != null)
@@ -102,6 +88,7 @@ namespace Team1_GraduationGame.SaveLoadSystem
         public void LoadGame()
         {
             string tempLoadString = "";
+            _player = GameObject.FindWithTag("Player");
 
             if (PlayerPrefs.GetInt("previousGame") != 1)
                 return;
@@ -119,7 +106,6 @@ namespace Team1_GraduationGame.SaveLoadSystem
                 Debug.Log("Save/Load Manager: Failed to load the game. Player not found");
                 return;
             }
-
         }
     }
 }

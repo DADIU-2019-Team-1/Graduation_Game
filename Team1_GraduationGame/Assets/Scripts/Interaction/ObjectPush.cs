@@ -13,7 +13,6 @@ namespace Team1_GraduationGame.Interaction
     {
         // References:
         private Rigidbody _thisRigidBody;
-        private Interactable _interactable;
         private GameObject _player;
 
         // Public:
@@ -28,7 +27,6 @@ namespace Team1_GraduationGame.Interaction
         {
             _player = GameObject.FindGameObjectWithTag("Player");
             _thisRigidBody = GetComponent<Rigidbody>();
-            _interactable = GetComponent<Interactable>();
 
             _thisRigidBody.mass = 100;
             

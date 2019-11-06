@@ -26,7 +26,7 @@ namespace Team1_GraduationGame.Managers
 
             }
         }
-
+#endif
 
         public void NewGame()
         {

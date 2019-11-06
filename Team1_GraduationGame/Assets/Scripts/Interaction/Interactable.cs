@@ -24,7 +24,7 @@ namespace Team1_GraduationGame.Interaction
         // Public:
         public float minDistance = 2.0f, angle = 90.0f, soundEmitDistance, interactCooldown = 1.5f;
         public bool interactableOnce, pushable, useEvents, useAnimation, switchBetweenAnimations, animationState, 
-            interactConditions = true, checkForObstructions, emitSound, useCooldown;
+            interactConditions, checkForObstructions, emitSound, useCooldown;
         public UnityEvent eventOnInteraction;
         public string animationDefault, animationAction;
         [HideInInspector] public bool toggleState;

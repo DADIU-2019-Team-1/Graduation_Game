@@ -112,23 +112,31 @@ public class Movement : MonoBehaviour
             Touch t = Input.GetTouch(i);
             if (t.phase == TouchPhase.Began && !moveFrozen)
             {
-                if (t.position.x < Screen.width / 2)
-                {
-                    stick.gameObject.SetActive(true);
-                    stickLimit.gameObject.SetActive(true);
-                    leftTouch = t.fingerId;
-                    stickLimit.transform.position = t.position;
-                    canMove = true;
+                if (t.position.x < (Screen.width / 2)-10)
+                {   
+                    if(t.fingerId < 50) {
+                        
+                        stick.gameObject.SetActive(true);
+                        stickLimit.gameObject.SetActive(true);
+                        stickLimit.transform.position = t.position;
+                        leftTouch = t.fingerId;
+                        
+                        canMove = true;
+                    }
+                    
 
                 }
 
 
                 else if (t.position.x > Screen.width / 2)
                 {
-                    rightTouch = t.fingerId;
-                    swipeStartPos = t.position;
+                    if(t.fingerId < 50) {
+                        rightTouch = t.fingerId;
+                        swipeStartPos = t.position;
 
-                    swipeTimeTimer = Time.time;
+                        swipeTimeTimer = Time.time;                        
+                    }
+
                     //Debug.Log("Began phase: " + swipeTimeTimer);
 
                     /*                     if(canJump && rightTouch == t.fingerId) {
@@ -172,7 +180,7 @@ public class Movement : MonoBehaviour
                 }
                 stick.transform.position = joyDiff + new Vector2(stickLimit.transform.position.x, stickLimit.transform.position.y);
                 // t.deltaPosition; is a Vector2 of the difference between the last frame to its position this frame. 
-                if (stickLimit.transform.position.x < Screen.width / 2)
+/*                 if (stickLimit.transform.position.x < Screen.width / 2)
                 {
                     stick.gameObject.SetActive(true);
                     stickLimit.gameObject.SetActive(true);
@@ -184,7 +192,7 @@ public class Movement : MonoBehaviour
                     // Swipe movement? Maybe use t.deltaPosition to check change for swiping. 
                     // Could use TouchPhase.Stationary for just jumping?
                 }
-
+ */
             }
             else if (t.phase == TouchPhase.Ended && leftTouch == t.fingerId)
             {

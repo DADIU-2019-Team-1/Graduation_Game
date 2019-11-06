@@ -85,6 +85,10 @@ public class Movement : MonoBehaviour
         playerTrigger.isTrigger = true; */
     }
 
+    void Update() {
+        currentSpeed.value = Vector3.Distance(transform.position, _previousPosition) / Time.fixedDeltaTime;
+    }
+
     void FixedUpdate()
     {
         if (playerRB.velocity.y <= 0 && isJumping)
@@ -269,6 +273,7 @@ public class Movement : MonoBehaviour
             //Debug.Log("End phase: " + Time.time);
             if (swipeOffSet.magnitude > swipePixelDistance.value && Input.mousePosition.x > Screen.width /2 && !canMove)
             {
+                
                 playerAttack(worldDirection);
                 //Debug.Log("Swipe");
                 //Debug.DrawLine(swipeStartPos, swipeStartPos + swipeDirection * 300, Color.red, 5);
@@ -369,14 +374,16 @@ public class Movement : MonoBehaviour
             Vector3 newPoint = new Vector3(x, 0, z);
             Debug.DrawLine(playerRB.transform.position, playerRB.transform.position + newPoint * attackRange.value, Color.magenta, 0.5f);
         }
-
+        
         // check all objects
         for (int i = 0; i < interactableObjects.Count; i++)
         {
             // if in range
+            
             float refDistance = Vector3.Distance(interactableObjects[i].transform.position, transform.position);
             if (refDistance <= attackRange.value)
             {
+                
                 // and in attack degree
                 Vector3 temp = interactableObjects[i].transform.position - transform.position;
                 temp.y = 0;
@@ -393,7 +400,7 @@ public class Movement : MonoBehaviour
 
     public float GetSpeed()
     {
-        currentSpeed.value = Vector3.Distance(transform.position, _previousPosition) / Time.fixedDeltaTime;
+        //currentSpeed.value = Vector3.Distance(transform.position, _previousPosition) / Time.fixedDeltaTime;
         return currentSpeed.value;
     }
 

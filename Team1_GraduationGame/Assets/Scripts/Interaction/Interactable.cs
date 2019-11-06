@@ -75,68 +75,7 @@ namespace Team1_GraduationGame.Interaction
             {
                 if (pushable)
                 {
-                    if (_objectPush.wayPoints.Count <= 2 || thisEnemy != null)
-                    {
-                        Vector3 dir = _player.transform.position - transform.position;
-                        float thisToPlayerAngle1 = Vector3.Angle(_objectPush.wayPoints[0].transform.position - _objectPush.wayPoints[1].transform.position, dir);
-                        float thisToPlayerAngle2 = Vector3.Angle(_objectPush.wayPoints[1].transform.position - _objectPush.wayPoints[0].transform.position, dir);
-                        RaycastHit hit;
-
-                        if (thisEnemy == null)
-                        {
-                            if (!interactConditions)
-                            {
-                                if (thisToPlayerAngle1 < 89)
-                                    DoAction(2);
-                                else if (thisToPlayerAngle2 < 89)
-                                    DoAction(1);
-                            }
-                            else if (checkForObstructions)
-                            {
-                                if (Vector3.Distance(transform.position, _player.transform.position) < minDistance
-                                    && Physics.Raycast(transform.position + transform.up, dir, out hit, minDistance, _layerMask))
-                                {
-                                    if (thisToPlayerAngle1 < angle / 2)
-                                        DoAction(2);
-                                    else if (thisToPlayerAngle2 < angle / 2)
-                                        DoAction(1);
-                                }
-                            }
-                            else
-                            {
-                                if (Vector3.Distance(transform.position, _player.transform.position) < minDistance)
-                                {
-                                    if (thisToPlayerAngle1 < angle / 2)
-                                        DoAction(2);
-                                    else if (thisToPlayerAngle2 < angle / 2)
-                                        DoAction(1);
-                                }
-                            }
-                        }
-                        else if (thisEnemy != null)
-                        {
-                            if (checkForObstructions)
-                            {
-                                if (Vector3.Distance(transform.position, _player.transform.position) < minDistance
-                                    && Physics.Raycast(transform.position + transform.up, dir, out hit, minDistance,
-                                        _layerMask))
-                                {
-                                    DoAction(0);
-                                }
-                            }
-                            else
-                            {
-                                if (Vector3.Distance(transform.position, _player.transform.position) < minDistance)
-                                {
-                                    DoAction(0);
-                                }
-                            }
-                        }
-                    }
-                    else
-                    {
-                        Debug.Log("Interaction Push Error: Please attach to waypoints using the 'Add Waypoint' button on " + gameObject.name);
-                    }
+                    PushAction();
                 }
                 else
                 {
@@ -156,7 +95,6 @@ namespace Team1_GraduationGame.Interaction
         /// <param name="dir">0 = No direction, 1 = forward, 2 = backwards</param>
         private void DoAction(int dir)
         {
-
             if (useEvents)
                 eventOnInteraction.Invoke();
 
@@ -192,6 +130,81 @@ namespace Team1_GraduationGame.Interaction
 
             if (interactableOnce)
                 _interacted = true;
+
+            toggleState = true; // Sets the state to have been toggled (For event system)
+        }
+
+        private void PushAction()
+        {
+            Vector3 dir = _player.transform.position - transform.position;
+            RaycastHit hit;
+
+            if (thisEnemy == null)
+            {
+                if (_objectPush.wayPoints.Count <= 2)
+                {
+                    float thisToPlayerAngle1 = Vector3.Angle(_objectPush.wayPoints[0].transform.position - _objectPush.wayPoints[1].transform.position, dir);
+                    float thisToPlayerAngle2 = Vector3.Angle(_objectPush.wayPoints[1].transform.position - _objectPush.wayPoints[0].transform.position, dir);
+
+                    if (!interactConditions)
+                    {
+                        if (thisToPlayerAngle1 < 89)
+                            DoAction(2);
+                        else if (thisToPlayerAngle2 < 89)
+                            DoAction(1);
+                    }
+                    else if (checkForObstructions)
+                    {
+                        if (Vector3.Distance(transform.position, _player.transform.position) < minDistance
+                            && Physics.Raycast(transform.position + transform.up, dir, out hit, minDistance, _layerMask))
+                        {
+                            if (thisToPlayerAngle1 < angle / 2)
+                                DoAction(2);
+                            else if (thisToPlayerAngle2 < angle / 2)
+                                DoAction(1);
+                        }
+                    }
+                    else
+                    {
+                        if (Vector3.Distance(transform.position, _player.transform.position) < minDistance)
+                        {
+                            if (thisToPlayerAngle1 < angle / 2)
+                                DoAction(2);
+                            else if (thisToPlayerAngle2 < angle / 2)
+                                DoAction(1);
+                        }
+                    }
+
+                }
+                else
+                {
+                    Debug.Log("Interaction Push Error: Please attach to waypoints using the 'Add Waypoint' button on " + gameObject.name);
+                }
+
+            }
+            else if (thisEnemy != null)
+            {
+                if (!interactConditions)
+                {
+                    DoAction(0);
+                }
+                else if (checkForObstructions)
+                {
+                    if (Vector3.Distance(transform.position, _player.transform.position) < minDistance
+                        && Physics.Raycast(transform.position + transform.up, dir, out hit, minDistance,
+                            _layerMask))
+                    {
+                        DoAction(0);
+                    }
+                }
+                else
+                {
+                    if (Vector3.Distance(transform.position, _player.transform.position) < minDistance)
+                    {
+                        DoAction(0);
+                    }
+                }
+            }
         }
 
         private void HearingCheck()

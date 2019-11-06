@@ -15700,7 +15700,7 @@ Animator:
   m_GameObject: {fileID: 7409109872908366446}
   m_Enabled: 1
   m_Avatar: {fileID: 9000000, guid: 44d66f0fc4187644d8599af09d4c18f7, type: 3}
-  m_Controller: {fileID: 9100000, guid: a3ea6be82444299439bcc94c35e470bf, type: 2}
+  m_Controller: {fileID: 0}
   m_CullingMode: 1
   m_UpdateMode: 0
   m_ApplyRootMotion: 1
@@ -20823,6 +20823,10 @@ PrefabInstance:
       propertyPath: m_LocalPosition.z
       value: -0
       objectReference: {fileID: 0}
+    - target: {fileID: 19861844, guid: 7b8f8a4d0ee5ffb4aaa6b54181380640, type: 3}
+      propertyPath: simulationSpeed
+      value: 100
+      objectReference: {fileID: 0}
     - target: {fileID: 166844, guid: 7b8f8a4d0ee5ffb4aaa6b54181380640, type: 3}
       propertyPath: m_IsActive
       value: 0
@@ -20830,6 +20834,14 @@ PrefabInstance:
     - target: {fileID: 114946, guid: 7b8f8a4d0ee5ffb4aaa6b54181380640, type: 3}
       propertyPath: m_IsActive
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 19834792, guid: 7b8f8a4d0ee5ffb4aaa6b54181380640, type: 3}
+      propertyPath: InitialModule.startSizeY.minMaxState
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 19834792, guid: 7b8f8a4d0ee5ffb4aaa6b54181380640, type: 3}
+      propertyPath: InitialModule.startSizeZ.minMaxState
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 19860412, guid: 7b8f8a4d0ee5ffb4aaa6b54181380640, type: 3}
       propertyPath: InitialModule.startSizeY.minMaxState
@@ -20970,18 +20982,6 @@ PrefabInstance:
     - target: {fileID: 19867468, guid: 7b8f8a4d0ee5ffb4aaa6b54181380640, type: 3}
       propertyPath: ForceModule.y.minScalar
       value: 0.2
-      objectReference: {fileID: 0}
-    - target: {fileID: 19985370, guid: 7b8f8a4d0ee5ffb4aaa6b54181380640, type: 3}
-      propertyPath: m_Materials.Array.data[0]
-      value: 
-      objectReference: {fileID: 2100000, guid: 0398acd146e33214bbf40957ec3f660c, type: 2}
-    - target: {fileID: 19834792, guid: 7b8f8a4d0ee5ffb4aaa6b54181380640, type: 3}
-      propertyPath: InitialModule.startSizeY.minMaxState
-      value: 3
-      objectReference: {fileID: 0}
-    - target: {fileID: 19834792, guid: 7b8f8a4d0ee5ffb4aaa6b54181380640, type: 3}
-      propertyPath: InitialModule.startSizeZ.minMaxState
-      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 19879722, guid: 7b8f8a4d0ee5ffb4aaa6b54181380640, type: 3}
       propertyPath: InitialModule.startLifetime.scalar
@@ -21179,14 +21179,14 @@ PrefabInstance:
       propertyPath: SizeBySpeedModule.curve.maxCurve.m_Curve.Array.data[1].outWeight
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 19985370, guid: 7b8f8a4d0ee5ffb4aaa6b54181380640, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 0398acd146e33214bbf40957ec3f660c, type: 2}
     - target: {fileID: 19990028, guid: 7b8f8a4d0ee5ffb4aaa6b54181380640, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
       objectReference: {fileID: 2100000, guid: 29808196714e37543a3a67305ed7992b, type: 2}
-    - target: {fileID: 19861844, guid: 7b8f8a4d0ee5ffb4aaa6b54181380640, type: 3}
-      propertyPath: simulationSpeed
-      value: 100
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 7b8f8a4d0ee5ffb4aaa6b54181380640, type: 3}
 --- !u!4 &1581782968320056295 stripped
@@ -21273,6 +21273,14 @@ PrefabInstance:
     - target: {fileID: 114946, guid: 7b8f8a4d0ee5ffb4aaa6b54181380640, type: 3}
       propertyPath: m_IsActive
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 19834792, guid: 7b8f8a4d0ee5ffb4aaa6b54181380640, type: 3}
+      propertyPath: InitialModule.startSizeY.minMaxState
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 19834792, guid: 7b8f8a4d0ee5ffb4aaa6b54181380640, type: 3}
+      propertyPath: InitialModule.startSizeZ.minMaxState
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 19860412, guid: 7b8f8a4d0ee5ffb4aaa6b54181380640, type: 3}
       propertyPath: InitialModule.startSizeY.minMaxState
@@ -21410,18 +21418,6 @@ PrefabInstance:
       propertyPath: ForceModule.y.minScalar
       value: 0.2
       objectReference: {fileID: 0}
-    - target: {fileID: 19985370, guid: 7b8f8a4d0ee5ffb4aaa6b54181380640, type: 3}
-      propertyPath: m_Materials.Array.data[0]
-      value: 
-      objectReference: {fileID: 2100000, guid: 0398acd146e33214bbf40957ec3f660c, type: 2}
-    - target: {fileID: 19834792, guid: 7b8f8a4d0ee5ffb4aaa6b54181380640, type: 3}
-      propertyPath: InitialModule.startSizeY.minMaxState
-      value: 3
-      objectReference: {fileID: 0}
-    - target: {fileID: 19834792, guid: 7b8f8a4d0ee5ffb4aaa6b54181380640, type: 3}
-      propertyPath: InitialModule.startSizeZ.minMaxState
-      value: 3
-      objectReference: {fileID: 0}
     - target: {fileID: 19879722, guid: 7b8f8a4d0ee5ffb4aaa6b54181380640, type: 3}
       propertyPath: simulationSpeed
       value: 0.2
@@ -21502,6 +21498,14 @@ PrefabInstance:
       propertyPath: ForceModule.y.minScalar
       value: 2
       objectReference: {fileID: 0}
+    - target: {fileID: 19879722, guid: 7b8f8a4d0ee5ffb4aaa6b54181380640, type: 3}
+      propertyPath: ShapeModule.radiusThickness
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 19985370, guid: 7b8f8a4d0ee5ffb4aaa6b54181380640, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 0398acd146e33214bbf40957ec3f660c, type: 2}
     - target: {fileID: 19990028, guid: 7b8f8a4d0ee5ffb4aaa6b54181380640, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
@@ -21593,6 +21597,14 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 19834792, guid: 7b8f8a4d0ee5ffb4aaa6b54181380640, type: 3}
+      propertyPath: InitialModule.startSizeY.minMaxState
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 19834792, guid: 7b8f8a4d0ee5ffb4aaa6b54181380640, type: 3}
+      propertyPath: InitialModule.startSizeZ.minMaxState
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 19860412, guid: 7b8f8a4d0ee5ffb4aaa6b54181380640, type: 3}
       propertyPath: InitialModule.startSizeY.minMaxState
       value: 3
@@ -21729,18 +21741,6 @@ PrefabInstance:
       propertyPath: ForceModule.y.minScalar
       value: 0.2
       objectReference: {fileID: 0}
-    - target: {fileID: 19985370, guid: 7b8f8a4d0ee5ffb4aaa6b54181380640, type: 3}
-      propertyPath: m_Materials.Array.data[0]
-      value: 
-      objectReference: {fileID: 2100000, guid: 0398acd146e33214bbf40957ec3f660c, type: 2}
-    - target: {fileID: 19834792, guid: 7b8f8a4d0ee5ffb4aaa6b54181380640, type: 3}
-      propertyPath: InitialModule.startSizeY.minMaxState
-      value: 3
-      objectReference: {fileID: 0}
-    - target: {fileID: 19834792, guid: 7b8f8a4d0ee5ffb4aaa6b54181380640, type: 3}
-      propertyPath: InitialModule.startSizeZ.minMaxState
-      value: 3
-      objectReference: {fileID: 0}
     - target: {fileID: 19879722, guid: 7b8f8a4d0ee5ffb4aaa6b54181380640, type: 3}
       propertyPath: simulationSpeed
       value: 0.2
@@ -21821,6 +21821,14 @@ PrefabInstance:
       propertyPath: ForceModule.y.minScalar
       value: 2
       objectReference: {fileID: 0}
+    - target: {fileID: 19879722, guid: 7b8f8a4d0ee5ffb4aaa6b54181380640, type: 3}
+      propertyPath: ShapeModule.radiusThickness
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 19985370, guid: 7b8f8a4d0ee5ffb4aaa6b54181380640, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 0398acd146e33214bbf40957ec3f660c, type: 2}
     - target: {fileID: 19990028, guid: 7b8f8a4d0ee5ffb4aaa6b54181380640, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
@@ -21911,6 +21919,14 @@ PrefabInstance:
     - target: {fileID: 114946, guid: 7b8f8a4d0ee5ffb4aaa6b54181380640, type: 3}
       propertyPath: m_IsActive
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 19834792, guid: 7b8f8a4d0ee5ffb4aaa6b54181380640, type: 3}
+      propertyPath: InitialModule.startSizeY.minMaxState
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 19834792, guid: 7b8f8a4d0ee5ffb4aaa6b54181380640, type: 3}
+      propertyPath: InitialModule.startSizeZ.minMaxState
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 19860412, guid: 7b8f8a4d0ee5ffb4aaa6b54181380640, type: 3}
       propertyPath: InitialModule.startSizeY.minMaxState
@@ -22096,17 +22112,9 @@ PrefabInstance:
       propertyPath: ForceModule.inWorldSpace
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 19985370, guid: 7b8f8a4d0ee5ffb4aaa6b54181380640, type: 3}
-      propertyPath: m_Materials.Array.data[0]
-      value: 
-      objectReference: {fileID: 2100000, guid: 0398acd146e33214bbf40957ec3f660c, type: 2}
-    - target: {fileID: 19834792, guid: 7b8f8a4d0ee5ffb4aaa6b54181380640, type: 3}
-      propertyPath: InitialModule.startSizeY.minMaxState
-      value: 3
-      objectReference: {fileID: 0}
-    - target: {fileID: 19834792, guid: 7b8f8a4d0ee5ffb4aaa6b54181380640, type: 3}
-      propertyPath: InitialModule.startSizeZ.minMaxState
-      value: 3
+    - target: {fileID: 19867468, guid: 7b8f8a4d0ee5ffb4aaa6b54181380640, type: 3}
+      propertyPath: ShapeModule.radiusThickness
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 19879722, guid: 7b8f8a4d0ee5ffb4aaa6b54181380640, type: 3}
       propertyPath: InitialModule.startSize.scalar
@@ -22212,6 +22220,14 @@ PrefabInstance:
       propertyPath: ForceModule.z.minScalar
       value: -0.1
       objectReference: {fileID: 0}
+    - target: {fileID: 19879722, guid: 7b8f8a4d0ee5ffb4aaa6b54181380640, type: 3}
+      propertyPath: ShapeModule.radiusThickness
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 19985370, guid: 7b8f8a4d0ee5ffb4aaa6b54181380640, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 0398acd146e33214bbf40957ec3f660c, type: 2}
     - target: {fileID: 19990028, guid: 7b8f8a4d0ee5ffb4aaa6b54181380640, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 

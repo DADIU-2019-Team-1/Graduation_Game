@@ -27,6 +27,7 @@ namespace Team1_GraduationGame.Interaction
             interactConditions = true, checkForObstructions, emitSound, useCooldown;
         public UnityEvent eventOnInteraction;
         public string animationDefault, animationAction;
+        [HideInInspector] public bool toggleState;
 
         // Private:
         private bool _isEnemy, _interacted;
@@ -249,6 +250,8 @@ namespace Team1_GraduationGame.Interaction
 
             if (script.gameObject.GetComponent<Enemy>() == null && script.GetComponent<NavMeshObstacle>() == null)
             {
+                if (script.gameObject.tag != "Interactable")
+                    script.gameObject.tag = "Interactable";
                 NavMeshObstacle tempNavMeshObs = script.gameObject.AddComponent<NavMeshObstacle>();
                 tempNavMeshObs.carving = true;
                 tempNavMeshObs.carveOnlyStationary = false;

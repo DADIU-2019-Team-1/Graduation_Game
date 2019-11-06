@@ -49,9 +49,9 @@ namespace Team1_GraduationGame.Interaction
                     _thisRigidBody.AddForce(transform.forward * thrustAmount * 135, ForceMode.Impulse);
                 else if (wayPoints != null && wayPoints.Count >= 2)
                 {
-                    if (dir == 2) // Checks which side the player is standing to the object
+                    if (dir == 2 && Vector3.Distance(transform.position, wayPoints[1].transform.position) > 1.0f) // Checks which side the player is standing to the object
                         _thisRigidBody.AddForce((wayPoints[1].transform.position - transform.position).normalized * thrustAmount * 400, ForceMode.Impulse);
-                    else if (dir == 1)
+                    else if (dir == 1 && Vector3.Distance(transform.position, wayPoints[0].transform.position) > 1.0f)
                         _thisRigidBody.AddForce((wayPoints[0].transform.position - transform.position).normalized * thrustAmount * 400, ForceMode.Impulse);
                 }
             }

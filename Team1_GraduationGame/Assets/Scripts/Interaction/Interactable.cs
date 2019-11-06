@@ -24,7 +24,7 @@ namespace Team1_GraduationGame.Interaction
         // Public:
         public float minDistance = 2.0f, angle = 90.0f, soundEmitDistance, interactCooldown = 1.5f;
         public bool interactableOnce, pushable, useEvents, useAnimation, switchBetweenAnimations, animationState, 
-            interactConditions = true, checkForObstructions, emitSound, useCooldown;
+            interactConditions, checkForObstructions, emitSound, useCooldown;
         public UnityEvent eventOnInteraction;
         public string animationDefault, animationAction;
         [HideInInspector] public bool toggleState;
@@ -73,61 +73,74 @@ namespace Team1_GraduationGame.Interaction
         {
             if (!_interacted)
             {
+                if (pushable)
+                {
+                    if (_objectPush.wayPoints.Count <= 2 || thisEnemy != null)
+                    {
+                        Vector3 dir = _player.transform.position - transform.position;
+                        float thisToPlayerAngle1 = Vector3.Angle(_objectPush.wayPoints[0].transform.position - _objectPush.wayPoints[1].transform.position, dir);
+                        float thisToPlayerAngle2 = Vector3.Angle(_objectPush.wayPoints[1].transform.position - _objectPush.wayPoints[0].transform.position, dir);
+                        RaycastHit hit;
 
-                if (!interactConditions)
+                        if (thisEnemy == null)
+                        {
+                            if (!interactConditions)
+                            {
+                                if (thisToPlayerAngle1 < 89)
+                                    DoAction(2);
+                                else if (thisToPlayerAngle2 < 89)
+                                    DoAction(1);
+                            }
+                            else if (checkForObstructions)
+                            {
+                                if (Vector3.Distance(transform.position, _player.transform.position) < minDistance
+                                    && Physics.Raycast(transform.position + transform.up, dir, out hit, minDistance, _layerMask))
+                                {
+                                    if (thisToPlayerAngle1 < angle / 2)
+                                        DoAction(2);
+                                    else if (thisToPlayerAngle2 < angle / 2)
+                                        DoAction(1);
+                                }
+                            }
+                            else
+                            {
+                                if (Vector3.Distance(transform.position, _player.transform.position) < minDistance)
+                                {
+                                    if (thisToPlayerAngle1 < angle / 2)
+                                        DoAction(2);
+                                    else if (thisToPlayerAngle2 < angle / 2)
+                                        DoAction(1);
+                                }
+                            }
+                        }
+                        else if (thisEnemy != null)
+                        {
+                            if (checkForObstructions)
+                            {
+                                if (Vector3.Distance(transform.position, _player.transform.position) < minDistance
+                                    && Physics.Raycast(transform.position + transform.up, dir, out hit, minDistance,
+                                        _layerMask))
+                                {
+                                    DoAction(0);
+                                }
+                            }
+                            else
+                            {
+                                if (Vector3.Distance(transform.position, _player.transform.position) < minDistance)
+                                {
+                                    DoAction(0);
+                                }
+                            }
+                        }
+                    }
+                    else
+                    {
+                        Debug.Log("Interaction Push Error: Please attach to waypoints using the 'Add Waypoint' button on " + gameObject.name);
+                    }
+                }
+                else
                 {
                     DoAction(0);
-                }
-                else if (_objectPush.wayPoints.Count <= 2)
-                {
-                    Vector3 dir = _player.transform.position - transform.position;
-                    float thisToPlayerAngle1 = Vector3.Angle(_objectPush.wayPoints[0].transform.position - _objectPush.wayPoints[1].transform.position, dir);
-                    float thisToPlayerAngle2 = Vector3.Angle(_objectPush.wayPoints[1].transform.position - _objectPush.wayPoints[0].transform.position, dir);
-                    RaycastHit hit;
-
-                    if (pushable && thisEnemy == null)
-                    {
-                        if (checkForObstructions)
-                        {
-                            if (Vector3.Distance(transform.position, _player.transform.position) < minDistance 
-                                && Physics.Raycast(transform.position + transform.up, dir, out hit, minDistance, _layerMask))
-                            {
-                                if (thisToPlayerAngle1 < angle / 2)
-                                    DoAction(2);
-                                else if (thisToPlayerAngle2 < angle / 2)
-                                    DoAction(1);
-                            }
-                        }
-                        else
-                        {
-                            if (Vector3.Distance(transform.position, _player.transform.position) < minDistance)
-                            {
-                                if (thisToPlayerAngle1 < angle / 2)
-                                    DoAction(2);
-                                else if (thisToPlayerAngle2 < angle / 2)
-                                    DoAction(1);
-                            }
-                        }
-                    }
-                    else if (thisEnemy != null)
-                    {
-                        if (checkForObstructions)
-                        {
-                            if (Vector3.Distance(transform.position, _player.transform.position) < minDistance
-                                && Physics.Raycast(transform.position + transform.up, dir, out hit, minDistance,
-                                    _layerMask))
-                            {
-                                DoAction(0);
-                            }
-                        }
-                        else
-                        {
-                            if (Vector3.Distance(transform.position, _player.transform.position) < minDistance)
-                            {
-                                DoAction(0);
-                            }
-                        }
-                    }
                 }
 
                 if (useCooldown && !interactableOnce)
@@ -151,13 +164,9 @@ namespace Team1_GraduationGame.Interaction
             {
                 if (_isEnemy)
                     thisEnemy.PushDown();
-                else if (_objectPush != null && interactConditions)
+                else if (_objectPush != null)
                 {
                     _objectPush.Push(false, dir);
-                }
-                else if (!interactConditions && _objectPush != null)
-                {
-                    _objectPush.Push(true, dir);
                 }
             }
 

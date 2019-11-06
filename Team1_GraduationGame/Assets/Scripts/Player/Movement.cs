@@ -9,7 +9,7 @@ public class Movement : MonoBehaviour
     private bool touchStart = false, canMove = false, canJump = true, canAttack, isJumping = false;
     private Vector3 initTouchPos;
     private Vector3 currTouchPos;
-
+    private Vector3 direction;
     private Vector3 joystickPos;
     private Vector3 stickLimitPos;
 
@@ -48,6 +48,16 @@ public class Movement : MonoBehaviour
     [SerializeField] [Range(0.0f, 1.0f)] 
     private float runThreshold;
     //public List<Touchlocation> touches = new List<Touchlocation>();
+
+    [Header("Motion Matching variables")]
+    private MotionMatching mm;
+    private TrajectoryPoint[] trajPoints;
+    
+    private void Awake()
+    {
+        mm = GetComponent<MotionMatching>();
+        trajPoints = new TrajectoryPoint[mm.pointsPerTrajectory]; 
+    }
     void Start()
     {
         playerRB = GetComponent<Rigidbody>();
@@ -88,7 +98,7 @@ public class Movement : MonoBehaviour
             } else if((t.phase == TouchPhase.Moved || t.phase == TouchPhase.Stationary)  && leftTouch == t.fingerId  && canMove){
 
                 Vector3 offset = new Vector3(t.position.x - stickLimit.transform.position.x, 0,  t.position.y-stickLimit.transform.position.y);
-                Vector3 direction = Vector3.ClampMagnitude(offset, 1.0f);
+                direction = Vector3.ClampMagnitude(offset, 1.0f);
                 float dragDist = Vector2.Distance(stick.transform.position, stickLimit.transform.position);
                 Vector2 joyDiff = t.position - new Vector2(stickLimit.transform.position.x, stickLimit.transform.position.y);
                 // Need new clamping.
@@ -171,7 +181,7 @@ public class Movement : MonoBehaviour
         if(touchStart && canMove){
 
             Vector3 offset = new Vector3(currTouchPos.x-initTouchPos.x, 0, currTouchPos.y - initTouchPos.y);
-            Vector3 direction = Vector3.ClampMagnitude(offset, 1.0f);
+            direction = Vector3.ClampMagnitude(offset, 1.0f);
             float dragDist = Vector2.Distance(stick.transform.position, stickLimit.transform.position);
             Vector2 joyDiff = Input.mousePosition - stickLimit.transform.position;
             joyDiff = Vector2.ClampMagnitude(joyDiff, radius.value);
@@ -260,5 +270,25 @@ public class Movement : MonoBehaviour
         }
         
         
+    }
+
+    public Trajectory GetMovementTrajectory()
+    {
+        for (int i = 0; i < trajPoints.Length; i++)
+        {
+            if (i > 0)
+            {
+                //Vector3 tempPos = trajPoints[i - 1].GetPoint() + Quaternion.Slerp(transform.rotation, lookRotation, (float) (i + 1) / trajPoints.Length) * Vector3.forward * Mathf.Clamp(speed, 0.1f, 1.0f);
+                Vector3 tempPos = trajPoints[i - 1].GetPoint() + direction * currentSpeed.value;
+
+                Vector3 tempForward = tempPos + Quaternion.Slerp(transform.rotation, lookRotation,
+                                          (float)(i + 1) / trajPoints.Length) * Vector3.forward * rotationValue;
+
+                trajPoints[i] = new TrajectoryPoint(tempPos, tempForward);
+            }
+            else
+                trajPoints[i] = new TrajectoryPoint(transform.position, transform.position + transform.forward);
+        }
+        return new Trajectory(trajPoints);
     }
 }

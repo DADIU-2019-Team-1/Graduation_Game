@@ -388,14 +388,18 @@ public class Movement : MonoBehaviour
         for (int i = 0; i < interactableObjects.Count; i++)
         {
             // if in range
+            Vector3 closestPoint = interactableObjects[i].GetComponent<Collider>().ClosestPointOnBounds(transform.position);
+            //Debug.Log("Closest point is: " + closestPoint);
+            //Instantiate(GameObject.CreatePrimitive(PrimitiveType.Cube), closestPoint, Quaternion.identity);
+            float refDistance = Vector3.Distance(closestPoint, transform.position);
             
-            float refDistance = Vector3.Distance(interactableObjects[i].transform.position, transform.position);
             if (refDistance <= attackRange.value)
             {
                 
                 // and in attack degree
-                Vector3 temp = interactableObjects[i].transform.position - transform.position;
+                Vector3 temp = closestPoint - transform.position;
                 temp.y = 0;
+                Debug.Log("Temp is: " + temp);
                 float angleToObject = Vector3.Angle(temp, direction);
                 if (angleToObject <= attackDegree.value / 2)
                 {

@@ -399,14 +399,14 @@ public class Movement : MonoBehaviour
                 // and in attack degree
                 Vector3 temp = closestPoint - transform.position;
                 temp.y = 0;
-                Debug.Log("Temp is: " + temp);
+                
                 float angleToObject = Vector3.Angle(temp, direction);
                 if (angleToObject <= attackDegree.value / 2)
                 {
                     // interact
                     interactableObjects[i].GetComponent<Interactable>().Interact();
-                    Debug.Log("INTERACT!!!!!");
-                    //interactableObjects[i].interact();
+                    // Debug.Log("INTERACT!!!!!");
+                    // interactableObjects[i].interact();
                 }
             }
         }

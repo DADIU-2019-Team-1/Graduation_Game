@@ -18,7 +18,7 @@ namespace Team1_GraduationGame.Interaction
 
         void OnDestroy()
         {
-            if (parentObject != null && !isParent)
+            if (parentObject != null && !isParent && Application.isEditor)
             {
                 if (parentObject.GetComponent<ObjectPush>() != null && wayPointId != 0)
                 {
@@ -40,7 +40,7 @@ namespace Team1_GraduationGame.Interaction
 
         private void Update()
         {
-            if (isParent)
+            if (isParent && Application.isEditor)
             {
                 if (transform.childCount == 0)
                 {

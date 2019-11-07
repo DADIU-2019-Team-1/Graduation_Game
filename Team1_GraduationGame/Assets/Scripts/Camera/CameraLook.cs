@@ -82,7 +82,7 @@ public class CameraLook : MonoBehaviour
         Gizmos.DrawWireSphere(camTarget, 1.0f);
     }
 
-    void Update()
+    void LateUpdate()
     {
         if (playerMovement != null)
         {

@@ -13,6 +13,7 @@
 				Pass {
 				ColorMask 0
 			}
+		
 		// Render normally
 		Pass {
 			ZWrite Off
@@ -28,6 +29,8 @@
 			Lighting On
 			SetTexture[_MainTex] {
 				Combine texture * primary DOUBLE, texture * primary
+
+			
 			}
 		}
 	}

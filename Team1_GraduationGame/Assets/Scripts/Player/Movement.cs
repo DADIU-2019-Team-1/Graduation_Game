@@ -10,12 +10,9 @@ public class Movement : MonoBehaviour
     private Rigidbody playerRB;
     private bool touchStart = false, canMove = false, canJump = true, canPush, isJumping = false, moveFrozen = false;
 
-    private float swipeTimeThreshold = 0.3f, swipeTimeTimer;
-    private Vector3 initTouchPos;
-    private Vector3 currTouchPos;
-    private Vector3 direction;
-    private Vector3 joystickPos;
-    private Vector3 stickLimitPos;
+    [SerializeField] private float accelerationFactor = 0.1f;
+    private float swipeTimeThreshold = 0.3f, swipeTimeTimer, acceleration;
+    private Vector3 initTouchPos, currTouchPos, joystickPos, stickLimitPos, direction, velocity;
 
     private Vector2 swipeStartPos, swipeEndPos, swipeDirection;
 
@@ -24,23 +21,10 @@ public class Movement : MonoBehaviour
     [Tooltip("Put the joystick border here")]
     public Transform stickLimit;
 
-    public FloatReference sneakSpeed;
-    public FloatReference walkSpeed;
-    public FloatReference runSpeed;
-    public FloatReference rotationSpeed;
-    public FloatReference jumpHeight;
-    public IntReference radius;
+    public FloatReference sneakSpeed, walkSpeed, runSpeed, rotationSpeed, jumpHeight, fallMultiplier, attackRange;
+    public IntReference radius, attackDegree, swipePixelDistance;
 
     public FloatVariable currentSpeed;
-
-    public FloatReference fallMultiplier;
-
-    public IntReference attackDegree;
-
-    public FloatReference attackRange;
-
-    public IntReference swipePixelDistance;
-
     public IntVariable moveState;
     private RaycastHit[] hit;
 
@@ -65,7 +49,6 @@ public class Movement : MonoBehaviour
     [SerializeField]
     [Range(0.0f, 1.0f)]
     private float runThreshold;
-    //public List<Touchlocation> touches = new List<Touchlocation>();
 
     [Header("Motion Matching variables")]
     private MotionMatching mm;
@@ -77,7 +60,11 @@ public class Movement : MonoBehaviour
     private void Awake()
     {
         mm = GetComponent<MotionMatching>();
-        trajPoints = new TrajectoryPoint[mm.pointsPerTrajectory]; 
+        trajPoints = new TrajectoryPoint[mm.pointsPerTrajectory];
+
+        //playerTrigger = GetComponent<SphereCollider>();
+        //playerTrigger.radius = attackRange.value;
+        //playerTrigger.isTrigger = true;
     }
     void Start()
     {
@@ -88,15 +75,10 @@ public class Movement : MonoBehaviour
             interactableObjects.AddRange(GameObject.FindGameObjectsWithTag(tagsToInteractWith[i]));
     }
 
-    void Awake()
-    {
-/*         playerTrigger = GetComponent<SphereCollider>();
-        playerTrigger.radius = attackRange.value;
-        playerTrigger.isTrigger = true; */
-    }
-
     void Update() {
         currentSpeed.value = Vector3.Distance(transform.position, _previousPosition) / Time.fixedDeltaTime;
+        velocity = direction.normalized * currentSpeed.value;
+
     }
 
     void FixedUpdate()
@@ -123,8 +105,8 @@ public class Movement : MonoBehaviour
             {
                 if (t.position.x < (Screen.width / 2)-10)
                 {   
-                    if(t.fingerId < 50) {
-                        
+                    if(t.fingerId < 50) 
+                    {
                         stick.gameObject.SetActive(true);
                         stickLimit.gameObject.SetActive(true);
                         stickLimit.transform.position = t.position;
@@ -132,10 +114,7 @@ public class Movement : MonoBehaviour
                         
                         canMove = true;
                     }
-                    
-
                 }
-
 
                 else if (t.position.x > Screen.width / 2)
                 {
@@ -234,10 +213,7 @@ public class Movement : MonoBehaviour
                     playerJump(Vector3.up, jumpHeight.value);
                     //Debug.Log("Jump");
                 }
-
             }
-
-
             ++i;
         }
 #endif
@@ -273,7 +249,6 @@ public class Movement : MonoBehaviour
         }
         if (Input.GetMouseButton(0))
         {
-
             touchStart = true;
             currTouchPos = Input.mousePosition;
         }
@@ -347,19 +322,19 @@ public class Movement : MonoBehaviour
             canMove = false;
         }
 #endif
-
-
-
         SetState();
     }
 
-
-    private void movePlayer(Vector3 direction, float speedMove)
+    private void movePlayer(Vector3 direction, float targetSpeed)
     {
-        Quaternion rotation = direction != Vector3.zero
-            ? Quaternion.LookRotation(direction) : Quaternion.identity; // Shorthand if : else
-        transform.rotation = Quaternion.Slerp(transform.rotation, rotation, Time.deltaTime * rotationSpeed.value);
-        playerRB.MovePosition(transform.position + (direction * speedMove * Time.deltaTime));
+        Vector3 currentVelocity = direction.normalized * currentSpeed.value;
+        float accelerationSpeed = Mathf.Lerp(currentSpeed.value, targetSpeed, accelerationFactor);
+        Quaternion targetRotation = direction != Vector3.zero
+            ? Quaternion.LookRotation(direction) : Quaternion.identity; // Shorthand if : else 
+
+        // TODO: Seperate rotation acceleration from speed acceleration
+        transform.rotation = Quaternion.Slerp(transform.rotation, /*(*/targetRotation/* - transform.rotation) * accelerationFactor*/, Time.deltaTime * rotationSpeed.value);
+        playerRB.MovePosition(transform.position + direction * ((targetSpeed - currentSpeed.value)*accelerationFactor + currentSpeed.value) * Time.deltaTime);
     }
 
     private void playerJump(Vector3 direction, float jumpHeight)
@@ -459,6 +434,7 @@ public class Movement : MonoBehaviour
 
     public Trajectory GetMovementTrajectory()
     {
+        Quaternion lookRotation = direction != Vector3.zero ? Quaternion.LookRotation(direction) : Quaternion.identity;
         for (int i = 0; i < trajPoints.Length; i++)
         {
             if (i > 0)
@@ -466,10 +442,10 @@ public class Movement : MonoBehaviour
                 //Vector3 tempPos = trajPoints[i - 1].GetPoint() + Quaternion.Slerp(transform.rotation, lookRotation, (float) (i + 1) / trajPoints.Length) * Vector3.forward * Mathf.Clamp(speed, 0.1f, 1.0f);
                 Vector3 tempPos = trajPoints[i - 1].GetPoint() + direction * currentSpeed.value;
 
-                //Vector3 tempForward = tempPos + Quaternion.Slerp(transform.rotation, lookRotation,
-                 //                         (float)(i + 1) / trajPoints.Length) * Vector3.forward * rotationValue;
+                Vector3 tempForward = tempPos + Quaternion.Slerp(transform.rotation, lookRotation,
+                                          (float)(i + 1) / trajPoints.Length) * Vector3.forward * rotationSpeed.value;
 
-                //trajPoints[i] = new TrajectoryPoint(tempPos, tempForward);
+                trajPoints[i] = new TrajectoryPoint(tempPos, tempForward);
             }
             else
                 trajPoints[i] = new TrajectoryPoint(transform.position, transform.position + transform.forward);

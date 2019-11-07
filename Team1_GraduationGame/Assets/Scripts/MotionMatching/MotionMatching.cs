@@ -24,7 +24,7 @@ public class MotionMatching : MonoBehaviour
 
 
     // --- References
-    private MovementTest movement;
+    private Movement movement;
     private PreProcessing preProcessing;
     private Animator animator;
 
@@ -63,7 +63,7 @@ public class MotionMatching : MonoBehaviour
 
     private void Awake() // Load animation data
     {
-        movement = GetComponent<MovementTest>();
+        movement = GetComponent<Movement>();
 	    animator = GetComponent<Animator>();
         preProcessing = new PreProcessing();
 

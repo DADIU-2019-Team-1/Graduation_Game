@@ -239,6 +239,12 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d7db440d93cdf694b856fa961d922fe9, type: 3}
+--- !u!224 &989500375 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 7481992443874503123, guid: d7db440d93cdf694b856fa961d922fe9,
+    type: 3}
+  m_PrefabInstance: {fileID: 100477474}
+  m_PrefabAsset: {fileID: 0}
 --- !u!95 &1010167329
 Animator:
   serializedVersion: 3
@@ -3012,6 +3018,7 @@ GameObject:
   - component: {fileID: 1017453380}
   - component: {fileID: 1017421286}
   - component: {fileID: 1017421284}
+  - component: {fileID: 1017421288}
   m_Layer: 0
   m_Name: DefaultAvatar
   m_TagString: Untagged
@@ -3031,43 +3038,57 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 57f10f26dc2bfb048b505753cd7efe99, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  stick: {fileID: 0}
-  stickLimit: {fileID: 0}
+  stick: {fileID: 989500375}
+  stickLimit: {fileID: 1928585235}
   sneakSpeed:
-    UseUnique: 1
+    UseUnique: 0
     UniqueValue: 0
-    Variable: {fileID: 0}
+    Variable: {fileID: 11400000, guid: beaa666bd53abc04ba6dbb8907186ed4, type: 2}
   walkSpeed:
-    UseUnique: 1
+    UseUnique: 0
     UniqueValue: 0
-    Variable: {fileID: 0}
+    Variable: {fileID: 11400000, guid: 72987dbff0efcb344bd7e5ef71736dab, type: 2}
   runSpeed:
-    UseUnique: 1
+    UseUnique: 0
     UniqueValue: 0
-    Variable: {fileID: 0}
+    Variable: {fileID: 11400000, guid: ca822172e7d5f314aaee0844346375f0, type: 2}
   rotationSpeed:
-    UseUnique: 1
+    UseUnique: 0
     UniqueValue: 0
-    Variable: {fileID: 0}
+    Variable: {fileID: 11400000, guid: c6005f997cbf1974ea2c928175f551f7, type: 2}
   jumpHeight:
-    UseUnique: 1
+    UseUnique: 0
     UniqueValue: 0
-    Variable: {fileID: 0}
-  radius:
-    UseUnique: 1
-    UniqueValue: 0
-    Variable: {fileID: 0}
-  currentSpeed: {fileID: 0}
+    Variable: {fileID: 11400000, guid: 3999ce15becbdb94ba845827c2594c03, type: 2}
   fallMultiplier:
-    UseUnique: 1
+    UseUnique: 0
     UniqueValue: 0
-    Variable: {fileID: 0}
-  moveState: {fileID: 0}
-  leftFootPos: {fileID: 0}
-  rightFootPos: {fileID: 0}
+    Variable: {fileID: 11400000, guid: aaf15d79fe870524a81070406eb46d86, type: 2}
+  attackRange:
+    UseUnique: 0
+    UniqueValue: 0
+    Variable: {fileID: 11400000, guid: 081cef8b5c4ab654fa3b8c990f375f8a, type: 2}
+  radius:
+    UseUnique: 0
+    UniqueValue: 0
+    Variable: {fileID: 11400000, guid: 2ba7ed972f6e3a740b27636fabad48e7, type: 2}
+  attackDegree:
+    UseUnique: 0
+    UniqueValue: 0
+    Variable: {fileID: 11400000, guid: db9f6d06529c36640a10564378bec7a0, type: 2}
+  swipePixelDistance:
+    UseUnique: 0
+    UniqueValue: 0
+    Variable: {fileID: 11400000, guid: c884f35f8e4e4304eb5dc5b1e0da785c, type: 2}
+  currentSpeed: {fileID: 11400000, guid: 6f04acf1fc8e6a24791f3fdc75e797ea, type: 2}
+  moveState: {fileID: 11400000, guid: 064acbb0600eace4e969fd76909dcac8, type: 2}
+  leftFootPos: {fileID: 1017421307}
+  rightFootPos: {fileID: 1017420869}
   idleThreshold: 0.1
   sneakThreshold: 0
   runThreshold: 0
+  tagsToInteractWith: []
+  interactableObjects: []
 --- !u!1 &1017421285
 GameObject:
   m_ObjectHideFlags: 0
@@ -3098,7 +3119,7 @@ Rigidbody:
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
-  m_Constraints: 0
+  m_Constraints: 80
   m_CollisionDetection: 0
 --- !u!1 &1017421287
 GameObject:
@@ -3116,6 +3137,20 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!136 &1017421288
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1017421283}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  m_Radius: 0.5
+  m_Height: 2
+  m_Direction: 1
+  m_Center: {x: 0, y: 1, z: 0}
 --- !u!1 &1017421289
 GameObject:
   m_ObjectHideFlags: 0
@@ -3613,3 +3648,9 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!224 &1928585235 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 7481992444128287873, guid: d7db440d93cdf694b856fa961d922fe9,
+    type: 3}
+  m_PrefabInstance: {fileID: 100477474}
+  m_PrefabAsset: {fileID: 0}

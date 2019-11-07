@@ -281,10 +281,10 @@ public class Movement : MonoBehaviour
                 //Vector3 tempPos = trajPoints[i - 1].GetPoint() + Quaternion.Slerp(transform.rotation, lookRotation, (float) (i + 1) / trajPoints.Length) * Vector3.forward * Mathf.Clamp(speed, 0.1f, 1.0f);
                 Vector3 tempPos = trajPoints[i - 1].GetPoint() + direction * currentSpeed.value;
 
-                Vector3 tempForward = tempPos + Quaternion.Slerp(transform.rotation, lookRotation,
-                                          (float)(i + 1) / trajPoints.Length) * Vector3.forward * rotationValue;
+                //Vector3 tempForward = tempPos + Quaternion.Slerp(transform.rotation, lookRotation,
+                 //                         (float)(i + 1) / trajPoints.Length) * Vector3.forward * rotationValue;
 
-                trajPoints[i] = new TrajectoryPoint(tempPos, tempForward);
+                //trajPoints[i] = new TrajectoryPoint(tempPos, tempForward);
             }
             else
                 trajPoints[i] = new TrajectoryPoint(transform.position, transform.position + transform.forward);

@@ -9,7 +9,7 @@ namespace UnityEditor
     {
 	    private static string workingDirectory;
 
-        //[MenuItem("Pipeline/Build: Latest fetch from SCM")]
+        //[MenuItem("Pipeline/Build: Latest fetch from SCM")]//
         public static void BuildAndroidAutobuild()
 	    {
 			BuildAndroidBase(@"C:\Users\Dadiu student\.jenkins\workspace\Graduation_Game\Autobuild\Team1_GraduationGame");
@@ -30,6 +30,12 @@ namespace UnityEditor
         public static void BuildAndroidPC()
         {
             BuildAndroidBase(@"C:\Users\Dadiu student\Documents\GitHub\Graduation_Game\Team1_GraduationGame");
+        }
+        //[MenuItem("Pipeline/DebugBuildScript")]
+        public static void DebugScript()
+        {
+            workingDirectory = @"C:\Users\Dadiu student\.jenkins\workspace\Graduation_Game\Autobuild\Team1_GraduationGame";
+            UnityEngine.Debug.Log(repoCommitMessage);
         }
 
         private static void BuildAndroidBase(string workingDir)
@@ -74,7 +80,7 @@ namespace UnityEditor
         {
             get
             {
-                return (DateTime.Now.ToString("yyyy-MM-dd-HH-mm") + /*"_build" + currentBuildNum + */"_" + repoBranchName + ".apk");
+                return (DateTime.Now.ToString("yyyy-MM-dd-HH-mm") + "_" + repoBranchName + "_" + repoCommitMessage + ".apk");
             }
         }
 
@@ -97,6 +103,27 @@ namespace UnityEditor
 
                 string branchname = process.StandardOutput.ReadLine();
                 return branchname;
+            }
+        }
+
+        public static string repoCommitMessage
+        {
+            get
+            {
+                ProcessStartInfo startInfo = new ProcessStartInfo("git.exe");
+
+                startInfo.UseShellExecute = false;
+                startInfo.WorkingDirectory = workingDirectory;
+                startInfo.RedirectStandardInput = true;
+                startInfo.RedirectStandardOutput = true;
+                startInfo.Arguments = "show -s --format=%B --abbrev-commit";
+
+                Process process = new Process();
+                process.StartInfo = startInfo;
+                process.Start();
+
+                string commitMessage = process.StandardOutput.ReadLine();
+                return commitMessage;
             }
         }
         // Unused, since the method does not update the build number in the git

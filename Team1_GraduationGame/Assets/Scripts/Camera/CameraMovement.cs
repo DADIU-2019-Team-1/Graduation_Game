@@ -9,7 +9,7 @@ public class CameraMovement : MonoBehaviour
     [Tooltip("If Player Target is not set, object with tag \"Player\" will be used instead.")]
     public Transform player;
     [Tooltip("If Camera Rail is not set, object with tag \"RailCamera\" will be used instead.")]
-    public Transform camRail;
+    public Transform railCam;
 
     [Tooltip("If the Camera Track is not set, object with the script \"Cinemachine Smooth Path\" will be used instead")]
     public GameObject track;
@@ -58,59 +58,59 @@ public class CameraMovement : MonoBehaviour
         _trackPath = track.GetComponent<CinemachineSmoothPath>();
         _cameraLook = track.GetComponent<CameraLook>();
 
-        if (camRail == null)
-            camRail = GameObject.FindGameObjectWithTag("RailCamera").transform;
+        if (railCam == null)
+            railCam = GameObject.FindGameObjectWithTag("RailCamera").transform;
 
         focusObjects = new List<GameObject>();
         for (int i = 0; i < tagsToFocus.Length; i++)
             focusObjects.AddRange(GameObject.FindGameObjectsWithTag(tagsToFocus[i]));
 
         // Init position and rotation
-        heightIncrease = Vector3.Distance(player.position, new Vector3(player.position.x, camRail.position.y, camRail.position.z)) * heightDistanceFactor.value;
+        heightIncrease = Vector3.Distance(player.position, new Vector3(player.position.x, railCam.position.y, railCam.position.z)) * heightDistanceFactor.value;
         transform.LookAt(player);
 
         trackX = _trackPath.gameObject.transform.position.x;
         if (player.position.x >= (_trackPath.m_Waypoints[0].position.x + trackX) && 
             player.position.x <= _trackPath.m_Waypoints[_trackPath.m_Waypoints.Length - 1].position.x + trackX)
             {
-                transform.position = new Vector3(player.position.x, camRail.position.y + heightIncrease, camRail.position.z);
+                transform.position = new Vector3(player.position.x, railCam.position.y + heightIncrease, railCam.position.z);
             }
         else
         {
-            transform.position = new Vector3(camRail.position.x, camRail.position.y + heightIncrease, camRail.position.z);
+            transform.position = new Vector3(railCam.position.x, railCam.position.y + heightIncrease, railCam.position.z);
         }
 
     }
 
-    void LateUpdate()
+    void FixedUpdate()
     {
         float diff = float.MaxValue;
         int bestIndex = -1;
         for (int i = 0; i < _trackPath.m_Waypoints.Length; i++)
         {
-            if (Mathf.Abs(camRail.position.x - (_trackPath.m_Waypoints[i].position.x + trackX)) < diff)
+            if (Mathf.Abs(railCam.position.x - (_trackPath.m_Waypoints[i].position.x + trackX)) < diff)
             {
-                diff = Mathf.Abs(camRail.position.x - (_trackPath.m_Waypoints[i].position.x + trackX));
+                diff = Mathf.Abs(railCam.position.x - (_trackPath.m_Waypoints[i].position.x + trackX));
                 bestIndex = i;
             }
         }
-        if (camRail.position.x < _trackPath.m_Waypoints[bestIndex].position.x + trackX || camRail.position.x == _trackPath.m_Waypoints[_trackPath.m_Waypoints.Length - 1].position.x + trackX)
+        if (railCam.position.x < _trackPath.m_Waypoints[bestIndex].position.x + trackX || railCam.position.x == _trackPath.m_Waypoints[_trackPath.m_Waypoints.Length - 1].position.x + trackX)
         {
             nextTrackIndex = bestIndex;
             previousTrackIndex = bestIndex - 1;
         }
-        else if (camRail.position.x > _trackPath.m_Waypoints[bestIndex].position.x + trackX || camRail.position.x == _trackPath.m_Waypoints[0].position.x + trackX)
+        else if (railCam.position.x > _trackPath.m_Waypoints[bestIndex].position.x + trackX || railCam.position.x == _trackPath.m_Waypoints[0].position.x + trackX)
         {
             nextTrackIndex = bestIndex + 1;
             previousTrackIndex = bestIndex;
         }
 
-        heightIncrease = Vector3.Distance(player.position, new Vector3(player.position.x, camRail.position.y, camRail.position.z)) * heightDistanceFactor.value;
+        heightIncrease = Vector3.Distance(player.position, new Vector3(player.position.x, railCam.position.y, railCam.position.z)) * heightDistanceFactor.value;
         // Check if camera has passed the end of the track
         if (!_endOfRail)
         {
             // Position update
-            transform.position = Vector3.SmoothDamp(transform.position, new Vector3(player.position.x, camRail.position.y + heightIncrease, camRail.position.z),
+            transform.position = Vector3.SmoothDamp(transform.position, new Vector3(player.position.x, railCam.position.y + heightIncrease, railCam.position.z),
                 ref camMovement, camMoveTime.value * Time.deltaTime);
             if (transform.position.x < (_trackPath.m_Waypoints[0].position.x + trackX) || transform.position.x > _trackPath.m_Waypoints[_trackPath.m_Waypoints.Length - 1].position.x + trackX)
                 _endOfRail = true;
@@ -118,15 +118,18 @@ public class CameraMovement : MonoBehaviour
         else
         {
             // Y and Z update
-            transform.position = Vector3.SmoothDamp(transform.position, new Vector3(transform.position.x, camRail.position.y + heightIncrease, camRail.position.z),
+            transform.position = Vector3.SmoothDamp(transform.position, new Vector3(transform.position.x, railCam.position.y + heightIncrease, railCam.position.z),
                 ref camMovement, camMoveTime.value * Time.deltaTime);
             if (player.position.x >= (_trackPath.m_Waypoints[0].position.x + trackX) && player.position.x <= _trackPath.m_Waypoints[_trackPath.m_Waypoints.Length - 1].position.x + trackX)
                 _endOfRail = false;
         }
+    }
 
+    void LateUpdate()
+    {
         // Rotation update
         lookPosition = CalculateLookPosition(player.position, _cameraLook.camTarget, focusRange.value, focusObjects);
-        targetRotation = (lookPosition - transform.position != Vector3.zero)
+        targetRotation = lookPosition - transform.position != Vector3.zero
             ? Quaternion.LookRotation(lookPosition - transform.position) : Quaternion.identity;
         transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, camLookSpeed.value * Time.deltaTime);
     }

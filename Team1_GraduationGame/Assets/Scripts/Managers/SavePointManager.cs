@@ -21,6 +21,11 @@ namespace Team1_GraduationGame.SaveLoadSystem
         public void Awake()
         {
             saveLoadManager = new SaveLoadManager();
+
+            if (PlayerPrefs.GetInt("loadGameOnAwake") == 1)
+            {
+                saveLoadManager.LoadGame();
+            }
         }
 
         public void AddSavePoint()

@@ -73,6 +73,7 @@ public class MenuCamera : MonoBehaviour
 
     public void ChangeLookAt(int i)
     {
+        Debug.Log("Registered LookAt change!"); 
         _move = false;
         currentTargetIndex = i;
         railIndex = currentTargetIndex > 0 ? _rail.m_Waypoints.Length - 1 : 0;

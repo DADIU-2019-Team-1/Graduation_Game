@@ -495,59 +495,64 @@
         public void SetLastSighting(Vector3 location) { _lastSighting = location; }
         #endregion
 
+#if UNITY_EDITOR
         #region WayPoint System
         public void AddWayPoint()
         {
-            GameObject tempWayPointObj;
-
-            if (!GameObject.Find("EnemyWaypoints"))
-                new GameObject("EnemyWaypoints");
-
-            if (!GameObject.Find(gameObject.name + "_Waypoints"))
+            if (Application.isEditor)
             {
-                parentWayPoint = new GameObject(gameObject.name + "_Waypoints");
+                GameObject tempWayPointObj;
 
-                parentWayPoint.AddComponent<WayPoint>();
-                parentWayPoint.GetComponent<WayPoint>().isParent = true;
-                parentWayPoint.transform.parent =
-                    GameObject.Find("EnemyWaypoints").transform;
+                if (!GameObject.Find("EnemyWaypoints"))
+                    new GameObject("EnemyWaypoints");
+
+                if (!GameObject.Find(gameObject.name + "_Waypoints"))
+                {
+                    parentWayPoint = new GameObject(gameObject.name + "_Waypoints");
+
+                    parentWayPoint.AddComponent<WayPoint>();
+                    parentWayPoint.GetComponent<WayPoint>().isParent = true;
+                    parentWayPoint.transform.parent =
+                        GameObject.Find("EnemyWaypoints").transform;
+                }
+                else
+                {
+                    parentWayPoint = GameObject.Find(gameObject.name + "_Waypoints");
+                }
+
+                if (wayPoints == null)
+                {
+                    wayPoints = new List<GameObject>();
+                }
+
+                tempWayPointObj = new GameObject("WayPoint" + (wayPoints.Count + 1));
+                tempWayPointObj.AddComponent<WayPoint>();
+                WayPoint tempWayPointScript = tempWayPointObj.GetComponent<WayPoint>();
+                tempWayPointScript.wayPointId = wayPoints.Count + 1;
+                tempWayPointScript.parentEnemy = gameObject;
+                tempWayPointScript.parentWayPoint = parentWayPoint;
+
+                tempWayPointObj.transform.position = gameObject.transform.position;
+                tempWayPointObj.transform.parent = parentWayPoint.transform;
+                wayPoints.Add(tempWayPointObj);
             }
-            else
-            {
-                parentWayPoint = GameObject.Find(gameObject.name + "_Waypoints");
-            }
-
-            if (wayPoints == null)
-            {
-                wayPoints = new List<GameObject>();
-            }
-
-            tempWayPointObj = new GameObject("WayPoint" + (wayPoints.Count + 1));
-            tempWayPointObj.AddComponent<WayPoint>();
-            WayPoint tempWayPointScript = tempWayPointObj.GetComponent<WayPoint>();
-            tempWayPointScript.wayPointId = wayPoints.Count + 1;
-            tempWayPointScript.parentEnemy = gameObject;
-            tempWayPointScript.parentWayPoint = parentWayPoint;
-
-            tempWayPointObj.transform.position = gameObject.transform.position;
-            tempWayPointObj.transform.parent = parentWayPoint.transform;
-            wayPoints.Add(tempWayPointObj);
         }
 
         public void RemoveWayPoint()
         {
-            if (wayPoints != null)
-                if (wayPoints.Count > 0)
-                {
-                    DestroyImmediate(wayPoints[wayPoints.Count - 1].gameObject);
-                }
+            if (Application.isEditor)
+            {
+                if (wayPoints != null)
+                    if (wayPoints.Count > 0)
+                    {
+                        DestroyImmediate(wayPoints[wayPoints.Count - 1].gameObject);
+                    }
+            }
         }
-
-#if UNITY_EDITOR
 
         private void OnDrawGizmos()
         {
-            if (drawGizmos)
+            if (drawGizmos && Application.isEditor)
                 if (wayPoints != null)
                 {
                     for (int i = 0; i < wayPoints.Count; i++)
@@ -576,8 +581,8 @@
                     }
                 }
         }
-#endif
         #endregion
+#endif
     }
 
     #region Custom Inspector

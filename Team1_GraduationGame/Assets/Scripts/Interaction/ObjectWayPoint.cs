@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
+using System.Linq;
 #if UNITY_EDITOR
 using UnityEditor;
 
@@ -22,14 +23,17 @@ namespace Team1_GraduationGame.Interaction
                 {
                     ObjectPush tempObject = parentObject.GetComponent<ObjectPush>();
 
-                    tempObject.wayPoints.RemoveAt(wayPointId - 1);
-
-                    for (int i = 0; i < tempObject.wayPoints.Count; i++)
+                    if (tempObject.wayPoints.Count > 0 && tempObject.wayPoints.ElementAtOrDefault(wayPointId - 1))
                     {
-                        if (tempObject.wayPoints[i].GetComponent<ObjectWayPoint>() != null)
+                        tempObject.wayPoints.RemoveAt(wayPointId - 1);
+
+                        for (int i = 0; i < tempObject.wayPoints.Count; i++)
                         {
-                            tempObject.wayPoints[i].GetComponent<ObjectWayPoint>().wayPointId = i + 1;
-                            tempObject.wayPoints[i].name = "WayPoint" + (i + 1);
+                            if (tempObject.wayPoints[i].GetComponent<ObjectWayPoint>() != null)
+                            {
+                                tempObject.wayPoints[i].GetComponent<ObjectWayPoint>().wayPointId = i + 1;
+                                tempObject.wayPoints[i].name = "WayPoint" + (i + 1);
+                            }
                         }
                     }
                 }

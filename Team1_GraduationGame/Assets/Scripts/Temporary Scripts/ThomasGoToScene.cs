@@ -5,7 +5,7 @@ using UnityEngine.SceneManagement;
 
 public class ThomasGoToScene : MonoBehaviour
 {
-
+    public bool forceSwitch;
     // Start is called before the first frame update
     void Start()
     {
@@ -21,5 +21,13 @@ public class ThomasGoToScene : MonoBehaviour
     {
         Debug.Log("going to scene '" +name+"'");
         SceneManager.LoadScene(name);
+    } 
+    
+    private void OnTriggerEnter(Collider other)
+    {
+        if(forceSwitch)
+            GoToSceneWithName("Mem01");
     }
 }
+
+

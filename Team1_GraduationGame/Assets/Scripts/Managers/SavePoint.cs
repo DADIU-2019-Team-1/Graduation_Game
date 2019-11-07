@@ -14,8 +14,9 @@ namespace Team1_GraduationGame.SaveLoadSystem
         // References:
         [HideInInspector] public SavePointManager thisSavePointManager;
 
-        // Public
+        // Public:
         public int thisID;
+        [HideInInspector] public bool savePointUsed;
         public enum colliderTypes
         {
             None,
@@ -38,9 +39,10 @@ namespace Team1_GraduationGame.SaveLoadSystem
         {
             if (Application.isPlaying)
             {
-                if (col.tag == "Player")
+                if (col.tag == "Player" && !savePointUsed)
                 {
                     thisSavePointManager.saveLoadManager.SaveGame();
+                    savePointUsed = true;
                 }
             }
         }
@@ -77,7 +79,7 @@ namespace Team1_GraduationGame.SaveLoadSystem
 
         void OnDestroy()
         {
-            if (thisSavePointManager != null)
+            if (thisSavePointManager != null && Application.isEditor)
             {
                 thisSavePointManager.savePoints.RemoveAt(thisID - 1);
 

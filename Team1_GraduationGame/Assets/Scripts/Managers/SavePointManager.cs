@@ -21,27 +21,35 @@ namespace Team1_GraduationGame.SaveLoadSystem
         public void Awake()
         {
             saveLoadManager = new SaveLoadManager();
-        }
 
-        public void AddSavePoint()
-        {
-            GameObject tempSavePoint;
-
-            tempSavePoint = new GameObject("SafePoint" + (savePoints.Count + 1));
-            tempSavePoint.AddComponent<SavePoint>();
-            tempSavePoint.transform.position = gameObject.transform.position;
-            tempSavePoint.transform.parent = transform;
-            tempSavePoint.layer = 2;
-
-            savePoints.Add(tempSavePoint);
-            tempSavePoint.GetComponent<SavePoint>().thisID = savePoints.Count;
-            tempSavePoint.GetComponent<SavePoint>().thisSavePointManager = gameObject.GetComponent<SavePointManager>();
+            if (PlayerPrefs.GetInt("loadGameOnAwake") == 1)
+            {
+                saveLoadManager.LoadGame();
+            }
         }
 
 #if UNITY_EDITOR
+        public void AddSavePoint()
+        {
+            if (Application.isEditor)
+            {
+                GameObject tempSavePoint;
+
+                tempSavePoint = new GameObject("SafePoint" + (savePoints.Count + 1));
+                tempSavePoint.AddComponent<SavePoint>();
+                tempSavePoint.transform.position = gameObject.transform.position;
+                tempSavePoint.transform.parent = transform;
+                tempSavePoint.layer = 2;
+
+                savePoints.Add(tempSavePoint);
+                tempSavePoint.GetComponent<SavePoint>().thisID = savePoints.Count;
+                tempSavePoint.GetComponent<SavePoint>().thisSavePointManager = gameObject.GetComponent<SavePointManager>();
+            }
+        }
+
         private void OnDrawGizmos()
         {
-            if (drawGizmos)
+            if (drawGizmos && Application.isEditor)
                 if (savePoints != null)
                 {
                     Gizmos.color = Color.green;

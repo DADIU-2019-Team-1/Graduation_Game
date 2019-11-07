@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using Team1_GraduationGame.Enemies;
 using Team1_GraduationGame.Interaction;
-using UnityEditor;
 using UnityEngine;
 using UnityEngine.AI;
+
+#if UNITY_EDITOR
+using UnityEditor;
 
 namespace Team1_GraduationGame.SaveLoadSystem
 {
@@ -47,7 +49,6 @@ namespace Team1_GraduationGame.SaveLoadSystem
             }
         }
 
-#if UNITY_EDITOR
         public void AttachCollider(int enumIndex)
         {
             Debug.Log("Attaching " + attachCollider + " collider to " + gameObject.name);
@@ -93,11 +94,9 @@ namespace Team1_GraduationGame.SaveLoadSystem
                 }
             }
         }
-#endif
     }
 
     #region Custom Inspector
-#if UNITY_EDITOR
     [CustomEditor(typeof(SavePoint))]
     public class SavePoint_Inspector : UnityEditor.Editor
     {
@@ -130,6 +129,6 @@ namespace Team1_GraduationGame.SaveLoadSystem
             }
         }
     }
-#endif
     #endregion
 }
+#endif

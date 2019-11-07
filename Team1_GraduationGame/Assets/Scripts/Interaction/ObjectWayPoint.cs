@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
+using System.Collections.Generic;
 #if UNITY_EDITOR
 using UnityEditor;
-#endif
 
 namespace Team1_GraduationGame.Interaction
 {
@@ -13,8 +13,6 @@ namespace Team1_GraduationGame.Interaction
         [HideInInspector] public bool isParent = false;
         public int wayPointId;
 
-
-#if UNITY_EDITOR
 
         void OnDestroy()
         {
@@ -48,10 +46,8 @@ namespace Team1_GraduationGame.Interaction
                 }
             }
         }
-#endif
     }
 
-#if UNITY_EDITOR
     [CustomEditor(typeof(ObjectWayPoint))]
     public class ObjectWayPoint_Inspector : UnityEditor.Editor
     {
@@ -70,5 +66,5 @@ namespace Team1_GraduationGame.Interaction
 
         }
     }
-#endif
 }
+#endif

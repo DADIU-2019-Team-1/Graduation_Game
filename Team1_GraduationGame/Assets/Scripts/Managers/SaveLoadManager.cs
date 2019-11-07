@@ -34,7 +34,6 @@ namespace Team1_GraduationGame.SaveLoadSystem
 
         public void NewGame()
         {
-            PlayerPrefs.SetInt("previousGame", 1);
             PlayerPrefs.SetInt("currentScene", 1);
 
             Scene startScene = SceneManager.GetSceneAt(1);
@@ -81,6 +80,7 @@ namespace Team1_GraduationGame.SaveLoadSystem
             tempSaveString = JsonUtility.ToJson(SceneManager.GetActiveScene().buildIndex);
             PlayerPrefs.SetInt("currentScene", int.Parse(tempSaveString));
 
+            PlayerPrefs.SetInt("previousGame", 1);
 
             Debug.Log("Save/Load Manager: Succesfully saved the game");
         }

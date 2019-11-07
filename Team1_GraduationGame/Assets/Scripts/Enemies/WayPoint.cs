@@ -5,7 +5,9 @@ using UnityEditor;
 
 namespace Team1_GraduationGame.Enemies
 {
+#if UNITY_EDITOR
     [ExecuteInEditMode]
+#endif
     public class WayPoint : MonoBehaviour
     {
         [HideInInspector] public GameObject parentEnemy;
@@ -20,7 +22,7 @@ namespace Team1_GraduationGame.Enemies
 
         void OnDestroy()
         {
-            if (parentEnemy != null && !isParent)
+            if (parentEnemy != null && !isParent && Application.isEditor)
             {
                 if (parentEnemy.GetComponent<Enemy>() != null && wayPointId != 0)
                 {
@@ -42,7 +44,7 @@ namespace Team1_GraduationGame.Enemies
 
         private void Update()
         {
-            if (isParent)
+            if (isParent && Application.isEditor)
             {
                 if (transform.childCount == 0)
                 {

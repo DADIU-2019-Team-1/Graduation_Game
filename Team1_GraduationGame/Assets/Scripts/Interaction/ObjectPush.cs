@@ -55,63 +55,67 @@ namespace Team1_GraduationGame.Interaction
             }
         }
 
+#if UNITY_EDITOR
         #region Waypoint System
         public void AddWayPoint()
         {
-            if (wayPoints == null)
-                wayPoints = new List<GameObject>();
-
-            if (wayPoints.Count >= 2)
-                return;
-
-            GameObject tempWayPointObj;
-
-            if (!GameObject.Find("ObjectMovingWaypoints"))
-                new GameObject("ObjectMovingWaypoints");
-
-            if (!GameObject.Find(gameObject.name + "_Waypoints"))
+            if (Application.isEditor)
             {
-                parentWayPoint = new GameObject(gameObject.name + "_Waypoints");
+                if (wayPoints == null)
+                    wayPoints = new List<GameObject>();
 
-                parentWayPoint.AddComponent<ObjectWayPoint>();
-                parentWayPoint.GetComponent<ObjectWayPoint>().isParent = true;
-                parentWayPoint.transform.parent =
-                    GameObject.Find("ObjectMovingWaypoints").transform;
+                if (wayPoints.Count >= 2)
+                    return;
+
+                GameObject tempWayPointObj;
+
+                if (!GameObject.Find("ObjectMovingWaypoints"))
+                    new GameObject("ObjectMovingWaypoints");
+
+                if (!GameObject.Find(gameObject.name + "_Waypoints"))
+                {
+                    parentWayPoint = new GameObject(gameObject.name + "_Waypoints");
+
+                    parentWayPoint.AddComponent<ObjectWayPoint>();
+                    parentWayPoint.GetComponent<ObjectWayPoint>().isParent = true;
+                    parentWayPoint.transform.parent =
+                        GameObject.Find("ObjectMovingWaypoints").transform;
+                }
+                else
+                {
+                    parentWayPoint = GameObject.Find(gameObject.name + "_Waypoints");
+                }
+
+                if (wayPoints == null)
+                {
+                    wayPoints = new List<GameObject>();
+                }
+
+                tempWayPointObj = new GameObject("WayPoint" + (wayPoints.Count + 1));
+                tempWayPointObj.AddComponent<ObjectWayPoint>();
+                ObjectWayPoint tempWayPointScript = tempWayPointObj.GetComponent<ObjectWayPoint>();
+                tempWayPointScript.wayPointId = wayPoints.Count + 1;
+                tempWayPointScript.parentObject = gameObject;
+                tempWayPointScript.parentWayPoint = parentWayPoint;
+
+                tempWayPointObj.transform.position = gameObject.transform.position;
+                tempWayPointObj.transform.parent = parentWayPoint.transform;
+                wayPoints.Add(tempWayPointObj);
             }
-            else
-            {
-                parentWayPoint = GameObject.Find(gameObject.name + "_Waypoints");
-            }
-
-            if (wayPoints == null)
-            {
-                wayPoints = new List<GameObject>();
-            }
-
-            tempWayPointObj = new GameObject("WayPoint" + (wayPoints.Count + 1));
-            tempWayPointObj.AddComponent<ObjectWayPoint>();
-            ObjectWayPoint tempWayPointScript = tempWayPointObj.GetComponent<ObjectWayPoint>();
-            tempWayPointScript.wayPointId = wayPoints.Count + 1;
-            tempWayPointScript.parentObject = gameObject;
-            tempWayPointScript.parentWayPoint = parentWayPoint;
-
-            tempWayPointObj.transform.position = gameObject.transform.position;
-            tempWayPointObj.transform.parent = parentWayPoint.transform;
-            wayPoints.Add(tempWayPointObj);
         }
 
         public void RemoveWayPoint()
         {
-            if (wayPoints != null)
-                if (wayPoints.Count > 0)
-                {
-                    DestroyImmediate(wayPoints[wayPoints.Count - 1].gameObject);
-                }
+            if (Application.isEditor)
+                if (wayPoints != null)
+                    if (wayPoints.Count > 0)
+                    {
+                        DestroyImmediate(wayPoints[wayPoints.Count - 1].gameObject);
+                    }
         }
         #endregion
 
         #region Draw Gizmos
-#if UNITY_EDITOR
         private void OnDrawGizmos()
         {
             if (drawGizmos)
@@ -132,8 +136,8 @@ namespace Team1_GraduationGame.Interaction
                     }
                 }
         }
-#endif
         #endregion
+#endif
     }
 
     #region Custom Inspector

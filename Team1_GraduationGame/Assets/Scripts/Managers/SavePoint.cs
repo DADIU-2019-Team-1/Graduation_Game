@@ -79,7 +79,7 @@ namespace Team1_GraduationGame.SaveLoadSystem
 
         void OnDestroy()
         {
-            if (thisSavePointManager != null)
+            if (thisSavePointManager != null && Application.isEditor)
             {
                 thisSavePointManager.savePoints.RemoveAt(thisID - 1);
 

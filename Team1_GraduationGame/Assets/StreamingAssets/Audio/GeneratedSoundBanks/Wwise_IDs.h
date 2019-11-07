@@ -13,7 +13,9 @@ namespace AK
 {
     namespace EVENTS
     {
+        static const AkUniqueID PLAY_DIRT = 2498286841U;
         static const AkUniqueID PLAY_FOOTSTEP_SYSTEM = 1702278464U;
+        static const AkUniqueID PLAY_GRIEF_MUSIC_SYSTEM = 1761881701U;
         static const AkUniqueID PLAY_SETUP_TEST_MUSIC = 3845448020U;
     } // namespace EVENTS
 

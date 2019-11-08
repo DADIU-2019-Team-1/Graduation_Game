@@ -88,6 +88,7 @@ namespace Team1_GraduationGame.SaveLoadSystem
                     tempSaveString = tempSaveString + SAVE_SEPERATOR + JsonUtility.ToJson(tempSavePoints[i].savePointUsed);
                     tempSaveString1 = tempSaveString1 + SAVE_SEPERATOR + JsonUtility.ToJson(tempSavePoints[i].thisID);
                 }
+                Debug.Log(tempSaveString + " | " + tempSaveString1);
 
                 PlayerPrefs.SetString("savePointStateSave", tempSaveString);
                 PlayerPrefs.SetString("savePointIDSave", tempSaveString1);

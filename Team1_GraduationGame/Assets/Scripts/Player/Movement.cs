@@ -10,7 +10,9 @@ public class Movement : MonoBehaviour
     private Rigidbody playerRB;
     private bool touchStart = false, canMove = false, canJump = true, canPush, isJumping = false, moveFrozen = false;
 
-    private float swipeTimeThreshold = 0.3f, swipeTimeTimer;
+    
+
+    private float swipeTimeTimer;
     private Vector3 initTouchPos;
     private Vector3 currTouchPos;
 
@@ -28,7 +30,11 @@ public class Movement : MonoBehaviour
     public FloatReference walkSpeed;
     public FloatReference runSpeed;
     public FloatReference rotationSpeed;
+
+    public FloatReference swipeTimeThreshold;
     public FloatReference jumpHeight;
+    [Tooltip("Height in meters for checking jump")]
+    public FloatReference ghostJumpHeight;
     public IntReference radius;
 
     public FloatVariable currentSpeed;
@@ -88,6 +94,256 @@ public class Movement : MonoBehaviour
 
     void Update() {
         currentSpeed.value = Vector3.Distance(transform.position, _previousPosition) / Time.fixedDeltaTime;
+//                 if (playerRB.velocity.y <= 0 && isJumping)
+//         {
+//             //playerRB.mass * fallMultiplier.value;
+
+//             playerRB.velocity += Vector3.up * Physics.gravity.y * (fallMultiplier.value - 1) * Time.deltaTime;
+
+//             if (Physics.Raycast(leftFootPos.transform.position, Vector3.down, 0.10f) || Physics.Raycast(rightFootPos.transform.position, Vector3.down, 0.10f))
+//             {
+//                 isJumping = false;
+//             }
+//         }
+//         _previousPosition = transform.position;
+//         // Making sure touches only run on Android
+// #if UNITY_ANDROID
+//         int i = 0;
+//         while (i < Input.touchCount)
+//         {
+//             Touch t = Input.GetTouch(i);
+//             if (t.phase == TouchPhase.Began && !moveFrozen)
+//             {
+//                 if (t.position.x < (Screen.width / 2)-10)
+//                 {   
+//                     if(t.fingerId < 50) {
+                        
+//                         stick.gameObject.SetActive(true);
+//                         stickLimit.gameObject.SetActive(true);
+//                         stickLimit.transform.position = t.position;
+//                         leftTouch = t.fingerId;
+                        
+//                         canMove = true;
+//                     }
+                    
+
+//                 }
+
+
+//                 else if (t.position.x > Screen.width / 2)
+//                 {
+//                     if(t.fingerId < 50) {
+//                         rightTouch = t.fingerId;
+//                         swipeStartPos = t.position;
+
+//                         swipeTimeTimer = Time.time;                        
+//                     }
+
+//                     //Debug.Log("Began phase: " + swipeTimeTimer);
+
+//                     /*                     if(canJump && rightTouch == t.fingerId) {
+//                                             playerJump(Vector3.up, jumpHeight.value);
+//                                         } */
+
+//                     // Start timer on finger down.
+
+//                 }
+
+//             }
+//             else if ((t.phase == TouchPhase.Moved || t.phase == TouchPhase.Stationary) && leftTouch == t.fingerId && canMove && !moveFrozen)
+//             {
+
+//                 Vector3 offset = new Vector3(t.position.x - stickLimit.transform.position.x, 0, t.position.y - stickLimit.transform.position.y);
+//                 Vector3 direction = Vector3.ClampMagnitude(offset, 1.0f);
+//                 float dragDist = Vector2.Distance(stick.transform.position, stickLimit.transform.position);
+//                 Vector2 joyDiff = t.position - new Vector2(stickLimit.transform.position.x, stickLimit.transform.position.y);
+//                 // Need new clamping.
+//                 joyDiff = Vector2.ClampMagnitude(joyDiff, radius.value);
+
+//                 if (dragDist <= radius.value * idleThreshold)
+//                 {
+//                     //movePlayer(direction,0);
+//                     //moveState.value = 0;
+//                 }
+//                 else if (dragDist > radius.value * idleThreshold && dragDist <= radius.value * sneakThreshold)
+//                 {
+//                     movePlayer(direction, sneakSpeed.value);
+//                     //moveState.value = 1;
+//                 }
+//                 else if (dragDist > radius.value * sneakThreshold && dragDist < radius.value * runThreshold)
+//                 {
+//                     movePlayer(direction, walkSpeed.value);
+//                     //moveState.value = 2;
+//                 }
+//                 else if (dragDist >= radius.value * runThreshold)
+//                 {
+//                     movePlayer(direction, runSpeed.value);
+//                     //moveState.value = 3;
+//                 }
+//                 stick.transform.position = joyDiff + new Vector2(stickLimit.transform.position.x, stickLimit.transform.position.y);
+//                 // t.deltaPosition; is a Vector2 of the difference between the last frame to its position this frame. 
+// /*                 if (stickLimit.transform.position.x < Screen.width / 2)
+//                 {
+//                     stick.gameObject.SetActive(true);
+//                     stickLimit.gameObject.SetActive(true);
+
+//                 }
+//                 else if (t.position.x > Screen.width / 2)
+//                 {
+
+//                     // Swipe movement? Maybe use t.deltaPosition to check change for swiping. 
+//                     // Could use TouchPhase.Stationary for just jumping?
+//                 }
+//  */
+//             }
+//             else if (t.phase == TouchPhase.Ended && leftTouch == t.fingerId)
+//             {
+//                 //if(leftTouch == t.fingerId) {
+//                 leftTouch = 99;
+//                 stick.gameObject.SetActive(false);
+//                 stickLimit.gameObject.SetActive(false);
+//                 if (canMove)
+//                     canMove = false;
+//                 //}
+
+//             }
+//             else if (t.phase == TouchPhase.Ended && rightTouch == t.fingerId)
+//             {
+//                 rightTouch = 98;
+//                 swipeEndPos = t.position;
+//                 Vector2 swipeOffSet = new Vector2(swipeEndPos.x - swipeStartPos.x, swipeEndPos.y - swipeStartPos.y);
+//                 swipeDirection = swipeOffSet.normalized;
+//                 Vector3 worldDirection = new Vector3(swipeDirection.x, 0, swipeDirection.y);
+//                 //Debug.Log("End phase: " + Time.time);
+//                 if (swipeOffSet.magnitude > swipePixelDistance.value)
+//                 {
+//                     //Debug.Log("Swipe");
+//                     //Debug.DrawLine(swipeStartPos, swipeStartPos + swipeDirection * 300, Color.red, 5);
+
+//                     playerAttack(worldDirection);
+//                 }
+//                 else if (swipeTimeTimer + swipeTimeThreshold >= Time.time && !moveFrozen)
+//                 {
+//                     playerJump(Vector3.up, jumpHeight.value);
+//                     //Debug.Log("Jump");
+//                 }
+
+//             }
+
+
+//             ++i;
+//         }
+// #endif
+
+//         // Making sure Mouse only runs on PC.
+//         // If this says && !UNITY_ANDROID, delete it. This is used to test on Unity Remote
+// #if UNITY_EDITOR
+//         if (Input.GetMouseButtonDown(0))
+//         {
+//             initTouchPos = Input.mousePosition;
+
+//             // Joystick anchor where you initially press. Circle around is the sneak/Walk indicator, if you drag outside it starts running.
+//             // Movement function which changes between the 3 based on thresholds. Make script, then fit it with UI, so we can disable it. 
+//             // Movement keeps working, as long as initial position is on the left side of the screen. 
+
+//             stickLimit.transform.position = Input.mousePosition;
+//             stick.transform.position = Input.mousePosition;
+//             // If the anchor point for Joystick is on the left side of the screen, allow movement.
+//             if (stickLimit.transform.position.x < Screen.width / 2 && !moveFrozen)
+//             {
+//                 canMove = true;
+//                 stick.gameObject.SetActive(true);
+//                 stickLimit.gameObject.SetActive(true);
+//             }
+
+//             if (Input.mousePosition.x > Screen.width / 2 && canJump)
+//             {
+//                 swipeStartPos = Input.mousePosition;
+//                 swipeTimeTimer = Time.time;
+//                 //playerJump(Vector3.up, jumpHeight.value);
+//             }
+
+//         }
+//         if (Input.GetMouseButton(0))
+//         {
+
+//             touchStart = true;
+//             currTouchPos = Input.mousePosition;
+//         }
+//         else
+//         {
+//             touchStart = false;
+//         }
+
+//         if (Input.GetMouseButtonUp(0))
+//         {
+//             swipeEndPos = Input.mousePosition;
+//             Vector2 swipeOffSet = new Vector2(swipeEndPos.x - swipeStartPos.x, swipeEndPos.y - swipeStartPos.y);
+//             swipeDirection = swipeOffSet.normalized;
+//             Vector3 worldDirection = new Vector3(swipeDirection.x, 0, swipeDirection.y);
+//             //Debug.Log("End phase: " + Time.time);
+//             if (swipeOffSet.magnitude > swipePixelDistance.value && Input.mousePosition.x > Screen.width /2 && !canMove)
+//             {
+                
+//                 playerAttack(worldDirection);
+//                 //Debug.Log("Swipe");
+//                 //Debug.DrawLine(swipeStartPos, swipeStartPos + swipeDirection * 300, Color.red, 5);
+//                 //Debug.DrawLine(playerRB.transform.position, playerRB.transform.position + worldDirection * 5, Color.green, 5);
+
+
+//             }
+//             else if (swipeTimeTimer + swipeTimeThreshold >= Time.time && !moveFrozen)
+//             {
+//                 playerJump(Vector3.up, jumpHeight.value);
+//                 //Debug.Log("Jump");
+//             }
+//         }
+
+//         if (touchStart && canMove && !moveFrozen)
+//         {
+
+//             Vector3 offset = new Vector3(currTouchPos.x - initTouchPos.x, 0, currTouchPos.y - initTouchPos.y);
+//             Vector3 direction = Vector3.ClampMagnitude(offset, 1.0f);
+//             float dragDist = Vector2.Distance(stick.transform.position, stickLimit.transform.position);
+//             Vector2 joyDiff = Input.mousePosition - stickLimit.transform.position;
+//             joyDiff = Vector2.ClampMagnitude(joyDiff, radius.value);
+
+//             if (dragDist <= radius.value * idleThreshold)
+//             {
+//                 //movePlayer(direction, 0);
+//                 //moveState.value = 0;
+//             }
+//             else if (dragDist <= radius.value * sneakThreshold)
+//             {
+//                 movePlayer(direction, sneakSpeed.value);
+//                 //moveState.value = 1;
+//             }
+//             else if (dragDist > radius.value * sneakThreshold && dragDist < radius.value * runThreshold)
+//             {
+//                 movePlayer(direction, walkSpeed.value);
+//                 //moveState.value = 2;
+//             }
+//             else if (dragDist >= radius.value * runThreshold)
+//             {
+//                 movePlayer(direction, runSpeed.value);
+//                 //moveState.value = 3;
+//             }
+
+
+
+//             stick.transform.position = joyDiff + new Vector2(stickLimit.transform.position.x, stickLimit.transform.position.y);
+//         }
+//         else
+//         {
+//             stick.gameObject.SetActive(false);
+//             stickLimit.gameObject.SetActive(false);
+//             canMove = false;
+//         }
+// #endif
+
+
+
+//         SetState();
     }
 
     void FixedUpdate()
@@ -220,7 +476,7 @@ public class Movement : MonoBehaviour
 
                     playerAttack(worldDirection);
                 }
-                else if (swipeTimeTimer + swipeTimeThreshold >= Time.time && !moveFrozen)
+                else if (swipeTimeTimer + swipeTimeThreshold.value >= Time.time && !moveFrozen)
                 {
                     playerJump(Vector3.up, jumpHeight.value);
                     //Debug.Log("Jump");
@@ -290,7 +546,7 @@ public class Movement : MonoBehaviour
 
 
             }
-            else if (swipeTimeTimer + swipeTimeThreshold >= Time.time && !moveFrozen)
+            else if (swipeTimeTimer + swipeTimeThreshold.value >= Time.time && !moveFrozen)
             {
                 playerJump(Vector3.up, jumpHeight.value);
                 //Debug.Log("Jump");
@@ -355,7 +611,7 @@ public class Movement : MonoBehaviour
 
     private void playerJump(Vector3 direction, float jumpHeight)
     {
-        if (!isJumping && (Physics.Raycast(leftFootPos.transform.position, Vector3.down, 0.10f) || Physics.Raycast(rightFootPos.transform.position, Vector3.down, 0.10f)))
+        if (!isJumping && (Physics.Raycast(leftFootPos.transform.position, Vector3.down, ghostJumpHeight.value) || Physics.Raycast(rightFootPos.transform.position, Vector3.down, ghostJumpHeight.value)))
         {
             playerRB.AddForce(direction * jumpHeight, ForceMode.Impulse);
             /*         if(playerRB.velocity.y <= 0) {
@@ -399,14 +655,14 @@ public class Movement : MonoBehaviour
                 // and in attack degree
                 Vector3 temp = closestPoint - transform.position;
                 temp.y = 0;
-                Debug.Log("Temp is: " + temp);
+                
                 float angleToObject = Vector3.Angle(temp, direction);
                 if (angleToObject <= attackDegree.value / 2)
                 {
                     // interact
                     interactableObjects[i].GetComponent<Interactable>().Interact();
-                    Debug.Log("INTERACT!!!!!");
-                    //interactableObjects[i].interact();
+                    // Debug.Log("INTERACT!!!!!");
+                    // interactableObjects[i].interact();
                 }
             }
         }

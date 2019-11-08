@@ -85,7 +85,7 @@ namespace Team1_GraduationGame.SaveLoadSystem
                     for (int i = 0; i < savePoints.Count; i++)
                     {
                         Gizmos.DrawWireSphere(savePoints[i].transform.position, 1.0f);
-                        Handles.Label(savePoints[i].transform.position + (Vector3.up * 1.0f), "SavePoint " + i);
+                        Handles.Label(savePoints[i].transform.position + (Vector3.up * 1.0f), "SavePoint " + (i + 1));
 
                         if (savePoints[i].GetComponent<Collider>() != null)
                         {

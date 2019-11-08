@@ -82,7 +82,7 @@ public class CameraMovement : MonoBehaviour
 
     }
 
-    void LateUpdate()
+    void FixedUpdate()
     {
         float diff = float.MaxValue;
         int bestIndex = -1;
@@ -123,7 +123,10 @@ public class CameraMovement : MonoBehaviour
             if (player.position.x >= (_trackPath.m_Waypoints[0].position.x + trackX) && player.position.x <= _trackPath.m_Waypoints[_trackPath.m_Waypoints.Length - 1].position.x + trackX)
                 _endOfRail = false;
         }
+    }
 
+    void LateUpdate()
+    {
         // Rotation update
         lookPosition = CalculateLookPosition(player.position, _cameraLook.camTarget, focusRange.value, focusObjects);
         targetRotation = lookPosition - transform.position != Vector3.zero

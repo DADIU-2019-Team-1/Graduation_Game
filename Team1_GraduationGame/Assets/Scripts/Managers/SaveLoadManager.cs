@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using Team1_GraduationGame.Enemies;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -10,49 +11,19 @@ namespace Team1_GraduationGame.SaveLoadSystem
     {
         private const string SAVE_SEPERATOR = "#SAVE-VALUE#";
         public bool newGame = true;
+        public int firstSceneIndex = 0; // TODO: change to be first scene (should be 1 and main menu 0?) - YYY Change back after testing
 
         // References:
         private GameObject _player;
-        //private GameObject[] _enemies;
+        private GameObject[] _enemies;
 
-
-        private void Awake()
-        {
-            _player = GameObject.FindWithTag("Player");
-            //_enemies = GameObject.FindGameObjectsWithTag("Enemy");
-        }
-
-        private void Start()
-        {
-            if (PlayerPrefs.GetInt("loadGameOnAwake") == 1)
-            {
-                PlayerPrefs.SetInt("loadGameOnAwake", 0);
-                LoadGame();
-            }
-        }
-
-#if UNITY_EDITOR
-        private void Update()
-        {
-            if (Input.GetKeyDown("l"))
-            {
-                LoadGame();
-                Debug.Log("Save/Load Manager: Loaded Game");
-            }
-            else if (Input.GetKeyDown("k"))
-            {
-                SaveGame();
-                Debug.Log("Save/Load Manager: Saved Game");
-            }
-        }
-#endif
 
         public void NewGame()
         {
-            PlayerPrefs.SetInt("previousGame", 1);
-            PlayerPrefs.SetInt("currentScene", 1);
+            PlayerPrefs.SetInt("currentScene", firstSceneIndex);
+            PlayerPrefs.SetInt("loadGameOnAwake", 0);
 
-            Scene startScene = SceneManager.GetSceneAt(1);
+            Scene startScene = SceneManager.GetSceneAt(firstSceneIndex);
             SceneManager.LoadScene(startScene.buildIndex);
         }
 
@@ -67,14 +38,29 @@ namespace Team1_GraduationGame.SaveLoadSystem
                 Debug.Log("Save/Load Manager: No previous games to load");
         }
 
+        public void NextLevel()
+        {
+            if (SceneManager.GetActiveScene().buildIndex != SceneManager.sceneCountInBuildSettings)
+            {
+                SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
+            }
+            else
+            {
+                Debug.Log("Error: There is no next scene!");
+            }
+        }
+
         public void SaveGame()
         {
             string tempSaveString = "";
+            _player = GameObject.FindWithTag("Player");
 
             //// Player save: ////
             if (_player != null)
             {
-                tempSaveString = JsonUtility.ToJson(_player.transform);
+                Vector3 tempPlayerPosition = _player.transform.position;
+                Quaternion tempPlayerRotation = _player.transform.rotation;
+                tempSaveString = JsonUtility.ToJson(tempPlayerPosition) + SAVE_SEPERATOR + JsonUtility.ToJson(tempPlayerRotation);
                 PlayerPrefs.SetString("playerSave", tempSaveString);
             }
             else
@@ -91,10 +77,26 @@ namespace Team1_GraduationGame.SaveLoadSystem
             //}
             //PlayerPrefs.SetString("enemySave", tempSaveString);
 
-            //// Scene save: ////
-            tempSaveString = JsonUtility.ToJson(SceneManager.GetActiveScene().buildIndex);
-            PlayerPrefs.SetInt("currentScene", int.Parse(tempSaveString));
+            //// SavePoint State: ////
+            SavePoint[] tempSavePoints = GameObject.FindObjectsOfType<SavePoint>();
+            tempSaveString = ""; string tempSaveString1 = "";
 
+            if (tempSavePoints != null)
+            {
+                for (int i = 0; i < tempSavePoints.Length; i++)
+                {
+                    tempSaveString = tempSaveString + SAVE_SEPERATOR + JsonUtility.ToJson(tempSavePoints[i].savePointUsed);
+                    tempSaveString1 = tempSaveString1 + SAVE_SEPERATOR + JsonUtility.ToJson(tempSavePoints[i].thisID);
+                }
+
+                PlayerPrefs.SetString("savePointStateSave", tempSaveString);
+                PlayerPrefs.SetString("savePointIDSave", tempSaveString1);
+            }
+
+            //// Scene save: ////
+            PlayerPrefs.SetInt("currentScene", SceneManager.GetActiveScene().buildIndex);
+
+            PlayerPrefs.SetInt("previousGame", 1);
 
             Debug.Log("Save/Load Manager: Succesfully saved the game");
         }
@@ -102,6 +104,7 @@ namespace Team1_GraduationGame.SaveLoadSystem
         public void LoadGame()
         {
             string tempLoadString = "";
+            _player = GameObject.FindWithTag("Player");
 
             if (PlayerPrefs.GetInt("previousGame") != 1)
                 return;
@@ -110,15 +113,41 @@ namespace Team1_GraduationGame.SaveLoadSystem
             if (_player != null)
             {
                 tempLoadString = PlayerPrefs.GetString("playerSave");
-                Transform tempPlayerTransform = JsonUtility.FromJson<Transform>(tempLoadString);
-                _player.transform.position = tempPlayerTransform.position;
-                _player.transform.rotation = tempPlayerTransform.rotation;
+                string[] tempDataString = tempLoadString.Split(new[] { SAVE_SEPERATOR }, System.StringSplitOptions.None);
+
+                Vector3 tempPlayerPosition = JsonUtility.FromJson<Vector3>(tempDataString[0]);
+                Quaternion tempPlayerRotation = JsonUtility.FromJson<Quaternion>(tempDataString[1]);
+
+                _player.transform.position = tempPlayerPosition;
+                _player.transform.rotation = tempPlayerRotation;
             }
             else
             {
                 Debug.Log("Save/Load Manager: Failed to load the game. Player not found");
                 return;
             }
+
+            //// SavePoint State load: ////
+            SavePoint[] tempSavePoints = GameObject.FindObjectsOfType<SavePoint>();
+            tempLoadString = PlayerPrefs.GetString("savePointStateSave");
+            string tempLoadString1 = PlayerPrefs.GetString("savePointIDSave");
+
+            if (tempSavePoints != null)
+            {
+                string[] tempDataString = tempLoadString.Split(new[] { SAVE_SEPERATOR }, System.StringSplitOptions.None);
+                string[] tempDataString1 = tempLoadString1.Split(new[] { SAVE_SEPERATOR }, System.StringSplitOptions.None);
+
+                for (int i = 1; i < tempDataString.Length; i++) // Must start at 1
+                {
+                    int tempID = JsonUtility.FromJson<int>(tempDataString[i]);
+                    bool tempBool = JsonUtility.FromJson<bool>(tempDataString1[i]);
+
+                    if (tempID == tempSavePoints[i].thisID)
+                        tempSavePoints[i].savePointUsed = tempBool;
+                }
+            }
+
+            Debug.Log("Save/Load Manager: Succesfully loaded the game");
 
         }
     }

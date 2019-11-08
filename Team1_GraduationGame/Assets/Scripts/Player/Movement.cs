@@ -33,6 +33,8 @@ public class Movement : MonoBehaviour
 
     public FloatReference swipeTimeThreshold;
     public FloatReference jumpHeight;
+
+    private PhysicMaterial _jumpMaterial;
     [Tooltip("Height in meters for checking jump")]
     public FloatReference ghostJumpHeight;
     public IntReference radius;
@@ -51,6 +53,10 @@ public class Movement : MonoBehaviour
     private RaycastHit[] hit;
 
     public GameObject leftHeelPos, rightHeelPos, rightToePos, leftToePos;
+
+    public PhysicMaterial jumpMaterial;
+
+    private CapsuleCollider _collider;
 
     //private SphereCollider playerTrigger;
 
@@ -90,6 +96,8 @@ public class Movement : MonoBehaviour
 /*         playerTrigger = GetComponent<SphereCollider>();
         playerTrigger.radius = attackRange.value;
         playerTrigger.isTrigger = true; */
+        _jumpMaterial = setJumpMaterial();
+        _collider = GetComponent<CapsuleCollider>();
     }
 
     void Update() {
@@ -108,6 +116,7 @@ public class Movement : MonoBehaviour
             if (Physics.Raycast(leftToePos.transform.position, Vector3.down, ghostJumpHeight.value) || Physics.Raycast(rightToePos.transform.position, Vector3.down, ghostJumpHeight.value) || Physics.Raycast(leftHeelPos.transform.position, Vector3.down, ghostJumpHeight.value) || Physics.Raycast(rightHeelPos.transform.position, Vector3.down, ghostJumpHeight.value))
             {
                 isJumping = false;
+                _collider.material = null;
             }
         }
         _previousPosition = transform.position;
@@ -155,7 +164,7 @@ public class Movement : MonoBehaviour
                 }
 
             }
-            else if ((t.phase == TouchPhase.Moved || t.phase == TouchPhase.Stationary) && leftTouch == t.fingerId && canMove && !moveFrozen)
+            else if ((t.phase == TouchPhase.Moved || t.phase == TouchPhase.Stationary) && leftTouch == t.fingerId && canMove && !moveFrozen && leftTouch == t.fingerId)
             {
 
                 Vector3 offset = new Vector3(t.position.x - stickLimit.transform.position.x, 0, t.position.y - stickLimit.transform.position.y);
@@ -201,36 +210,39 @@ public class Movement : MonoBehaviour
                 }
  */
             }
-            else if (t.phase == TouchPhase.Ended && leftTouch == t.fingerId)
-            {
-                //if(leftTouch == t.fingerId) {
-                leftTouch = 99;
-                stick.gameObject.SetActive(false);
-                stickLimit.gameObject.SetActive(false);
-                if (canMove)
-                    canMove = false;
-                //}
-
-            }
-            else if (t.phase == TouchPhase.Ended && rightTouch == t.fingerId)
-            {
-                rightTouch = 98;
-                swipeEndPos = t.position;
-                Vector2 swipeOffSet = new Vector2(swipeEndPos.x - swipeStartPos.x, swipeEndPos.y - swipeStartPos.y);
-                swipeDirection = swipeOffSet.normalized;
-                Vector3 worldDirection = new Vector3(swipeDirection.x, 0, swipeDirection.y);
-                //Debug.Log("End phase: " + Time.time);
-                if (swipeOffSet.magnitude > swipePixelDistance.value)
+            else {
+                if (t.phase == TouchPhase.Ended && leftTouch == t.fingerId)
                 {
-                    //Debug.Log("Swipe");
-                    //Debug.DrawLine(swipeStartPos, swipeStartPos + swipeDirection * 300, Color.red, 5);
+                    //if(leftTouch == t.fingerId) {
+                    
+                    leftTouch = 99;
+                    stick.gameObject.SetActive(false);
+                    stickLimit.gameObject.SetActive(false);
+                    Debug.Log("Joystick Status in close statement: " + stickLimit.gameObject.activeInHierarchy);
+                    if (canMove)
+                        canMove = false;
+                    //}
 
-                    playerAttack(worldDirection);
                 }
-                else if (swipeTimeTimer + swipeTimeThreshold.value >= Time.time && !moveFrozen)
+                if (t.phase == TouchPhase.Ended && rightTouch == t.fingerId)
                 {
-                    playerJump(Vector3.up, jumpHeight.value);
-                    //Debug.Log("Jump");
+                    rightTouch = 98;
+                    swipeEndPos = t.position;
+                    Vector2 swipeOffSet = new Vector2(swipeEndPos.x - swipeStartPos.x, swipeEndPos.y - swipeStartPos.y);
+                    swipeDirection = swipeOffSet.normalized;
+                    Vector3 worldDirection = new Vector3(swipeDirection.x, 0, swipeDirection.y);
+                    //Debug.Log("End phase: " + Time.time);
+                    if (swipeOffSet.magnitude > swipePixelDistance.value)
+                    {
+                        playerAttack(worldDirection);
+                    }
+                    else if (swipeTimeTimer + swipeTimeThreshold.value >= Time.time && !moveFrozen)
+                    {
+                        // Jump feels sluggish inside else if, but when only if, triggers every time and you never swipe/do both always.
+                        playerJump(Vector3.up, jumpHeight.value);
+                        //Debug.Log("Jump");
+                    }
+
                 }
 
             }
@@ -247,7 +259,7 @@ public class Movement : MonoBehaviour
 
         // Making sure Mouse only runs on PC.
         // If this says && !UNITY_ANDROID, delete it. This is used to test on Unity Remote
-#if UNITY_EDITOR
+#if UNITY_EDITOR && !UNITY_ANDROID
         if (Input.GetMouseButtonDown(0))
         {
             initTouchPos = Input.mousePosition;
@@ -378,6 +390,10 @@ public class Movement : MonoBehaviour
             // If the feet are atleast 10 cm away from the ground. 
             isJumping = true;
 
+
+            _collider.material = _jumpMaterial;
+
+
         }
 
 
@@ -458,5 +474,22 @@ public class Movement : MonoBehaviour
         }
 
 
+    }
+
+    private PhysicMaterial setJumpMaterial() {
+        
+        Collider coll = GetComponent<CapsuleCollider>();
+
+        PhysicMaterial newPhysMaterial;
+        newPhysMaterial = coll.material;
+        
+        newPhysMaterial.bounciness = 0;
+        newPhysMaterial.frictionCombine = 0;
+        newPhysMaterial.dynamicFriction = 0;
+        newPhysMaterial.staticFriction = 0;
+        newPhysMaterial.name = "Jump_Material";
+        
+
+        return newPhysMaterial;
     }
 }

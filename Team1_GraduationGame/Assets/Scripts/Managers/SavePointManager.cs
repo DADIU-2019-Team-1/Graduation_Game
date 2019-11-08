@@ -13,6 +13,7 @@ namespace Team1_GraduationGame.SaveLoadSystem
         public SaveLoadManager saveLoadManager;
 
         // Public
+        public int firstSceneBuildIndex = 0;
         public bool drawGizmos = true;
         [HideInInspector] public List<GameObject> savePoints;
 
@@ -20,6 +21,7 @@ namespace Team1_GraduationGame.SaveLoadSystem
         public void Awake()
         {
             saveLoadManager = new SaveLoadManager();
+            saveLoadManager.firstSceneIndex = firstSceneBuildIndex;
 
             if (PlayerPrefs.GetInt("loadGameOnAwake") == 1)
             {

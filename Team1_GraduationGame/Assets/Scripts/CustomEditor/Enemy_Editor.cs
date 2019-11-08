@@ -7,7 +7,7 @@ using UnityEditor;
 namespace Team1_GraduationGame.Editor
 {
     [CustomEditor(typeof(Enemy))]
-    public class Enemy_Inspector : UnityEditor.Editor
+    public class Enemy_Editor : UnityEditor.Editor
     {
         private GUIStyle _style = new GUIStyle();
         private GameObject _parentWayPoint;

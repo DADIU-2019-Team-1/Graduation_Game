@@ -10,7 +10,7 @@ namespace Team1_GraduationGame.SaveLoadSystem
     {
         private const string SAVE_SEPERATOR = "#SAVE-VALUE#";
         public bool newGame = true;
-        public int firstSceneIndex = 0; // TODO: change to be first scene (should be 1 and main menu 0?) - YYY Change back after testing
+        public int firstSceneIndex = 1;
 
         // References:
         private GameObject _player;

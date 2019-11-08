@@ -1,11 +1,11 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using Team1_GraduationGame.Enemies;
-using Team1_GraduationGame.Interaction;
-using UnityEditor;
+using System.Linq;
 using UnityEngine;
-using UnityEngine.AI;
 
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 namespace Team1_GraduationGame.SaveLoadSystem
 {
     [ExecuteInEditMode]
@@ -47,7 +47,6 @@ namespace Team1_GraduationGame.SaveLoadSystem
             }
         }
 
-#if UNITY_EDITOR
         public void AttachCollider(int enumIndex)
         {
             Debug.Log("Attaching " + attachCollider + " collider to " + gameObject.name);
@@ -77,18 +76,23 @@ namespace Team1_GraduationGame.SaveLoadSystem
             GetComponent<Collider>().isTrigger = true;
         }
 
+#if UNITY_EDITOR
         void OnDestroy()
         {
             if (thisSavePointManager != null && Application.isEditor)
             {
-                thisSavePointManager.savePoints.RemoveAt(thisID - 1);
-
-                for (int i = 0; i < thisSavePointManager.savePoints.Count; i++)
+                if (thisSavePointManager.savePoints.Count > 0 &&
+                    thisSavePointManager.savePoints.ElementAtOrDefault(thisID - 1))
                 {
-                    if (thisSavePointManager.savePoints[i].GetComponent<SavePoint>() != null)
+                    thisSavePointManager.savePoints.RemoveAt(thisID - 1);
+
+                    for (int i = 0; i < thisSavePointManager.savePoints.Count; i++)
                     {
-                        thisSavePointManager.savePoints[i].GetComponent<SavePoint>().thisID = i + 1;
-                        thisSavePointManager.savePoints[i].name = "SavePoint" + (i + 1);
+                        if (thisSavePointManager.savePoints[i].GetComponent<SavePoint>() != null)
+                        {
+                            thisSavePointManager.savePoints[i].GetComponent<SavePoint>().thisID = i + 1;
+                            thisSavePointManager.savePoints[i].name = "SavePoint" + (i + 1);
+                        }
                     }
                 }
             }
@@ -96,8 +100,8 @@ namespace Team1_GraduationGame.SaveLoadSystem
 #endif
     }
 
-    #region Custom Inspector
 #if UNITY_EDITOR
+#region Custom Inspector
     [CustomEditor(typeof(SavePoint))]
     public class SavePoint_Inspector : UnityEditor.Editor
     {
@@ -130,6 +134,6 @@ namespace Team1_GraduationGame.SaveLoadSystem
             }
         }
     }
-#endif
     #endregion
+#endif
 }

@@ -10,7 +10,6 @@ using UnityEditor;
 
 namespace Team1_GraduationGame.Events
 {
-
     public class EventManager : MonoBehaviour
     {
         public ThisEventSystem[] events;
@@ -29,7 +28,6 @@ namespace Team1_GraduationGame.Events
                     Debug.Log("EventManager Notice: event number " + i + " is not set up correctly!");
                 }
             }
-
         }
 
         public void Fire(string eventName)
@@ -143,65 +141,77 @@ namespace Team1_GraduationGame.Events
 
         [HideInInspector] public myFuncEnum function;
 
-        [HideInInspector] public float delayForFire = 0.0f;
-
         [HideInInspector] public GameObject thisGameObject;
         [HideInInspector] public int gameObjectAmount = 0;
         [HideInInspector] public GameObject[] theseGameObjects;
         [HideInInspector] public string collisionTag = "";
         [HideInInspector] public bool isTrigger = true;
-        [HideInInspector] public float fireCooldown = 0.0f;
+        [HideInInspector] public float fireCooldown = 0.0f, delayForFire = 0.0f;
         [HideInInspector] public int[] specificRotations;
 
         public void OnCollisionWithTag()
         {
-            if (thisGameObject.GetComponent<ColliderChecker>() == null)
+            if (thisGameObject != null)
             {
-                thisGameObject.AddComponent<ColliderChecker>();
-            }
-
-            if (thisGameObject.GetComponent<ColliderChecker>() != null)
-            {
-
-                if (hasFired)
+                if (thisGameObject.GetComponent<ColliderChecker>() == null)
                 {
-                    Debug.Log(eventName + " event already fired");
+                    thisGameObject.AddComponent<ColliderChecker>();
+                }
+
+                if (thisGameObject.GetComponent<ColliderChecker>() != null)
+                {
+
+                    if (hasFired)
+                    {
+                        Debug.Log(eventName + " event already fired");
+                    }
+                    else
+                    {
+                        thisGameObject.GetComponent<ColliderChecker>().SetUpColliderChecker(eventName, fireCooldown, isTrigger, attachedManager, collisionTag);
+                    }
+
                 }
                 else
                 {
-                    thisGameObject.GetComponent<ColliderChecker>().SetUpColliderChecker(eventName, fireCooldown, isTrigger, attachedManager, collisionTag);
+                    Debug.Log(eventName + " error: ColliderChecker script missing!");
                 }
-
             }
             else
             {
-                Debug.Log(eventName + " error: ColliderChecker script missing!");
+                Debug.LogError("EventSystem Error: No object attached for event " + eventName);
             }
         }
 
         public void OnCollision()
         {
-            if (thisGameObject.GetComponent<ColliderChecker>() == null)
+            if (thisGameObject != null)
             {
-                thisGameObject.AddComponent<ColliderChecker>();
-            }
-
-            if (thisGameObject.GetComponent<ColliderChecker>() != null)
-            {
-
-                if (hasFired)
+                if (thisGameObject.GetComponent<ColliderChecker>() == null)
                 {
-                    Debug.Log(eventName + " event already fired");
+                    thisGameObject.AddComponent<ColliderChecker>();
+                }
+
+                if (thisGameObject.GetComponent<ColliderChecker>() != null)
+                {
+
+                    if (hasFired)
+                    {
+                        Debug.Log(eventName + " event already fired");
+                    }
+                    else
+                    {
+                        thisGameObject.GetComponent<ColliderChecker>().SetUpColliderChecker(eventName, fireCooldown, isTrigger, attachedManager);
+                    }
+
                 }
                 else
                 {
-                    thisGameObject.GetComponent<ColliderChecker>().SetUpColliderChecker(eventName, fireCooldown, isTrigger, attachedManager);
+                    Debug.Log(eventName + " error: ColliderChecker script missing!");
                 }
-
             }
             else
             {
-                Debug.Log(eventName + " error: ColliderChecker script missing!");
+                Debug.LogError("EventSystem Error: No object attached for event " + eventName);
             }
         }
 
@@ -321,7 +331,6 @@ namespace Team1_GraduationGame.Events
                     }
                 }
             }
-
         }
 
         public IEnumerator OnObjectMoving()
@@ -389,7 +398,6 @@ namespace Team1_GraduationGame.Events
             theseGameObjects = new GameObject[amount];
             specificRotations = new int[amount];
         }
-
     }
 
     #region Custom Editor

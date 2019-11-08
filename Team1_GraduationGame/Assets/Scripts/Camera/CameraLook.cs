@@ -66,7 +66,7 @@ public class CameraLook : MonoBehaviour
             CameraOffset[] temp = new CameraOffset[offsetTrack.Length];
             for (int i = 0; i < offsetTrack.Length; i++)
             {
-                temp[i] = new CameraOffset(offsetTrack[i].GetPos(), offsetTrack[i].GetFOV());
+                temp[i] = new CameraOffset(offsetTrack[i].GetLook(), offsetTrack[i].GetPos(), offsetTrack[i].GetFOV());
             }
             offsetTrack = new CameraOffset[cmPath.m_Waypoints.Length];
             for (int i = 0; i < cmPath.m_Waypoints.Length && i < temp.Length; i++)

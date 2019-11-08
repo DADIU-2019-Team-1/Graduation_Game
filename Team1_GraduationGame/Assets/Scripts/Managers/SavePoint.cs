@@ -5,7 +5,7 @@ using UnityEngine;
 
 #if UNITY_EDITOR
 using UnityEditor;
-
+#endif
 namespace Team1_GraduationGame.SaveLoadSystem
 {
     [ExecuteInEditMode]
@@ -76,6 +76,7 @@ namespace Team1_GraduationGame.SaveLoadSystem
             GetComponent<Collider>().isTrigger = true;
         }
 
+#if UNITY_EDITOR
         void OnDestroy()
         {
             if (thisSavePointManager != null && Application.isEditor)
@@ -96,9 +97,11 @@ namespace Team1_GraduationGame.SaveLoadSystem
                 }
             }
         }
+#endif
     }
 
-    #region Custom Inspector
+#if UNITY_EDITOR
+#region Custom Inspector
     [CustomEditor(typeof(SavePoint))]
     public class SavePoint_Inspector : UnityEditor.Editor
     {
@@ -132,5 +135,5 @@ namespace Team1_GraduationGame.SaveLoadSystem
         }
     }
     #endregion
-}
 #endif
+}

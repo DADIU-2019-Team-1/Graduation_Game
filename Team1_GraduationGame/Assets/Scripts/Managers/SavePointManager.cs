@@ -4,7 +4,6 @@ using Team1_GraduationGame.Enemies;
 using Team1_GraduationGame.Interaction;
 using UnityEditor;
 using UnityEngine;
-using UnityEngine.AI;
 
 namespace Team1_GraduationGame.SaveLoadSystem
 {
@@ -15,7 +14,7 @@ namespace Team1_GraduationGame.SaveLoadSystem
 
         // Public
         public bool drawGizmos = true;
-        public List<GameObject> savePoints;
+        [HideInInspector] public List<GameObject> savePoints;
 
 
         public void Awake()
@@ -78,13 +77,20 @@ namespace Team1_GraduationGame.SaveLoadSystem
             if (drawGizmos && Application.isEditor)
                 if (savePoints != null)
                 {
-                    Gizmos.color = Color.green;
+                    Gizmos.color = Color.magenta;
                     Handles.color = Color.red;
 
                     for (int i = 0; i < savePoints.Count; i++)
                     {
                         Gizmos.DrawWireSphere(savePoints[i].transform.position, 1.0f);
-                        Handles.Label(savePoints[i].transform.position + (Vector3.up * 2.0f), "SavePoint " + i);
+                        Handles.Label(savePoints[i].transform.position + (Vector3.up * 1.0f), "SavePoint " + i);
+
+                        if (savePoints[i].GetComponent<Collider>() != null)
+                        {
+                            Gizmos.color = Color.white;
+                            Collider tempCollider = savePoints[i].GetComponent<Collider>();
+                            Gizmos.DrawWireCube(tempCollider.bounds.center, savePoints[i].GetComponent<Collider>().bounds.size);
+                        }
                     }
                 }
         }
@@ -103,12 +109,28 @@ namespace Team1_GraduationGame.SaveLoadSystem
 
             var script = target as SavePointManager;
 
-            EditorGUILayout.HelpBox("Please only create new savepoints by using the 'Add SavePoint' button", MessageType.Info);
+            EditorGUILayout.Space();
+
+            if (script.savePoints != null)
+            {
+                EditorGUILayout.LabelField(script.savePoints.Count.ToString() + " SavePoints Active");
+            }
+            else
+            {
+                EditorGUILayout.LabelField("0 SavePoints Active");
+            }
+
+            EditorGUILayout.Space();
+
+            EditorGUILayout.HelpBox("Please only create new savepoints by using the 'Add SavePoint' button. IMPORTANT: The first savepoint must be at the player start position of the level!", MessageType.Info);
 
             if (GUILayout.Button("Add SavePoint"))
             {
                 script.AddSavePoint();
             }
+
+            if (GUI.changed)
+                EditorUtility.SetDirty(script);
         }
     }
 #endif

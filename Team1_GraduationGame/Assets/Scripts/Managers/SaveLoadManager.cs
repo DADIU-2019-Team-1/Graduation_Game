@@ -1,7 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using Team1_GraduationGame.Enemies;
-using UnityEditor;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -79,19 +78,25 @@ namespace Team1_GraduationGame.SaveLoadSystem
 
             //// SavePoint State: ////
             SavePoint[] tempSavePoints = GameObject.FindObjectsOfType<SavePoint>();
-            tempSaveString = ""; string tempSaveString1 = "";
+            tempSaveString = "";
 
             if (tempSavePoints != null)
             {
+                List<SavePointContainer> tempSavePointContainerList = new List<SavePointContainer>();
+
                 for (int i = 0; i < tempSavePoints.Length; i++)
                 {
-                    tempSaveString = tempSaveString + SAVE_SEPERATOR + JsonUtility.ToJson(tempSavePoints[i].savePointUsed);
-                    tempSaveString1 = tempSaveString1 + SAVE_SEPERATOR + JsonUtility.ToJson(tempSavePoints[i].thisID);
+                    SavePointContainer tempSavePointContainer = new SavePointContainer();
+
+                    tempSavePointContainer.savePointUsed = tempSavePoints[i].savePointUsed;
+                    tempSavePointContainer.thisID = tempSavePoints[i].thisID;
+
+                    tempSavePointContainerList.Add(tempSavePointContainer);
+
+                    tempSaveString = tempSaveString + SAVE_SEPERATOR + JsonUtility.ToJson(tempSavePointContainerList[i]);
                 }
-                Debug.Log(tempSaveString + " | " + tempSaveString1);
 
                 PlayerPrefs.SetString("savePointStateSave", tempSaveString);
-                PlayerPrefs.SetString("savePointIDSave", tempSaveString1);
             }
 
             //// Scene save: ////
@@ -110,14 +115,36 @@ namespace Team1_GraduationGame.SaveLoadSystem
             if (PlayerPrefs.GetInt("previousGame") != 1)
                 return;
 
-            //// Player load: ////
             if (_player != null)
             {
-                tempLoadString = PlayerPrefs.GetString("playerSave");
-                string[] tempDataString = tempLoadString.Split(new[] { SAVE_SEPERATOR }, System.StringSplitOptions.None);
+                //// SavePoint State load: ////
+                SavePoint[] tempSavePoints = GameObject.FindObjectsOfType<SavePoint>();
+                tempLoadString = PlayerPrefs.GetString("savePointStateSave");
 
-                Vector3 tempPlayerPosition = JsonUtility.FromJson<Vector3>(tempDataString[0]);
-                Quaternion tempPlayerRotation = JsonUtility.FromJson<Quaternion>(tempDataString[1]);
+                if (tempSavePoints != null)
+                {
+                    string[] tempDataString1 = tempLoadString.Split(new[] { SAVE_SEPERATOR }, System.StringSplitOptions.None);
+                    List<SavePointContainer> tempSavePointContainers = new List<SavePointContainer>();
+
+                    for (int i = 1; i < tempDataString1.Length; i++) // Must start at 1
+                    {
+                        SavePointContainer tempSavePointContainer =
+                            JsonUtility.FromJson<SavePointContainer>(tempDataString1[i]);
+
+                        for (int j = 0; j < tempSavePoints.Length; j++)
+                        {
+                            if (tempSavePointContainer.thisID == tempSavePoints[j].thisID)
+                                tempSavePoints[j].savePointUsed = tempSavePointContainer.savePointUsed;
+                        }
+                    }
+                }
+
+                //// Player load: ////
+                tempLoadString = PlayerPrefs.GetString("playerSave");
+                string[] tempDataString2 = tempLoadString.Split(new[] { SAVE_SEPERATOR }, System.StringSplitOptions.None);
+
+                Vector3 tempPlayerPosition = JsonUtility.FromJson<Vector3>(tempDataString2[0]);
+                Quaternion tempPlayerRotation = JsonUtility.FromJson<Quaternion>(tempDataString2[1]);
 
                 _player.transform.position = tempPlayerPosition;
                 _player.transform.rotation = tempPlayerRotation;
@@ -128,28 +155,14 @@ namespace Team1_GraduationGame.SaveLoadSystem
                 return;
             }
 
-            //// SavePoint State load: ////
-            SavePoint[] tempSavePoints = GameObject.FindObjectsOfType<SavePoint>();
-            tempLoadString = PlayerPrefs.GetString("savePointStateSave");
-            string tempLoadString1 = PlayerPrefs.GetString("savePointIDSave");
-
-            if (tempSavePoints != null)
-            {
-                string[] tempDataString = tempLoadString.Split(new[] { SAVE_SEPERATOR }, System.StringSplitOptions.None);
-                string[] tempDataString1 = tempLoadString1.Split(new[] { SAVE_SEPERATOR }, System.StringSplitOptions.None);
-
-                for (int i = 1; i < tempDataString.Length; i++) // Must start at 1
-                {
-                    int tempID = JsonUtility.FromJson<int>(tempDataString[i]);
-                    bool tempBool = JsonUtility.FromJson<bool>(tempDataString1[i]);
-
-                    if (tempID == tempSavePoints[i].thisID)
-                        tempSavePoints[i].savePointUsed = tempBool;
-                }
-            }
-
             Debug.Log("Save/Load Manager: Succesfully loaded the game");
 
+        }
+
+        public class SavePointContainer
+        {
+            public bool savePointUsed;
+            public int thisID;
         }
     }
 }

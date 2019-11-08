@@ -24,8 +24,34 @@ namespace Team1_GraduationGame.SaveLoadSystem
 
             if (PlayerPrefs.GetInt("loadGameOnAwake") == 1)
             {
+                PlayerPrefs.SetInt("loadGameOnAwake", 0);
                 saveLoadManager.LoadGame();
             }
+        }
+
+        public void NewGame()
+        {
+            saveLoadManager?.NewGame();
+        }
+
+        public void Continue()
+        {
+            saveLoadManager?.ContinueGame();
+        }
+
+        public void SaveGame()
+        {
+            saveLoadManager?.SaveGame();
+        }
+
+        public void LoadGame()
+        {
+            saveLoadManager?.LoadGame();
+        }
+
+        public void NextLevel()
+        {
+            saveLoadManager?.NextLevel();
         }
 
 #if UNITY_EDITOR
@@ -35,7 +61,7 @@ namespace Team1_GraduationGame.SaveLoadSystem
             {
                 GameObject tempSavePoint;
 
-                tempSavePoint = new GameObject("SafePoint" + (savePoints.Count + 1));
+                tempSavePoint = new GameObject("SavePoint" + (savePoints.Count + 1));
                 tempSavePoint.AddComponent<SavePoint>();
                 tempSavePoint.transform.position = gameObject.transform.position;
                 tempSavePoint.transform.parent = transform;
@@ -79,7 +105,7 @@ namespace Team1_GraduationGame.SaveLoadSystem
 
             EditorGUILayout.HelpBox("Please only create new savepoints by using the 'Add SavePoint' button", MessageType.Info);
 
-            if (GUILayout.Button("Add SafePoint"))
+            if (GUILayout.Button("Add SavePoint"))
             {
                 script.AddSavePoint();
             }

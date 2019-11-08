@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 #if UNITY_EDITOR
 using UnityEditor;
+#endif
 
 namespace Team1_GraduationGame.Enemies
 {
-
     [ExecuteInEditMode]
     public class WayPoint : MonoBehaviour
     {
@@ -17,7 +17,7 @@ namespace Team1_GraduationGame.Enemies
         [Range(0.0f, 359.0f)] public float enemyLookDirection = 0.0f;
         public int wayPointId;
 
-
+#if UNITY_EDITOR
         void OnDestroy()
         {
             if (parentEnemy != null && !isParent && Application.isEditor)
@@ -53,9 +53,10 @@ namespace Team1_GraduationGame.Enemies
                 }
             }
         }
-
+#endif
     }
 
+#if UNITY_EDITOR
     [CustomEditor(typeof(WayPoint))]
     public class WayPoint_Inspector : UnityEditor.Editor
     {
@@ -74,5 +75,5 @@ namespace Team1_GraduationGame.Enemies
 
         }
     }
-}
 #endif
+}

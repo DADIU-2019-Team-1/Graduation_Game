@@ -1,5 +1,7 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Team1_GraduationGame.Enemies;
 using Team1_GraduationGame.Interaction;
 using UnityEditor;
@@ -27,6 +29,30 @@ namespace Team1_GraduationGame.SaveLoadSystem
             {
                 PlayerPrefs.SetInt("loadGameOnAwake", 0);
                 saveLoadManager.LoadGame();
+            }
+        }
+
+        public void DisableSavingOnSavePoints()
+        {
+            if (savePoints != null && Application.isPlaying)    // Should be called when playing (for debugging)
+                for (int i = 0; i < savePoints.Count; i++)
+                {
+                    if (savePoints[i].GetComponent<SavePoint>() != null)
+                    {
+                        savePoints[i].GetComponent<SavePoint>().savingDisabled = true;
+                    }
+                }
+        }
+
+        public void TeleportToSavePoint(int savePointNumber)
+        {
+            if (savePoints.ElementAtOrDefault(savePointNumber - 1))
+            {
+                if (GameObject.FindGameObjectWithTag("Player") != null)
+                {
+                    GameObject.FindGameObjectWithTag("Player").transform.position =
+                        savePoints[savePointNumber - 1].transform.position + transform.up;
+                }
             }
         }
 

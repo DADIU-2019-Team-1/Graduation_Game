@@ -19,6 +19,7 @@ public class MotionMatching : MonoBehaviour
 
     // TODO: https://docs.unity3d.com/ScriptReference/AnimationClip.SampleAnimation.html
     // TODO: https://docs.unity3d.com/ScriptReference/HumanBodyBones.html
+    // TODO: Use idle threshold reference from Movement
 
 	// BUG: CSV Data is not correctly converted to char space (feet are in world pos)
 

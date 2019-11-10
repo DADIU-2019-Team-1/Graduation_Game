@@ -136,16 +136,11 @@ public class MotionMatching : MonoBehaviour
 			    currentState = 0;
 		    else if (movement.GetSpeed() > idleThreshold && currentState != 1)
 			    currentState = 1;
-		    if (!_isMotionMatching /* && movement.GetSpeed() > idleThreshold*/)
+		    if (!_isMotionMatching)
 		    {
 			    StopAllCoroutines();
 			    StartCoroutine(MotionMatch());
 		    }
-		    //if (!_isIdling && movement.GetSpeed() <= idleThreshold)
-		    //{
-		    //    StopAllCoroutines();
-		    //    StartCoroutine(Idle());
-		    //}
         }
     }
 
@@ -189,7 +184,7 @@ public class MotionMatching : MonoBehaviour
 
             Gizmos.color = Color.green; // Animation Trajectory
             for (int i = 0; i < featureVectors[currentID].GetTrajectory().GetTrajectoryPoints().Length; i++)
-            { // TODO: Figure out why anim traj extends when sprinting...
+            {
               // Position
               Gizmos.DrawWireSphere(invCharSpace.MultiplyPoint3x4(animSpace.inverse.MultiplyPoint3x4(featureVectors[currentID].GetTrajectory().GetTrajectoryPoints()[i].GetPoint())), 0.2f);
 
@@ -216,7 +211,7 @@ public class MotionMatching : MonoBehaviour
 			    break;
 		    }
 		}
-		Debug.Log("Updating animation " + currentClip.name + " to frame " + frame + " with ID " + id);
+		Debug.Log("Updating to animation " + currentClip.name + " to frame " + frame + " with ID " + id + " from id " + currentID + " of frame " + currentFrame);
         animator.CrossFadeInFixedTime(currentClip.name, 0.3f, 0, frame / currentClip.frameRate); // 0.3f was recommended by Magnus
         currentID = id;
         currentFrame = frame;
@@ -295,7 +290,7 @@ public class MotionMatching : MonoBehaviour
             if (!TagChecker(featureVectors[i].GetClipName(), currentState))
                 continue;
             if ((featureVectors[i].GetID() > currentID ||  featureVectors[i].GetID() < currentID - queryRateInFrames) &&
-                 featureVectors[i].GetFrame() + queryRateInFrames <  featureVectors[i].GetFrameCountForID())
+                 featureVectors[i].GetFrame() + queryRateInFrames <=  featureVectors[i].GetFrameCountForID())
             {
                 float comparison = featureVectors[i].GetTrajectory().CompareTrajectories(movementTraj, transform.worldToLocalMatrix.inverse, weightTrajPoints, weightTrajForwards);
                 for (int j = 0; j < candidatesPerMisc; j++)
@@ -321,11 +316,8 @@ public class MotionMatching : MonoBehaviour
                 }
             }
         }
-        foreach (var candidate in possibleCandidates)
-        {
-            if (candidate != null)
-                candidates.Add(candidate);
-        }
+
+        candidates.AddRange(possibleCandidates);
         return candidates;
     }
 
@@ -333,20 +325,18 @@ public class MotionMatching : MonoBehaviour
     {
         int bestId = -1;
         float currentDif = float.MaxValue;
-        //Debug.Log("Pose matching for " + candidates.Count + " candidates!");
         foreach (var candidate in candidates)
         {
-            float velDif = featureVectors[currentID].GetPose().ComparePoses(candidate.GetPose(), transform.worldToLocalMatrix, weightRootVel, weightLFootVel, weightRFootVel, weightNeckVel);
-            float feetPosDif = featureVectors[currentID].GetPose().GetJointDistance(candidate.GetPose(), transform.worldToLocalMatrix, weightFeetPos, weightNeckPos);
-            float candidateDif = velDif + feetPosDif;
+            float velDif = featureVectors[currentID].GetPose().ComparePoses(candidate.GetPose(), transform.worldToLocalMatrix.inverse, weightRootVel, weightLFootVel, weightRFootVel, weightNeckVel);
+            float feetPosDif = featureVectors[currentID].GetPose().GetJointDistance(candidate.GetPose(), transform.worldToLocalMatrix.inverse, weightFeetPos, weightNeckPos);
+            float candidateDif = /*velDif + */feetPosDif; // TODO: Look at joint distance for idle
             if (candidateDif < currentDif)
             {
-				//Debug.Log("Candidate diff: " + velDif + " < " + " Current diff:" + currentDif);
+				Debug.Log("Candidate ID " + candidate.GetID() + " diff: " + candidateDif + " < " + " Current ID " + bestId + " diff:" + currentDif);
                 bestId = candidate.GetID();
                 currentDif = candidateDif;
             }
         }
-		//Debug.Log("Returning best id from pose matching: " + bestId);
 		return bestId;
     }
 

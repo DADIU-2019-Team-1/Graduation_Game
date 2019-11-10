@@ -13,7 +13,7 @@ public class Movement : MonoBehaviour
     [SerializeField] private float accelerationFactor = 0.1f;
     private float swipeTimeThreshold = 0.3f, swipeTimeTimer, acceleration;
     private Vector3 initTouchPos, currTouchPos, joystickPos, stickLimitPos, direction, velocity;
-
+    private Quaternion lookRotation;
     private Vector2 swipeStartPos, swipeEndPos, swipeDirection;
 
     [Tooltip("Put the joystick here")]
@@ -77,8 +77,8 @@ public class Movement : MonoBehaviour
 
     void Update() {
         currentSpeed.value = Vector3.Distance(transform.position, _previousPosition) / Time.fixedDeltaTime;
+        lookRotation = direction != Vector3.zero ? Quaternion.LookRotation(direction) : transform.rotation;
         velocity = direction.normalized * currentSpeed.value;
-
     }
 
     void FixedUpdate()
@@ -320,6 +320,8 @@ public class Movement : MonoBehaviour
             stick.gameObject.SetActive(false);
             stickLimit.gameObject.SetActive(false);
             canMove = false;
+
+            direction = Vector3.zero;
         }
 #endif
         SetState();
@@ -434,7 +436,6 @@ public class Movement : MonoBehaviour
 
     public Trajectory GetMovementTrajectory()
     {
-        Quaternion lookRotation = direction != Vector3.zero ? Quaternion.LookRotation(direction) : Quaternion.identity;
         for (int i = 0; i < trajPoints.Length; i++)
         {
             if (i > 0)
@@ -442,8 +443,8 @@ public class Movement : MonoBehaviour
                 //Vector3 tempPos = trajPoints[i - 1].GetPoint() + Quaternion.Slerp(transform.rotation, lookRotation, (float) (i + 1) / trajPoints.Length) * Vector3.forward * Mathf.Clamp(speed, 0.1f, 1.0f);
                 Vector3 tempPos = trajPoints[i - 1].GetPoint() + direction * currentSpeed.value;
 
-                Vector3 tempForward = tempPos + Quaternion.Slerp(transform.rotation, lookRotation,
-                                          (float)(i + 1) / trajPoints.Length) * Vector3.forward * rotationSpeed.value;
+                Vector3 tempForward = tempPos + (Quaternion.Slerp(transform.rotation, lookRotation,
+                                          (float)i / trajPoints.Length) * Vector3.forward * rotationSpeed.value).normalized;
 
                 trajPoints[i] = new TrajectoryPoint(tempPos, tempForward);
             }

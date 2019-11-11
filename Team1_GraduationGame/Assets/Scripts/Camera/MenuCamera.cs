@@ -59,6 +59,8 @@ public class MenuCamera : MonoBehaviour
 
         if (_move)
         {
+
+            Debug.Log("MOVE IS ACTIVE");
             // Position update
             transform.position = new Vector3(transform.position.x, railCamera.transform.position.y, railCamera.transform.position.z);
             transform.position = Vector3.SmoothDamp(transform.position, new Vector3(_rail.m_Waypoints[railIndex].position.x, transform.position.y, transform.position.z),

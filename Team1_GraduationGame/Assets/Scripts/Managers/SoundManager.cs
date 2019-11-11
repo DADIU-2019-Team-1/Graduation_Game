@@ -370,7 +370,7 @@ namespace Team1_GraduationGame.Managers
                 {
                     if (rtpcGlobal)
                     {
-                        if (!useValueFromEvent)
+                        if (!useValueFromEvent && !setCustomRtpcFloat)
                             wwiseRTPC.SetGlobalValue(rtpcScriptableObject.value);
                         else
                             wwiseRTPC.SetGlobalValue(_parsedValue);
@@ -379,7 +379,7 @@ namespace Team1_GraduationGame.Managers
                     {
                         if (targetGameObject == null || !useOtherGameObject)
                         {
-                            if (!useValueFromEvent)
+                            if (!useValueFromEvent && !setCustomRtpcFloat)
                                 wwiseRTPC.SetValue(soundManagerGameObject, rtpcScriptableObject.value);
                             else
                                 wwiseRTPC.SetValue(soundManagerGameObject, _parsedValue);

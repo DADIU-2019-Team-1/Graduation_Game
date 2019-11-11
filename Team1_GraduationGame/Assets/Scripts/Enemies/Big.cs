@@ -17,13 +17,14 @@ namespace Team1_GraduationGame.Enemies
         private GameObject _parentSpawnPoint;
         private bool _isSpawned, _isRotating, _turnLeft;
         private int _layerMask, _currentSpawnPoint = 0;
-        private Vector3[] _lookRangeTo, _lookRangeFrom;
+        private Vector3 _lookRangeToVector, _lookRangeFromVector;
         private Quaternion _lookRotation;
 
         // Public:
         [HideInInspector] public List<GameObject> spawnPoints;
         public bool drawGizmos = true;
-        public float spawnActivationDistance = 25.0f, fieldOfView = 90.0f, viewDistance = 20.0f, headRotateSpeed = 1.0f, rotateWaitTime = 0.0f;
+        public float spawnActivationDistance = 25.0f, fieldOfView = 90.0f, viewDistance = 20.0f, 
+            headRotateSpeed = 0.05f, rotateWaitTime = 0.0f, lookRangeTo = 230f, lookRangeFrom = 130f;
         public Color normalConeColor = Color.yellow, aggroConeColor = Color.red;
 
 
@@ -37,20 +38,9 @@ namespace Team1_GraduationGame.Enemies
 
             _layerMask = ~LayerMask.GetMask("Enemies");
 
-            if (spawnPoints != null)
-            {
-                _lookRangeFrom = new Vector3[spawnPoints.Count];
-                _lookRangeTo = new Vector3[spawnPoints.Count];
-            }
+            _lookRangeToVector = new Vector3(0, lookRangeTo, 0);
+            _lookRangeFromVector = new Vector3(0, lookRangeFrom, 0);
 
-            for (int i = 0; i < spawnPoints.Count; i++)
-            {
-                if (spawnPoints[i].GetComponent<WayPoint>() != null)
-                {
-                    _lookRangeTo[i] = new Vector3(0, spawnPoints[i].GetComponent<Big_SpawnPoint>().lookRangeTo, 0);
-                    _lookRangeFrom[i] = new Vector3(0, spawnPoints[i].GetComponent<Big_SpawnPoint>().lookRangeFrom, 0);
-                }
-            }
         }
 
         private void Start()
@@ -65,16 +55,23 @@ namespace Team1_GraduationGame.Enemies
                 if (_currentSpawnPoint >= 0 && _currentSpawnPoint < spawnPoints.Count)
                 {
                     if (_turnLeft)
-                        _lookRotation = Quaternion.Euler(_lookRangeTo[_currentSpawnPoint]) != Quaternion.identity ? Quaternion.Euler(_lookRangeTo[_currentSpawnPoint]) : transform.rotation;
+                        _lookRotation = Quaternion.Euler(_lookRangeToVector) != Quaternion.identity ? Quaternion.Euler(_lookRangeToVector) : transform.rotation;
                     else
-                        _lookRotation = Quaternion.Euler(_lookRangeFrom[_currentSpawnPoint]) != Quaternion.identity ? Quaternion.Euler(_lookRangeFrom[_currentSpawnPoint]) : transform.rotation;
+                        _lookRotation = Quaternion.Euler(_lookRangeFromVector) != Quaternion.identity ? Quaternion.Euler(_lookRangeFromVector) : transform.rotation;
 
-                    transform.rotation = Quaternion.Slerp(transform.rotation, _lookRotation, headRotateSpeed);
+                    transform.rotation = Quaternion.Slerp(transform.rotation, _lookRotation, headRotateSpeed * Time.fixedDeltaTime);
+                    //Debug.Log(_lookRotation);
 
-                    if (transform.rotation.y >= _lookRangeTo[_currentSpawnPoint].y || transform.rotation.y <= _lookRangeFrom[_currentSpawnPoint].y)
-                    {
-                        _turnLeft = !_turnLeft;
-                    }
+                #if UNITY_EDITOR
+                    Vector3 fwd = _lookRotation * Vector3.forward;
+                    Debug.DrawRay(transform.position, fwd, Color.magenta, 0f, true);
+                #endif
+
+                    //if (transform.rotation.y <= _lookRangeTo[_currentSpawnPoint].y || transform.rotation.y >= _lookRangeFrom[_currentSpawnPoint].y)
+                    //{
+                    //    Debug.Log("DIRECTION SWITCH");
+                    //    _turnLeft = !_turnLeft;
+                    //}
                 }
             }
 
@@ -90,75 +87,15 @@ namespace Team1_GraduationGame.Enemies
         }
 
 #if UNITY_EDITOR
-        #region SpawnPoint System
-        public void AddSpawnPoint()
-        {
-            if (Application.isEditor)
-            {
-                GameObject tempWayPointObj;
-
-                if (!GameObject.Find("BigSpawnpoints"))
-                    new GameObject("BigSpawnpoints");
-
-                if (!GameObject.Find(gameObject.name + "_Spawnpoints"))
-                {
-                    _parentSpawnPoint = new GameObject(gameObject.name + "_Spawnpoints");
-
-                    _parentSpawnPoint.AddComponent<Big_SpawnPoint>();
-                    _parentSpawnPoint.GetComponent<Big_SpawnPoint>().isParent = true;
-                    _parentSpawnPoint.transform.parent =
-                        GameObject.Find("BigSpawnpoints").transform;
-                }
-                else
-                {
-                    _parentSpawnPoint = GameObject.Find(gameObject.name + "_Spawnpoints");
-                }
-
-                if (spawnPoints == null)
-                {
-                    spawnPoints = new List<GameObject>();
-                }
-
-                tempWayPointObj = new GameObject("SpawnPoint" + (spawnPoints.Count + 1));
-                tempWayPointObj.AddComponent<Big_SpawnPoint>();
-                Big_SpawnPoint tempWayPointScript = tempWayPointObj.GetComponent<Big_SpawnPoint>();
-                tempWayPointScript.parentObject = _parentSpawnPoint;
-
-                tempWayPointObj.transform.position = gameObject.transform.position;
-                tempWayPointObj.transform.parent = _parentSpawnPoint.transform;
-                spawnPoints.Add(tempWayPointObj);
-            }
-        }
-
-        public void RemoveSpawnPoint()
-        {
-            if (Application.isEditor)
-            {
-                if (spawnPoints != null)
-                    if (spawnPoints.Count > 0)
-                    {
-                        DestroyImmediate(spawnPoints[spawnPoints.Count - 1].gameObject);
-                    }
-            }
-        }
-
         private void OnDrawGizmos()
         {
             if (drawGizmos && Application.isEditor)
-                if (spawnPoints != null)
-                {
-                    for (int i = 0; i < spawnPoints.Count; i++)
-                    {
-                        Gizmos.color = Color.blue;
-                        Gizmos.DrawWireSphere(spawnPoints[i].transform.position, 0.3f);
-                        Handles.Label(spawnPoints[i].transform.position + (Vector3.up * 0.6f), (i + 1).ToString());
+            {
+                Gizmos.color = Color.red;
 
-                        Gizmos.color = Color.red;
-                        Gizmos.DrawLine(transform.position + transform.up, transform.forward * viewDistance + (transform.position + transform.up));
-                    }
-                }
+                Gizmos.DrawLine(transform.position + transform.up, transform.forward * viewDistance + (transform.position + transform.up));
+            }
         }
-        #endregion
 #endif
     }
 
@@ -184,37 +121,6 @@ namespace Team1_GraduationGame.Enemies
             var script = target as Big;
 
             DrawUILine();
-
-            if (script != null)
-            {
-                if (script.spawnPoints.Count == 0)
-                {
-                    _style.normal.textColor = Color.red;
-                }
-                else
-                {
-                    _style.normal.textColor = Color.green;
-                }
-
-                EditorGUILayout.LabelField(script.spawnPoints.Count.ToString() + " spawnpoints", _style);
-            }
-            else
-            {
-                _style.normal.textColor = Color.red;
-                EditorGUILayout.LabelField("0 spawnpoints", _style);
-            }
-
-            EditorGUILayout.Space();
-
-            if (GUILayout.Button("Add SpawnPoint"))
-            {
-                script.AddSpawnPoint();
-            }
-
-            if (GUILayout.Button("Remove SpawnPoint"))
-            {
-                script.RemoveSpawnPoint();
-            }
 
             serializedObject.ApplyModifiedProperties();
 

@@ -11,7 +11,7 @@
     using UnityEditor;
 #endif
 
-    [RequireComponent(typeof(SphereCollider), typeof(NavMeshAgent))]
+    [RequireComponent(typeof(SphereCollider), typeof(NavMeshAgent), typeof(Interactable))]
     public class Enemy : MonoBehaviour
     {
         #region Variables
@@ -495,59 +495,64 @@
         public void SetLastSighting(Vector3 location) { _lastSighting = location; }
         #endregion
 
+#if UNITY_EDITOR
         #region WayPoint System
         public void AddWayPoint()
         {
-            GameObject tempWayPointObj;
-
-            if (!GameObject.Find("EnemyWaypoints"))
-                new GameObject("EnemyWaypoints");
-
-            if (!GameObject.Find(gameObject.name + "_Waypoints"))
+            if (Application.isEditor)
             {
-                parentWayPoint = new GameObject(gameObject.name + "_Waypoints");
+                GameObject tempWayPointObj;
 
-                parentWayPoint.AddComponent<WayPoint>();
-                parentWayPoint.GetComponent<WayPoint>().isParent = true;
-                parentWayPoint.transform.parent =
-                    GameObject.Find("EnemyWaypoints").transform;
+                if (!GameObject.Find("EnemyWaypoints"))
+                    new GameObject("EnemyWaypoints");
+
+                if (!GameObject.Find(gameObject.name + "_Waypoints"))
+                {
+                    parentWayPoint = new GameObject(gameObject.name + "_Waypoints");
+
+                    parentWayPoint.AddComponent<WayPoint>();
+                    parentWayPoint.GetComponent<WayPoint>().isParent = true;
+                    parentWayPoint.transform.parent =
+                        GameObject.Find("EnemyWaypoints").transform;
+                }
+                else
+                {
+                    parentWayPoint = GameObject.Find(gameObject.name + "_Waypoints");
+                }
+
+                if (wayPoints == null)
+                {
+                    wayPoints = new List<GameObject>();
+                }
+
+                tempWayPointObj = new GameObject("WayPoint" + (wayPoints.Count + 1));
+                tempWayPointObj.AddComponent<WayPoint>();
+                WayPoint tempWayPointScript = tempWayPointObj.GetComponent<WayPoint>();
+                tempWayPointScript.wayPointId = wayPoints.Count + 1;
+                tempWayPointScript.parentEnemy = gameObject;
+                tempWayPointScript.parentWayPoint = parentWayPoint;
+
+                tempWayPointObj.transform.position = gameObject.transform.position;
+                tempWayPointObj.transform.parent = parentWayPoint.transform;
+                wayPoints.Add(tempWayPointObj);
             }
-            else
-            {
-                parentWayPoint = GameObject.Find(gameObject.name + "_Waypoints");
-            }
-
-            if (wayPoints == null)
-            {
-                wayPoints = new List<GameObject>();
-            }
-
-            tempWayPointObj = new GameObject("WayPoint" + (wayPoints.Count + 1));
-            tempWayPointObj.AddComponent<WayPoint>();
-            WayPoint tempWayPointScript = tempWayPointObj.GetComponent<WayPoint>();
-            tempWayPointScript.wayPointId = wayPoints.Count + 1;
-            tempWayPointScript.parentEnemy = gameObject;
-            tempWayPointScript.parentWayPoint = parentWayPoint;
-
-            tempWayPointObj.transform.position = gameObject.transform.position;
-            tempWayPointObj.transform.parent = parentWayPoint.transform;
-            wayPoints.Add(tempWayPointObj);
         }
 
         public void RemoveWayPoint()
         {
-            if (wayPoints != null)
-                if (wayPoints.Count > 0)
-                {
-                    DestroyImmediate(wayPoints[wayPoints.Count - 1].gameObject);
-                }
+            if (Application.isEditor)
+            {
+                if (wayPoints != null)
+                    if (wayPoints.Count > 0)
+                    {
+                        DestroyImmediate(wayPoints[wayPoints.Count - 1].gameObject);
+                    }
+            }
         }
-
-#if UNITY_EDITOR
 
         private void OnDrawGizmos()
         {
-            if (drawGizmos)
+            if (drawGizmos && Application.isEditor)
                 if (wayPoints != null)
                 {
                     for (int i = 0; i < wayPoints.Count; i++)
@@ -555,6 +560,8 @@
                         Gizmos.color = Color.blue;
                         Gizmos.DrawWireSphere(wayPoints[i].transform.position, 0.2f);
                         Handles.Label(wayPoints[i].transform.position + (Vector3.up * 0.6f), (i + 1).ToString());
+
+                        Gizmos.DrawLine(transform.position, wayPoints[i].transform.position);
 
                         Gizmos.color = Color.yellow;
                         if (i + 1 < wayPoints.Count)
@@ -576,102 +583,7 @@
                     }
                 }
         }
-#endif
         #endregion
-    }
-
-    #region Custom Inspector
-#if UNITY_EDITOR
-    [CustomEditor(typeof(Enemy))]
-    public class Enemy_Inspector : Editor
-    {
-        private GUIStyle _style = new GUIStyle();
-        private GameObject _parentWayPoint;
-        private bool _runOnce;
-
-        public override void OnInspectorGUI()
-        {
-            if (!_runOnce)
-            {
-                _style.fontStyle = FontStyle.Bold;
-                _style.alignment = TextAnchor.MiddleCenter;
-                _style.fontSize = 14;
-                _runOnce = true;
-            }
-
-            EditorGUILayout.HelpBox("Please only use the 'Add WayPoint' button to create new waypoints. They can then be found in the 'WayPoints' object in the hierarchy.\nAlso make sure that every enemy is on the 'Enemies' layer", MessageType.Info);
-
-            DrawDefaultInspector(); // for other non-HideInInspector fields
-
-            var script = target as Enemy;
-
-            if (script.useWaitTime)
-            {
-                script.useGlobalWaitTime = EditorGUILayout.Toggle("Use Global Wait Time?", script.useGlobalWaitTime);
-                EditorGUILayout.HelpBox("If a wait time is specified on the waypoint it will override the global wait time value", MessageType.None);
-            }
-            if (script.useGlobalWaitTime && script.useWaitTime)
-                script.waitTime = EditorGUILayout.FloatField("Global Wait Time", script.waitTime);
-
-            DrawUILine(false);
-
-            if (script.wayPoints != null)
-            {
-                if (script.wayPoints.Count == 0)
-                {
-                    _style.normal.textColor = Color.red;
-                }
-                else
-                {
-                    _style.normal.textColor = Color.green;
-                }
-
-                EditorGUILayout.LabelField(script.wayPoints.Count.ToString() + " waypoints active", _style);
-            }
-            else
-            {
-                _style.normal.textColor = Color.red;
-                EditorGUILayout.LabelField("0 waypoints active", _style);
-            }
-
-            EditorGUILayout.Space();
-
-            if (GUILayout.Button("Add WayPoint"))
-            {
-                script.AddWayPoint();
-            }
-
-            if (GUILayout.Button("Remove WayPoint"))
-            {
-                script.RemoveWayPoint();
-            }
-
-            serializedObject.ApplyModifiedProperties();
-
-            if (GUI.changed)
-            {
-                EditorUtility.SetDirty(script);
-            }
-        }
-
-        #region DrawUILine function
-        public static void DrawUILine(bool start)
-        {
-            Color color = new Color(1, 1, 1, 0.3f);
-            int thickness = 1;
-            if (start)
-                thickness = 7;
-            int padding = 8;
-
-            Rect r = EditorGUILayout.GetControlRect(GUILayout.Height(padding + thickness));
-            r.height = thickness;
-            r.y += padding / 2;
-            r.x -= 2;
-            r.width += 6;
-            EditorGUI.DrawRect(r, color);
-        }
-        #endregion
-    }
 #endif
-    #endregion
+    }
 }

@@ -1,7 +1,8 @@
 ﻿using UnityEngine;
+using System.Collections.Generic;
+using System.Linq;
 #if UNITY_EDITOR
 using UnityEditor;
-#endif
 
 namespace Team1_GraduationGame.Interaction
 {
@@ -14,24 +15,25 @@ namespace Team1_GraduationGame.Interaction
         public int wayPointId;
 
 
-#if UNITY_EDITOR
-
         void OnDestroy()
         {
-            if (parentObject != null && !isParent)
+            if (parentObject != null && !isParent && Application.isEditor)
             {
                 if (parentObject.GetComponent<ObjectPush>() != null && wayPointId != 0)
                 {
                     ObjectPush tempObject = parentObject.GetComponent<ObjectPush>();
 
-                    tempObject.wayPoints.RemoveAt(wayPointId - 1);
-
-                    for (int i = 0; i < tempObject.wayPoints.Count; i++)
+                    if (tempObject.wayPoints.Count > 0 && tempObject.wayPoints.ElementAtOrDefault(wayPointId - 1))
                     {
-                        if (tempObject.wayPoints[i].GetComponent<ObjectWayPoint>() != null)
+                        tempObject.wayPoints.RemoveAt(wayPointId - 1);
+
+                        for (int i = 0; i < tempObject.wayPoints.Count; i++)
                         {
-                            tempObject.wayPoints[i].GetComponent<ObjectWayPoint>().wayPointId = i + 1;
-                            tempObject.wayPoints[i].name = "WayPoint" + (i + 1);
+                            if (tempObject.wayPoints[i].GetComponent<ObjectWayPoint>() != null)
+                            {
+                                tempObject.wayPoints[i].GetComponent<ObjectWayPoint>().wayPointId = i + 1;
+                                tempObject.wayPoints[i].name = "WayPoint" + (i + 1);
+                            }
                         }
                     }
                 }
@@ -40,7 +42,7 @@ namespace Team1_GraduationGame.Interaction
 
         private void Update()
         {
-            if (isParent)
+            if (isParent && Application.isEditor)
             {
                 if (transform.childCount == 0)
                 {
@@ -48,10 +50,8 @@ namespace Team1_GraduationGame.Interaction
                 }
             }
         }
-#endif
     }
 
-#if UNITY_EDITOR
     [CustomEditor(typeof(ObjectWayPoint))]
     public class ObjectWayPoint_Inspector : UnityEditor.Editor
     {
@@ -70,5 +70,5 @@ namespace Team1_GraduationGame.Interaction
 
         }
     }
-#endif
 }
+#endif

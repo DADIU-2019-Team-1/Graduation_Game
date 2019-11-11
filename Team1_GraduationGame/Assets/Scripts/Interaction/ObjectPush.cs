@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using Team1_GraduationGame.Enemies;
 using UnityEngine;
-using UnityEngine.ProBuilder.MeshOperations;
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
@@ -13,7 +12,6 @@ namespace Team1_GraduationGame.Interaction
     {
         // References:
         private Rigidbody _thisRigidBody;
-        private Interactable _interactable;
         private GameObject _player;
 
         // Public:
@@ -28,7 +26,6 @@ namespace Team1_GraduationGame.Interaction
         {
             _player = GameObject.FindGameObjectWithTag("Player");
             _thisRigidBody = GetComponent<Rigidbody>();
-            _interactable = GetComponent<Interactable>();
 
             _thisRigidBody.mass = 100;
             
@@ -49,71 +46,75 @@ namespace Team1_GraduationGame.Interaction
                     _thisRigidBody.AddForce(transform.forward * thrustAmount * 135, ForceMode.Impulse);
                 else if (wayPoints != null && wayPoints.Count >= 2)
                 {
-                    if (dir == 2) // Checks which side the player is standing to the object
+                    if (dir == 2 && Vector3.Distance(transform.position, wayPoints[1].transform.position) > 1.0f) // Checks which side the player is standing to the object
                         _thisRigidBody.AddForce((wayPoints[1].transform.position - transform.position).normalized * thrustAmount * 400, ForceMode.Impulse);
-                    else if (dir == 1)
+                    else if (dir == 1 && Vector3.Distance(transform.position, wayPoints[0].transform.position) > 1.0f)
                         _thisRigidBody.AddForce((wayPoints[0].transform.position - transform.position).normalized * thrustAmount * 400, ForceMode.Impulse);
                 }
             }
         }
 
+#if UNITY_EDITOR
         #region Waypoint System
         public void AddWayPoint()
         {
-            if (wayPoints == null)
-                wayPoints = new List<GameObject>();
-
-            if (wayPoints.Count >= 2)
-                return;
-
-            GameObject tempWayPointObj;
-
-            if (!GameObject.Find("ObjectMovingWaypoints"))
-                new GameObject("ObjectMovingWaypoints");
-
-            if (!GameObject.Find(gameObject.name + "_Waypoints"))
+            if (Application.isEditor)
             {
-                parentWayPoint = new GameObject(gameObject.name + "_Waypoints");
+                if (wayPoints == null)
+                    wayPoints = new List<GameObject>();
 
-                parentWayPoint.AddComponent<ObjectWayPoint>();
-                parentWayPoint.GetComponent<ObjectWayPoint>().isParent = true;
-                parentWayPoint.transform.parent =
-                    GameObject.Find("ObjectMovingWaypoints").transform;
+                if (wayPoints.Count >= 2)
+                    return;
+
+                GameObject tempWayPointObj;
+
+                if (!GameObject.Find("ObjectMovingWaypoints"))
+                    new GameObject("ObjectMovingWaypoints");
+
+                if (!GameObject.Find(gameObject.name + "_Waypoints"))
+                {
+                    parentWayPoint = new GameObject(gameObject.name + "_Waypoints");
+
+                    parentWayPoint.AddComponent<ObjectWayPoint>();
+                    parentWayPoint.GetComponent<ObjectWayPoint>().isParent = true;
+                    parentWayPoint.transform.parent =
+                        GameObject.Find("ObjectMovingWaypoints").transform;
+                }
+                else
+                {
+                    parentWayPoint = GameObject.Find(gameObject.name + "_Waypoints");
+                }
+
+                if (wayPoints == null)
+                {
+                    wayPoints = new List<GameObject>();
+                }
+
+                tempWayPointObj = new GameObject("WayPoint" + (wayPoints.Count + 1));
+                tempWayPointObj.AddComponent<ObjectWayPoint>();
+                ObjectWayPoint tempWayPointScript = tempWayPointObj.GetComponent<ObjectWayPoint>();
+                tempWayPointScript.wayPointId = wayPoints.Count + 1;
+                tempWayPointScript.parentObject = gameObject;
+                tempWayPointScript.parentWayPoint = parentWayPoint;
+
+                tempWayPointObj.transform.position = gameObject.transform.position;
+                tempWayPointObj.transform.parent = parentWayPoint.transform;
+                wayPoints.Add(tempWayPointObj);
             }
-            else
-            {
-                parentWayPoint = GameObject.Find(gameObject.name + "_Waypoints");
-            }
-
-            if (wayPoints == null)
-            {
-                wayPoints = new List<GameObject>();
-            }
-
-            tempWayPointObj = new GameObject("WayPoint" + (wayPoints.Count + 1));
-            tempWayPointObj.AddComponent<ObjectWayPoint>();
-            ObjectWayPoint tempWayPointScript = tempWayPointObj.GetComponent<ObjectWayPoint>();
-            tempWayPointScript.wayPointId = wayPoints.Count + 1;
-            tempWayPointScript.parentObject = gameObject;
-            tempWayPointScript.parentWayPoint = parentWayPoint;
-
-            tempWayPointObj.transform.position = gameObject.transform.position;
-            tempWayPointObj.transform.parent = parentWayPoint.transform;
-            wayPoints.Add(tempWayPointObj);
         }
 
         public void RemoveWayPoint()
         {
-            if (wayPoints != null)
-                if (wayPoints.Count > 0)
-                {
-                    DestroyImmediate(wayPoints[wayPoints.Count - 1].gameObject);
-                }
+            if (Application.isEditor)
+                if (wayPoints != null)
+                    if (wayPoints.Count > 0)
+                    {
+                        DestroyImmediate(wayPoints[wayPoints.Count - 1].gameObject);
+                    }
         }
         #endregion
 
         #region Draw Gizmos
-#if UNITY_EDITOR
         private void OnDrawGizmos()
         {
             if (drawGizmos)
@@ -124,6 +125,7 @@ namespace Team1_GraduationGame.Interaction
                         Gizmos.color = Color.green;
                         Gizmos.DrawWireSphere(wayPoints[i].transform.position, 0.1f);
                         Handles.Label(wayPoints[i].transform.position + (Vector3.up * 0.5f), (i + 1).ToString());
+                        Gizmos.DrawLine(transform.position, wayPoints[i].transform.position);
 
                         Gizmos.color = Color.white;
                         if (i + 1 < wayPoints.Count)
@@ -134,8 +136,8 @@ namespace Team1_GraduationGame.Interaction
                     }
                 }
         }
-#endif
         #endregion
+#endif
     }
 
     #region Custom Inspector

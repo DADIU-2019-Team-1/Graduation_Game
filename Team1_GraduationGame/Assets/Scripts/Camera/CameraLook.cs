@@ -82,7 +82,7 @@ public class CameraLook : MonoBehaviour
         Gizmos.DrawWireSphere(camTarget, 1.0f);
     }
 
-    void Update()
+    void LateUpdate()
     {
         if (playerMovement != null)
         {
@@ -91,7 +91,6 @@ public class CameraLook : MonoBehaviour
 
         if (camMovement != null && cmPath.m_Waypoints.Length > 1 && offsetTrack.Length > 1)
         {
-            Debug.Log(camMovement.previousTrackIndex + " | " + camMovement.nextTrackIndex);
             offsetLerpTime = (camMovement.railCam.position.x - cmPath.m_Waypoints[camMovement.previousTrackIndex].position.x - camMovement.trackX) /
                              (cmPath.m_Waypoints[camMovement.nextTrackIndex].position.x - cmPath.m_Waypoints[camMovement.previousTrackIndex].position.x);
             offset = Vector3.Lerp(offsetTrack[camMovement.previousTrackIndex].GetPos(), offsetTrack[camMovement.nextTrackIndex].GetPos(), offsetLerpTime);

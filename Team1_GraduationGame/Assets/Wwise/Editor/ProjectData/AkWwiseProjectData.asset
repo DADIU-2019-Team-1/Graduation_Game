@@ -24,7 +24,7 @@ MonoBehaviour:
     ParentPhysicalPath: 
     guid: 48daf6f70164444b820a1d909d54dc89
     GuidInternal: 
-    m_lastTime: -8586298718967439749
+    m_lastTime: -8586281442692576811
     List: []
   BankWwu:
   - PhysicalPath: SoundBanks\Default Work Unit.wwu
@@ -47,20 +47,92 @@ MonoBehaviour:
     ParentPhysicalPath: 
     guid: 90243057bcb2464a8758196960c07052
     GuidInternal: 
-    m_lastTime: -8586298713798943724
+    m_lastTime: -8586281438089667571
     List:
-    - name: Play_Footstep_System
-      guid: 075d9f00ae836949a556914ddcfba642
-      id: 1702278464
+    - name: Play_Amb_Outside
+      guid: bd79bfdc0bc19a4dbfc052734b6c673e
+      id: 121174090
       PathAndIcons:
       - ElementName: Default Work Unit
         ObjectType: 12
-      - ElementName: Play_Footstep_System
+      - ElementName: AMBIENCE
+        ObjectType: 4
+      - ElementName: Play_Amb_Outside
         ObjectType: 3
-      Path: Default Work Unit\Play_Footstep_System
+      Path: Default Work Unit\AMBIENCE\Play_Amb_Outside
+      maxAttenuation: 0
+      maxDuration: -1
+      minDuration: -1
+    - name: Play_Breath
+      guid: f4e81e7c951a6e4ea633cbcf6195f26c
+      id: 3698047240
+      PathAndIcons:
+      - ElementName: Default Work Unit
+        ObjectType: 12
+      - ElementName: PLAYER
+        ObjectType: 4
+      - ElementName: Play_Breath
+        ObjectType: 3
+      Path: Default Work Unit\PLAYER\Play_Breath
       maxAttenuation: 0
       maxDuration: 0
       minDuration: 0
+    - name: Play_FS_Land
+      guid: 575ee6bae808734f890309fe4a98c30d
+      id: 741775033
+      PathAndIcons:
+      - ElementName: Default Work Unit
+        ObjectType: 12
+      - ElementName: PLAYER
+        ObjectType: 4
+      - ElementName: Play_FS_Land
+        ObjectType: 3
+      Path: Default Work Unit\PLAYER\Play_FS_Land
+      maxAttenuation: 0
+      maxDuration: 1.078785
+      minDuration: 0.388902
+    - name: Play_FS_System
+      guid: 17f628fa491d234b9353ca7e2f2b9ff8
+      id: 2874393337
+      PathAndIcons:
+      - ElementName: Default Work Unit
+        ObjectType: 12
+      - ElementName: PLAYER
+        ObjectType: 4
+      - ElementName: Play_FS_System
+        ObjectType: 3
+      Path: Default Work Unit\PLAYER\Play_FS_System
+      maxAttenuation: 0
+      maxDuration: 1.380145
+      minDuration: 0.597895
+    - name: Play_HMC_Music_System
+      guid: 4dbbbfb7f5eac042a5016aca9947c061
+      id: 1346337994
+      PathAndIcons:
+      - ElementName: Default Work Unit
+        ObjectType: 12
+      - ElementName: MUSIC
+        ObjectType: 4
+      - ElementName: Play_HMC_Music_System
+        ObjectType: 3
+      Path: Default Work Unit\MUSIC\Play_HMC_Music_System
+      maxAttenuation: 0
+      maxDuration: -1
+      minDuration: -1
+    - name: Play_Rumble_Blend
+      guid: bff5bc6a54bcaa4dbbf15de015a84aea
+      id: 728827549
+      PathAndIcons:
+      - ElementName: Default Work Unit
+        ObjectType: 12
+      - ElementName: AMBIENCE
+        ObjectType: 4
+      - ElementName: Play_Rumble_Blend
+        ObjectType: 3
+      Path: Default Work Unit\AMBIENCE\Play_Rumble_Blend
+      maxAttenuation: 0
+      maxDuration: -1
+      minDuration: -1
     - name: Play_setup_test_music
       guid: e6fc6df0e6742343911a23eedc1ab8d8
       id: 3845448020
@@ -78,8 +150,35 @@ MonoBehaviour:
     ParentPhysicalPath: 
     guid: 99676a34afe9c64ebf6e87f509590ec9
     GuidInternal: 
-    m_lastTime: -8586298718964620392
-    List: []
+    m_lastTime: -8586283841590043958
+    List:
+    - name: Amb_Intensity
+      guid: fcd4b015c5407649905222394af6816f
+      id: 752028789
+      PathAndIcons:
+      - ElementName: Default Work Unit
+        ObjectType: 12
+      - ElementName: Amb_Intensity
+        ObjectType: 13
+      Path: Default Work Unit\Amb_Intensity
+    - name: FS_Wettish
+      guid: 5a894a299d40014e99efb6614d562ea6
+      id: 1688601825
+      PathAndIcons:
+      - ElementName: Default Work Unit
+        ObjectType: 12
+      - ElementName: FS_Wettish
+        ObjectType: 13
+      Path: Default Work Unit\FS_Wettish
+    - name: Meter_Wind
+      guid: 1d7d3e317c7cd442b78bd9589d763ce9
+      id: 3084119761
+      PathAndIcons:
+      - ElementName: Default Work Unit
+        ObjectType: 12
+      - ElementName: Meter_Wind
+        ObjectType: 13
+      Path: Default Work Unit\Meter_Wind
   - PhysicalPath: Game Parameters\Factory Motion.wwu
     ParentPhysicalPath: 
     guid: 225213d7dbd1d042adc0930743567776
@@ -265,14 +364,63 @@ MonoBehaviour:
     ParentPhysicalPath: 
     guid: 4799b636530bef4180335a76ffb4e8cf
     GuidInternal: 
-    m_lastTime: -8586298718965997322
-    List: []
+    m_lastTime: -8586281402037437472
+    List:
+    - name: GameState
+      guid: 72ba4114be77444ea2fe81173da12ede
+      id: 4091656514
+      PathAndIcons:
+      - ElementName: Default Work Unit
+        ObjectType: 12
+      - ElementName: GameState
+        ObjectType: 9
+      Path: Default Work Unit\GameState
+      values:
+      - name: Exit_Memory
+        guid: ab98dfb1754bd2468dcfa5c074b01fe8
+        id: 4198270385
+        PathAndIcons:
+        - ElementName: Exit_Memory
+          ObjectType: 8
+      - name: Hub
+        guid: 18536fc692233e4e8c59299f04d26949
+        id: 646625282
+        PathAndIcons:
+        - ElementName: Hub
+          ObjectType: 8
+      - name: Memory_Lullaby
+        guid: 7a8a326b92d73544be08b55b1149afa1
+        id: 3074462064
+        PathAndIcons:
+        - ElementName: Memory_Lullaby
+          ObjectType: 8
+      - name: Menu
+        guid: e30106b28c078343962c4b3ff2b9d1e8
+        id: 2607556080
+        PathAndIcons:
+        - ElementName: Menu
+          ObjectType: 8
+      - name: None
+        guid: 68e4ee4a87a42f46b72063e552672523
+        id: 748895195
+        PathAndIcons:
+        - ElementName: None
+          ObjectType: 8
+      - name: Outside
+        guid: 6f46f18c545b1843b481646187071901
+        id: 438105790
+        PathAndIcons:
+        - ElementName: Outside
+          ObjectType: 8
+      ValueGuids: []
+      ValueIcons: []
+      valuesInternal: []
   SwitchWwu:
   - PhysicalPath: Switches\Default Work Unit.wwu
     ParentPhysicalPath: 
     guid: b8020256874dd547a897ee702d5e3c95
     GuidInternal: 
-    m_lastTime: -8586298718966097076
+    m_lastTime: -8586284670358769775
     List:
     - name: Footstep_Material_Switcher
       guid: 7ed1be8f286a6b4fab62c9cc0a8c6437
@@ -296,11 +444,103 @@ MonoBehaviour:
         PathAndIcons:
         - ElementName: Grass
           ObjectType: 10
+      - name: Ice
+        guid: a2b0b7227e9d3c408afe72ea035bcf04
+        id: 344481046
+        PathAndIcons:
+        - ElementName: Ice
+          ObjectType: 10
+      - name: Leaves
+        guid: c159caaa97dd77409969476b1dad9cfd
+        id: 582824249
+        PathAndIcons:
+        - ElementName: Leaves
+          ObjectType: 10
+      - name: Snow
+        guid: a8789403ae6aa04ca48b9c985274c1f9
+        id: 787898836
+        PathAndIcons:
+        - ElementName: Snow
+          ObjectType: 10
       - name: Stone
         guid: 734b673eff7af441a9a6bc8abd43b4e8
         id: 1216965916
         PathAndIcons:
         - ElementName: Stone
+          ObjectType: 10
+      - name: Wood
+        guid: e274757e3a0fbc4386b59a0cf48e8ae1
+        id: 2058049674
+        PathAndIcons:
+        - ElementName: Wood
+          ObjectType: 10
+      ValueGuids: []
+      ValueIcons: []
+      valuesInternal: []
+    - name: Lvl
+      guid: dc2f124ae870c04d87a7d1a566244742
+      id: 964811649
+      PathAndIcons:
+      - ElementName: Default Work Unit
+        ObjectType: 12
+      - ElementName: Lvl
+        ObjectType: 11
+      Path: Default Work Unit\Lvl
+      values:
+      - name: Lvl_1
+        guid: 8e6bdd8f9bb323439ecfdd4c89f05225
+        id: 2397100949
+        PathAndIcons:
+        - ElementName: Lvl_1
+          ObjectType: 10
+      - name: Lvl_2
+        guid: f6154ac4c338e7409c8318dcc682fa81
+        id: 2397100950
+        PathAndIcons:
+        - ElementName: Lvl_2
+          ObjectType: 10
+      - name: Lvl_3
+        guid: f2757d55007ce54d9fbd3de84493c581
+        id: 2397100951
+        PathAndIcons:
+        - ElementName: Lvl_3
+          ObjectType: 10
+      ValueGuids: []
+      ValueIcons: []
+      valuesInternal: []
+    - name: Player_Speed
+      guid: 85c8f7c3e7262f45871a438e0b72392a
+      id: 1062779386
+      PathAndIcons:
+      - ElementName: Default Work Unit
+        ObjectType: 12
+      - ElementName: Player_Speed
+        ObjectType: 11
+      Path: Default Work Unit\Player_Speed
+      values:
+      - name: Run
+        guid: 66e4fe8bc1cd794188d54188519a29c4
+        id: 712161704
+        PathAndIcons:
+        - ElementName: Run
+          ObjectType: 10
+      - name: Sneak
+        guid: c1f07b7457b7f84e99d71bfbd44c797b
+        id: 2884887403
+        PathAndIcons:
+        - ElementName: Sneak
+          ObjectType: 10
+      - name: Standing
+        guid: fbbd60d468b37748b65298641dc5c5aa
+        id: 2689084685
+        PathAndIcons:
+        - ElementName: Standing
+          ObjectType: 10
+      - name: Walk
+        guid: 33867ab0fea09343a4cbfe3dd04a8d5a
+        id: 2108779966
+        PathAndIcons:
+        - ElementName: Walk
           ObjectType: 10
       ValueGuids: []
       ValueIcons: []
@@ -313,8 +553,6 @@ MonoBehaviour:
     m_lastTime: -8586298718968849425
     List: []
   ExpandedItems:
-  - /Grief_GraduationGame_DADIU_JFK
-  - /Grief_GraduationGame_DADIU_JFK/Events
-  - /Grief_GraduationGame_DADIU_JFK/Events/Default Work Unit
+  - /HMC_GraduationGame_DADIU_JFK
   autoPopulateEnabled: 1
   CurrentPluginConfig: 

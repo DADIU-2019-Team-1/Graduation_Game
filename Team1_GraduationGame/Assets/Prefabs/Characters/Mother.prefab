@@ -2040,6 +2040,8 @@ GameObject:
   - component: {fileID: 5865448813341310184}
   - component: {fileID: 5865448813341310185}
   - component: {fileID: 5865448813341310186}
+  - component: {fileID: 8724323518715605681}
+  - component: {fileID: 962641346844991771}
   m_Layer: 0
   m_Name: Mother
   m_TagString: Player
@@ -2162,8 +2164,11 @@ MonoBehaviour:
     UniqueValue: 0
     Variable: {fileID: 11400000, guid: c884f35f8e4e4304eb5dc5b1e0da785c, type: 2}
   moveState: {fileID: 11400000, guid: 064acbb0600eace4e969fd76909dcac8, type: 2}
-  leftFootPos: {fileID: 5125805972727412764}
-  rightFootPos: {fileID: 3535082909732245362}
+  leftHeelPos: {fileID: 8772038921157955164}
+  rightHeelPos: {fileID: 3279459211723012556}
+  rightToePos: {fileID: 8892215795764574592}
+  leftToePos: {fileID: 9150403650913744982}
+  jumpMaterial: {fileID: 0}
   idleThreshold: 0.1
   sneakThreshold: 0.25
   runThreshold: 0.6
@@ -2199,6 +2204,42 @@ CapsuleCollider:
   m_Height: 1.85
   m_Direction: 1
   m_Center: {x: 0, y: 0.925, z: 0}
+--- !u!114 &8724323518715605681
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5865448813341310187}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f56c9a8239fcd2e468d4759dd7119fb1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_listeners:
+    initialListenerList: []
+    useDefaultListeners: 1
+  isEnvironmentAware: 1
+  isStaticObject: 0
+  m_positionOffsetData:
+    KeepMe: 0
+    positionOffset: {x: 0, y: 0, z: 0}
+  m_posOffsetData: {fileID: 0}
+  listenerMask: 1
+--- !u!114 &962641346844991771
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5865448813341310187}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7c44e29f64696274480437119e0ecf6f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isDefaultListener: 1
+  listenerId: 0
 --- !u!1 &6016816948309197438
 GameObject:
   m_ObjectHideFlags: 0

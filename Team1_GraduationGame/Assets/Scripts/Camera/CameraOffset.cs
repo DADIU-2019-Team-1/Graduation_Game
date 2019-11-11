@@ -7,8 +7,6 @@ using UnityEngine;
 public class CameraOffset
 {
     [Tooltip("Added to existing lookAtPos")]
-    [SerializeField] private Vector3 offsetLook;
-    [Tooltip("Added to existing Camera Position")]
     [SerializeField] private Vector3 offsetPos;
     [Tooltip("Added to existing Camera FOV")]
     [SerializeField] private float offsetFOV;
@@ -18,15 +16,10 @@ public class CameraOffset
     /// </summary>
     /// <param name="offsetPos"></param>
     /// <param name="offsetFOV"></param>
-    public CameraOffset(Vector3 offsetLook, Vector3 offsetPos, float offsetFOV)
+    public CameraOffset(Vector3 offsetPos, float offsetFOV)
     {
-        this.offsetLook = offsetLook;
         this.offsetPos = offsetPos;
         this.offsetFOV = offsetFOV;
-    }
-    public Vector3 GetLook()
-    {
-        return offsetLook;
     }
 
     public Vector3 GetPos()

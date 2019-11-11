@@ -7571,6 +7571,7 @@ Transform:
   - {fileID: 1391661074}
   - {fileID: 1828887178}
   - {fileID: 1660754331}
+  - {fileID: 429099684}
   m_Father: {fileID: 0}
   m_RootOrder: 9
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -13894,6 +13895,36 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 1260a6de53fbf3248b3ea2d760bd7c8e, type: 3}
+--- !u!1 &429099683
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 429099684}
+  m_Layer: 0
+  m_Name: Wwise_Level_Objects
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &429099684
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 429099683}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 280205378}
+  m_RootOrder: 4
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &430795926
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -41231,6 +41262,12 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 5d540e2b7079e904f8fa9961313962b9, type: 3}
+--- !u!1 &1323724517 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6086938879507949215, guid: bffd6909a73269946945f759803e30be,
+    type: 3}
+  m_PrefabInstance: {fileID: 1718314935}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1325130862
 GameObject:
   m_ObjectHideFlags: 0
@@ -56386,6 +56423,43 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2186950586717431779, guid: bffd6909a73269946945f759803e30be,
+        type: 3}
+      propertyPath: soundEvents.Array.size
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 2186950586717431779, guid: bffd6909a73269946945f759803e30be,
+        type: 3}
+      propertyPath: soundEvents.Array.data[3].triggerTypeSelector
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2186950586717431779, guid: bffd6909a73269946945f759803e30be,
+        type: 3}
+      propertyPath: soundEvents.Array.data[3].soundManagerGameObject
+      value: 
+      objectReference: {fileID: 1323724517}
+    - target: {fileID: 2186950586717431779, guid: bffd6909a73269946945f759803e30be,
+        type: 3}
+      propertyPath: soundEvents.Array.data[3].wwiseEvent.WwiseObjectReference
+      value: 
+      objectReference: {fileID: 11400000, guid: 3e56c39aaee162c408b6730c388a745a,
+        type: 2}
+    - target: {fileID: 2186950586717431779, guid: bffd6909a73269946945f759803e30be,
+        type: 3}
+      propertyPath: soundEvents.Array.data[3].isActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2186950586717431779, guid: bffd6909a73269946945f759803e30be,
+        type: 3}
+      propertyPath: soundEvents.Array.data[3].behaviorSelector
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2186950586717431779, guid: bffd6909a73269946945f759803e30be,
+        type: 3}
+      propertyPath: soundEvents.Array.data[3].wwiseState.WwiseObjectReference
+      value: 
+      objectReference: {fileID: 11400000, guid: 3530b8b68e94c374e91ba51b5b329d01,
+        type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: bffd6909a73269946945f759803e30be, type: 3}
 --- !u!1001 &1721006590

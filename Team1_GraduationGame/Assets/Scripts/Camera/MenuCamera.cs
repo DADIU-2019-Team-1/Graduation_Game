@@ -11,7 +11,7 @@ public class MenuCamera : MonoBehaviour
     [SerializeField] private GameObject[] objectsToActive;
     [SerializeField] private FloatReference camLookSpeed, camMoveTime;
     [SerializeField] private FloatReference activateMenuThreshold, waitBeforeMoving;
-    [SerializeField] [Range(0.01f, 1.0f)] private float fadeAmount = 0.01f;
+    [SerializeField] [Range(0.01f, 1.0f)] private float fadeAmount = 0.05f;
     private int currentTargetIndex, railIndex = 0;
     private Quaternion targetRotation;
     private Vector3 camMovement;
@@ -28,7 +28,7 @@ public class MenuCamera : MonoBehaviour
     void LateUpdate()
     {
         // Object activation
-        if (Vector3.Distance(transform.position, _rail.m_Waypoints[railIndex].position) <= activateMenuThreshold.value)
+        if (Vector3.Distance(transform.position, _rail.m_Waypoints[railIndex].position + _rail.transform.position) <= activateMenuThreshold.value)
         {
             StopCoroutine(WaitForTextFade());
             for (int i = 0; i < objectsToActive.Length; i++)
@@ -36,13 +36,21 @@ public class MenuCamera : MonoBehaviour
                 if (i == currentTargetIndex)
                 {
                     objectsToActive[i].SetActive(true);
-                    objectsToActive[i].GetComponent<CanvasGroup>().alpha += fadeAmount;
+                    if (objectsToActive[i].GetComponent<CanvasGroup>())
+                        objectsToActive[i].GetComponent<CanvasGroup>().alpha += fadeAmount;
                 }
                 else
                 {
-                    objectsToActive[i].GetComponent<CanvasGroup>().alpha -= fadeAmount;
-                    if (objectsToActive[i].GetComponent<CanvasGroup>().alpha < fadeAmount)
+                    if (objectsToActive[i].GetComponent<CanvasGroup>())
+                    {
+                        objectsToActive[i].GetComponent<CanvasGroup>().alpha -= fadeAmount;
+                        if (objectsToActive[i].GetComponent<CanvasGroup>().alpha < fadeAmount)
+                            objectsToActive[i].SetActive(false);
+                    }
+                    else
+                    {
                         objectsToActive[i].SetActive(false);
+                    }
                 }
             }
         }
@@ -51,19 +59,24 @@ public class MenuCamera : MonoBehaviour
             StartCoroutine(WaitForTextFade());
             for (int i = 0; i < objectsToActive.Length; i++)
             {
-                objectsToActive[i].GetComponent<CanvasGroup>().alpha -= fadeAmount;
-                if (objectsToActive[i].GetComponent<CanvasGroup>().alpha < fadeAmount)
+                if (objectsToActive[i].GetComponent<CanvasGroup>())
+                {
+                    objectsToActive[i].GetComponent<CanvasGroup>().alpha -= fadeAmount;
+                    if (objectsToActive[i].GetComponent<CanvasGroup>().alpha < fadeAmount)
+                        objectsToActive[i].SetActive(false);
+                }
+                else
+                {
                     objectsToActive[i].SetActive(false);
+                }
             }
         }
 
         if (_move)
         {
-
-            Debug.Log("MOVE IS ACTIVE");
-            // Position update
+            // Position update // TODO: Optimize so not only smoothening x axis (or smoothening all)
             transform.position = new Vector3(transform.position.x, railCamera.transform.position.y, railCamera.transform.position.z);
-            transform.position = Vector3.SmoothDamp(transform.position, new Vector3(_rail.m_Waypoints[railIndex].position.x, transform.position.y, transform.position.z),
+            transform.position = Vector3.SmoothDamp(transform.position, new Vector3(_rail.m_Waypoints[railIndex].position.x + _rail.transform.position.x, transform.position.y, transform.position.z),
                 ref camMovement, camMoveTime.value * Time.deltaTime);
 
             // Rotation update
@@ -78,6 +91,28 @@ public class MenuCamera : MonoBehaviour
         _move = false;
         currentTargetIndex = i;
         railIndex = currentTargetIndex > 0 ? _rail.m_Waypoints.Length - 1 : 0;
+    }
+
+    public void StartGame()
+    {
+        Debug.Log("Starting game!");
+        StartCoroutine(StartGameCoroutine());
+    }
+
+    public IEnumerator StartGameCoroutine()
+    {
+        while (true)
+        {
+            for (int i = 0; i < objectsToActive.Length; i++)
+            {
+                if (objectsToActive[i].GetComponent<CanvasGroup>())
+                {
+                    objectsToActive[i].GetComponent<CanvasGroup>().alpha -= fadeAmount;
+                }
+            }
+            yield return new WaitForSeconds(5.0f);
+            break;
+        }
     }
 
     IEnumerator WaitForTextFade()

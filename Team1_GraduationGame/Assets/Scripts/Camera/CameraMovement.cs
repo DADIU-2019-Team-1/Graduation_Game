@@ -42,15 +42,15 @@ public class CameraMovement : MonoBehaviour
 
     private void Awake()
     {
+    }
+
+    void Start()
+    {
         if (GetComponent<Camera>() != null)
             thisCam = GetComponent<Camera>();
         else
             Debug.LogError("This script is not attached to an object with a Camera!");
         startingFOV = thisCam.fieldOfView;
-    }
-
-    void Start()
-    {
         if (player == null)
             player = GameObject.FindGameObjectWithTag("Player").transform;
         if (track == null)

@@ -362,9 +362,9 @@ namespace Team1_GraduationGame.Managers
         #endregion
 
         #region RTPC Handler
-        private void RTPCHandler()  // TODO: Implement use value from event
+        private void RTPCHandler()
         {
-            if (rtpcScriptableObject != null && wwiseRTPC != null)
+            if (rtpcScriptableObject != null || wwiseRTPC != null)
             {
                 if (rtpcRoleBool && !objDistanceToRtpc)
                 {
@@ -379,7 +379,11 @@ namespace Team1_GraduationGame.Managers
                     {
                         if (targetGameObject == null || !useOtherGameObject)
                         {
-                            wwiseRTPC.SetValue(soundManagerGameObject, rtpcScriptableObject.value);
+                            if (!useValueFromEvent)
+                                wwiseRTPC.SetValue(soundManagerGameObject, rtpcScriptableObject.value);
+                            else
+                                wwiseRTPC.SetValue(soundManagerGameObject, _parsedValue);
+
                             if (targetGameObject == null && useOtherGameObject)
                                 Debug.LogWarning("SoundManager: Target GameObject is not set! - Using default object instead");
                         }

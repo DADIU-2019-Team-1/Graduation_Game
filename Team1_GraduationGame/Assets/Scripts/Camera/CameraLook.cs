@@ -11,7 +11,7 @@ public class CameraLook : MonoBehaviour
     [Tooltip("If no Input is defined, the object with the script \"CameraMovement\" attached will be used.")]
     public CameraMovement camMovement;
 
-    [Tooltip("The default offset that will always be added")]
+    [Tooltip("The default camLookOffset that will always be added")]
     public Vector3 defaultOffset = new Vector3(0.0f,0.0f,0.0f);
 
     [Tooltip("Control the amount that the players direction influences the camera.")]
@@ -23,9 +23,10 @@ public class CameraLook : MonoBehaviour
     private Movement playerMovement;
     private CinemachineSmoothPath cmPath;
     private Camera cam;
-    private Vector3 moveDir;
-    private Vector3 offset;
-    private float offsetLerpTime, startingFOV;
+    private Vector3 lookDir;
+    private Vector3 camLookOffset;
+    [HideInInspector] public Vector3 camPosOffset;
+    private float offsetTrackLerpValue, startingFOV;
 
     private void Awake()
     {
@@ -86,16 +87,17 @@ public class CameraLook : MonoBehaviour
     {
         if (playerMovement != null)
         {
-            moveDir = player.forward * playerMovement.GetSpeed() * lookDirFactor;
+            lookDir = player.forward * playerMovement.GetSpeed() * lookDirFactor;
         }
 
         if (camMovement != null)
         {
-            offsetLerpTime = (camMovement.camRail.position.x - cmPath.m_Waypoints[camMovement.previousTrackIndex].position.x - camMovement.trackX) /
+            offsetTrackLerpValue = (camMovement.camRail.position.x - cmPath.m_Waypoints[camMovement.previousTrackIndex].position.x - camMovement.trackX) /
                              (cmPath.m_Waypoints[camMovement.nextTrackIndex].position.x - cmPath.m_Waypoints[camMovement.previousTrackIndex].position.x);
-            offset = Vector3.Lerp(offsetTrack[camMovement.previousTrackIndex].GetPos(), offsetTrack[camMovement.nextTrackIndex].GetPos(), offsetLerpTime);
-            cam.fieldOfView = Mathf.Lerp(startingFOV + offsetTrack[camMovement.previousTrackIndex].GetFOV(), startingFOV + offsetTrack[camMovement.nextTrackIndex].GetFOV(), offsetLerpTime);
+            camLookOffset = Vector3.Lerp(offsetTrack[camMovement.previousTrackIndex].GetLook(), offsetTrack[camMovement.nextTrackIndex].GetLook(), offsetTrackLerpValue);
+            camPosOffset = Vector3.Lerp(offsetTrack[camMovement.previousTrackIndex].GetPos(), offsetTrack[camMovement.nextTrackIndex].GetPos(), offsetTrackLerpValue);
+            cam.fieldOfView = Mathf.Lerp(startingFOV + offsetTrack[camMovement.previousTrackIndex].GetFOV(), startingFOV + offsetTrack[camMovement.nextTrackIndex].GetFOV(), offsetTrackLerpValue);
         }
-        camTarget = player.position + offset + moveDir;
+        camTarget = player.position + camLookOffset + lookDir;
     }
 }

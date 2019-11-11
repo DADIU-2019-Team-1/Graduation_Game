@@ -15,6 +15,7 @@ namespace Team1_GraduationGame.SaveLoadSystem
         [HideInInspector] public SavePointManager thisSavePointManager;
 
         // Public:
+        public bool savingDisabled;
         public int thisID;
         [HideInInspector] public bool savePointUsed;
         public enum colliderTypes
@@ -37,7 +38,7 @@ namespace Team1_GraduationGame.SaveLoadSystem
 
         private void OnTriggerEnter(Collider col)
         {
-            if (Application.isPlaying)
+            if (Application.isPlaying && !savingDisabled)
             {
                 if (col.tag == "Player" && !savePointUsed)
                 {

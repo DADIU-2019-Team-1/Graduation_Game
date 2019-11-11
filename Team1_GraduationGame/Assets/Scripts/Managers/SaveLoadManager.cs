@@ -37,6 +37,14 @@ namespace Team1_GraduationGame.SaveLoadSystem
                 Debug.Log("Save/Load Manager: No previous games to load");
         }
 
+        public void OpenLevel(int atBuildIndex)
+        {
+            if (atBuildIndex < SceneManager.sceneCountInBuildSettings && atBuildIndex >= 0)
+            {
+                SceneManager.LoadScene(atBuildIndex);
+            }
+        }
+
         public void NextLevel()
         {
             if (SceneManager.GetActiveScene().buildIndex != SceneManager.sceneCountInBuildSettings)

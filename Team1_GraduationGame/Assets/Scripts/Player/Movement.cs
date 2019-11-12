@@ -9,11 +9,12 @@ public class Movement : MonoBehaviour
 {
     private Rigidbody playerRB;
     private bool touchStart = false, canMove = false, canJump = true, canPush, isJumping = false, moveFrozen = false;
+    private float currentRotSpeed, maxRotSpeed = 5.0f, calculatedRotSpeed;
 
     [SerializeField] private float accelerationFactor = 0.1f;
-    private float swipeTimeThreshold = 0.3f, swipeTimeTimer, acceleration;
+    private float swipeTimeTimer, currentRotationSpeed;
     private Vector3 initTouchPos, currTouchPos, joystickPos, stickLimitPos, direction, velocity;
-    private Quaternion lookRotation;
+    private Quaternion lookRotation, _prevousRotation = Quaternion.identity;
     private Vector2 swipeStartPos, swipeEndPos, swipeDirection;
 
     [Tooltip("Put the joystick here")]
@@ -21,7 +22,7 @@ public class Movement : MonoBehaviour
     [Tooltip("Put the joystick border here")]
     public Transform stickLimit;
 
-    public FloatReference sneakSpeed, walkSpeed, runSpeed, rotationSpeed, jumpHeight, fallMultiplier, attackRange;
+    public FloatReference sneakSpeed, walkSpeed, runSpeed, rotationSpeed, jumpHeight, fallMultiplier, attackRange, swipeTimeThreshold;
     public IntReference radius, attackDegree, swipePixelDistance;
 
     private PhysicMaterial _jumpMaterial;
@@ -83,16 +84,20 @@ public class Movement : MonoBehaviour
         interactableObjects = new List<GameObject>();
         for (int i = 0; i < tagsToInteractWith.Length; i++)
             interactableObjects.AddRange(GameObject.FindGameObjectsWithTag(tagsToInteractWith[i]));
+        moveState.value = 0;
     }
 
     void Update() {
         currentSpeed.value = Vector3.Distance(transform.position, _previousPosition) / Time.fixedDeltaTime;
-        lookRotation = direction != Vector3.zero ? Quaternion.LookRotation(direction) : transform.rotation;
+        currentRotationSpeed = Quaternion.Angle(transform.rotation, _prevousRotation) / Time.fixedDeltaTime;
+        lookRotation = direction != Vector3.zero ? Quaternion.LookRotation(direction) : Quaternion.identity;
         velocity = direction.normalized * currentSpeed.value;
     }
 
     void FixedUpdate()
     {
+        _previousPosition = transform.position;
+        _prevousRotation = transform.rotation;
         if (playerRB.velocity.y <= 0 && isJumping)
         {
             //playerRB.mass * fallMultiplier.value;
@@ -106,7 +111,6 @@ public class Movement : MonoBehaviour
                 _collider.material = null;
             }
         }
-        _previousPosition = transform.position;
         // Making sure touches only run on Android
 #if UNITY_ANDROID
         int i = 0;
@@ -310,23 +314,19 @@ public class Movement : MonoBehaviour
 
             if (dragDist <= radius.value * idleThreshold)
             {
-                //movePlayer(direction, 0);
-                //moveState.value = 0;
+                // Empty
             }
             else if (dragDist <= radius.value * sneakThreshold)
             {
                 movePlayer(direction, sneakSpeed.value);
-                //moveState.value = 1;
             }
             else if (dragDist > radius.value * sneakThreshold && dragDist < radius.value * runThreshold)
             {
                 movePlayer(direction, walkSpeed.value);
-                //moveState.value = 2;
             }
             else if (dragDist >= radius.value * runThreshold)
             {
                 movePlayer(direction, runSpeed.value);
-                //moveState.value = 3;
             }
 
 
@@ -353,8 +353,8 @@ public class Movement : MonoBehaviour
             ? Quaternion.LookRotation(direction) : Quaternion.identity; // Shorthand if : else 
 
         // TODO: Seperate rotation acceleration from speed acceleration
-        transform.rotation = Quaternion.Slerp(transform.rotation, /*(*/targetRotation/* - transform.rotation) * accelerationFactor*/, Time.deltaTime * rotationSpeed.value);
-        playerRB.MovePosition(transform.position + direction * ((targetSpeed - currentSpeed.value)*accelerationFactor + currentSpeed.value) * Time.deltaTime);
+        transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * rotationSpeed.value);
+        playerRB.MovePosition(transform.position + (direction + transform.forward /* * rotation factor can be inserted  here*/).normalized * ((targetSpeed - currentSpeed.value)*accelerationFactor + currentSpeed.value) * Time.deltaTime);
     }
 
     private void playerJump(Vector3 direction, float jumpHeight)

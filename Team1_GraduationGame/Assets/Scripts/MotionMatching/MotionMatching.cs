@@ -30,15 +30,10 @@ public class MotionMatching : MonoBehaviour
     private Animator animator;
 
     // --- Collections
-    private List<FeatureVector> featureVectors, trajCandidatesRef, trajPossibleCandidatesRef;
+    private List<FeatureVector> featureVectors, trajCandidatesRef;
     private AnimationClip[] allClips;
     public HumanBodyBones[] joints;
     public AnimContainer animContainer; // put ref to chosen animation container scriptable object
-    public string[][] movementTags = // TODO: Create an inspector version of this
-    {
-        new []{ "Idle"},                        // State 0
-        new []{ "Sneak", "Walk", "Run" }        // State 1
-    };
 
     [SerializeField] private string[] states;
 
@@ -47,12 +42,11 @@ public class MotionMatching : MonoBehaviour
     // --- Variables 
     public bool _preProcess, _playAnimationMode;
     public int pointsPerTrajectory = 4, framesBetweenTrajectoryPoints = 10;
-    public float idleThreshold = 0.10f;
     [SerializeField] private bool _isMotionMatching, _isIdling;
     [SerializeField] private int queryRateInFrames = 10, candidatesPerMisc = 10;
 
     private AnimationClip currentClip;
-    private int currentFrame, currentID, currentState;
+    private int currentFrame, currentID;
 
     // --- Weights
     [Range(0, 1)] public float weightRootVel = 1.0f, weightLFootVel = 1.0f, weightRFootVel = 1.0f, weightNeckVel = 1.0f,
@@ -107,15 +101,6 @@ public class MotionMatching : MonoBehaviour
         }
         
         trajCandidatesRef = new List<FeatureVector>();
-        trajPossibleCandidatesRef = new List<FeatureVector>();
-
-        for (int i = 0; i < movementTags.Length; i++)
-        {
-            for (int j = 0; j < movementTags[i].Length; j++)
-            {
-                movementTags[i][j] = movementTags[i][j].ToLower();
-            }
-        }
         enumeratorBools = AddEnumeratorBoolsToList();
     }
 
@@ -131,12 +116,8 @@ public class MotionMatching : MonoBehaviour
     private void FixedUpdate()
     {
         if (!_playAnimationMode)
-	    {
-		    if (movement.GetSpeed() <= idleThreshold && currentState != 0)
-			    currentState = 0;
-		    else if (movement.GetSpeed() > idleThreshold && currentState != 1)
-			    currentState = 1;
-		    if (!_isMotionMatching)
+        {
+            if (!_isMotionMatching)
 		    {
 			    StopAllCoroutines();
 			    StartCoroutine(MotionMatch());
@@ -239,7 +220,7 @@ public class MotionMatching : MonoBehaviour
 	    while (true)
 	    {
 		    currentID += queryRateInFrames;
-            List<FeatureVector> candidates = TrajectoryMatching(movement.GetMovementTrajectory(), ref trajCandidatesRef, ref trajPossibleCandidatesRef);
+            List<FeatureVector> candidates = TrajectoryMatching(movement.GetMovementTrajectory(), ref trajCandidatesRef);
             int candidateID = PoseMatching(candidates);
 			UpdateAnimation(candidateID, featureVectors[candidateID].GetFrame());
             yield return new WaitForSeconds(queryRateInFrames / currentClip.frameRate);
@@ -274,33 +255,32 @@ public class MotionMatching : MonoBehaviour
     }
     #endregion
 
-    List<FeatureVector> TrajectoryMatching(Trajectory movementTraj, ref List<FeatureVector> candidates, ref List<FeatureVector> possibleCandidates)
+    List<FeatureVector> TrajectoryMatching(Trajectory movementTraj, ref List<FeatureVector> candidates)
     {
         candidates.Clear();
-        possibleCandidates.Clear();
         List<float> values = new List<float>();
         for (int i = 0; i < candidatesPerMisc; i++)
         {
-            possibleCandidates.Add(null);
+            candidates.Add(null);
             values.Add(float.MaxValue);
         }
 
         for (int i = 0; i < featureVectors.Count; i++)
 		{
-            if (!TagChecker(featureVectors[i].GetClipName(), currentState))
+            if (!TagChecker(featureVectors[i].GetClipName(), movement.moveState.value))
                 continue;
-            if ((featureVectors[i].GetID() > currentID ||  featureVectors[i].GetID() < currentID - queryRateInFrames) &&
+            if ((featureVectors[i].GetID() > currentID ||  featureVectors[i].GetID() < currentID - queryRateInFrames * 2) &&
                  featureVectors[i].GetFrame() + queryRateInFrames <=  featureVectors[i].GetFrameCountForID())
             {
                 float comparison = featureVectors[i].GetTrajectory().CompareTrajectories(movementTraj, transform.worldToLocalMatrix.inverse, weightTrajPoints, weightTrajForwards);
                 for (int j = 0; j < candidatesPerMisc; j++)
                 {
-                    if (possibleCandidates[j] != null)
+                    if (candidates[j] != null)
                     {
                         if (comparison < values[j])
                         {
-                            possibleCandidates.Insert(j, featureVectors[i]);
-                            possibleCandidates.RemoveAt(candidatesPerMisc);
+                            candidates.Insert(j, featureVectors[i]);
+                            candidates.RemoveAt(candidatesPerMisc);
                             values.Insert(j, comparison);
                             values.RemoveAt(candidatesPerMisc);
                             break;
@@ -308,7 +288,7 @@ public class MotionMatching : MonoBehaviour
                     }
                     else
                     {
-                        possibleCandidates[j] = featureVectors[i];
+                        candidates[j] = featureVectors[i];
                         values[j] = featureVectors[i].GetTrajectory().CompareTrajectories(movementTraj,
                             transform.worldToLocalMatrix.inverse, weightTrajPoints, weightTrajForwards);
                         break;
@@ -316,8 +296,6 @@ public class MotionMatching : MonoBehaviour
                 }
             }
         }
-
-        candidates.AddRange(possibleCandidates);
         return candidates;
     }
 
@@ -329,29 +307,19 @@ public class MotionMatching : MonoBehaviour
         {
             float velDif = featureVectors[currentID].GetPose().ComparePoses(candidate.GetPose(), transform.worldToLocalMatrix.inverse, weightRootVel, weightLFootVel, weightRFootVel, weightNeckVel);
             float feetPosDif = featureVectors[currentID].GetPose().GetJointDistance(candidate.GetPose(), transform.worldToLocalMatrix.inverse, weightFeetPos, weightNeckPos);
-            float candidateDif = /*velDif + */feetPosDif; // TODO: Look at joint distance for idle
+            float candidateDif = velDif + feetPosDif; // TODO: Look at joint distance for idle
             if (candidateDif < currentDif)
             {
-				Debug.Log("Candidate ID " + candidate.GetID() + " diff: " + candidateDif + " < " + " Current ID " + bestId + " diff:" + currentDif);
+				//Debug.Log("Candidate ID " + candidate.GetID() + " diff: " + candidateDif + " < " + " Current ID " + bestId + " diff:" + currentDif + "\nVelocity dif was " + velDif + " and feetPos dif was " + feetPosDif);
                 bestId = candidate.GetID();
                 currentDif = candidateDif;
             }
         }
 		return bestId;
     }
-
     private bool TagChecker(string candidateName, int stateNumber)
     {
-        for (int i = 0; i < movementTags[stateNumber].Length; i++)
-        {
-            if (candidateName.ToLower().Contains(movementTags[stateNumber][i]))
-                return true;
-        }
-        return false;
-    }
-    private bool TagChecker(string candidateName, int stateNumber, int miscNumber)
-    {
-	    if (candidateName.ToLower().Contains(movementTags[stateNumber][miscNumber]))
+	    if (candidateName.ToLower().Contains(states[stateNumber]))
 		    return true;
         return false;
     }

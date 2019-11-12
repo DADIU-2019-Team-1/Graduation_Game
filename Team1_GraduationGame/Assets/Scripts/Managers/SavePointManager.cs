@@ -33,6 +33,15 @@ namespace Team1_GraduationGame.SaveLoadSystem
             }
         }
 
+        private void Start()
+        {
+            if (FindObjectOfType<HubMenu>() != null)
+            {
+                FindObjectOfType<HubMenu>().startGameEvent += NewGame;
+                FindObjectOfType<HubMenu>().continueGameEvent += Continue;
+            }
+        }
+
         public void DisableSavingOnSavePoints()
         {
             if (savePoints != null && Application.isPlaying)    // Should be called when playing (for debugging)

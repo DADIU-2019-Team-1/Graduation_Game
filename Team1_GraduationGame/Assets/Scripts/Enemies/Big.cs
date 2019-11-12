@@ -18,11 +18,11 @@ namespace Team1_GraduationGame.Enemies
         // Private:
         private bool _active, _isSpawned, _isRotating, _turnLeft, _updateRotation, _playerSpotted, _lightOn, _timerRunning;
         private int _layerMask, _currentSpawnPoint = 0;
-        private Vector3 _lookRangeToVector, _lookRangeFromVector;
+        private Vector3 _lookRangeToVector, _lookRangeFromVector, _spawnedPos, _unSpawnedPos;
         private Quaternion _lookRotation;
+        private bool _appear, _disappear; // TODO: Remove this later (they are used as placeholders for animation atm.)
 
         // Public:
-        [HideInInspector] public List<GameObject> spawnPoints;
         public bool drawGizmos = true;
         public float spawnActivationDistance = 25.0f, fieldOfView = 65.0f, viewDistance = 20.0f, 
             rotateDegreesPerSecond = 5.0f, rotateWaitTime = 0.0f, lookRangeTo = 230f, lookRangeFrom = 130f;
@@ -48,15 +48,10 @@ namespace Team1_GraduationGame.Enemies
                 fieldOfViewLight.spotAngle = fieldOfView;
             }
 
-            _active = true;
-        }
+            _unSpawnedPos = transform.position;
+            _spawnedPos = transform.position + (transform.up * 6);
 
-        private void Start()
-        {
-            // TODO remove this after debugging:
-            _isRotating = true;
-            _isSpawned = true;
-            _updateRotation = true;
+            _active = true;
         }
 
         private void FixedUpdate()
@@ -86,9 +81,10 @@ namespace Team1_GraduationGame.Enemies
                         {
                             if (rotateWaitTime > 0 && !_timerRunning)
                             {
+                                _turnLeft = false;
                                 StartCoroutine(WaitTimer());
                             }
-                            else
+                            else if (!_timerRunning)
                             {
                                 _turnLeft = false;
                                 _updateRotation = true;
@@ -98,15 +94,16 @@ namespace Team1_GraduationGame.Enemies
                         {
                             if (rotateWaitTime > 0 && !_timerRunning)
                             {
+                                _turnLeft = true;
+                                _updateRotation = true;
                                 StartCoroutine(WaitTimer());
                             }
-                            else
+                            else if (!_timerRunning)
                             {
                                 _turnLeft = true;
                                 _updateRotation = true;
                             }
                         }
-
                     }
 
                     if (!_playerSpotted)
@@ -126,7 +123,7 @@ namespace Team1_GraduationGame.Enemies
                                         Debug.Log("PLAYER SPOTTED");
                                         _active = false;
 
-                                        transform.LookAt(dir);
+                                        transform.LookAt(_player.transform.position);
                                         _player.GetComponent<Movement>().Frozen(true);
 
                                         StartCoroutine(PlayerDied());
@@ -144,22 +141,40 @@ namespace Team1_GraduationGame.Enemies
                         UpdateFOVLight(false, false);
                 }
 
-                if (_player != null && spawnPoints != null)
+                if (_player != null)
                 {
                     if (Vector3.Distance(transform.position, _player.transform.position) < spawnActivationDistance && !_isSpawned)
                     {
-                        Debug.Log("Player CLOSE");
-                        _isRotating = true;
-                        _isSpawned = true;
-                        //_updateRotation = true;
+                        _appear = true;
+                        _disappear = false;
+                        UpdateFOVLight(true, false);
+                        StopCoroutine(ChangeState(false));
+                        StartCoroutine(ChangeState(true));
                     }
                     else if (Vector3.Distance(transform.position, _player.transform.position) > spawnActivationDistance &&
                              _isSpawned)
                     {
-                        // _isRotating = false;
-                        //_isSpawned = false;
-                        //_updateRotation = false;
+                        _disappear = true;
+                        _appear = false;
+                        UpdateFOVLight(false, false);
+                        StopCoroutine(ChangeState(true));
+                        StartCoroutine(ChangeState(false));
                     }
+                }
+
+                if (_appear && !_disappear)
+                {
+                    transform.position = Vector3.Lerp(transform.position, _spawnedPos, Time.fixedDeltaTime);
+
+                    if (transform.position == _spawnedPos)
+                        _appear = false;
+                }
+                else if (_disappear && !_appear)
+                {
+                    transform.position = Vector3.Lerp(transform.position, _unSpawnedPos, Time.fixedDeltaTime);
+
+                    if (transform.position == _unSpawnedPos)
+                        _disappear = false;
                 }
             }
         }
@@ -185,9 +200,29 @@ namespace Team1_GraduationGame.Enemies
             }
         }
 
+        private IEnumerator ChangeState(bool isActive)
+        {
+            yield return new WaitForSeconds(3.0f);
+
+            if (isActive)
+            {
+                _isRotating = true;
+                _isSpawned = true;
+                _updateRotation = true;
+            }
+            else
+            {
+                _isRotating = false;
+                _isSpawned = false;
+                _updateRotation = false;
+            }
+
+        }
+
         private IEnumerator PlayerDied()
         {
-            yield return new WaitForSeconds(5.0f); // TODO Specify amount of time animation takes instead
+            yield return new WaitForSeconds(2.0f); // TODO Specify amount of time animation takes instead
+            Debug.Log("Player died from Big");
             if (playerDiedEvent != null)
                 playerDiedEvent.Raise();
         }
@@ -198,11 +233,7 @@ namespace Team1_GraduationGame.Enemies
             _isRotating = false;
             yield return new WaitForSeconds(rotateWaitTime);
 
-            if (_turnLeft)
-                _turnLeft = false;
-            else
-                _turnLeft = true;
-
+            _isRotating = true;
             _updateRotation = true;
             _timerRunning = false;
         }
@@ -225,25 +256,11 @@ namespace Team1_GraduationGame.Enemies
     [CustomEditor(typeof(Big))]
     public class Big_Editor : UnityEditor.Editor
     {
-        private GUIStyle _style = new GUIStyle();
-        private GameObject _parentWayPoint;
-        private bool _runOnce;
-
         public override void OnInspectorGUI()
         {
-            if (!_runOnce)
-            {
-                _style.fontStyle = FontStyle.Bold;
-                _style.alignment = TextAnchor.MiddleCenter;
-                _style.fontSize = 14;
-                _runOnce = true;
-            }
-
             DrawDefaultInspector(); // for other non-HideInInspector fields
 
             var script = target as Big;
-
-            DrawUILine();
 
             serializedObject.ApplyModifiedProperties();
 
@@ -252,22 +269,6 @@ namespace Team1_GraduationGame.Enemies
                 EditorUtility.SetDirty(script);
             }
         }
-
-        #region DrawUILine function
-        public static void DrawUILine()
-        {
-            Color color = new Color(1, 1, 1, 0.3f);
-            int thickness = 1;
-            int padding = 8;
-
-            Rect r = EditorGUILayout.GetControlRect(GUILayout.Height(padding + thickness));
-            r.height = thickness;
-            r.y += padding / 2;
-            r.x -= 2;
-            r.width += 6;
-            EditorGUI.DrawRect(r, color);
-        }
-        #endregion
     }
     #endregion
 #endif

@@ -43,6 +43,7 @@ namespace Team1_GraduationGame.SaveLoadSystem
                 if (col.tag == "Player" && !savePointUsed)
                 {
                     thisSavePointManager.saveLoadManager.SaveGame();
+                    thisSavePointManager.previousCheckPoint = thisID;
                     savePointUsed = true;
                 }
             }

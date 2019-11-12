@@ -23,6 +23,7 @@ namespace Team1_GraduationGame.DevelopmentTools
         [HideInInspector] public Text warningText;
         [HideInInspector] public GameObject mainPanel;
         [HideInInspector] public Text debugText;
+        [HideInInspector] public Text fpsText;
 
         // Bools:
         public bool setUpEnable = false;
@@ -72,6 +73,10 @@ namespace Team1_GraduationGame.DevelopmentTools
         {
             if (debugText != null)
                 debugText.text = _dLog;
+
+            if (fpsText != null)
+                fpsText.text = (1.0f / Time.deltaTime).ToString();
+
         }
 
         /// <summary>
@@ -139,6 +144,9 @@ namespace Team1_GraduationGame.DevelopmentTools
 
                 SerializedProperty debugTextProp = serializedObject.FindProperty("debugText");
                 EditorGUILayout.PropertyField(debugTextProp);
+
+                SerializedProperty fpsTextProp = serializedObject.FindProperty("fpsText");
+                EditorGUILayout.PropertyField(fpsTextProp);
             }
 
             serializedObject.ApplyModifiedProperties();

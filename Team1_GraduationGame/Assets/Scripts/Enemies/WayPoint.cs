@@ -1,13 +1,13 @@
 ﻿using UnityEngine;
+using System.Collections.Generic;
+using System.Linq;
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
 
 namespace Team1_GraduationGame.Enemies
 {
-#if UNITY_EDITOR
     [ExecuteInEditMode]
-#endif
     public class WayPoint : MonoBehaviour
     {
         [HideInInspector] public GameObject parentEnemy;
@@ -17,9 +17,7 @@ namespace Team1_GraduationGame.Enemies
         [Range(0.0f, 359.0f)] public float enemyLookDirection = 0.0f;
         public int wayPointId;
 
-
 #if UNITY_EDITOR
-
         void OnDestroy()
         {
             if (parentEnemy != null && !isParent && Application.isEditor)
@@ -28,14 +26,17 @@ namespace Team1_GraduationGame.Enemies
                 {
                     Enemy tempEnemy = parentEnemy.GetComponent<Enemy>();
 
-                    tempEnemy.wayPoints.RemoveAt(wayPointId - 1);
-
-                    for (int i = 0; i < tempEnemy.wayPoints.Count; i++)
+                    if (tempEnemy.wayPoints.Count > 0 && tempEnemy.wayPoints.ElementAtOrDefault(wayPointId - 1))
                     {
-                        if (tempEnemy.wayPoints[i].GetComponent<WayPoint>() != null)
+                        tempEnemy.wayPoints.RemoveAt(wayPointId - 1);
+
+                        for (int i = 0; i < tempEnemy.wayPoints.Count; i++)
                         {
-                            tempEnemy.wayPoints[i].GetComponent<WayPoint>().wayPointId = i + 1;
-                            tempEnemy.wayPoints[i].name = "WayPoint" + (i + 1);
+                            if (tempEnemy.wayPoints[i].GetComponent<WayPoint>() != null)
+                            {
+                                tempEnemy.wayPoints[i].GetComponent<WayPoint>().wayPointId = i + 1;
+                                tempEnemy.wayPoints[i].name = "WayPoint" + (i + 1);
+                            }
                         }
                     }
                 }

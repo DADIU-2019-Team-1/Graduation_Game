@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using Team1_GraduationGame.Enemies;
 using UnityEngine;
-using UnityEngine.ProBuilder.MeshOperations;
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
@@ -126,6 +125,7 @@ namespace Team1_GraduationGame.Interaction
                         Gizmos.color = Color.green;
                         Gizmos.DrawWireSphere(wayPoints[i].transform.position, 0.1f);
                         Handles.Label(wayPoints[i].transform.position + (Vector3.up * 0.5f), (i + 1).ToString());
+                        Gizmos.DrawLine(transform.position, wayPoints[i].transform.position);
 
                         Gizmos.color = Color.white;
                         if (i + 1 < wayPoints.Count)

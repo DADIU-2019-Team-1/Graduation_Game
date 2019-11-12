@@ -1,10 +1,11 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Team1_GraduationGame.Enemies;
 using Team1_GraduationGame.Interaction;
 using UnityEditor;
 using UnityEngine;
-using UnityEngine.AI;
 
 namespace Team1_GraduationGame.SaveLoadSystem
 {
@@ -14,18 +15,70 @@ namespace Team1_GraduationGame.SaveLoadSystem
         public SaveLoadManager saveLoadManager;
 
         // Public
+        public int firstSceneBuildIndex = 0;
         public bool drawGizmos = true;
-        public List<GameObject> savePoints;
+        [HideInInspector] public List<GameObject> savePoints;
 
 
         public void Awake()
         {
             saveLoadManager = new SaveLoadManager();
+            saveLoadManager.firstSceneIndex = firstSceneBuildIndex;
 
             if (PlayerPrefs.GetInt("loadGameOnAwake") == 1)
             {
+                PlayerPrefs.SetInt("loadGameOnAwake", 0);
                 saveLoadManager.LoadGame();
             }
+        }
+
+        public void DisableSavingOnSavePoints()
+        {
+            if (savePoints != null && Application.isPlaying)    // Should be called when playing (for debugging)
+                for (int i = 0; i < savePoints.Count; i++)
+                {
+                    if (savePoints[i].GetComponent<SavePoint>() != null)
+                    {
+                        savePoints[i].GetComponent<SavePoint>().savingDisabled = true;
+                    }
+                }
+        }
+
+        public void TeleportToSavePoint(int savePointNumber)
+        {
+            if (savePoints.ElementAtOrDefault(savePointNumber - 1))
+            {
+                if (GameObject.FindGameObjectWithTag("Player") != null)
+                {
+                    GameObject.FindGameObjectWithTag("Player").transform.position =
+                        savePoints[savePointNumber - 1].transform.position + transform.up;
+                }
+            }
+        }
+
+        public void NewGame()
+        {
+            saveLoadManager?.NewGame();
+        }
+
+        public void Continue()
+        {
+            saveLoadManager?.ContinueGame();
+        }
+
+        public void SaveGame()
+        {
+            saveLoadManager?.SaveGame();
+        }
+
+        public void LoadGame()
+        {
+            saveLoadManager?.LoadGame();
+        }
+
+        public void NextLevel()
+        {
+            saveLoadManager?.NextLevel();
         }
 
 #if UNITY_EDITOR
@@ -35,7 +88,7 @@ namespace Team1_GraduationGame.SaveLoadSystem
             {
                 GameObject tempSavePoint;
 
-                tempSavePoint = new GameObject("SafePoint" + (savePoints.Count + 1));
+                tempSavePoint = new GameObject("SavePoint" + (savePoints.Count + 1));
                 tempSavePoint.AddComponent<SavePoint>();
                 tempSavePoint.transform.position = gameObject.transform.position;
                 tempSavePoint.transform.parent = transform;
@@ -52,13 +105,20 @@ namespace Team1_GraduationGame.SaveLoadSystem
             if (drawGizmos && Application.isEditor)
                 if (savePoints != null)
                 {
-                    Gizmos.color = Color.green;
+                    Gizmos.color = Color.magenta;
                     Handles.color = Color.red;
 
                     for (int i = 0; i < savePoints.Count; i++)
                     {
                         Gizmos.DrawWireSphere(savePoints[i].transform.position, 1.0f);
-                        Handles.Label(savePoints[i].transform.position + (Vector3.up * 2.0f), "SavePoint " + i);
+                        Handles.Label(savePoints[i].transform.position + (Vector3.up * 1.0f), "SavePoint " + (i + 1));
+
+                        if (savePoints[i].GetComponent<Collider>() != null)
+                        {
+                            Gizmos.color = Color.white;
+                            Collider tempCollider = savePoints[i].GetComponent<Collider>();
+                            Gizmos.DrawWireCube(tempCollider.bounds.center, savePoints[i].GetComponent<Collider>().bounds.size);
+                        }
                     }
                 }
         }
@@ -77,12 +137,28 @@ namespace Team1_GraduationGame.SaveLoadSystem
 
             var script = target as SavePointManager;
 
-            EditorGUILayout.HelpBox("Please only create new savepoints by using the 'Add SavePoint' button", MessageType.Info);
+            EditorGUILayout.Space();
 
-            if (GUILayout.Button("Add SafePoint"))
+            if (script.savePoints != null)
+            {
+                EditorGUILayout.LabelField(script.savePoints.Count.ToString() + " SavePoints Active");
+            }
+            else
+            {
+                EditorGUILayout.LabelField("0 SavePoints Active");
+            }
+
+            EditorGUILayout.Space();
+
+            EditorGUILayout.HelpBox("Please only create new savepoints by using the 'Add SavePoint' button. IMPORTANT: The first savepoint must be at the player start position of the level!", MessageType.Info);
+
+            if (GUILayout.Button("Add SavePoint"))
             {
                 script.AddSavePoint();
             }
+
+            if (GUI.changed)
+                EditorUtility.SetDirty(script);
         }
     }
 #endif

@@ -1,5 +1,5 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿// Code owner: Jannik Neerdal
+using System.Collections;
 using Cinemachine;
 using UnityEngine;
 using UnityEngine.Playables;
@@ -27,6 +27,9 @@ public class MenuCamera : MonoBehaviour
             railCamera = FindObjectOfType<CinemachineVirtualCamera>();
         if (startingTimeline == null)
             startingTimeline = FindObjectOfType<PlayableDirector>();
+
+        FindObjectOfType<HubMenu>().menuChangeEvent += ChangeLookAt;
+        FindObjectOfType<HubMenu>().startGameEvent += StartGame;
     }
 
     void LateUpdate()
@@ -111,22 +114,6 @@ public class MenuCamera : MonoBehaviour
             startingTimeline.Play();
         }
         _startingGame = true;
-    }
-
-    public IEnumerator StartGameCoroutine()
-    {
-        while (true)
-        {
-            for (int i = 0; i < menuObjectsToSetActivate.Length; i++)
-            {
-                if (menuObjectsToSetActivate[i].GetComponent<CanvasGroup>())
-                {
-                    menuObjectsToSetActivate[i].GetComponent<CanvasGroup>().alpha -= fadeAmount;
-                }
-            }
-            yield return new WaitForSeconds(5.0f);
-            break;
-        }
     }
 
     IEnumerator WaitForTextFade()

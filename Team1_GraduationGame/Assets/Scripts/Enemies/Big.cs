@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using Team1_GraduationGame.Enemies;
+using Team1_GraduationGame.Events;
 using UnityEditor;
 using UnityEngine;
 
@@ -12,10 +13,10 @@ namespace Team1_GraduationGame.Enemies
         private GameObject _player;
         private Animator _animator;
         public Light fieldOfViewLight;
+        public VoidEvent playerDiedEvent;
 
         // Private:
-        private GameObject _parentSpawnPoint;
-        private bool _isSpawned, _isRotating, _turnLeft;
+        private bool _active, _isSpawned, _isRotating, _turnLeft, _updateRotation, _playerSpotted, _lightOn, _timerRunning;
         private int _layerMask, _currentSpawnPoint = 0;
         private Vector3 _lookRangeToVector, _lookRangeFromVector;
         private Quaternion _lookRotation;
@@ -23,8 +24,8 @@ namespace Team1_GraduationGame.Enemies
         // Public:
         [HideInInspector] public List<GameObject> spawnPoints;
         public bool drawGizmos = true;
-        public float spawnActivationDistance = 25.0f, fieldOfView = 90.0f, viewDistance = 20.0f, 
-            headRotateSpeed = 0.05f, rotateWaitTime = 0.0f, lookRangeTo = 230f, lookRangeFrom = 130f;
+        public float spawnActivationDistance = 25.0f, fieldOfView = 65.0f, viewDistance = 20.0f, 
+            rotateDegreesPerSecond = 5.0f, rotateWaitTime = 0.0f, lookRangeTo = 230f, lookRangeFrom = 130f;
         public Color normalConeColor = Color.yellow, aggroConeColor = Color.red;
 
 
@@ -41,52 +42,172 @@ namespace Team1_GraduationGame.Enemies
             _lookRangeToVector = new Vector3(0, lookRangeTo, 0);
             _lookRangeFromVector = new Vector3(0, lookRangeFrom, 0);
 
+            if (fieldOfViewLight != null)
+            {
+                fieldOfViewLight.range = viewDistance;
+                fieldOfViewLight.spotAngle = fieldOfView;
+            }
+
+            _active = true;
         }
 
         private void Start()
         {
+            // TODO remove this after debugging:
             _isRotating = true;
+            _isSpawned = true;
+            _updateRotation = true;
         }
 
         private void FixedUpdate()
         {
-            if (_isRotating)    // TODO make this work
+            if (_active)
             {
-                if (_currentSpawnPoint >= 0 && _currentSpawnPoint < spawnPoints.Count)
+                if (_isSpawned)
                 {
-                    if (_turnLeft)
-                        _lookRotation = Quaternion.Euler(_lookRangeToVector) != Quaternion.identity ? Quaternion.Euler(_lookRangeToVector) : transform.rotation;
-                    else
-                        _lookRotation = Quaternion.Euler(_lookRangeFromVector) != Quaternion.identity ? Quaternion.Euler(_lookRangeFromVector) : transform.rotation;
+                    if (!_lightOn)
+                        UpdateFOVLight(true, false);
 
-                    transform.rotation = Quaternion.Slerp(transform.rotation, _lookRotation, headRotateSpeed * Time.fixedDeltaTime);
-                    //Debug.Log(_lookRotation);
+                    if (_isRotating)
+                    {
+                        if (_updateRotation)
+                        {
+                            _updateRotation = false;
 
-                #if UNITY_EDITOR
-                    Vector3 fwd = _lookRotation * Vector3.forward;
-                    Debug.DrawRay(transform.position, fwd, Color.magenta, 0f, true);
-                #endif
+                            if (_turnLeft)
+                                _lookRotation = Quaternion.Euler(_lookRangeToVector) != Quaternion.identity ? Quaternion.Euler(_lookRangeToVector) : transform.rotation;
+                            else
+                                _lookRotation = Quaternion.Euler(_lookRangeFromVector) != Quaternion.identity ? Quaternion.Euler(_lookRangeFromVector) : transform.rotation;
+                        }
 
-                    //if (transform.rotation.y <= _lookRangeTo[_currentSpawnPoint].y || transform.rotation.y >= _lookRangeFrom[_currentSpawnPoint].y)
-                    //{
-                    //    Debug.Log("DIRECTION SWITCH");
-                    //    _turnLeft = !_turnLeft;
-                    //}
+                        transform.rotation = Quaternion.RotateTowards(transform.rotation, _lookRotation, rotateDegreesPerSecond * Time.fixedDeltaTime);
+
+                        if (transform.rotation.eulerAngles.y >= lookRangeTo - 3.0f && _turnLeft)
+                        {
+                            if (rotateWaitTime > 0 && !_timerRunning)
+                            {
+                                StartCoroutine(WaitTimer());
+                            }
+                            else
+                            {
+                                _turnLeft = false;
+                                _updateRotation = true;
+                            }
+                        }
+                        else if (transform.rotation.eulerAngles.y <= lookRangeFrom + 3.0f && !_turnLeft)
+                        {
+                            if (rotateWaitTime > 0 && !_timerRunning)
+                            {
+                                StartCoroutine(WaitTimer());
+                            }
+                            else
+                            {
+                                _turnLeft = true;
+                                _updateRotation = true;
+                            }
+                        }
+
+                    }
+
+                    if (!_playerSpotted)
+                    {
+                        if (_player != null)
+                        {
+                            Vector3 dir = _player.transform.position - transform.position;
+                            float enemyToPlayerAngle = Vector3.Angle(transform.forward, dir);
+
+                            if (enemyToPlayerAngle < fieldOfView / 2)
+                            {
+                                RaycastHit hit;
+
+                                if (Physics.Raycast(transform.position + transform.up, dir, out hit, viewDistance, _layerMask))
+                                    if (hit.collider.tag == _player.tag)
+                                    {
+                                        Debug.Log("PLAYER SPOTTED");
+                                        _active = false;
+
+                                        transform.LookAt(dir);
+                                        _player.GetComponent<Movement>().Frozen(true);
+
+                                        StartCoroutine(PlayerDied());
+
+                                        if (_lightOn)
+                                            UpdateFOVLight(true, true);
+                                    }
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    if (_lightOn)
+                        UpdateFOVLight(false, false);
+                }
+
+                if (_player != null && spawnPoints != null)
+                {
+                    if (Vector3.Distance(transform.position, _player.transform.position) < spawnActivationDistance && !_isSpawned)
+                    {
+                        Debug.Log("Player CLOSE");
+                        _isRotating = true;
+                        _isSpawned = true;
+                        //_updateRotation = true;
+                    }
+                    else if (Vector3.Distance(transform.position, _player.transform.position) > spawnActivationDistance &&
+                             _isSpawned)
+                    {
+                        // _isRotating = false;
+                        //_isSpawned = false;
+                        //_updateRotation = false;
+                    }
                 }
             }
-
-            if (_player != null && spawnPoints != null)
-            {
-                if (Vector3.Distance(transform.position, _player.transform.position) < spawnActivationDistance)
-                {
-
-                }
-            }
-
-
         }
 
-#if UNITY_EDITOR
+        private void UpdateFOVLight(bool on, bool aggro)
+        {
+            if (fieldOfViewLight != null)
+            {
+                if (on && !aggro)
+                {
+                    fieldOfViewLight.color = normalConeColor;
+                    _lightOn = true;
+                }
+                else if (on && aggro)
+                {
+                    fieldOfViewLight.color = aggroConeColor;
+                    _lightOn = true;
+                }
+                else
+                {
+                    _lightOn = false;
+                }
+            }
+        }
+
+        private IEnumerator PlayerDied()
+        {
+            yield return new WaitForSeconds(5.0f); // TODO Specify amount of time animation takes instead
+            if (playerDiedEvent != null)
+                playerDiedEvent.Raise();
+        }
+
+        private IEnumerator WaitTimer()
+        {
+            _timerRunning = true;
+            _isRotating = false;
+            yield return new WaitForSeconds(rotateWaitTime);
+
+            if (_turnLeft)
+                _turnLeft = false;
+            else
+                _turnLeft = true;
+
+            _updateRotation = true;
+            _timerRunning = false;
+        }
+
+        #if UNITY_EDITOR
         private void OnDrawGizmos()
         {
             if (drawGizmos && Application.isEditor)
@@ -96,9 +217,11 @@ namespace Team1_GraduationGame.Enemies
                 Gizmos.DrawLine(transform.position + transform.up, transform.forward * viewDistance + (transform.position + transform.up));
             }
         }
-#endif
+        #endif
     }
 
+#if UNITY_EDITOR
+    #region Custom Editor
     [CustomEditor(typeof(Big))]
     public class Big_Editor : UnityEditor.Editor
     {
@@ -146,4 +269,6 @@ namespace Team1_GraduationGame.Enemies
         }
         #endregion
     }
+    #endregion
+#endif
 }

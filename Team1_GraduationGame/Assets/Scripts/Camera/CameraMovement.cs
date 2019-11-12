@@ -20,7 +20,7 @@ public class CameraMovement : MonoBehaviour
     // --- Inspector
     [Tooltip("Use to create an array of tags that will be used as focus points. Each object with a tag in this array will be counted as a focus point, if within the focus range.")]
     [TagSelector] [SerializeField] private string[] tagsToFocus;
-    [Tooltip("This value is used to determine the height when the target is far away.")] 
+    [Tooltip("This value is used to determine the height when the target is far away.")]
     [SerializeField] private FloatReference heightDistanceFactor;
     [Tooltip("A higher value makes the camera LookAt more aggressive.")]
     [SerializeField] private FloatReference camLookSpeed;
@@ -42,15 +42,15 @@ public class CameraMovement : MonoBehaviour
 
     private void Awake()
     {
+    }
+
+    void Start()
+    {
         if (GetComponent<Camera>() != null)
             thisCam = GetComponent<Camera>();
         else
             Debug.LogError("This script is not attached to an object with a Camera!");
         startingFOV = thisCam.fieldOfView;
-    }
-
-    void Start()
-    {
         if (player == null)
             player = GameObject.FindGameObjectWithTag("Player").transform;
         if (track == null)
@@ -70,16 +70,15 @@ public class CameraMovement : MonoBehaviour
         transform.LookAt(player);
 
         trackX = _trackPath.gameObject.transform.position.x;
-        if (player.position.x >= (_trackPath.m_Waypoints[0].position.x + trackX) && 
+        if (player.position.x >= (_trackPath.m_Waypoints[0].position.x + trackX) &&
             player.position.x <= _trackPath.m_Waypoints[_trackPath.m_Waypoints.Length - 1].position.x + trackX)
-            {
-                transform.position = new Vector3(player.position.x, railCam.position.y + heightIncrease, railCam.position.z);
-            }
+        {
+            transform.position = new Vector3(player.position.x, railCam.position.y + heightIncrease, railCam.position.z);
+        }
         else
         {
             transform.position = new Vector3(railCam.position.x, railCam.position.y + heightIncrease, railCam.position.z);
         }
-
     }
 
     void FixedUpdate()
@@ -110,7 +109,7 @@ public class CameraMovement : MonoBehaviour
         if (!_endOfRail)
         {
             // Position update
-            transform.position = Vector3.SmoothDamp(transform.position, new Vector3(player.position.x, railCam.position.y + heightIncrease, railCam.position.z),
+            transform.position = Vector3.SmoothDamp(transform.position, new Vector3(player.position.x, railCam.position.y + heightIncrease, railCam.position.z) + _cameraLook.camPosOffset,
                 ref camMovement, camMoveTime.value * Time.deltaTime);
             if (transform.position.x < (_trackPath.m_Waypoints[0].position.x + trackX) || transform.position.x > _trackPath.m_Waypoints[_trackPath.m_Waypoints.Length - 1].position.x + trackX)
                 _endOfRail = true;
@@ -120,7 +119,7 @@ public class CameraMovement : MonoBehaviour
             // Y and Z update
             transform.position = Vector3.SmoothDamp(transform.position, new Vector3(transform.position.x, railCam.position.y + heightIncrease, railCam.position.z),
                 ref camMovement, camMoveTime.value * Time.deltaTime);
-            if (player.position.x >= (_trackPath.m_Waypoints[0].position.x + trackX) && player.position.x <= _trackPath.m_Waypoints[_trackPath.m_Waypoints.Length - 1].position.x + trackX)
+            if (player.position.x + _cameraLook.camPosOffset.x >= (_trackPath.m_Waypoints[0].position.x + trackX) && player.position.x + _cameraLook.camPosOffset.x <= _trackPath.m_Waypoints[_trackPath.m_Waypoints.Length - 1].position.x + trackX)
                 _endOfRail = false;
         }
     }
@@ -130,7 +129,7 @@ public class CameraMovement : MonoBehaviour
         // Rotation update
         lookPosition = CalculateLookPosition(player.position, _cameraLook.camTarget, focusRange.value, focusObjects);
         targetRotation = lookPosition - transform.position != Vector3.zero
-            ? Quaternion.LookRotation(lookPosition - transform.position) : Quaternion.identity;
+            ? Quaternion.LookRotation(lookPosition - transform.position) : transform.rotation;
         transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, camLookSpeed.value * Time.deltaTime);
     }
 

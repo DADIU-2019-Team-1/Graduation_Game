@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 7891406403683870198}
   - component: {fileID: 2176778631625258344}
   - component: {fileID: 1593289953190623653}
-  - component: {fileID: 4846101908441847817}
+  - component: {fileID: 2856297161425197806}
   m_Layer: 0
   m_Name: TempBush
   m_TagString: Untagged
@@ -52,14 +52,14 @@ MeshRenderer:
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
-  m_DynamicOccludee: 1
+  m_DynamicOccludee: 0
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 735b9c16e8aaafd48a87389e50db5f71, type: 2}
+  - {fileID: 2100000, guid: 1e3029d6b1cbcbb4684b44f2cc9367ec, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -80,8 +80,8 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
---- !u!64 &4846101908441847817
-MeshCollider:
+--- !u!135 &2856297161425197806
+SphereCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -90,10 +90,9 @@ MeshCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
-  serializedVersion: 3
-  m_Convex: 0
-  m_CookingOptions: 14
-  m_Mesh: {fileID: 4579454407841743219, guid: c3019b38044dd4b4893c1470109a7e32, type: 3}
+  serializedVersion: 2
+  m_Radius: 1.1514245
+  m_Center: {x: 0.20470077, y: 0.47214878, z: -0.52341175}
 --- !u!1 &5140151583149983419
 GameObject:
   m_ObjectHideFlags: 0
@@ -110,7 +109,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 4294967295
+  m_StaticEditorFlags: 0
   m_IsActive: 1
 --- !u!4 &7545555747006103250
 Transform:

@@ -115,6 +115,7 @@ public class Movement : MonoBehaviour
 
             if (Physics.Raycast(leftToePos.transform.position, Vector3.down, ghostJumpHeight.value) || Physics.Raycast(rightToePos.transform.position, Vector3.down, ghostJumpHeight.value) || Physics.Raycast(leftHeelPos.transform.position, Vector3.down, ghostJumpHeight.value) || Physics.Raycast(rightHeelPos.transform.position, Vector3.down, ghostJumpHeight.value))
             {
+                Debug.Log(true);
                 isJumping = false;
                 _collider.material = null;
             }
@@ -200,11 +201,9 @@ public class Movement : MonoBehaviour
                 {
                     stick.gameObject.SetActive(true);
                     stickLimit.gameObject.SetActive(true);
-
                 }
                 else if (t.position.x > Screen.width / 2)
                 {
-
                     // Swipe movement? Maybe use t.deltaPosition to check change for swiping. 
                     // Could use TouchPhase.Stationary for just jumping?
                 }
@@ -385,7 +384,6 @@ public class Movement : MonoBehaviour
             /*         if(playerRB.velocity.y <= 0) {
                         //playerRB.mass * fallMultiplier.value;
                         playerRB.velocity += Vector3.up * Physics.gravity.y * (fallMultiplier.value -1) * Time.deltaTime;
-
                     } */
             // If the feet are atleast 10 cm away from the ground. 
             isJumping = true;

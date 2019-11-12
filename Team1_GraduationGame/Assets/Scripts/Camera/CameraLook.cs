@@ -91,7 +91,7 @@ public class CameraLook : MonoBehaviour
 
         if (camMovement != null && cmPath.m_Waypoints.Length > 1 && offsetTrack.Length > 1)
         {
-            offsetLerpTime = (camMovement.railCam.position.x - cmPath.m_Waypoints[camMovement.previousTrackIndex].position.x - camMovement.trackX) /
+            offsetTrackLerpValue = (camMovement.railCam.position.x - cmPath.m_Waypoints[camMovement.previousTrackIndex].position.x - camMovement.trackX) /
                              (cmPath.m_Waypoints[camMovement.nextTrackIndex].position.x - cmPath.m_Waypoints[camMovement.previousTrackIndex].position.x);
             offset = Vector3.Lerp(offsetTrack[camMovement.previousTrackIndex].GetPos(), offsetTrack[camMovement.nextTrackIndex].GetPos(), offsetLerpTime);
             cam.fieldOfView = Mathf.Lerp(startingFOV + offsetTrack[camMovement.previousTrackIndex].GetFOV(), startingFOV + offsetTrack[camMovement.nextTrackIndex].GetFOV(), offsetLerpTime);
@@ -108,6 +108,6 @@ public class CameraLook : MonoBehaviour
         {
             Debug.LogError("The offset track does not have enough points to support proper camera look.\nThe length of the track is " + offsetTrack.Length  + " and has to be at least 2!");
         }
-        camTarget = player.position + offset + moveDir;
+        camTarget = player.position + camLookOffset + lookDir;
     }
 }

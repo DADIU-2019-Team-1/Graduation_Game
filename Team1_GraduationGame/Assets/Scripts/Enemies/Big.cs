@@ -16,7 +16,7 @@ namespace Team1_GraduationGame.Enemies
         public VoidEvent playerDiedEvent;
 
         // Private:
-        private bool _active, _isSpawned, _isRotating, _turnLeft, _updateRotation, _playerSpotted, _lightOn, _timerRunning;
+        private bool _active, _isAggro, _isSpawned, _isRotating, _turnLeft, _updateRotation, _playerSpotted, _lightOn, _timerRunning;
         private int _layerMask, _currentSpawnPoint = 0;
         private Vector3 _lookRangeToVector, _lookRangeFromVector, _spawnedPos, _unSpawnedPos;
         private Quaternion _lookRotation;
@@ -25,7 +25,7 @@ namespace Team1_GraduationGame.Enemies
         // Public:
         public bool drawGizmos = true;
         public float spawnActivationDistance = 25.0f, fieldOfView = 65.0f, viewDistance = 20.0f, 
-            rotateDegreesPerSecond = 5.0f, rotateWaitTime = 0.0f, lookRangeTo = 230f, lookRangeFrom = 130f;
+            rotateDegreesPerSecond = 5.0f, rotateWaitTime = 0.0f, lookRangeTo = 230f, lookRangeFrom = 130f, aggroTime = 2.0f;
         public Color normalConeColor = Color.yellow, aggroConeColor = Color.red;
 
 
@@ -120,13 +120,10 @@ namespace Team1_GraduationGame.Enemies
                                 if (Physics.Raycast(transform.position + transform.up, dir, out hit, viewDistance, _layerMask))
                                     if (hit.collider.tag == _player.tag)
                                     {
-                                        Debug.Log("PLAYER SPOTTED");
                                         _active = false;
 
-                                        transform.LookAt(_player.transform.position);
-                                        _player.GetComponent<Movement>().Frozen(true);
-
-                                        StartCoroutine(PlayerDied());
+                                        if (!_isAggro)
+                                            StartCoroutine(Aggro());
 
                                         if (_lightOn)
                                             UpdateFOVLight(true, true);
@@ -177,6 +174,15 @@ namespace Team1_GraduationGame.Enemies
                         _disappear = false;
                 }
             }
+
+            if (_isAggro && !_active)
+            {
+                Vector3 dir = _player.transform.position - transform.position;
+
+                Quaternion rot = Quaternion.LookRotation(_player.transform.position - transform.position) != Quaternion.identity ? Quaternion.LookRotation(_player.transform.position - transform.position) : transform.rotation;
+
+                transform.rotation = Quaternion.RotateTowards(transform.rotation, rot, 85.0f * Time.fixedDeltaTime);
+            }
         }
 
         private void UpdateFOVLight(bool on, bool aggro)
@@ -221,10 +227,42 @@ namespace Team1_GraduationGame.Enemies
 
         private IEnumerator PlayerDied()
         {
+            _player.GetComponent<Movement>().Frozen(true);
+
             yield return new WaitForSeconds(2.0f); // TODO Specify amount of time animation takes instead
             Debug.Log("Player died from Big");
             if (playerDiedEvent != null)
                 playerDiedEvent.Raise();
+        }
+
+        private IEnumerator Aggro()
+        {
+            _isAggro = true;
+
+            yield return new WaitForSeconds(aggroTime);
+
+            Vector3 dir = _player.transform.position - transform.position;
+            RaycastHit hit;
+
+            if (Physics.Raycast(transform.position + transform.up, dir, out hit, viewDistance, _layerMask))
+            {
+                if (hit.collider.tag == _player.tag)
+                {
+                    StartCoroutine(PlayerDied());
+                }
+                else
+                {
+                    UpdateFOVLight(true, false);
+                    _isAggro = false;
+                    _active = true;
+                }
+            }
+            else
+            {
+                UpdateFOVLight(true, false);
+                _isAggro = false;
+                _active = true;
+            }
         }
 
         private IEnumerator WaitTimer()

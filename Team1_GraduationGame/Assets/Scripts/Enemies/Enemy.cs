@@ -164,6 +164,14 @@
 
         }
 
+        private void LateUpdate()
+        {
+            if (_navMeshAgent?.velocity.magnitude < 0.10)
+            {
+                
+            }
+        }
+
         private void FixedUpdate()
         {
             if (_active)

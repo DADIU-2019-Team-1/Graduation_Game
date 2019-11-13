@@ -9,6 +9,9 @@ public class PlayerDeath : MonoBehaviour
     public Animator fadeBlackAnimator;
     public SavePointManager spManager;
     private bool _allowStateChange;
+    private bool _hasFaded;
+    public float animationDuration = 1.0f;
+
     public void Start()
     {
         fadeBlackAnimator = GetComponent<Animator>();
@@ -17,7 +20,7 @@ public class PlayerDeath : MonoBehaviour
 
     public void PlayerRespawn()
     {
-        StartCoroutine("FadeHandler");
+        StartCoroutine(FadeHandler());
 
 
     }
@@ -33,23 +36,34 @@ public class PlayerDeath : MonoBehaviour
     private IEnumerator FadeHandler()
     {
         Debug.Log("Entered coroutine");
-        fadeBlackAnimator.SetTrigger("FadeOut");
-        if (_allowStateChange && (fadeBlackAnimator.GetCurrentAnimatorStateInfo(0).IsName("FadeIn") || fadeBlackAnimator.GetCurrentAnimatorStateInfo(0).IsName("Idle")))
-        {
-            Debug.Log("Entered first if FadeHandler");
-            spManager.LoadToPreviousCheckpoint();
-            _allowStateChange = false;
-        }
+        //while (!_hasFaded)
+        //{
+        //    fadeBlackAnimator.SetTrigger("FadeOut");
+        //    if (_allowStateChange /* && (fadeBlackAnimator.GetCurrentAnimatorStateInfo(0).IsName("FadeIn") ||
+        //                              fadeBlackAnimator.GetCurrentAnimatorStateInfo(0).IsName("Idle")) */)
+        //    {
+        //        Debug.Log("Entered first if FadeHandler");
+        //        spManager.LoadToPreviousCheckpoint();
+        //        _allowStateChange = false;
+        //    }
 
 
 
-        if (_allowStateChange && fadeBlackAnimator.GetCurrentAnimatorStateInfo(0).IsName("FadeOut"))
-        {
-            Debug.Log("Entered Second if FadeHandler");
-            fadeBlackAnimator.SetTrigger("FadeIn");
-            _allowStateChange = false;
-            yield return null;
-        }
-        
+        //    if (_allowStateChange/* && fadeBlackAnimator.GetCurrentAnimatorStateInfo(0).IsName("FadeOut")*/)
+        //    {
+        //        Debug.Log("Entered Second if FadeHandler");
+        //        fadeBlackAnimator.SetTrigger("FadeIn");
+        //        _allowStateChange = false;
+        //        _hasFaded = true;
+        //        yield return _hasFaded;
+        //    }
+        //}
+        fadeBlackAnimator.SetTrigger(("FadeOut"));
+        yield return new WaitForSeconds(animationDuration);
+
+        spManager.LoadToPreviousCheckpoint();
+
+        fadeBlackAnimator.SetTrigger(("FadeIn"));
+
     }
 }

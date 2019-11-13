@@ -14343,7 +14343,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &429099684
 Transform:
   m_ObjectHideFlags: 0
@@ -33771,7 +33771,7 @@ MonoBehaviour:
   soundEvents:
   - thisSoundManager: {fileID: 0}
     soundEventId: 0
-    triggerTypeSelector: 0
+    triggerTypeSelector: 2
     triggerDelay: 0
     triggerEvent: {fileID: 0}
     triggerFloatEvent: {fileID: 0}
@@ -33818,9 +33818,62 @@ MonoBehaviour:
     setCustomRtpcFloat: 0
     isActive: 1
     objDistanceToRtpc: 0
-    checkForTag: 0
+    checkForTag: 1
     useValueFromEvent: 0
-    tag: 
+    tag: Player
+  - thisSoundManager: {fileID: 0}
+    soundEventId: 0
+    triggerTypeSelector: 2
+    triggerDelay: 0
+    triggerEvent: {fileID: 0}
+    triggerFloatEvent: {fileID: 0}
+    triggerIntEvent: {fileID: 0}
+    rtpcRoleBool: 1
+    customValue: 80
+    transitionDuration: 0
+    behaviorSelector: 3
+    soundManagerGameObject: {fileID: 997311602}
+    targetGameObject: {fileID: 0}
+    secondGameObject: {fileID: 0}
+    callbacks: []
+    wwiseEvent:
+      idInternal: 0
+      valueGuidInternal: 
+      WwiseObjectReference: {fileID: 0}
+    wwiseState:
+      idInternal: 0
+      valueGuidInternal: 
+      groupIdInternal: 0
+      groupGuidInternal: 
+      WwiseObjectReference: {fileID: 11400000, guid: 3530b8b68e94c374e91ba51b5b329d01,
+        type: 2}
+    wwiseSwitch:
+      idInternal: 0
+      valueGuidInternal: 
+      groupIdInternal: 0
+      groupGuidInternal: 
+      WwiseObjectReference: {fileID: 0}
+    wwiseRTPC:
+      idInternal: 0
+      valueGuidInternal: 
+      WwiseObjectReference: {fileID: 11400000, guid: a3b2b7cc0d680c4489e12ae695cb7a0f,
+        type: 2}
+    rtpcScriptableObject: {fileID: 0}
+    actionOnEventType: 0
+    curveInterpolation: 0
+    multiPositionType: 0
+    multiPosTypeLabel: 0
+    useCallbacks: 0
+    useActionOnEvent: 0
+    rtpcGlobal: 0
+    runOnce: 0
+    useOtherGameObject: 0
+    setCustomRtpcFloat: 1
+    isActive: 1
+    objDistanceToRtpc: 0
+    checkForTag: 1
+    useValueFromEvent: 0
+    tag: Player
 --- !u!114 &997311607
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -42509,7 +42562,7 @@ MonoBehaviour:
   soundEvents:
   - thisSoundManager: {fileID: 0}
     soundEventId: 0
-    triggerTypeSelector: 0
+    triggerTypeSelector: 2
     triggerDelay: 0
     triggerEvent: {fileID: 0}
     triggerFloatEvent: {fileID: 0}
@@ -42556,9 +42609,62 @@ MonoBehaviour:
     setCustomRtpcFloat: 0
     isActive: 1
     objDistanceToRtpc: 0
-    checkForTag: 0
+    checkForTag: 1
     useValueFromEvent: 0
-    tag: 
+    tag: Player
+  - thisSoundManager: {fileID: 0}
+    soundEventId: 0
+    triggerTypeSelector: 2
+    triggerDelay: 0
+    triggerEvent: {fileID: 0}
+    triggerFloatEvent: {fileID: 0}
+    triggerIntEvent: {fileID: 0}
+    rtpcRoleBool: 1
+    customValue: 50
+    transitionDuration: 0
+    behaviorSelector: 3
+    soundManagerGameObject: {fileID: 1323137002}
+    targetGameObject: {fileID: 0}
+    secondGameObject: {fileID: 0}
+    callbacks: []
+    wwiseEvent:
+      idInternal: 0
+      valueGuidInternal: 
+      WwiseObjectReference: {fileID: 0}
+    wwiseState:
+      idInternal: 0
+      valueGuidInternal: 
+      groupIdInternal: 0
+      groupGuidInternal: 
+      WwiseObjectReference: {fileID: 11400000, guid: d5b0aea41cae83d48bf86b76d78da4ca,
+        type: 2}
+    wwiseSwitch:
+      idInternal: 0
+      valueGuidInternal: 
+      groupIdInternal: 0
+      groupGuidInternal: 
+      WwiseObjectReference: {fileID: 0}
+    wwiseRTPC:
+      idInternal: 0
+      valueGuidInternal: 
+      WwiseObjectReference: {fileID: 11400000, guid: a3b2b7cc0d680c4489e12ae695cb7a0f,
+        type: 2}
+    rtpcScriptableObject: {fileID: 0}
+    actionOnEventType: 0
+    curveInterpolation: 0
+    multiPositionType: 0
+    multiPosTypeLabel: 0
+    useCallbacks: 0
+    useActionOnEvent: 0
+    rtpcGlobal: 0
+    runOnce: 0
+    useOtherGameObject: 0
+    setCustomRtpcFloat: 1
+    isActive: 1
+    objDistanceToRtpc: 0
+    checkForTag: 1
+    useValueFromEvent: 0
+    tag: Player
 --- !u!114 &1323137006
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -56010,7 +56116,12 @@ PrefabInstance:
     - target: {fileID: 6086938879507949215, guid: bffd6909a73269946945f759803e30be,
         type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6086938879507949215, guid: bffd6909a73269946945f759803e30be,
+        type: 3}
+      propertyPath: m_TagString
+      value: Wwise
       objectReference: {fileID: 0}
     - target: {fileID: 5370165979892479981, guid: bffd6909a73269946945f759803e30be,
         type: 3}
@@ -56110,6 +56221,26 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 11400000, guid: 7929e0df34885664f8542fb93c5d40ce,
         type: 2}
+    - target: {fileID: 2186950586717431779, guid: bffd6909a73269946945f759803e30be,
+        type: 3}
+      propertyPath: soundEvents.Array.data[2].isActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2186950586717431779, guid: bffd6909a73269946945f759803e30be,
+        type: 3}
+      propertyPath: soundEvents.Array.data[2].runOnce
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2186950586717431779, guid: bffd6909a73269946945f759803e30be,
+        type: 3}
+      propertyPath: soundEvents.Array.data[0].runOnce
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2186950586717431779, guid: bffd6909a73269946945f759803e30be,
+        type: 3}
+      propertyPath: soundEvents.Array.data[1].runOnce
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: bffd6909a73269946945f759803e30be, type: 3}
 --- !u!1001 &1721006590

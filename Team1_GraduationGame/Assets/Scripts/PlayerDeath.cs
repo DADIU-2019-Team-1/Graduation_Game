@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿// Code Owner: Nicolai Hansen
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Team1_GraduationGame.SaveLoadSystem;
@@ -63,6 +64,7 @@ public class PlayerDeath : MonoBehaviour
 
         spManager.LoadToPreviousCheckpoint();
 
+        yield return new WaitForSeconds(0.75f);
         fadeBlackAnimator.SetTrigger(("FadeIn"));
 
     }

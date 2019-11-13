@@ -35,7 +35,7 @@
 
         // Private variables:
         private bool _active, _timerRunning, _destinationSet, _isRotating, _isAggro, 
-            _isHugging, _rotatingAtWp, _inTriggerZone, _accelerating, _hearingDisabled, _goingReversePath;
+            _isHugging, _rotatingAtWp, _inTriggerZone, _accelerating, _hearingDisabled, _goingReversePath, _giveUpPursuitRunning;
         private NavMeshPath _path;
         private Vector3 _lastSighting;
         private Vector3[] _wayPointRotations;
@@ -51,7 +51,7 @@
         void Awake()
         {
             _player = GameObject.FindGameObjectWithTag("Player");
-            _layerMask = ~LayerMask.GetMask("Enemies");
+            _layerMask = ~LayerMask.GetMask("Enemies"); // Use later for raycast to ignore other enemies
 
             if (_player != null && thisEnemy != null)
             {
@@ -125,7 +125,7 @@
         #endregion
 
         /// <summary>
-        /// 0 = Walking, 1 = Running, 2 = Attacking
+        /// Switches the state of this enemy. 0 = Walking, 1 = Running, 2 = Attacking
         /// </summary>
         public void SwitchState(int state)
         {
@@ -164,15 +164,14 @@
         {
             if (_active)
             {
-
                 if (!_isAggro && wayPoints != null && wayPoints.Count != 0)
                 {
                     if (_state != 0)
                         SwitchState(0); // Switch to walking
 
-                    if (Vector3.Distance(transform.position, wayPoints[_currentWayPoint].transform.position) < wayPointReachRange)
+                    if (Vector3.Distance(transform.position, wayPoints[_currentWayPoint].transform.position) < wayPointReachRange)  // Checks whether enemy reached its waypoint
                     {   
-                        if (!rotateAtWaypoints)
+                        if (!rotateAtWaypoints) // Checks if enemy should rotate in specific direction at waypoint.
                             _isRotating = false;
                         else
                             _rotatingAtWp = true;
@@ -180,7 +179,7 @@
                         UpdatePathRoutine();
                     }
 
-                    if (!_destinationSet)   // If no destination set
+                    if (!_destinationSet)   // If no destination set for the nav mesh agent
                     {
                         _navMeshAgent.SetDestination(wayPoints[_currentWayPoint].transform.position);
                         _rotatingAtWp = false;
@@ -189,7 +188,7 @@
                     }
                 }
 
-                if (alwaysAggro)
+                if (alwaysAggro)    // If always aggro, this enemy should always know the position of the player
                 {
                     _lastSighting = _player.transform.position;
                 }
@@ -199,13 +198,13 @@
                     if (!_isHugging && _state != 1)
                         SwitchState(1); // Switch to running
 
-                    _navMeshAgent.SetDestination(_lastSighting);
+                    _navMeshAgent.SetDestination(_lastSighting);    // Go to last sighting, will be updated constantly if player still in range
                     _isRotating = true;
 
                     if (Vector3.Distance(transform.position, _player.transform.position) <
-                        thisEnemy.embraceDistance && _isAggro)
+                        thisEnemy.embraceDistance && _isAggro)  // Is player in hug/attack range?
                     {
-                        if (!_isHugging)
+                        if (!_isHugging)    // If not already hugging/attacking then start hug/attack co-routine.
                             StartCoroutine(EnemyHug());
                     }
 
@@ -213,27 +212,24 @@
                     {
                         _destinationSet = false;
                         _isAggro = false;
+                        StopCoroutine(PursuitTimeout()); // Stop pursuit timeout, as enemy reached last sighting
                     }
                 }
 
-                if (_isRotating)
+                if (_isRotating)    // Is true if enemy should be rotating
                 {
                     Quaternion lookRotation;
 
-                    if (!_rotatingAtWp || _isAggro)
+                    if (!_rotatingAtWp || _isAggro) // Checks whether enemy should currently rotate using a waypoint rotate value or walking direction
                         lookRotation = _navMeshAgent.velocity.normalized != Vector3.zero ? Quaternion.LookRotation(_navMeshAgent.velocity.normalized) : transform.rotation;
                     else
                         lookRotation = Quaternion.Euler(_wayPointRotations[_currentWayPoint]) != Quaternion.identity ? Quaternion.Euler(_wayPointRotations[_currentWayPoint]) : transform.rotation;
 
                     transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, _navMeshAgent.angularSpeed);
 
-                    #if UNITY_EDITOR
-                    Vector3 fwd = lookRotation * Vector3.forward;
-                    Debug.DrawRay(transform.position, fwd, Color.magenta, 0f, true);
-                    #endif
                 }
 
-                if (_accelerating && _state != 2)
+                if (_accelerating && _state != 2)   // Used for accelerating the enemy speed, instead of instant speed change:
                 {
                     if (_navMeshAgent.speed < _targetSpeed)
                     {
@@ -249,7 +245,7 @@
                     }
                 }
 
-                if (!_hearingDisabled)
+                if (!_hearingDisabled)  // Enemy hearing:
                 {
                     _hearingDistance = thisEnemy.hearingDistance;
                     if (playerMoveState.value == 2)
@@ -263,10 +259,19 @@
 
                 ViewLightConeControl();
 
+                if (_inTriggerZone && _giveUpPursuitRunning)    // this part is used to time out the pursuit, if enemy cannot reach player last sighting
+                {
+                    StopCoroutine(PursuitTimeout());
+                }
+                else if (!_inTriggerZone && !_giveUpPursuitRunning)
+                {
+                    StartCoroutine(PursuitTimeout());
+                }
+
             }
         }
 
-        private void UpdatePathRoutine()
+        private void UpdatePathRoutine()    // Updates destination to next waypoint
         {
             if (!useWaitTime)
             {
@@ -469,6 +474,17 @@
                 else
                     _isAggro = true;
             }
+        }
+
+        private IEnumerator PursuitTimeout()
+        {
+            _giveUpPursuitRunning = true;
+            yield return new WaitForSeconds(10);
+
+            _destinationSet = false;
+            _isAggro = false;
+
+            _giveUpPursuitRunning = false;
         }
 
         private IEnumerator PushDownDelay()

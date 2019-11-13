@@ -129,6 +129,7 @@ public class Movement : MonoBehaviour
 
             if (Physics.Raycast(leftToePos.transform.position, Vector3.down, ghostJumpHeight.value) || Physics.Raycast(rightToePos.transform.position, Vector3.down, ghostJumpHeight.value) || Physics.Raycast(leftHeelPos.transform.position, Vector3.down, ghostJumpHeight.value) || Physics.Raycast(rightHeelPos.transform.position, Vector3.down, ghostJumpHeight.value))
             {
+                Debug.Log(true);
                 isJumping = false;
                 for (int j = 0; j < jumpPlatforms.Count; j++)
                 {

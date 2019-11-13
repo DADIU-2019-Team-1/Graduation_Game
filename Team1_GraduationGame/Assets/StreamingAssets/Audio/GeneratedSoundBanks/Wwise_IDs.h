@@ -15,10 +15,12 @@ namespace AK
     {
         static const AkUniqueID PLAY_AMB_OUTSIDE = 121174090U;
         static const AkUniqueID PLAY_BREATH = 3698047240U;
+        static const AkUniqueID PLAY_ECHOCALL_MEMORY_PLAYLIST = 3108390310U;
         static const AkUniqueID PLAY_FS_LAND = 741775033U;
         static const AkUniqueID PLAY_FS_SYSTEM = 2874393337U;
         static const AkUniqueID PLAY_HMC_MUSIC_SYSTEM_LEVEL1 = 2367316274U;
         static const AkUniqueID PLAY_RUMBLE_BLEND = 728827549U;
+        static const AkUniqueID STOP_ECHOCALL_MEMORY_PLAYLIST = 3307487220U;
     } // namespace EVENTS
 
     namespace STATES

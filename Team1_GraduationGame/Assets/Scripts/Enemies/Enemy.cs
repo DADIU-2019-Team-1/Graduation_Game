@@ -259,15 +259,17 @@
 
                 ViewLightConeControl();
 
-                if (_inTriggerZone && _giveUpPursuitRunning)    // this part is used to time out the pursuit, if enemy cannot reach player last sighting
+                if (!alwaysAggro)
                 {
-                    StopCoroutine(PursuitTimeout());
+                    if (_inTriggerZone && _giveUpPursuitRunning)    // this part is used to time out the pursuit, if enemy cannot reach player last sighting
+                    {
+                        StopCoroutine(PursuitTimeout());
+                    }
+                    else if (!_inTriggerZone && !_giveUpPursuitRunning)
+                    {
+                        StartCoroutine(PursuitTimeout());
+                    }
                 }
-                else if (!_inTriggerZone && !_giveUpPursuitRunning)
-                {
-                    StartCoroutine(PursuitTimeout());
-                }
-
             }
         }
 

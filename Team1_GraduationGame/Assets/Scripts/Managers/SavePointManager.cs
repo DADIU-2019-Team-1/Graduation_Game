@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Team1_GraduationGame.Enemies;
+using Team1_GraduationGame.Events;
 using Team1_GraduationGame.Interaction;
 using UnityEditor;
 using UnityEngine;
@@ -13,6 +14,8 @@ namespace Team1_GraduationGame.SaveLoadSystem
     {
         // References:
         public SaveLoadManager saveLoadManager;
+        public VoidEvent newGameEvent;
+        public VoidEvent inMenuEvent;
 
         // Public
         public int firstSceneBuildIndex = 0;
@@ -39,6 +42,7 @@ namespace Team1_GraduationGame.SaveLoadSystem
             {
                 FindObjectOfType<HubMenu>().startGameEvent += NewGame;
                 FindObjectOfType<HubMenu>().continueGameEvent += Continue;
+                newGameEvent?.Raise();
             }
         }
 
@@ -81,6 +85,11 @@ namespace Team1_GraduationGame.SaveLoadSystem
                     tempPlayer.GetComponent<Movement>().Frozen(false);
                 }
             }
+        }
+
+        private void InMenu()
+        {
+            inMenuEvent?.Raise();
         }
 
         public void NewGame()

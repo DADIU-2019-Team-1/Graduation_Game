@@ -311,7 +311,7 @@ SphereCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 1
+  m_Radius: 0.61
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!195 &6373199372352939523
 NavMeshAgent:
@@ -363,6 +363,7 @@ MonoBehaviour:
   alwaysAggro: 0
   normalConeColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
   aggroConeColor: {r: 1, g: 0, b: 0, a: 1}
+  animNoiseHeardTime: 2
   useGlobalWaitTime: 1
   waitTime: 0
 --- !u!114 &6687820084175197433
@@ -407,11 +408,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 6373199372352939544}
     m_Modifications:
-    - target: {fileID: 7409109872908366446, guid: 18d146ee5e7f77447a68cefb68f8697a,
-        type: 3}
-      propertyPath: m_Name
-      value: FriendPrefab
-      objectReference: {fileID: 0}
     - target: {fileID: 5803217923746824317, guid: 18d146ee5e7f77447a68cefb68f8697a,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -481,6 +477,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalScale.y
       value: 1.4631101
+      objectReference: {fileID: 0}
+    - target: {fileID: 7409109872908366446, guid: 18d146ee5e7f77447a68cefb68f8697a,
+        type: 3}
+      propertyPath: m_Name
+      value: FriendPrefab
       objectReference: {fileID: 0}
     - target: {fileID: 4468459467088375047, guid: 18d146ee5e7f77447a68cefb68f8697a,
         type: 3}

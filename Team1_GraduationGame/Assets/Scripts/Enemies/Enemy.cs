@@ -264,8 +264,15 @@
                         _hearingDistance = thisEnemy.hearingDistance * hearingSensitivity;
 
                     if (HearingPathLength() < thisEnemy.hearingDistance && playerMoveState.value != 0 &&
-                        playerMoveState.value != 1 && !_playerHeard)
-                        StartCoroutine(PlayerHeard());
+                        playerMoveState.value != 1 /*&& !_playerHeard*/)
+                    {
+                        _lastSighting = _player.transform.position;
+
+                        if (!_isAggro)
+                            StartCoroutine(EnemyAggro());
+
+                        //StartCoroutine(PlayerHeard());    // TODO: Enable later YYY
+                    }
                     else if (Vector3.Distance(transform.position, _player.transform.position) < minimumAlwaysDetectRange
                     ) // If very very close the enemy will "hear" the player no matter what
                     {
@@ -430,6 +437,7 @@
         private IEnumerator PlayerHeard()
         {
             _playerHeard = true;
+            _active = false;
             _lastSighting = _player.transform.position;
             _animator?.SetTrigger("NoiseHeard");
 
@@ -439,6 +447,7 @@
                 StartCoroutine(EnemyAggro());
 
             _playerHeard = false;
+            _active = true;
         }
 
         private IEnumerator WaitTimer()
@@ -471,6 +480,7 @@
             SwitchState(2); // Switch to attacking
 
             transform.LookAt(_player.transform.position);
+            alwaysAggro = true;
 
             if (_movement != null)
             {
@@ -482,8 +492,7 @@
             if (Vector3.Distance(transform.position, _player.transform.position) <
                 thisEnemy.embraceDistance)
             {
-                // _animator?.
-                // TODO - YYY play hug/attack animation
+                _animator?.SetTrigger("Attack"); // TODO - YYY play hug/attack animation
 
                 Debug.Log("THE PLAYER DIED");
 
@@ -491,6 +500,7 @@
             }
             else
             {
+                alwaysAggro = false;
                 _active = true;
                 _isHugging = false;
                 if (!alwaysAggro)

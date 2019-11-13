@@ -113,6 +113,9 @@ namespace Team1_GraduationGame.SaveLoadSystem
             {
                 GameObject tempSavePoint;
 
+                if (savePoints == null)
+                    savePoints = new List<GameObject>();
+
                 tempSavePoint = new GameObject("SavePoint" + (savePoints.Count + 1));
                 tempSavePoint.AddComponent<SavePoint>();
                 tempSavePoint.transform.position = gameObject.transform.position;

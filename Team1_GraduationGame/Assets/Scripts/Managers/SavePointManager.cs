@@ -38,16 +38,11 @@ namespace Team1_GraduationGame.SaveLoadSystem
 
         private void Start()
         {
-            if (FindObjectOfType<HubMenu>() != null )
+            if (FindObjectOfType<HubMenu>() != null)
             {
-                //FindObjectOfType<HubMenu>().startGameEvent += NewGame;
+                FindObjectOfType<HubMenu>().startGameEvent += NewGame;
                 FindObjectOfType<HubMenu>().continueGameEvent += Continue;
                 newGameEvent?.Raise();
-            }
-
-            if (FindObjectOfType<InGameUI>() != null)
-            {
-                FindObjectOfType<InGameUI>().gamePauseState += InMenu;
             }
         }
 
@@ -92,7 +87,7 @@ namespace Team1_GraduationGame.SaveLoadSystem
             }
         }
 
-        public void InMenu(bool inMenu)
+        private void InMenu()
         {
             inMenuEvent?.Raise();
         }

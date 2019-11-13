@@ -115,6 +115,7 @@ public class Movement : MonoBehaviour
 
             if (Physics.Raycast(leftToePos.transform.position, Vector3.down, ghostJumpHeight.value) || Physics.Raycast(rightToePos.transform.position, Vector3.down, ghostJumpHeight.value) || Physics.Raycast(leftHeelPos.transform.position, Vector3.down, ghostJumpHeight.value) || Physics.Raycast(rightHeelPos.transform.position, Vector3.down, ghostJumpHeight.value))
             {
+                Debug.Log(true);
                 isJumping = false;
                 _collider.material = null;
             }
@@ -257,7 +258,7 @@ public class Movement : MonoBehaviour
 
         // Making sure Mouse only runs on PC.
         // If this says && !UNITY_ANDROID, delete it. This is used to test on Unity Remote
-#if UNITY_EDITOR && !UNITY_ANDROID
+#if UNITY_EDITOR
         if (Input.GetMouseButtonDown(0))
         {
             initTouchPos = Input.mousePosition;

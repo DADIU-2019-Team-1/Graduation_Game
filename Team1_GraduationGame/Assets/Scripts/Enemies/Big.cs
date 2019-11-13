@@ -55,6 +55,8 @@ namespace Team1_GraduationGame.Enemies
             _spawnedPos = transform.position + (transform.up * 6);
 
             _active = true;
+
+            _animator?.SetBool("Patrolling", false);
         }
 
         private void FixedUpdate()
@@ -145,8 +147,6 @@ namespace Team1_GraduationGame.Enemies
                 {
                     if (Vector3.Distance(transform.position, _player.transform.position) < spawnActivationDistance && !_isSpawned)
                     {
-                        _animator?.SetTrigger("Appearing"); // TODO - YYY play appearing animation
-
                         _appear = true;
                         _disappear = false;
                         UpdateFOVLight(true, false);
@@ -156,8 +156,6 @@ namespace Team1_GraduationGame.Enemies
                     else if (Vector3.Distance(transform.position, _player.transform.position) > spawnActivationDistance &&
                              _isSpawned)
                     {
-                        _animator?.SetTrigger("Disappearing"); // TODO - YYY play disappearing animation
-
                         _disappear = true;
                         _appear = false;
                         UpdateFOVLight(false, false);
@@ -211,22 +209,28 @@ namespace Team1_GraduationGame.Enemies
                 }
                 else
                     _lightOn = false;
-                
             }
         }
 
         private IEnumerator ChangeState(bool isActive)
         {
+            if (isActive)
+                _animator?.SetTrigger("Appearing");
+            else
+                _animator?.SetTrigger("Disappearing");
+
             yield return new WaitForSeconds(changeStateTime);
 
             if (isActive)
             {
+                _animator?.SetBool("Patrolling", true);
                 _isRotating = true;
                 _isSpawned = true;
                 _updateRotation = true;
             }
             else
             {
+                _animator?.SetBool("Patrolling", false);
                 _isRotating = false;
                 _isSpawned = false;
                 _updateRotation = false;
@@ -249,6 +253,8 @@ namespace Team1_GraduationGame.Enemies
         private IEnumerator Aggro()
         {
             _isAggro = true;
+            _animator?.SetBool("Patrolling", false);
+            _animator?.SetTrigger("Spotted");
 
             yield return new WaitForSeconds(aggroTime);
 
@@ -266,6 +272,7 @@ namespace Team1_GraduationGame.Enemies
                     UpdateFOVLight(true, false);
                     _isAggro = false;
                     _active = true;
+                    _animator?.SetBool("Patrolling", true);
                 }
             }
             else
@@ -273,6 +280,7 @@ namespace Team1_GraduationGame.Enemies
                 UpdateFOVLight(true, false);
                 _isAggro = false;
                 _active = true;
+                _animator?.SetBool("Patrolling", true);
             }
         }
 

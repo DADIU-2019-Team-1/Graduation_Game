@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Team1_GraduationGame.Interaction;
+using Team1_GraduationGame.Events;
 
 [RequireComponent(typeof(Rigidbody), typeof(SphereCollider))]
 
@@ -15,6 +16,9 @@ public class Movement : MonoBehaviour
     private float swipeTimeTimer, currentRotationSpeed;
     private Vector3 initTouchPos, currTouchPos, joystickPos, stickLimitPos, direction, velocity;
     private Quaternion lookRotation, _prevousRotation = Quaternion.identity;
+    public VoidEvent jumpEvent, attackEvent;
+    public IntEvent stateChangeEvent;
+
     private Vector2 swipeStartPos, swipeEndPos, swipeDirection;
 
     [Tooltip("Put the joystick here")]
@@ -34,8 +38,6 @@ public class Movement : MonoBehaviour
     private RaycastHit[] hit;
 
     public GameObject leftHeelPos, rightHeelPos, rightToePos, leftToePos;
-
-    public PhysicMaterial jumpMaterial;
 
     private CapsuleCollider _collider;
 
@@ -65,6 +67,9 @@ public class Movement : MonoBehaviour
     
     [TagSelector] [SerializeField] private string[] tagsToInteractWith;
     [SerializeField] private List<GameObject> interactableObjects;
+    
+    [TagSelector] [SerializeField] private string[] jumpPlatformTag;
+    [SerializeField] private List<GameObject> jumpPlatforms;
 
     private void Awake()
     {
@@ -85,6 +90,11 @@ public class Movement : MonoBehaviour
         for (int i = 0; i < tagsToInteractWith.Length; i++)
             interactableObjects.AddRange(GameObject.FindGameObjectsWithTag(tagsToInteractWith[i]));
         moveState.value = 0;
+        
+        for (int j = 0; j < jumpPlatformTag.Length; j++)
+        {
+            jumpPlatforms.AddRange(GameObject.FindGameObjectsWithTag(jumpPlatformTag[j]));
+        }
     }
 
     void Update() {
@@ -108,7 +118,11 @@ public class Movement : MonoBehaviour
             {
                 Debug.Log(true);
                 isJumping = false;
-                _collider.material = null;
+                for (int j = 0; j < jumpPlatforms.Count; j++)
+                {
+                    jumpPlatforms[j].GetComponent<Collider>().material = null;
+                }
+                
             }
         }
         // Making sure touches only run on Android
@@ -152,10 +166,10 @@ public class Movement : MonoBehaviour
                 }
 
             }
-            else if ((t.phase == TouchPhase.Moved || t.phase == TouchPhase.Stationary) && leftTouch == t.fingerId && canMove && !moveFrozen && leftTouch == t.fingerId)
+            else if ((t.phase == TouchPhase.Moved || t.phase == TouchPhase.Stationary) && leftTouch == t.fingerId && canMove && !moveFrozen)
             {
 
-                Vector3 offset = new Vector3(t.position.x - stickLimit.transform.position.x, 0,  t.position.y-stickLimit.transform.position.y);
+                Vector3 offset = new Vector3(t.position.x - stickLimit.transform.position.x, 0,  t.position.y - stickLimit.transform.position.y);
                 direction = Vector3.ClampMagnitude(offset, 1.0f);
                 float dragDist = Vector2.Distance(stick.transform.position, stickLimit.transform.position);
                 Vector2 joyDiff = t.position - new Vector2(stickLimit.transform.position.x, stickLimit.transform.position.y);
@@ -204,10 +218,12 @@ public class Movement : MonoBehaviour
                     leftTouch = 99;
                     stick.gameObject.SetActive(false);
                     stickLimit.gameObject.SetActive(false);
-                    Debug.Log("Joystick Status in close statement: " + stickLimit.gameObject.activeInHierarchy);
+                    
                     if (canMove)
                         canMove = false;
                     //}
+
+                    direction = new Vector3(0,0,0);
 
                 }
                 if (t.phase == TouchPhase.Ended && rightTouch == t.fingerId)
@@ -222,10 +238,10 @@ public class Movement : MonoBehaviour
                     {
                         playerAttack(worldDirection);
                     }
-                    else if (swipeTimeTimer + swipeTimeThreshold.value >= Time.time && !moveFrozen)
+                    else if (/*swipeTimeTimer + swipeTimeThreshold.value >= Time.time &&*/ !moveFrozen)
                     {
                         // Jump feels sluggish inside else if, but when only if, triggers every time and you never swipe/do both always.
-                        playerJump(Vector3.up, jumpHeight.value);
+                        playerJump(Vector3.up + direction, jumpHeight.value);
                         //Debug.Log("Jump");
                     }
 
@@ -354,13 +370,24 @@ public class Movement : MonoBehaviour
 
         // TODO: Seperate rotation acceleration from speed acceleration
         transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * rotationSpeed.value);
-        playerRB.MovePosition(transform.position + (direction + transform.forward /* * rotation factor can be inserted  here*/).normalized * ((targetSpeed - currentSpeed.value)*accelerationFactor + currentSpeed.value) * Time.deltaTime);
+        if (!isJumping)
+        {
+            playerRB.MovePosition(transform.position + (direction + transform.forward /* * rotation factor can be inserted  here*/).normalized * ((targetSpeed - currentSpeed.value)*accelerationFactor + currentSpeed.value) * Time.deltaTime);
+        }
+        else
+        {
+            playerRB.AddForce(direction * jumpSpeed.value * Time.deltaTime, ForceMode.VelocityChange);
+        }
     }
 
     private void playerJump(Vector3 direction, float jumpHeight)
     {
         if (!isJumping && (Physics.Raycast(leftToePos.transform.position, Vector3.down, ghostJumpHeight.value) || Physics.Raycast(rightToePos.transform.position, Vector3.down, ghostJumpHeight.value) || Physics.Raycast(leftHeelPos.transform.position, Vector3.down, ghostJumpHeight.value) || Physics.Raycast(rightHeelPos.transform.position, Vector3.down, ghostJumpHeight.value)))
         {
+            for (int j = 0; j < jumpPlatforms.Count; j++)
+            {
+                jumpPlatforms[j].GetComponent<Collider>().material = _jumpMaterial;
+            }
             playerRB.AddForce(direction * jumpHeight, ForceMode.Impulse);
             /*         if(playerRB.velocity.y <= 0) {
                         //playerRB.mass * fallMultiplier.value;
@@ -368,9 +395,11 @@ public class Movement : MonoBehaviour
                     } */
             // If the feet are atleast 10 cm away from the ground. 
             isJumping = true;
-
-
-            _collider.material = _jumpMaterial;
+            if (jumpEvent != null) 
+                jumpEvent.Raise();
+            
+            Debug.Log("Is Jumping: " + isJumping);
+            //_collider.material = _jumpMaterial;
 
 
         }
@@ -412,6 +441,8 @@ public class Movement : MonoBehaviour
                 {
                     // interact
                     interactableObjects[i].GetComponent<Interactable>().Interact();
+                    if (attackEvent != null)
+                        attackEvent.Raise();
                     // Debug.Log("INTERACT!!!!!");
                     // interactableObjects[i].interact();
                 }
@@ -440,7 +471,6 @@ public class Movement : MonoBehaviour
         else if (currentSpeed.value <= sneakSpeed.value + 0.05f)
         {
             moveState.value = 1;
-
         }
         else if (currentSpeed.value <= walkSpeed.value + 0.05f)
         {
@@ -451,8 +481,8 @@ public class Movement : MonoBehaviour
         {
             moveState.value = 3;
         }
-
-
+        if(stateChangeEvent != null)
+            stateChangeEvent.Raise(moveState.value);
     }
 
     public Trajectory GetMovementTrajectory()
@@ -475,20 +505,18 @@ public class Movement : MonoBehaviour
         return new Trajectory(trajPoints);
     }
     
-    private PhysicMaterial setJumpMaterial() {
-        
-        Collider coll = GetComponent<CapsuleCollider>();
-
+    private PhysicMaterial setJumpMaterial() 
+    {
         PhysicMaterial newPhysMaterial;
-        newPhysMaterial = coll.material;
-        
-        newPhysMaterial.bounciness = 0;
-        newPhysMaterial.frictionCombine = 0;
-        newPhysMaterial.dynamicFriction = 0;
-        newPhysMaterial.staticFriction = 0;
-        newPhysMaterial.name = "Jump_Material";
-        
-
+        newPhysMaterial = new PhysicMaterial
+        {
+            bounciness = 0,
+            frictionCombine = 0,
+            dynamicFriction = 0,
+            staticFriction = 0,
+            bounceCombine = 0,
+            name = "Jump_Material"
+        };
         return newPhysMaterial;
     }
 }

@@ -102,6 +102,11 @@ namespace Team1_GraduationGame.Managers
                                 script.soundEvents[i].tag = EditorGUILayout.TextField("Tag", script.soundEvents[i].tag);
                             }
                         }
+                        else if ((int) script.soundEvents[i].triggerTypeSelector == 6)
+                        {
+                            SerializedProperty triggerIntEventProp = serializedObject.FindProperty("soundEvents.Array.data[" + i + "].triggerIntEvent");
+                            EditorGUILayout.PropertyField(triggerIntEventProp);
+                        }
 
                         script.soundEvents[i].runOnce = EditorGUILayout.Toggle("Run Once", script.soundEvents[i].runOnce);
 

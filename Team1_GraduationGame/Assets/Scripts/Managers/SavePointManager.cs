@@ -18,6 +18,7 @@ namespace Team1_GraduationGame.SaveLoadSystem
         public int firstSceneBuildIndex = 0;
         public bool drawGizmos = true;
         [HideInInspector] public List<GameObject> savePoints;
+        [HideInInspector] public int previousCheckPoint = 1;
 
 
         public void Awake()
@@ -29,6 +30,15 @@ namespace Team1_GraduationGame.SaveLoadSystem
             {
                 PlayerPrefs.SetInt("loadGameOnAwake", 0);
                 saveLoadManager.LoadGame();
+            }
+        }
+
+        private void Start()
+        {
+            if (FindObjectOfType<HubMenu>() != null)
+            {
+                FindObjectOfType<HubMenu>().startGameEvent += NewGame;
+                FindObjectOfType<HubMenu>().continueGameEvent += Continue;
             }
         }
 
@@ -50,8 +60,23 @@ namespace Team1_GraduationGame.SaveLoadSystem
             {
                 if (GameObject.FindGameObjectWithTag("Player") != null)
                 {
-                    GameObject.FindGameObjectWithTag("Player").transform.position =
+                    GameObject tempPlayer = GameObject.FindGameObjectWithTag("Player");
+                    tempPlayer.transform.position =
                         savePoints[savePointNumber - 1].transform.position + transform.up;
+
+                    tempPlayer.GetComponent<Movement>().Frozen(false);
+                }
+            }
+        }
+
+        public void LoadToPreviousCheckpoint()
+        {
+            if (savePoints.ElementAtOrDefault(previousCheckPoint - 1))
+            {
+                if (GameObject.FindGameObjectWithTag("Player") != null)
+                {
+                    GameObject.FindGameObjectWithTag("Player").transform.position =
+                        savePoints[previousCheckPoint - 1].transform.position + transform.up;
                 }
             }
         }

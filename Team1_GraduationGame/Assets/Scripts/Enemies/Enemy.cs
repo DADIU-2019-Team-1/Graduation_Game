@@ -23,6 +23,7 @@
         private GameObject _player;
         private Movement _movement;
         private NavMeshAgent _navMeshAgent;
+        private Animator _animator;
         [HideInInspector] public List<GameObject> wayPoints;
         [HideInInspector] public GameObject parentWayPoint;
 
@@ -30,12 +31,13 @@
         public float wayPointReachRange = 1.0f, hearingSensitivity = 2.0f, minimumAlwaysDetectRange = 1.3f;
         public bool drawGizmos = true, useWaitTime, rotateAtWaypoints, loopWaypointRoutine = true, alwaysAggro;
         public Color normalConeColor = Color.yellow, aggroConeColor = Color.red;
+        public float animNoiseHeardTime = 2.0f;
         [HideInInspector] public bool useGlobalWaitTime = true;
         [HideInInspector] public float waitTime = 0.0f;
 
         // Private variables:
-        private bool _active, _timerRunning, _destinationSet, _isRotating, _isAggro, 
-            _isHugging, _rotatingAtWp, _inTriggerZone, _accelerating, _hearingDisabled, _goingReversePath;
+        private bool _active, _timerRunning, _destinationSet, _isRotating, _isAggro, _playerHeard,
+            _isHugging, _rotatingAtWp, _inTriggerZone, _accelerating, _hearingDisabled, _goingReversePath, _giveUpPursuitRunning;
         private NavMeshPath _path;
         private Vector3 _lastSighting;
         private Vector3[] _wayPointRotations;
@@ -47,11 +49,10 @@
         #endregion
 
         #region Awake
-
         void Awake()
         {
             _player = GameObject.FindGameObjectWithTag("Player");
-            _layerMask = ~LayerMask.GetMask("Enemies");
+            _layerMask = ~LayerMask.GetMask("Enemies"); // Use later for raycast to ignore other enemies
 
             if (_player != null && thisEnemy != null)
             {
@@ -118,6 +119,9 @@
                         viewConeLight.gameObject.SetActive(false);
                 }
 
+                if (GetComponent<Animator>() != null)
+                    _animator = GetComponent<Animator>();
+
                 if (alwaysAggro)
                     _isAggro = true;
             }
@@ -125,7 +129,7 @@
         #endregion
 
         /// <summary>
-        /// 0 = Walking, 1 = Running, 2 = Attacking
+        /// Switches the state of this enemy. 0 = Walking, 1 = Running, 2 = Attacking
         /// </summary>
         public void SwitchState(int state)
         {
@@ -160,19 +164,26 @@
 
         }
 
+        private void LateUpdate()
+        {
+            if (_navMeshAgent?.velocity.magnitude < 0.10)
+            {
+                
+            }
+        }
+
         private void FixedUpdate()
         {
             if (_active)
             {
-
                 if (!_isAggro && wayPoints != null && wayPoints.Count != 0)
                 {
                     if (_state != 0)
                         SwitchState(0); // Switch to walking
 
-                    if (Vector3.Distance(transform.position, wayPoints[_currentWayPoint].transform.position) < wayPointReachRange)
+                    if (Vector3.Distance(transform.position, wayPoints[_currentWayPoint].transform.position) < wayPointReachRange)  // Checks whether enemy reached its waypoint
                     {   
-                        if (!rotateAtWaypoints)
+                        if (!rotateAtWaypoints) // Checks if enemy should rotate in specific direction at waypoint.
                             _isRotating = false;
                         else
                             _rotatingAtWp = true;
@@ -180,7 +191,7 @@
                         UpdatePathRoutine();
                     }
 
-                    if (!_destinationSet)   // If no destination set
+                    if (!_destinationSet)   // If no destination set for the nav mesh agent
                     {
                         _navMeshAgent.SetDestination(wayPoints[_currentWayPoint].transform.position);
                         _rotatingAtWp = false;
@@ -189,7 +200,7 @@
                     }
                 }
 
-                if (alwaysAggro)
+                if (alwaysAggro)    // If always aggro, this enemy should always know the position of the player
                 {
                     _lastSighting = _player.transform.position;
                 }
@@ -199,13 +210,13 @@
                     if (!_isHugging && _state != 1)
                         SwitchState(1); // Switch to running
 
-                    _navMeshAgent.SetDestination(_lastSighting);
+                    _navMeshAgent.SetDestination(_lastSighting);    // Go to last sighting, will be updated constantly if player still in range
                     _isRotating = true;
 
                     if (Vector3.Distance(transform.position, _player.transform.position) <
-                        thisEnemy.embraceDistance && _isAggro)
+                        thisEnemy.embraceDistance && _isAggro)  // Is player in hug/attack range?
                     {
-                        if (!_isHugging)
+                        if (!_isHugging)    // If not already hugging/attacking then start hug/attack co-routine.
                             StartCoroutine(EnemyHug());
                     }
 
@@ -213,27 +224,24 @@
                     {
                         _destinationSet = false;
                         _isAggro = false;
+                        StopCoroutine(PursuitTimeout()); // Stop pursuit timeout, as enemy reached last sighting
                     }
                 }
 
-                if (_isRotating)
+                if (_isRotating)    // Is true if enemy should be rotating
                 {
                     Quaternion lookRotation;
 
-                    if (!_rotatingAtWp || _isAggro)
+                    if (!_rotatingAtWp || _isAggro) // Checks whether enemy should currently rotate using a waypoint rotate value or walking direction
                         lookRotation = _navMeshAgent.velocity.normalized != Vector3.zero ? Quaternion.LookRotation(_navMeshAgent.velocity.normalized) : transform.rotation;
                     else
                         lookRotation = Quaternion.Euler(_wayPointRotations[_currentWayPoint]) != Quaternion.identity ? Quaternion.Euler(_wayPointRotations[_currentWayPoint]) : transform.rotation;
 
                     transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, _navMeshAgent.angularSpeed);
 
-                    #if UNITY_EDITOR
-                    Vector3 fwd = lookRotation * Vector3.forward;
-                    Debug.DrawRay(transform.position, fwd, Color.magenta, 0f, true);
-                    #endif
                 }
 
-                if (_accelerating && _state != 2)
+                if (_accelerating && _state != 2)   // Used for accelerating the enemy speed, instead of instant speed change:
                 {
                     if (_navMeshAgent.speed < _targetSpeed)
                     {
@@ -249,24 +257,49 @@
                     }
                 }
 
-                if (!_hearingDisabled)
+                if (!_hearingDisabled && !_isAggro)  // Enemy hearing:
                 {
                     _hearingDistance = thisEnemy.hearingDistance;
                     if (playerMoveState.value == 2)
                         _hearingDistance = thisEnemy.hearingDistance * hearingSensitivity;
 
-                    if (HearingPathLength() < thisEnemy.hearingDistance && playerMoveState.value != 0 && playerMoveState.value != 1)
-                        PlayerHeard();
-                    else if (Vector3.Distance(transform.position, _player.transform.position) < minimumAlwaysDetectRange) // If very very close the enemy will hear the player no matter what
-                        PlayerHeard();
+                    if (HearingPathLength() < thisEnemy.hearingDistance && playerMoveState.value != 0 &&
+                        playerMoveState.value != 1 /*&& !_playerHeard*/)
+                    {
+                        _lastSighting = _player.transform.position;
+
+                        if (!_isAggro)
+                            StartCoroutine(EnemyAggro());
+
+                        //StartCoroutine(PlayerHeard());    // TODO: Enable later YYY
+                    }
+                    else if (Vector3.Distance(transform.position, _player.transform.position) < minimumAlwaysDetectRange
+                    ) // If very very close the enemy will "hear" the player no matter what
+                    {
+                        _lastSighting = _player.transform.position;
+
+                        if (!_isAggro)
+                            StartCoroutine(EnemyAggro());
+                    }
                 }
 
                 ViewLightConeControl();
 
+                if (!alwaysAggro)
+                {
+                    if (_inTriggerZone && _giveUpPursuitRunning)    // this part is used to time out the pursuit, if enemy cannot reach player last sighting
+                    {
+                        StopCoroutine(PursuitTimeout());
+                    }
+                    else if (!_inTriggerZone && !_giveUpPursuitRunning)
+                    {
+                        StartCoroutine(PursuitTimeout());
+                    }
+                }
             }
         }
 
-        private void UpdatePathRoutine()
+        private void UpdatePathRoutine()    // Updates destination to next waypoint
         {
             if (!useWaitTime)
             {
@@ -330,19 +363,10 @@
 
         private void OnTriggerExit(Collider col)
         {
-            if (_active)
-                if (col.tag == _player.tag)
-                {
-                    _inTriggerZone = false;
-                }
-        }
-
-        private void PlayerHeard()
-        {
-            _lastSighting = _player.transform.position;
-
-            if (!_isAggro)
-                StartCoroutine(EnemyAggro());
+            if (col.tag == _player.tag)
+            {
+                _inTriggerZone = false;
+            }
         }
 
         public void PushDown()
@@ -352,18 +376,15 @@
                 _active = false;
                 _navMeshAgent.isStopped = true;
 
-                // TODO - YYY play lie down/knocked down animation
+                _animator?.SetTrigger("PushedDown"); // TODO - YYY play lie down/knocked down animation
 
                 viewConeLight.gameObject.SetActive(true);
                 viewConeLight.color = Color.green;
 
                 StopCoroutine(EnemyHug());  // Stop hug if hugging
 
-                if (_movement != null)
-                {
-                    _movement.Frozen(false);
-                }
-
+                _movement?.Frozen(false);
+                
                 StartCoroutine(PushDownDelay());
             }
         }
@@ -412,6 +433,22 @@
 
         #region Co-Routines
 
+        private IEnumerator PlayerHeard()
+        {
+            _playerHeard = true;
+            _active = false;
+            _lastSighting = _player.transform.position;
+            _animator?.SetTrigger("NoiseHeard");
+
+            yield return new WaitForSeconds(animNoiseHeardTime);
+
+            if (!_isAggro)
+                StartCoroutine(EnemyAggro());
+
+            _playerHeard = false;
+            _active = true;
+        }
+
         private IEnumerator WaitTimer()
         {
             if (_waitTimes[_currentWayPoint] > 0)
@@ -442,6 +479,7 @@
             SwitchState(2); // Switch to attacking
 
             transform.LookAt(_player.transform.position);
+            alwaysAggro = true;
 
             if (_movement != null)
             {
@@ -453,15 +491,16 @@
             if (Vector3.Distance(transform.position, _player.transform.position) <
                 thisEnemy.embraceDistance)
             {
-                Debug.Log("THE PLAYER DIED");
+                _animator?.SetTrigger("Attack"); // TODO - YYY play hug/attack animation
 
-                if (playerDiedEvent != null)
-                {
-                    playerDiedEvent.Raise();
-                }
+                Debug.Log("THE PLAYER DIED");
+                alwaysAggro = false;
+
+                playerDiedEvent?.Raise();
             }
             else
             {
+                alwaysAggro = false;
                 _active = true;
                 _isHugging = false;
                 if (!alwaysAggro)
@@ -469,6 +508,17 @@
                 else
                     _isAggro = true;
             }
+        }
+
+        private IEnumerator PursuitTimeout()
+        {
+            _giveUpPursuitRunning = true;
+            yield return new WaitForSeconds(10);
+
+            _destinationSet = false;
+            _isAggro = false;
+
+            _giveUpPursuitRunning = false;
         }
 
         private IEnumerator PushDownDelay()

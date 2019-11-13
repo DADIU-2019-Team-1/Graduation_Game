@@ -198,14 +198,17 @@ namespace Team1_GraduationGame.Managers
             OnTriggerEnter,
             OnTriggerExit,
             Start,
-            ExternalRaise
+            ExternalRaise,
+            IntEvent
         }
         [HideInInspector] public EventTypeEnum triggerTypeSelector;
         [HideInInspector] public SoundVoidEventListener soundEventListener;
         [HideInInspector] public SoundFloatEventListener soundFloatEventListener;
+        [HideInInspector] public SoundIntEventListener soundIntEventListener;
         [HideInInspector] public float triggerDelay = 0.0f;
         [HideInInspector] public VoidEvent triggerEvent;
         [HideInInspector] public FloatEvent triggerFloatEvent;
+        [HideInInspector] public IntEvent triggerIntEvent;
         [HideInInspector] public bool rtpcRoleBool;
         private bool _eventFired = false;
         private float _parsedValue = 0;
@@ -523,6 +526,12 @@ namespace Team1_GraduationGame.Managers
                 Debug.Log(tempFloat);
                 SoundEventClass.EventRaised(tempFloat);
             }
+            else if (item.GetType() == typeof(int))
+            {
+                float tempInt = int.Parse(item.ToString());
+                Debug.Log(tempInt);
+                SoundEventClass.EventRaised(tempInt);
+            }
 
         }
     }
@@ -534,6 +543,9 @@ namespace Team1_GraduationGame.Managers
     public class SoundFloatEventListener : SoundEventListener<float, FloatEvent, SoundEvent>
     {
     }
-    #endregion
 
+    public class SoundIntEventListener : SoundEventListener<int, IntEvent, SoundEvent>
+    {
+    }
+    #endregion
 }

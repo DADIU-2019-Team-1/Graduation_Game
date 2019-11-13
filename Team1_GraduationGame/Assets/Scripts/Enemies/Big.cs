@@ -16,16 +16,16 @@ namespace Team1_GraduationGame.Enemies
         public VoidEvent playerDiedEvent;
 
         // Private:
-        private bool _active, _isSpawned, _isRotating, _turnLeft, _updateRotation, _playerSpotted, _lightOn, _timerRunning;
+        private bool _active, _isAggro, _isSpawned, _isRotating, _turnLeft, _updateRotation, _playerSpotted, _lightOn, _timerRunning;
         private int _layerMask, _currentSpawnPoint = 0;
-        private Vector3 _lookRangeToVector, _lookRangeFromVector;
+        private Vector3 _lookRangeToVector, _lookRangeFromVector, _spawnedPos, _unSpawnedPos;
         private Quaternion _lookRotation;
+        private bool _appear, _disappear; // TODO: Remove this later (they are used as placeholders for animation atm.)
 
         // Public:
-        [HideInInspector] public List<GameObject> spawnPoints;
         public bool drawGizmos = true;
         public float spawnActivationDistance = 25.0f, fieldOfView = 65.0f, viewDistance = 20.0f, 
-            rotateDegreesPerSecond = 5.0f, rotateWaitTime = 0.0f, lookRangeTo = 230f, lookRangeFrom = 130f;
+            rotateDegreesPerSecond = 5.0f, rotateWaitTime = 0.0f, lookRangeTo = 230f, lookRangeFrom = 130f, aggroTime = 2.0f;
         public Color normalConeColor = Color.yellow, aggroConeColor = Color.red;
 
 
@@ -48,15 +48,10 @@ namespace Team1_GraduationGame.Enemies
                 fieldOfViewLight.spotAngle = fieldOfView;
             }
 
-            _active = true;
-        }
+            _unSpawnedPos = transform.position;
+            _spawnedPos = transform.position + (transform.up * 6);
 
-        private void Start()
-        {
-            // TODO remove this after debugging:
-            _isRotating = true;
-            _isSpawned = true;
-            _updateRotation = true;
+            _active = true;
         }
 
         private void FixedUpdate()
@@ -86,9 +81,10 @@ namespace Team1_GraduationGame.Enemies
                         {
                             if (rotateWaitTime > 0 && !_timerRunning)
                             {
+                                _turnLeft = false;
                                 StartCoroutine(WaitTimer());
                             }
-                            else
+                            else if (!_timerRunning)
                             {
                                 _turnLeft = false;
                                 _updateRotation = true;
@@ -98,15 +94,16 @@ namespace Team1_GraduationGame.Enemies
                         {
                             if (rotateWaitTime > 0 && !_timerRunning)
                             {
+                                _turnLeft = true;
+                                _updateRotation = true;
                                 StartCoroutine(WaitTimer());
                             }
-                            else
+                            else if (!_timerRunning)
                             {
                                 _turnLeft = true;
                                 _updateRotation = true;
                             }
                         }
-
                     }
 
                     if (!_playerSpotted)
@@ -123,13 +120,10 @@ namespace Team1_GraduationGame.Enemies
                                 if (Physics.Raycast(transform.position + transform.up, dir, out hit, viewDistance, _layerMask))
                                     if (hit.collider.tag == _player.tag)
                                     {
-                                        Debug.Log("PLAYER SPOTTED");
                                         _active = false;
 
-                                        transform.LookAt(dir);
-                                        _player.GetComponent<Movement>().Frozen(true);
-
-                                        StartCoroutine(PlayerDied());
+                                        if (!_isAggro)
+                                            StartCoroutine(Aggro());
 
                                         if (_lightOn)
                                             UpdateFOVLight(true, true);
@@ -144,23 +138,50 @@ namespace Team1_GraduationGame.Enemies
                         UpdateFOVLight(false, false);
                 }
 
-                if (_player != null && spawnPoints != null)
+                if (_player != null)
                 {
                     if (Vector3.Distance(transform.position, _player.transform.position) < spawnActivationDistance && !_isSpawned)
                     {
-                        Debug.Log("Player CLOSE");
-                        _isRotating = true;
-                        _isSpawned = true;
-                        //_updateRotation = true;
+                        _appear = true;
+                        _disappear = false;
+                        UpdateFOVLight(true, false);
+                        StopCoroutine(ChangeState(false));
+                        StartCoroutine(ChangeState(true));
                     }
                     else if (Vector3.Distance(transform.position, _player.transform.position) > spawnActivationDistance &&
                              _isSpawned)
                     {
-                        // _isRotating = false;
-                        //_isSpawned = false;
-                        //_updateRotation = false;
+                        _disappear = true;
+                        _appear = false;
+                        UpdateFOVLight(false, false);
+                        StopCoroutine(ChangeState(true));
+                        StartCoroutine(ChangeState(false));
                     }
                 }
+
+                if (_appear && !_disappear)
+                {
+                    transform.position = Vector3.Lerp(transform.position, _spawnedPos, Time.fixedDeltaTime);
+
+                    if (transform.position == _spawnedPos)
+                        _appear = false;
+                }
+                else if (_disappear && !_appear)
+                {
+                    transform.position = Vector3.Lerp(transform.position, _unSpawnedPos, Time.fixedDeltaTime);
+
+                    if (transform.position == _unSpawnedPos)
+                        _disappear = false;
+                }
+            }
+
+            if (_isAggro && !_active)
+            {
+                Vector3 dir = _player.transform.position - transform.position;
+
+                Quaternion rot = Quaternion.LookRotation(_player.transform.position - transform.position) != Quaternion.identity ? Quaternion.LookRotation(_player.transform.position - transform.position) : transform.rotation;
+
+                transform.rotation = Quaternion.RotateTowards(transform.rotation, rot, 85.0f * Time.fixedDeltaTime);
             }
         }
 
@@ -185,11 +206,63 @@ namespace Team1_GraduationGame.Enemies
             }
         }
 
+        private IEnumerator ChangeState(bool isActive)
+        {
+            yield return new WaitForSeconds(3.0f);
+
+            if (isActive)
+            {
+                _isRotating = true;
+                _isSpawned = true;
+                _updateRotation = true;
+            }
+            else
+            {
+                _isRotating = false;
+                _isSpawned = false;
+                _updateRotation = false;
+            }
+
+        }
+
         private IEnumerator PlayerDied()
         {
-            yield return new WaitForSeconds(5.0f); // TODO Specify amount of time animation takes instead
+            _player.GetComponent<Movement>().Frozen(true);
+
+            yield return new WaitForSeconds(2.0f); // TODO Specify amount of time animation takes instead
+            Debug.Log("Player died from Big");
             if (playerDiedEvent != null)
                 playerDiedEvent.Raise();
+        }
+
+        private IEnumerator Aggro()
+        {
+            _isAggro = true;
+
+            yield return new WaitForSeconds(aggroTime);
+
+            Vector3 dir = _player.transform.position - transform.position;
+            RaycastHit hit;
+
+            if (Physics.Raycast(transform.position + transform.up, dir, out hit, viewDistance, _layerMask))
+            {
+                if (hit.collider.tag == _player.tag)
+                {
+                    StartCoroutine(PlayerDied());
+                }
+                else
+                {
+                    UpdateFOVLight(true, false);
+                    _isAggro = false;
+                    _active = true;
+                }
+            }
+            else
+            {
+                UpdateFOVLight(true, false);
+                _isAggro = false;
+                _active = true;
+            }
         }
 
         private IEnumerator WaitTimer()
@@ -198,11 +271,7 @@ namespace Team1_GraduationGame.Enemies
             _isRotating = false;
             yield return new WaitForSeconds(rotateWaitTime);
 
-            if (_turnLeft)
-                _turnLeft = false;
-            else
-                _turnLeft = true;
-
+            _isRotating = true;
             _updateRotation = true;
             _timerRunning = false;
         }
@@ -225,25 +294,11 @@ namespace Team1_GraduationGame.Enemies
     [CustomEditor(typeof(Big))]
     public class Big_Editor : UnityEditor.Editor
     {
-        private GUIStyle _style = new GUIStyle();
-        private GameObject _parentWayPoint;
-        private bool _runOnce;
-
         public override void OnInspectorGUI()
         {
-            if (!_runOnce)
-            {
-                _style.fontStyle = FontStyle.Bold;
-                _style.alignment = TextAnchor.MiddleCenter;
-                _style.fontSize = 14;
-                _runOnce = true;
-            }
-
             DrawDefaultInspector(); // for other non-HideInInspector fields
 
             var script = target as Big;
-
-            DrawUILine();
 
             serializedObject.ApplyModifiedProperties();
 
@@ -252,22 +307,6 @@ namespace Team1_GraduationGame.Enemies
                 EditorUtility.SetDirty(script);
             }
         }
-
-        #region DrawUILine function
-        public static void DrawUILine()
-        {
-            Color color = new Color(1, 1, 1, 0.3f);
-            int thickness = 1;
-            int padding = 8;
-
-            Rect r = EditorGUILayout.GetControlRect(GUILayout.Height(padding + thickness));
-            r.height = thickness;
-            r.y += padding / 2;
-            r.x -= 2;
-            r.width += 6;
-            EditorGUI.DrawRect(r, color);
-        }
-        #endregion
     }
     #endregion
 #endif

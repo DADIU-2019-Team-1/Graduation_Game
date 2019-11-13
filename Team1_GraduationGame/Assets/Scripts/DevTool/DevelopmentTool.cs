@@ -34,6 +34,11 @@ namespace Team1_GraduationGame.DevelopmentTools
 
         private void Awake()
         {
+            if (thisSavePointManager == null)
+            {
+                thisSavePointManager = GameObject.FindObjectOfType<SavePointManager>();
+            }
+
             if (thisSavePointManager == null && warningText != null)
             {
                 warningText.gameObject.SetActive(true);

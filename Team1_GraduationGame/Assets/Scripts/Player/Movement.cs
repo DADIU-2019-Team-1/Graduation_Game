@@ -1,8 +1,10 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Team1_GraduationGame.Interaction;
 using Team1_GraduationGame.Events;
+using UnityEditor;
 
 [RequireComponent(typeof(Rigidbody), typeof(SphereCollider))]
 
@@ -10,12 +12,13 @@ public class Movement : MonoBehaviour
 {
     private Rigidbody playerRB;
     private bool touchStart = false, canMove = false, canJump = true, canPush, isJumping = false, moveFrozen = false;
-    private float currentRotSpeed, maxRotSpeed = 5.0f, calculatedRotSpeed;
+    private float rotationSpeedCurrent, rotationSpeedMax = 5.0f, rotationSpeedGoal, rotationAccelerationFactor = 0.1f, rotationAngleReactionFactor = 0.1f,
+        targetSpeed;
 
     [SerializeField] private float accelerationFactor = 0.1f;
-    private float swipeTimeTimer, currentRotationSpeed;
-    private Vector3 initTouchPos, currTouchPos, joystickPos, stickLimitPos, direction, velocity;
-    private Quaternion lookRotation, _prevousRotation = Quaternion.identity;
+    private float swipeTimeTimer;
+    private Vector3 initTouchPos, currTouchPos, joystickPos, stickLimitPos, direction = Vector3.zero, velocity;
+    private Quaternion lookRotation;
     public VoidEvent jumpEvent, attackEvent;
     public IntEvent stateChangeEvent;
 
@@ -26,7 +29,7 @@ public class Movement : MonoBehaviour
     [Tooltip("Put the joystick border here")]
     public Transform stickLimit;
 
-    public FloatReference sneakSpeed, walkSpeed, runSpeed, rotationSpeed, jumpHeight, fallMultiplier, attackRange, swipeTimeThreshold;
+    public FloatReference sneakSpeed, walkSpeed, runSpeed, rotationSpeed, jumpHeight, jumpSpeed, fallMultiplier, attackRange, swipeTimeThreshold;
     public IntReference radius, attackDegree, swipePixelDistance;
 
     private PhysicMaterial _jumpMaterial;
@@ -73,6 +76,8 @@ public class Movement : MonoBehaviour
 
     private void Awake()
     {
+        playerRB = GetComponent<Rigidbody>();
+        moveState.value = 0;
         mm = GetComponent<MotionMatching>();
         trajPoints = new TrajectoryPoint[mm.pointsPerTrajectory];
 
@@ -84,13 +89,9 @@ public class Movement : MonoBehaviour
     }
     void Start()
     {
-        playerRB = GetComponent<Rigidbody>();
-
         interactableObjects = new List<GameObject>();
         for (int i = 0; i < tagsToInteractWith.Length; i++)
             interactableObjects.AddRange(GameObject.FindGameObjectsWithTag(tagsToInteractWith[i]));
-        moveState.value = 0;
-        
         for (int j = 0; j < jumpPlatformTag.Length; j++)
         {
             jumpPlatforms.AddRange(GameObject.FindGameObjectsWithTag(jumpPlatformTag[j]));
@@ -99,7 +100,6 @@ public class Movement : MonoBehaviour
 
     void Update() {
         currentSpeed.value = Vector3.Distance(transform.position, _previousPosition) / Time.fixedDeltaTime;
-        currentRotationSpeed = Quaternion.Angle(transform.rotation, _prevousRotation) / Time.fixedDeltaTime;
         lookRotation = direction != Vector3.zero ? Quaternion.LookRotation(direction) : Quaternion.identity;
         velocity = direction.normalized * currentSpeed.value;
     }
@@ -107,7 +107,6 @@ public class Movement : MonoBehaviour
     void FixedUpdate()
     {
         _previousPosition = transform.position;
-        _prevousRotation = transform.rotation;
         if (playerRB.velocity.y <= 0 && isJumping)
         {
             //playerRB.mass * fallMultiplier.value;
@@ -176,26 +175,8 @@ public class Movement : MonoBehaviour
                 // Need new clamping.
                 joyDiff = Vector2.ClampMagnitude(joyDiff, radius.value);
 
-                if (dragDist <= radius.value * idleThreshold)
-                {
-                    //movePlayer(direction,0);
-                    //moveState.value = 0;
-                }
-                else if (dragDist > radius.value * idleThreshold && dragDist <= radius.value * sneakThreshold)
-                {
-                    movePlayer(direction, sneakSpeed.value);
-                    //moveState.value = 1;
-                }
-                else if (dragDist > radius.value * sneakThreshold && dragDist < radius.value * runThreshold)
-                {
-                    movePlayer(direction, walkSpeed.value);
-                    //moveState.value = 2;
-                }
-                else if (dragDist >= radius.value * runThreshold)
-                {
-                    movePlayer(direction, runSpeed.value);
-                    //moveState.value = 3;
-                }
+                PlayerMoveRequest(dragDist);
+
                 stick.transform.position = joyDiff + new Vector2(stickLimit.transform.position.x, stickLimit.transform.position.y);
                 // t.deltaPosition; is a Vector2 of the difference between the last frame to its position this frame. 
 /*                 if (stickLimit.transform.position.x < Screen.width / 2)
@@ -328,24 +309,7 @@ public class Movement : MonoBehaviour
             Vector2 joyDiff = Input.mousePosition - stickLimit.transform.position;
             joyDiff = Vector2.ClampMagnitude(joyDiff, radius.value);
 
-            if (dragDist <= radius.value * idleThreshold)
-            {
-                // Empty
-            }
-            else if (dragDist <= radius.value * sneakThreshold)
-            {
-                movePlayer(direction, sneakSpeed.value);
-            }
-            else if (dragDist > radius.value * sneakThreshold && dragDist < radius.value * runThreshold)
-            {
-                movePlayer(direction, walkSpeed.value);
-            }
-            else if (dragDist >= radius.value * runThreshold)
-            {
-                movePlayer(direction, runSpeed.value);
-            }
-
-
+            PlayerMoveRequest(dragDist);
 
             stick.transform.position = joyDiff + new Vector2(stickLimit.transform.position.x, stickLimit.transform.position.y);
         }
@@ -354,25 +318,52 @@ public class Movement : MonoBehaviour
             stick.gameObject.SetActive(false);
             stickLimit.gameObject.SetActive(false);
             canMove = false;
-
             direction = Vector3.zero;
+            rotationSpeedCurrent = 0.0f;
         }
 #endif
         SetState();
     }
 
-    private void movePlayer(Vector3 direction, float targetSpeed)
+    private void PlayerMoveRequest(float dragDist)
     {
-        Vector3 currentVelocity = direction.normalized * currentSpeed.value;
-        float accelerationSpeed = Mathf.Lerp(currentSpeed.value, targetSpeed, accelerationFactor);
-        Quaternion targetRotation = direction != Vector3.zero
-            ? Quaternion.LookRotation(direction) : Quaternion.identity; // Shorthand if : else 
+        if (dragDist < radius.value * idleThreshold) // Idle
+        {
+            // Empty
+        }
+        else if (dragDist < radius.value * sneakThreshold) // Sneak
+        {
+            targetSpeed = sneakSpeed.value;
+            movePlayer(direction);
+        }
+        else if (dragDist < radius.value * runThreshold) // Walk
+        {
+            targetSpeed = walkSpeed.value;
+            movePlayer(direction);
+        }
+        else // Run
+        {
+            targetSpeed = runSpeed.value;
+            movePlayer(direction);
+        }
+    }
 
-        // TODO: Seperate rotation acceleration from speed acceleration
-        transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * rotationSpeed.value);
+    private Boolean CrossProductPositive(Vector3 a, Vector3 b)
+    {
+        return a.x * b.z - a.z * b.x >= 0;
+    }
+
+    private void movePlayer(Vector3 direction)
+    {
+        int wayToRotate = CrossProductPositive(transform.forward, direction) ? 1 : -1;
+        rotationSpeedGoal = Mathf.Min(rotationSpeed.value, Vector3.Angle(transform.forward, direction) * rotationAngleReactionFactor) * wayToRotate;
+        rotationSpeedCurrent += (rotationSpeedGoal - rotationSpeedCurrent) * rotationAccelerationFactor;
+
+        transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * Mathf.Abs(rotationSpeedCurrent));
+
         if (!isJumping)
         {
-            playerRB.MovePosition(transform.position + (direction + transform.forward /* * rotation factor can be inserted  here*/).normalized * ((targetSpeed - currentSpeed.value)*accelerationFactor + currentSpeed.value) * Time.deltaTime);
+            playerRB.MovePosition(transform.position + (direction + transform.forward /* * rotation factor can be inserted  here*/).normalized * ((targetSpeed - currentSpeed.value)*accelerationFactor + currentSpeed.value) * Time.fixedDeltaTime);
         }
         else
         {
@@ -466,7 +457,6 @@ public class Movement : MonoBehaviour
         if (currentSpeed.value <= 0.01f)
         {
             moveState.value = 0;
-
         }
         else if (currentSpeed.value <= sneakSpeed.value + 0.05f)
         {
@@ -475,7 +465,6 @@ public class Movement : MonoBehaviour
         else if (currentSpeed.value <= walkSpeed.value + 0.05f)
         {
             moveState.value = 2;
-
         }
         else
         {
@@ -487,24 +476,53 @@ public class Movement : MonoBehaviour
 
     public Trajectory GetMovementTrajectory()
     {
-        for (int i = 0; i < trajPoints.Length; i++)
+        float newRotationSpeedCurrent = rotationSpeedCurrent;
+        //for (int i = 0; i < trajPoints.Length; i++)
+        //{
+        //    if (i > 0)
+        //    {
+        //        //Vector3 tempPos = trajPoints[i - 1].GetPoint() + Quaternion.Slerp(transform.rotation, lookRotation, (float) (i + 1) / trajPoints.Length) * Vector3.forward * Mathf.Clamp(speed, 0.1f, 1.0f);
+        //        Vector3 tempPos = trajPoints[i - 1].GetPoint() + direction /*trajPoints[i - 1].GetForward()*/ * currentSpeed.value;
+
+        //        Vector3 tempForward = tempPos + (Quaternion.Slerp(transform.rotation, lookRotation,
+        //                                  (float)i / trajPoints.Length) * Vector3.forward * rotationSpeed.value).normalized;
+
+        //        trajPoints[i] = new TrajectoryPoint(tempPos, tempForward);
+        //    }
+        //    else
+        //        trajPoints[i] = new TrajectoryPoint(transform.position, transform.position + transform.forward);
+        //}
+        Vector3 playerPos = transform.position, previousPlayerPos;
+        Vector3 playerForward = transform.forward;
+        Quaternion playerRot = transform.rotation;
+        float simulatedSpeed = currentSpeed.value;
+        int wayToRotate = CrossProductPositive(playerForward, direction) ? 1 : -1;
+        int j = 0;
+
+        for (int i = 0; i < trajPoints.Length * mm.framesBetweenTrajectoryPoints; i++)
         {
-            if (i > 0)
+            previousPlayerPos = playerPos;
+            float newRotationSpeedGoal = Mathf.Min(rotationSpeed.value, Vector3.Angle(playerForward, direction) * rotationAngleReactionFactor) * wayToRotate;
+            newRotationSpeedCurrent += (newRotationSpeedGoal - newRotationSpeedCurrent) * rotationAccelerationFactor;
+
+            playerRot = Quaternion.Slerp(playerRot, lookRotation, Time.deltaTime * Mathf.Abs(rotationSpeedCurrent));
+            playerForward = playerRot * Vector3.forward;
+            playerPos += (direction + playerForward).normalized * ((targetSpeed - simulatedSpeed) * accelerationFactor + simulatedSpeed) * Time.fixedDeltaTime;
+
+            if (i % mm.framesBetweenTrajectoryPoints == 0)
             {
-                //Vector3 tempPos = trajPoints[i - 1].GetPoint() + Quaternion.Slerp(transform.rotation, lookRotation, (float) (i + 1) / trajPoints.Length) * Vector3.forward * Mathf.Clamp(speed, 0.1f, 1.0f);
-                Vector3 tempPos = trajPoints[i - 1].GetPoint() + direction * currentSpeed.value;
-
-                Vector3 tempForward = tempPos + (Quaternion.Slerp(transform.rotation, lookRotation,
-                                          (float)i / trajPoints.Length) * Vector3.forward * rotationSpeed.value).normalized;
-
-                trajPoints[i] = new TrajectoryPoint(tempPos, tempForward);
+                trajPoints[j] = new TrajectoryPoint(playerPos, playerPos + playerForward);
+                j++;
             }
-            else
-                trajPoints[i] = new TrajectoryPoint(transform.position, transform.position + transform.forward);
+
+            simulatedSpeed = Vector3.Distance(playerPos, previousPlayerPos) / Time.fixedDeltaTime;
         }
+
         return new Trajectory(trajPoints);
     }
     
+    
+
     private PhysicMaterial setJumpMaterial() 
     {
         PhysicMaterial newPhysMaterial;

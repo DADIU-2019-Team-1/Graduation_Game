@@ -23,6 +23,7 @@
         private GameObject _player;
         private Movement _movement;
         private NavMeshAgent _navMeshAgent;
+        private Animator _animator;
         [HideInInspector] public List<GameObject> wayPoints;
         [HideInInspector] public GameObject parentWayPoint;
 
@@ -30,11 +31,12 @@
         public float wayPointReachRange = 1.0f, hearingSensitivity = 2.0f, minimumAlwaysDetectRange = 1.3f;
         public bool drawGizmos = true, useWaitTime, rotateAtWaypoints, loopWaypointRoutine = true, alwaysAggro;
         public Color normalConeColor = Color.yellow, aggroConeColor = Color.red;
+        public float animNoiseHeardTime = 2.0f;
         [HideInInspector] public bool useGlobalWaitTime = true;
         [HideInInspector] public float waitTime = 0.0f;
 
         // Private variables:
-        private bool _active, _timerRunning, _destinationSet, _isRotating, _isAggro, 
+        private bool _active, _timerRunning, _destinationSet, _isRotating, _isAggro, _playerHeard,
             _isHugging, _rotatingAtWp, _inTriggerZone, _accelerating, _hearingDisabled, _goingReversePath, _giveUpPursuitRunning;
         private NavMeshPath _path;
         private Vector3 _lastSighting;
@@ -47,7 +49,6 @@
         #endregion
 
         #region Awake
-
         void Awake()
         {
             _player = GameObject.FindGameObjectWithTag("Player");
@@ -118,6 +119,9 @@
                         viewConeLight.gameObject.SetActive(false);
                 }
 
+                if (GetComponent<Animator>() != null)
+                    _animator = GetComponent<Animator>();
+
                 if (alwaysAggro)
                     _isAggro = true;
             }
@@ -158,6 +162,14 @@
 
             _accelerating = true; // Enables accelerating in the update loop to desired state
 
+        }
+
+        private void LateUpdate()
+        {
+            if (_navMeshAgent?.velocity.magnitude < 0.10)
+            {
+                
+            }
         }
 
         private void FixedUpdate()
@@ -245,29 +257,45 @@
                     }
                 }
 
-                if (!_hearingDisabled)  // Enemy hearing:
+                if (!_hearingDisabled && !_isAggro)  // Enemy hearing:
                 {
                     _hearingDistance = thisEnemy.hearingDistance;
                     if (playerMoveState.value == 2)
                         _hearingDistance = thisEnemy.hearingDistance * hearingSensitivity;
 
-                    if (HearingPathLength() < thisEnemy.hearingDistance && playerMoveState.value != 0 && playerMoveState.value != 1)
-                        PlayerHeard();
-                    else if (Vector3.Distance(transform.position, _player.transform.position) < minimumAlwaysDetectRange) // If very very close the enemy will hear the player no matter what
-                        PlayerHeard();
+                    if (HearingPathLength() < thisEnemy.hearingDistance && playerMoveState.value != 0 &&
+                        playerMoveState.value != 1 /*&& !_playerHeard*/)
+                    {
+                        _lastSighting = _player.transform.position;
+
+                        if (!_isAggro)
+                            StartCoroutine(EnemyAggro());
+
+                        //StartCoroutine(PlayerHeard());    // TODO: Enable later YYY
+                    }
+                    else if (Vector3.Distance(transform.position, _player.transform.position) < minimumAlwaysDetectRange
+                    ) // If very very close the enemy will "hear" the player no matter what
+                    {
+                        _lastSighting = _player.transform.position;
+
+                        if (!_isAggro)
+                            StartCoroutine(EnemyAggro());
+                    }
                 }
 
                 ViewLightConeControl();
 
-                if (_inTriggerZone && _giveUpPursuitRunning)    // this part is used to time out the pursuit, if enemy cannot reach player last sighting
+                if (!alwaysAggro)
                 {
-                    StopCoroutine(PursuitTimeout());
+                    if (_inTriggerZone && _giveUpPursuitRunning)    // this part is used to time out the pursuit, if enemy cannot reach player last sighting
+                    {
+                        StopCoroutine(PursuitTimeout());
+                    }
+                    else if (!_inTriggerZone && !_giveUpPursuitRunning)
+                    {
+                        StartCoroutine(PursuitTimeout());
+                    }
                 }
-                else if (!_inTriggerZone && !_giveUpPursuitRunning)
-                {
-                    StartCoroutine(PursuitTimeout());
-                }
-
             }
         }
 
@@ -335,19 +363,10 @@
 
         private void OnTriggerExit(Collider col)
         {
-            if (_active)
-                if (col.tag == _player.tag)
-                {
-                    _inTriggerZone = false;
-                }
-        }
-
-        private void PlayerHeard()
-        {
-            _lastSighting = _player.transform.position;
-
-            if (!_isAggro)
-                StartCoroutine(EnemyAggro());
+            if (col.tag == _player.tag)
+            {
+                _inTriggerZone = false;
+            }
         }
 
         public void PushDown()
@@ -357,18 +376,15 @@
                 _active = false;
                 _navMeshAgent.isStopped = true;
 
-                // TODO - YYY play lie down/knocked down animation
+                _animator?.SetTrigger("PushedDown"); // TODO - YYY play lie down/knocked down animation
 
                 viewConeLight.gameObject.SetActive(true);
                 viewConeLight.color = Color.green;
 
                 StopCoroutine(EnemyHug());  // Stop hug if hugging
 
-                if (_movement != null)
-                {
-                    _movement.Frozen(false);
-                }
-
+                _movement?.Frozen(false);
+                
                 StartCoroutine(PushDownDelay());
             }
         }
@@ -417,6 +433,22 @@
 
         #region Co-Routines
 
+        private IEnumerator PlayerHeard()
+        {
+            _playerHeard = true;
+            _active = false;
+            _lastSighting = _player.transform.position;
+            _animator?.SetTrigger("NoiseHeard");
+
+            yield return new WaitForSeconds(animNoiseHeardTime);
+
+            if (!_isAggro)
+                StartCoroutine(EnemyAggro());
+
+            _playerHeard = false;
+            _active = true;
+        }
+
         private IEnumerator WaitTimer()
         {
             if (_waitTimes[_currentWayPoint] > 0)
@@ -447,6 +479,7 @@
             SwitchState(2); // Switch to attacking
 
             transform.LookAt(_player.transform.position);
+            alwaysAggro = true;
 
             if (_movement != null)
             {
@@ -458,15 +491,16 @@
             if (Vector3.Distance(transform.position, _player.transform.position) <
                 thisEnemy.embraceDistance)
             {
-                Debug.Log("THE PLAYER DIED");
+                _animator?.SetTrigger("Attack"); // TODO - YYY play hug/attack animation
 
-                if (playerDiedEvent != null)
-                {
-                    playerDiedEvent.Raise();
-                }
+                Debug.Log("THE PLAYER DIED");
+                alwaysAggro = false;
+
+                playerDiedEvent?.Raise();
             }
             else
             {
+                alwaysAggro = false;
                 _active = true;
                 _isHugging = false;
                 if (!alwaysAggro)

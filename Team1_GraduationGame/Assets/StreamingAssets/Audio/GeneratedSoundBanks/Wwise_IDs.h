@@ -15,10 +15,12 @@ namespace AK
     {
         static const AkUniqueID PLAY_AMB_OUTSIDE = 121174090U;
         static const AkUniqueID PLAY_BREATH = 3698047240U;
+        static const AkUniqueID PLAY_ECHOCALL_MEMORY_PLAYLIST = 3108390310U;
         static const AkUniqueID PLAY_FS_LAND = 741775033U;
         static const AkUniqueID PLAY_FS_SYSTEM = 2874393337U;
         static const AkUniqueID PLAY_HMC_MUSIC_SYSTEM_LEVEL1 = 2367316274U;
         static const AkUniqueID PLAY_RUMBLE_BLEND = 728827549U;
+        static const AkUniqueID STOP_ECHOCALL_MEMORY_PLAYLIST = 3307487220U;
     } // namespace EVENTS
 
     namespace STATES
@@ -30,12 +32,26 @@ namespace AK
             namespace STATE
             {
                 static const AkUniqueID EXIT_MEMORY = 4198270385U;
+                static const AkUniqueID GRIEF_APPEARS = 3170210169U;
                 static const AkUniqueID HUB = 646625282U;
                 static const AkUniqueID MEMORY_LULLABY = 3074462064U;
                 static const AkUniqueID MENU = 2607556080U;
                 static const AkUniqueID OUTSIDE = 438105790U;
             } // namespace STATE
         } // namespace GAMESTATE
+
+        namespace LEVEL
+        {
+            static const AkUniqueID GROUP = 2782712965U;
+
+            namespace STATE
+            {
+                static const AkUniqueID LVL_00 = 2147068364U;
+                static const AkUniqueID LVL_01 = 2147068365U;
+                static const AkUniqueID LVL_02 = 2147068366U;
+                static const AkUniqueID LVL_03 = 2147068367U;
+            } // namespace STATE
+        } // namespace LEVEL
 
     } // namespace STATES
 
@@ -48,26 +64,14 @@ namespace AK
             namespace SWITCH
             {
                 static const AkUniqueID DIRT = 2195636714U;
+                static const AkUniqueID DRUM = 2247793849U;
                 static const AkUniqueID GRASS = 4248645337U;
-                static const AkUniqueID ICE = 344481046U;
                 static const AkUniqueID LEAVES = 582824249U;
                 static const AkUniqueID SNOW = 787898836U;
                 static const AkUniqueID STONE = 1216965916U;
                 static const AkUniqueID WOOD = 2058049674U;
             } // namespace SWITCH
         } // namespace FOOTSTEP_MATERIAL_SWITCHER
-
-        namespace LVL
-        {
-            static const AkUniqueID GROUP = 964811649U;
-
-            namespace SWITCH
-            {
-                static const AkUniqueID LVL_1 = 2397100949U;
-                static const AkUniqueID LVL_2 = 2397100950U;
-                static const AkUniqueID LVL_3 = 2397100951U;
-            } // namespace SWITCH
-        } // namespace LVL
 
         namespace PLAYER_SPEED
         {

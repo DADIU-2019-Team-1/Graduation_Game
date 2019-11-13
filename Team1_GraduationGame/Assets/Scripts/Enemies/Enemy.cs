@@ -254,7 +254,7 @@
                     }
                 }
 
-                if (!_hearingDisabled && !_isAggro)  // Enemy hearing:
+                if (!_hearingDisabled /*&& !_isAggro*/)  // Enemy hearing:
                 {
                     _hearingDistance = thisEnemy.hearingDistance;
                     if (playerMoveState.value == 2)
@@ -294,9 +294,13 @@
                     }
                 }
             }
+        }
 
+        private void LateUpdate()
+        {
             if (_navMeshAgent != null)
-                _animator?.SetFloat("Speed", _navMeshAgent.velocity.magnitude);
+                if (_animator?.runtimeAnimatorController != null)
+                    _animator?.SetFloat("Speed", _navMeshAgent.velocity.magnitude);
         }
 
         private void UpdatePathRoutine()    // Updates destination to next waypoint
@@ -487,7 +491,7 @@
             if (_movement != null)
             {
                 _movement.Frozen(true);
-                _player.transform.forward = _player.transform.position - transform.position; // TODO: Test if works
+                /*_player.transform.forward = _player.transform.position - transform.position;*/ // TODO: Test if works
             }
 
             yield return new WaitForSeconds(thisEnemy.embraceDelay);

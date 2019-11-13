@@ -363,11 +363,10 @@
 
         private void OnTriggerExit(Collider col)
         {
-            if (_active)
-                if (col.tag == _player.tag)
-                {
-                    _inTriggerZone = false;
-                }
+            if (col.tag == _player.tag)
+            {
+                _inTriggerZone = false;
+            }
         }
 
         public void PushDown()
@@ -495,6 +494,7 @@
                 _animator?.SetTrigger("Attack"); // TODO - YYY play hug/attack animation
 
                 Debug.Log("THE PLAYER DIED");
+                alwaysAggro = false;
 
                 playerDiedEvent?.Raise();
             }

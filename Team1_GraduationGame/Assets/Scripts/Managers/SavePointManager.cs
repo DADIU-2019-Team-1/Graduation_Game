@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Team1_GraduationGame.Enemies;
+using Team1_GraduationGame.Events;
 using Team1_GraduationGame.Interaction;
 using UnityEditor;
 using UnityEngine;
@@ -13,6 +14,8 @@ namespace Team1_GraduationGame.SaveLoadSystem
     {
         // References:
         public SaveLoadManager saveLoadManager;
+        public VoidEvent newGameEvent;
+        public VoidEvent inMenuEvent;
 
         // Public
         public int firstSceneBuildIndex = 0;
@@ -39,6 +42,7 @@ namespace Team1_GraduationGame.SaveLoadSystem
             {
                 FindObjectOfType<HubMenu>().startGameEvent += NewGame;
                 FindObjectOfType<HubMenu>().continueGameEvent += Continue;
+                newGameEvent?.Raise();
             }
         }
 
@@ -63,8 +67,6 @@ namespace Team1_GraduationGame.SaveLoadSystem
                     GameObject tempPlayer = GameObject.FindGameObjectWithTag("Player");
                     tempPlayer.transform.position =
                         savePoints[savePointNumber - 1].transform.position + transform.up;
-
-                    tempPlayer.GetComponent<Movement>().Frozen(false);
                 }
             }
         }
@@ -75,10 +77,19 @@ namespace Team1_GraduationGame.SaveLoadSystem
             {
                 if (GameObject.FindGameObjectWithTag("Player") != null)
                 {
-                    GameObject.FindGameObjectWithTag("Player").transform.position =
+                    GameObject tempPlayer = GameObject.FindGameObjectWithTag("Player");
+
+                    tempPlayer.transform.position =
                         savePoints[previousCheckPoint - 1].transform.position + transform.up;
+
+                    tempPlayer.GetComponent<Movement>().Frozen(false);
                 }
             }
+        }
+
+        private void InMenu()
+        {
+            inMenuEvent?.Raise();
         }
 
         public void NewGame()
@@ -112,6 +123,9 @@ namespace Team1_GraduationGame.SaveLoadSystem
             if (Application.isEditor)
             {
                 GameObject tempSavePoint;
+
+                if (savePoints == null)
+                    savePoints = new List<GameObject>();
 
                 tempSavePoint = new GameObject("SavePoint" + (savePoints.Count + 1));
                 tempSavePoint.AddComponent<SavePoint>();

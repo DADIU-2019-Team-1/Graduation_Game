@@ -128,6 +128,11 @@
         }
         #endregion
 
+        private void Start()
+        {
+            _animator?.SetBool("Motion", true);
+        }
+
         /// <summary>
         /// Switches the state of this enemy. 0 = Walking, 1 = Running, 2 = Attacking
         /// </summary>
@@ -162,14 +167,6 @@
 
             _accelerating = true; // Enables accelerating in the update loop to desired state
 
-        }
-
-        private void LateUpdate()
-        {
-            if (_navMeshAgent?.velocity.magnitude < 0.10)
-            {
-                
-            }
         }
 
         private void FixedUpdate()
@@ -257,7 +254,7 @@
                     }
                 }
 
-                if (!_hearingDisabled && !_isAggro)  // Enemy hearing:
+                if (!_hearingDisabled /*&& !_isAggro*/)  // Enemy hearing:
                 {
                     _hearingDistance = thisEnemy.hearingDistance;
                     if (playerMoveState.value == 2)
@@ -297,6 +294,13 @@
                     }
                 }
             }
+        }
+
+        private void LateUpdate()
+        {
+            if (_navMeshAgent != null)
+                if (_animator?.runtimeAnimatorController != null)
+                    _animator?.SetFloat("Speed", _navMeshAgent.velocity.magnitude);
         }
 
         private void UpdatePathRoutine()    // Updates destination to next waypoint
@@ -376,6 +380,7 @@
                 _active = false;
                 _navMeshAgent.isStopped = true;
 
+                _animator?.SetBool("Motion", false);
                 _animator?.SetTrigger("PushedDown"); // TODO - YYY play lie down/knocked down animation
 
                 viewConeLight.gameObject.SetActive(true);
@@ -439,9 +444,11 @@
             _active = false;
             _lastSighting = _player.transform.position;
             _animator?.SetTrigger("NoiseHeard");
+            _animator?.SetBool("Motion", false);
 
             yield return new WaitForSeconds(animNoiseHeardTime);
 
+            _animator?.SetBool("Motion", true);
             if (!_isAggro)
                 StartCoroutine(EnemyAggro());
 
@@ -465,7 +472,7 @@
         {
             _isAggro = true;
             yield return new WaitForSeconds(thisEnemy.aggroTime);
-            Debug.Log("Is AGGRO");
+
             if (!_inTriggerZone)
                 _isAggro = false;
 
@@ -484,6 +491,7 @@
             if (_movement != null)
             {
                 _movement.Frozen(true);
+                /*_player.transform.forward = _player.transform.position - transform.position;*/ // TODO: Test if works
             }
 
             yield return new WaitForSeconds(thisEnemy.embraceDelay);
@@ -491,23 +499,21 @@
             if (Vector3.Distance(transform.position, _player.transform.position) <
                 thisEnemy.embraceDistance)
             {
+                _animator?.SetBool("Motion", false);
                 _animator?.SetTrigger("Attack"); // TODO - YYY play hug/attack animation
 
-                Debug.Log("THE PLAYER DIED");
-                alwaysAggro = false;
+                Debug.Log("PLAYER DIED");
 
                 playerDiedEvent?.Raise();
             }
+
+            alwaysAggro = false;    // TODO: This is temporary
+            _active = true;
+            _isHugging = false;
+            if (!alwaysAggro)
+                _isAggro = false;
             else
-            {
-                alwaysAggro = false;
-                _active = true;
-                _isHugging = false;
-                if (!alwaysAggro)
-                    _isAggro = false;
-                else
-                    _isAggro = true;
-            }
+                _isAggro = true;
         }
 
         private IEnumerator PursuitTimeout()
@@ -527,6 +533,7 @@
             _active = true;
             _navMeshAgent.isStopped = false;
             viewConeLight.color = normalConeColor;
+            _animator?.SetTrigger("GettingUp");
 
             if (!alwaysAggro)
                 _destinationSet = false;
@@ -571,10 +578,8 @@
                 }
 
                 if (wayPoints == null)
-                {
                     wayPoints = new List<GameObject>();
-                }
-
+                
                 tempWayPointObj = new GameObject("WayPoint" + (wayPoints.Count + 1));
                 tempWayPointObj.AddComponent<WayPoint>();
                 WayPoint tempWayPointScript = tempWayPointObj.GetComponent<WayPoint>();

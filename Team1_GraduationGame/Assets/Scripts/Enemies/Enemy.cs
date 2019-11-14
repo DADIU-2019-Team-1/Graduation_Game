@@ -503,20 +503,17 @@
                 _animator?.SetTrigger("Attack"); // TODO - YYY play hug/attack animation
 
                 Debug.Log("PLAYER DIED");
-                alwaysAggro = false;
 
                 playerDiedEvent?.Raise();
             }
+
+            alwaysAggro = false;    // TODO: This is temporary
+            _active = true;
+            _isHugging = false;
+            if (!alwaysAggro)
+                _isAggro = false;
             else
-            {
-                alwaysAggro = false;
-                _active = true;
-                _isHugging = false;
-                if (!alwaysAggro)
-                    _isAggro = false;
-                else
-                    _isAggro = true;
-            }
+                _isAggro = true;
         }
 
         private IEnumerator PursuitTimeout()

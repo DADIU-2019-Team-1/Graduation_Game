@@ -14,19 +14,22 @@ namespace Team1_GraduationGame.Enemies
         private Animator _animator;
         public Light fieldOfViewLight;
         public VoidEvent playerDiedEvent;
+        [HideInInspector] public List<GameObject> lookPoints;
 
         // Private:
         private bool _active, _isAggro, _isSpawned, _isRotating, _turnLeft, _updateRotation, _playerSpotted, _lightOn, _timerRunning;
         private int _layerMask, _currentSpawnPoint = 0;
         private Vector3 _lookRangeToVector, _lookRangeFromVector, _spawnedPos, _unSpawnedPos;
         private Quaternion _lookRotation;
+
         private bool _appear, _disappear; // TODO: Remove this later (they are used as placeholders for animation atm.)
 
         // Public:
         public bool drawGizmos = true;
-        public float spawnActivationDistance = 25.0f, fieldOfView = 65.0f, viewDistance = 20.0f, 
+        public float spawnActivationDistance = 25.0f, fieldOfView = 65.0f, viewDistance = 20.0f, changeStateTime = 3.0f,
             rotateDegreesPerSecond = 5.0f, rotateWaitTime = 0.0f, lookRangeTo = 230f, lookRangeFrom = 130f, aggroTime = 2.0f;
         public Color normalConeColor = Color.yellow, aggroConeColor = Color.red;
+        public float animAttackTime = 3.0f;
 
 
         private void Awake()
@@ -52,6 +55,8 @@ namespace Team1_GraduationGame.Enemies
             _spawnedPos = transform.position + (transform.up * 6);
 
             _active = true;
+
+            _animator?.SetBool("Patrolling", false);
         }
 
         private void FixedUpdate()
@@ -159,19 +164,22 @@ namespace Team1_GraduationGame.Enemies
                     }
                 }
 
-                if (_appear && !_disappear)
+                if (_animator == null)
                 {
-                    transform.position = Vector3.Lerp(transform.position, _spawnedPos, Time.fixedDeltaTime);
+                    if (_appear && !_disappear) // TODO: This section is a temporary, until an animation is in place
+                    {
+                        transform.position = Vector3.Lerp(transform.position, _spawnedPos, Time.fixedDeltaTime);
 
-                    if (transform.position == _spawnedPos)
-                        _appear = false;
-                }
-                else if (_disappear && !_appear)
-                {
-                    transform.position = Vector3.Lerp(transform.position, _unSpawnedPos, Time.fixedDeltaTime);
+                        if (transform.position == _spawnedPos)
+                            _appear = false;
+                    }
+                    else if (_disappear && !_appear)
+                    {
+                        transform.position = Vector3.Lerp(transform.position, _unSpawnedPos, Time.fixedDeltaTime);
 
-                    if (transform.position == _unSpawnedPos)
-                        _disappear = false;
+                        if (transform.position == _unSpawnedPos)
+                            _disappear = false;
+                    }
                 }
             }
 
@@ -200,24 +208,29 @@ namespace Team1_GraduationGame.Enemies
                     _lightOn = true;
                 }
                 else
-                {
                     _lightOn = false;
-                }
             }
         }
 
         private IEnumerator ChangeState(bool isActive)
         {
-            yield return new WaitForSeconds(3.0f);
+            if (isActive)
+                _animator?.SetTrigger("Appearing");
+            else
+                _animator?.SetTrigger("Disappearing");
+
+            yield return new WaitForSeconds(changeStateTime);
 
             if (isActive)
             {
+                _animator?.SetBool("Patrolling", true);
                 _isRotating = true;
                 _isSpawned = true;
                 _updateRotation = true;
             }
             else
             {
+                _animator?.SetBool("Patrolling", false);
                 _isRotating = false;
                 _isSpawned = false;
                 _updateRotation = false;
@@ -229,15 +242,19 @@ namespace Team1_GraduationGame.Enemies
         {
             _player.GetComponent<Movement>().Frozen(true);
 
-            yield return new WaitForSeconds(2.0f); // TODO Specify amount of time animation takes instead
+            _animator?.SetTrigger("Attack"); // TODO - YYY play Big attack animation
+
+            yield return new WaitForSeconds(animAttackTime);
             Debug.Log("Player died from Big");
-            if (playerDiedEvent != null)
-                playerDiedEvent.Raise();
+
+            playerDiedEvent?.Raise();
         }
 
         private IEnumerator Aggro()
         {
             _isAggro = true;
+            _animator?.SetBool("Patrolling", false);
+            _animator?.SetTrigger("Spotted");
 
             yield return new WaitForSeconds(aggroTime);
 
@@ -255,6 +272,7 @@ namespace Team1_GraduationGame.Enemies
                     UpdateFOVLight(true, false);
                     _isAggro = false;
                     _active = true;
+                    _animator?.SetBool("Patrolling", true);
                 }
             }
             else
@@ -262,6 +280,7 @@ namespace Team1_GraduationGame.Enemies
                 UpdateFOVLight(true, false);
                 _isAggro = false;
                 _active = true;
+                _animator?.SetBool("Patrolling", true);
             }
         }
 
@@ -286,7 +305,17 @@ namespace Team1_GraduationGame.Enemies
                 Gizmos.DrawLine(transform.position + transform.up, transform.forward * viewDistance + (transform.position + transform.up));
             }
         }
-        #endif
+
+        public void AddLookPoint()
+        {
+            
+        }
+
+        public void RemoveLookPoint()
+        {
+
+        }
+#endif
     }
 
 #if UNITY_EDITOR

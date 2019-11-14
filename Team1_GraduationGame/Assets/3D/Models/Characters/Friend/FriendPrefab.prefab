@@ -940,13 +940,13 @@ ParticleSystem:
     m_UseMeshMaterialIndex: 0
     m_UseMeshColors: 1
     alignToDirection: 0
-    m_Texture: {fileID: 2800000, guid: 5c2648ca28264174bb6327fed6ac1346, type: 3}
+    m_Texture: {fileID: 2800000, guid: e63922aeead26dc4ea8e6d2b5759cedf, type: 3}
     m_TextureClipChannel: 3
     m_TextureClipThreshold: 0.3
     m_TextureUVChannel: 0
     m_TextureColorAffectsParticles: 1
     m_TextureAlphaAffectsParticles: 1
-    m_TextureBilinearFiltering: 0
+    m_TextureBilinearFiltering: 1
     randomDirectionAmount: 0
     sphericalDirectionAmount: 0
     randomPositionAmount: 0
@@ -22003,7 +22003,7 @@ PrefabInstance:
     - target: {fileID: 19867468, guid: 7b8f8a4d0ee5ffb4aaa6b54181380640, type: 3}
       propertyPath: ShapeModule.m_Texture
       value: 
-      objectReference: {fileID: 2800000, guid: 5c2648ca28264174bb6327fed6ac1346, type: 3}
+      objectReference: {fileID: 2800000, guid: e63922aeead26dc4ea8e6d2b5759cedf, type: 3}
     - target: {fileID: 19867468, guid: 7b8f8a4d0ee5ffb4aaa6b54181380640, type: 3}
       propertyPath: ShapeModule.m_TextureClipThreshold
       value: 0.27
@@ -22132,6 +22132,10 @@ PrefabInstance:
       propertyPath: ShapeModule.radiusThickness
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 19867468, guid: 7b8f8a4d0ee5ffb4aaa6b54181380640, type: 3}
+      propertyPath: ShapeModule.m_TextureBilinearFiltering
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 19860412, guid: 7b8f8a4d0ee5ffb4aaa6b54181380640, type: 3}
       propertyPath: InitialModule.startSizeY.minMaxState
       value: 3
@@ -22175,7 +22179,7 @@ PrefabInstance:
     - target: {fileID: 19879722, guid: 7b8f8a4d0ee5ffb4aaa6b54181380640, type: 3}
       propertyPath: ShapeModule.m_Texture
       value: 
-      objectReference: {fileID: 2800000, guid: 5c2648ca28264174bb6327fed6ac1346, type: 3}
+      objectReference: {fileID: 2800000, guid: e63922aeead26dc4ea8e6d2b5759cedf, type: 3}
     - target: {fileID: 19879722, guid: 7b8f8a4d0ee5ffb4aaa6b54181380640, type: 3}
       propertyPath: ShapeModule.radius.value
       value: 0.3
@@ -22246,6 +22250,14 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 19879722, guid: 7b8f8a4d0ee5ffb4aaa6b54181380640, type: 3}
       propertyPath: ShapeModule.radiusThickness
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 19879722, guid: 7b8f8a4d0ee5ffb4aaa6b54181380640, type: 3}
+      propertyPath: ShapeModule.m_TextureClipThreshold
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 19879722, guid: 7b8f8a4d0ee5ffb4aaa6b54181380640, type: 3}
+      propertyPath: ShapeModule.m_TextureBilinearFiltering
       value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []

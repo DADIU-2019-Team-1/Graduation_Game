@@ -9,7 +9,7 @@ using Team1_GraduationGame.Events;
 public class Movement : MonoBehaviour
 {
     private Rigidbody playerRB;
-    private bool touchStart = false, canMove = false, canJump = true, canPush, isJumping = false, moveFrozen = false;
+    private bool touchStart = false, canMove = false, canJump = true, canPush, isJumping = false, moveFrozen = false, inSneakZone = false;
 
     public VoidEvent jumpEvent, attackEvent;
     public IntEvent stateChangeEvent;
@@ -85,6 +85,9 @@ public class Movement : MonoBehaviour
     private float runThreshold;
     //public List<Touchlocation> touches = new List<Touchlocation>();
 
+    [Header("This is for SneakZones")] [SerializeField] [Range(0.0f, 0.99f)]
+    private float zoneSneakThreshold;
+
     [TagSelector] [SerializeField] private string[] tagsToInteractWith;
     [SerializeField] private List<GameObject> interactableObjects;
     
@@ -121,15 +124,15 @@ public class Movement : MonoBehaviour
 
     void FixedUpdate()
     {
-        if (playerRB.velocity.y <= 0 && isJumping)
+        //Debug.Log(playerRB.velocity.magnitude);
+        if (playerRB.velocity.y < 0 && isJumping )
         {
             //playerRB.mass * fallMultiplier.value;
-
             playerRB.velocity += Vector3.up * Physics.gravity.y * (fallMultiplier.value - 1) * Time.deltaTime;
 
             if (Physics.Raycast(leftToePos.transform.position, Vector3.down, ghostJumpHeight.value) || Physics.Raycast(rightToePos.transform.position, Vector3.down, ghostJumpHeight.value) || Physics.Raycast(leftHeelPos.transform.position, Vector3.down, ghostJumpHeight.value) || Physics.Raycast(rightHeelPos.transform.position, Vector3.down, ghostJumpHeight.value))
             {
-                Debug.Log(true);
+                //Debug.Log(true);
                 isJumping = false;
                 for (int j = 0; j < jumpPlatforms.Count; j++)
                 {
@@ -335,7 +338,7 @@ public class Movement : MonoBehaviour
             }
             else if (swipeTimeTimer + swipeTimeThreshold.value >= Time.time && !moveFrozen)
             {
-                playerJump(Vector3.up, jumpHeight.value);
+                playerJump(Vector3.up + moveDirection, jumpHeight.value);
                 //Debug.Log("Jump");
             }
         }
@@ -349,27 +352,49 @@ public class Movement : MonoBehaviour
             Vector2 joyDiff = Input.mousePosition - stickLimit.transform.position;
             joyDiff = Vector2.ClampMagnitude(joyDiff, radius.value);
 
-            if (dragDist <= radius.value * idleThreshold)
+            if (inSneakZone)
             {
-                //movePlayer(direction, 0);
-                //moveState.value = 0;
-            }
-            else if (dragDist <= radius.value * sneakThreshold)
-            {
-                movePlayer(moveDirection, sneakSpeed.value);
-                //moveState.value = 1;
-            }
-            else if (dragDist > radius.value * sneakThreshold && dragDist < radius.value * runThreshold)
-            {
-                movePlayer(moveDirection, walkSpeed.value);
-                //moveState.value = 2;
-            }
-            else if (dragDist >= radius.value * runThreshold)
-            {
-                movePlayer(moveDirection, runSpeed.value);
-                //moveState.value = 3;
-            }
+                if (dragDist < radius.value * idleThreshold)
+                {
+                    //movePlayer(direction, 0);
+                    //moveState.value = 0;
+                }
+                else if (dragDist < radius.value * zoneSneakThreshold)
+                {
+                    movePlayer(moveDirection, sneakSpeed.value);
+                    //moveState.value = 1;
+                }
+                else 
+                {
 
+                    movePlayer(moveDirection, walkSpeed.value);
+                    //moveState.value = 2;
+                }
+
+            }
+            else
+            {
+                if (dragDist < radius.value * idleThreshold)
+                {
+                    //movePlayer(direction, 0);
+                    //moveState.value = 0;
+                }
+                else if (dragDist < radius.value * sneakThreshold)
+                {
+                    movePlayer(moveDirection, sneakSpeed.value);
+                    //moveState.value = 1;
+                }
+                else if (dragDist < radius.value * runThreshold)
+                {
+
+                    movePlayer(moveDirection, walkSpeed.value);
+                    //moveState.value = 2;
+                }
+                else
+                {
+                    movePlayer(moveDirection, runSpeed.value);
+                }
+            }
 
 
             stick.transform.position = joyDiff + new Vector2(stickLimit.transform.position.x, stickLimit.transform.position.y);
@@ -379,6 +404,7 @@ public class Movement : MonoBehaviour
             stick.gameObject.SetActive(false);
             stickLimit.gameObject.SetActive(false);
             canMove = false;
+            moveDirection = Vector3.zero;
         }
 #endif
 
@@ -387,6 +413,21 @@ public class Movement : MonoBehaviour
         SetState();
     }
 
+    private void OnTriggerEnter(Collider sneakZone)
+    {
+        if (sneakZone.tag == "Sneakzone")
+        {
+            inSneakZone = true;
+        }
+    }
+
+    private void OnTriggerExit(Collider sneakZone)
+    {
+        if (sneakZone.tag == "Sneakzone")
+        { 
+            inSneakZone = false;
+        }
+    }
 
     private void movePlayer(Vector3 direction, float speedMove)
     {
@@ -399,7 +440,12 @@ public class Movement : MonoBehaviour
         }
         else
         {
-            playerRB.AddForce(direction * jumpSpeed.value * Time.deltaTime, ForceMode.VelocityChange);
+#if UNITY_EDITOR
+            playerRB.MovePosition(transform.position + (direction * speedMove * Time.deltaTime));
+#endif
+#if UNITY_ANDROID
+            playerRB.AddForce(direction * jumpSpeed.value * Time.deltaTime, ForceMode.Impulse);
+#endif
         }
             
     }

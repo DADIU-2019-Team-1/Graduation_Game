@@ -18,7 +18,7 @@ public class PreProcessing
     // --- Variables
     private const float velFactor = 10.0f;
 
-    public void Preprocess(AnimationClip[] allClips, HumanBodyBones[] joints, GameObject avatar, Animator animator)
+    public void Preprocess(AnimationClip[] allClips, HumanBodyBones[] joints, GameObject avatar, Animator animator, float frameSampleRate)
     {
 		csvHandler = new CSVHandler();
 
@@ -38,9 +38,9 @@ public class PreProcessing
 
             Vector3 preRootPos = Vector3.zero, preLFootPos = Vector3.zero, preRFootPos = Vector3.zero, preNeckPos = Vector3.zero;
 
-            for (int j = 0; j < (int)(allClips[i].length * allClips[i].frameRate); j++)
+            for (int j = 0; j < (int)(allClips[i].length * frameSampleRate); j++)
             {
-	            allClips[i].SampleAnimation(avatar, j / allClips[i].frameRate);
+	            allClips[i].SampleAnimation(avatar, j / frameSampleRate);
 	            allClipNames.Add(allClips[i].name);
 	            allFrames.Add(j);
                 Vector3 rootPos = startSpace.inverse.MultiplyPoint3x4(animator.GetBoneTransform(joints[0]).position);
@@ -60,7 +60,7 @@ public class PreProcessing
                     preNeckPos = neckPos;
 
                     allPoints.Add(new TrajectoryPoint(rootPos,
-	                    rootPos + startSpace.MultiplyVector(animator.GetBoneTransform(joints[0]).forward)));
+	                    rootPos + startSpace.inverse.MultiplyPoint3x4(animator.GetBoneTransform(joints[0]).forward)));
                 }
                 else // Velocity calculations use j+1 - j instead of j - j-1, since there is no previous timestep, and the velocity in frame 0 should be similar to frame 1
                 {
@@ -78,7 +78,7 @@ public class PreProcessing
 		                CalculateVelocity(rFootPos, preRFootPos, velFactor), CalculateVelocity(neckPos, preNeckPos, velFactor)));
 
 	                allPoints.Add(new TrajectoryPoint(rootPos,
-		                preRootPos + startSpace.MultiplyVector(animator.GetBoneTransform(joints[0]).forward)));
+		                preRootPos + startSpace.inverse.MultiplyPoint3x4(animator.GetBoneTransform(joints[0]).forward)));
                 }
             }
         }

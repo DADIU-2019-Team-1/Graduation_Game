@@ -320,6 +320,7 @@ public class Movement : MonoBehaviour
             canMove = false;
             direction = Vector3.zero;
             rotationSpeedCurrent = 0.0f;
+            targetSpeed = 0.0f;
         }
 #endif
         SetState();
@@ -476,7 +477,6 @@ public class Movement : MonoBehaviour
 
     public Trajectory GetMovementTrajectory()
     {
-        float newRotationSpeedCurrent = rotationSpeedCurrent;
         //for (int i = 0; i < trajPoints.Length; i++)
         //{
         //    if (i > 0)
@@ -492,13 +492,13 @@ public class Movement : MonoBehaviour
         //    else
         //        trajPoints[i] = new TrajectoryPoint(transform.position, transform.position + transform.forward);
         //}
+        float newRotationSpeedCurrent = rotationSpeedCurrent;
         Vector3 playerPos = transform.position, previousPlayerPos;
         Vector3 playerForward = transform.forward;
         Quaternion playerRot = transform.rotation;
         float simulatedSpeed = currentSpeed.value;
         int wayToRotate = CrossProductPositive(playerForward, direction) ? 1 : -1;
         int j = 0;
-
         for (int i = 0; i < trajPoints.Length * mm.framesBetweenTrajectoryPoints; i++)
         {
             previousPlayerPos = playerPos;

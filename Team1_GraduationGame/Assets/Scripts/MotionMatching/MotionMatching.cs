@@ -6,22 +6,30 @@ using UnityEngine;
 [RequireComponent(typeof(Animator))]
 public class MotionMatching : MonoBehaviour
 {
-    // TODO: Add method summaries and general documentation 
-    // TODO: Create LookUp system in preproccesing, that can be used instead of pose matching during runtime
+    // Must have
+    // TODO BUGFIX: Animation forwards are being calculated incorrectly (oppositely?)
+    // TODO BUGFIX: Animations do not blend together. Reason could be pose matching, but might be something else
+    // TODO: Revise pose matching
+    // TODO: Cut down idle animations (lots of repetition)
+    // TODO: Store animations in seperate "state" lists for performance
+    // TODO: Revise how transitions are used (currently state takes priority, IdleToRun can be called from both Idle and Run - should only be called from Idle)
+    // TODO: Start and stop motion matching based on movement (and events)
     // TODO: Convert system to Unity DOTS - can only take NativeArrays<float3>
-    // TODO: When preprocessing, also store the data that is being written to CSV as return to feature vector (do load and write step together when preprocessing)
-    // TODO: Do correct char space conversion
-    // TODO: Check that forwards for trajectories are being created correctly
-    // TODO: Create bool for using misc or not, since our current misc system doesn't really make sense
-    // TODO: Create some debugger that shows various information about the data, especially the trajectory for each frame
-    // TODO: Collision detection with raycasting between the trajectory points
+
+
+
+    // Should have
+    // TODO: Simpler comparison and weight system
     // TODO: Extrapolate empty trajectorypoints (points that go over the frame size for that clip)
+    // TODO: Collision detection with raycasting between the trajectory points
 
-    // TODO: https://docs.unity3d.com/ScriptReference/AnimationClip.SampleAnimation.html
-    // TODO: https://docs.unity3d.com/ScriptReference/HumanBodyBones.html
+    // Nice to have
+    // TODO: Create LookUp system in preproccesing, that can be used instead of pose matching during runtime
+    // TODO: Create some debugger that shows various information about the data, especially the trajectory for each frame
+    // TODO: When preprocessing, also store the data that is being written to CSV as return to feature vector (do load and write step together when preprocessing)
     // TODO: Use idle threshold reference from Movement
-
-	// BUG: CSV Data is not correctly converted to char space (feet are in world pos)
+    // TODO: Add idle events
+    // TODO: Add method summaries and general documentation 
 
 
     // --- References
@@ -47,6 +55,7 @@ public class MotionMatching : MonoBehaviour
 
     private AnimationClip currentClip;
     private int currentFrame, currentID;
+    [SerializeField] private float animationFrameRate = 50.0f;
 
     // --- Weights
     [Range(0, 1)] public float weightRootVel = 1.0f, weightLFootVel = 1.0f, weightRFootVel = 1.0f, weightNeckVel = 1.0f,
@@ -80,7 +89,7 @@ public class MotionMatching : MonoBehaviour
             EditorUtility.CopySerialized(tempAnimContainer, animContainer);
             AssetDatabase.SaveAssets();
 
-            preProcessing.Preprocess(allClips, joints, gameObject, animator);
+            preProcessing.Preprocess(allClips, joints, gameObject, animator, animationFrameRate);
         }
 
         if (allClips == null)
@@ -152,7 +161,6 @@ public class MotionMatching : MonoBehaviour
 	    if (Application.isPlaying)
 	    {
 		    Matrix4x4 invCharSpace = transform.worldToLocalMatrix.inverse;
-		    Matrix4x4 charSpace = transform.localToWorldMatrix;
 		    Matrix4x4 animSpace = new Matrix4x4();
             animSpace.SetTRS(featureVectors[currentID].GetTrajectory().GetTrajectoryPoints()[0].GetPoint(), Quaternion.identity, Vector3.one);
 
@@ -199,7 +207,7 @@ public class MotionMatching : MonoBehaviour
 		    }
 		}
 		//Debug.Log("Updating to animation " + currentClip.name + " to frame " + frame + " with ID " + id + " from id " + currentID + " of frame " + currentFrame);
-        animator.CrossFadeInFixedTime(currentClip.name, 0.3f, 0, frame / currentClip.frameRate); // 0.3f was recommended by Magnus
+        animator.CrossFadeInFixedTime(currentClip.name, 0.3f, 0, frame / animationFrameRate); // 0.3f was recommended by Magnus
         currentID = id;
         currentFrame = frame;
     }

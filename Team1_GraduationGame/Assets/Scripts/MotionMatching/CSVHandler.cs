@@ -142,7 +142,7 @@ public class CSVHandler
             TrajectoryPoint[] trajPoints = new TrajectoryPoint[trajPointsLength];
             for (int j = 0; j < trajPointsLength; j++)
             {
-                if (i + j * trajStepSize < allClipNames.Count) // Out of bounds handler
+                if (i + j * trajStepSize * 2.0f < allClipNames.Count) // Out of bounds handler
                 {
                     if (allFrames[i] <= allFrames[i + j * trajStepSize]) // clip 3 at frame 45 out of 70 with a trajStepSize of 10 goes 45, 55, 65, X, X
                         trajPoints[j] = new TrajectoryPoint(allPoints[i + j * trajStepSize].GetPoint(), allPoints[i + j * trajStepSize].GetForward());

@@ -478,7 +478,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 844056503148310349}
-  m_LocalRotation: {x: -0.016256088, y: -0.08606317, z: 0.08606312, w: 0.99243236}
+  m_LocalRotation: {x: -0.01625609, y: -0.08606317, z: 0.086063124, w: 0.99243236}
   m_LocalPosition: {x: -0.005676844, y: 0.028438991, z: -0.0010599546}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -2166,6 +2166,7 @@ GameObject:
   - component: {fileID: 5865448813341310186}
   - component: {fileID: 8724323518715605681}
   - component: {fileID: 962641346844991771}
+  - component: {fileID: 6342135361023566537}
   m_Layer: 0
   m_Name: Mother
   m_TagString: Player
@@ -2199,10 +2200,10 @@ Animator:
   m_GameObject: {fileID: 5865448813341310187}
   m_Enabled: 1
   m_Avatar: {fileID: 9000000, guid: 9235eb15ba2e4494f9d172e6334b20a2, type: 3}
-  m_Controller: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 0dc8e1d9544524f438dded959db0ac00, type: 2}
   m_CullingMode: 1
   m_UpdateMode: 0
-  m_ApplyRootMotion: 1
+  m_ApplyRootMotion: 0
   m_LinearVelocityBlending: 0
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
@@ -2236,6 +2237,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 57f10f26dc2bfb048b505753cd7efe99, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  accelerationFactor: 0.1
+  jumpEvent: {fileID: 0}
+  attackEvent: {fileID: 0}
+  stateChangeEvent: {fileID: 0}
   stick: {fileID: 0}
   stickLimit: {fileID: 0}
   sneakSpeed:
@@ -2254,52 +2259,57 @@ MonoBehaviour:
     UseUnique: 0
     UniqueValue: 0
     Variable: {fileID: 11400000, guid: c6005f997cbf1974ea2c928175f551f7, type: 2}
-  swipeTimeThreshold:
-    UseUnique: 0
-    UniqueValue: 0
-    Variable: {fileID: 11400000, guid: 76d6d489be169344f8087ed31294e00c, type: 2}
   jumpHeight:
     UseUnique: 0
     UniqueValue: 0
     Variable: {fileID: 11400000, guid: 3999ce15becbdb94ba845827c2594c03, type: 2}
-  ghostJumpHeight:
+  jumpSpeed:
     UseUnique: 0
     UniqueValue: 0
-    Variable: {fileID: 11400000, guid: f3fcfd93e458d3b40aaf525d6795823d, type: 2}
-  radius:
-    UseUnique: 0
-    UniqueValue: 0
-    Variable: {fileID: 11400000, guid: 2ba7ed972f6e3a740b27636fabad48e7, type: 2}
-  currentSpeed: {fileID: 11400000, guid: 6f04acf1fc8e6a24791f3fdc75e797ea, type: 2}
+    Variable: {fileID: 11400000, guid: 9dc58a2eaeb2a7b49a67d0dac2ed182d, type: 2}
   fallMultiplier:
     UseUnique: 0
     UniqueValue: 0
     Variable: {fileID: 11400000, guid: aaf15d79fe870524a81070406eb46d86, type: 2}
-  attackDegree:
-    UseUnique: 0
-    UniqueValue: 0
-    Variable: {fileID: 11400000, guid: db9f6d06529c36640a10564378bec7a0, type: 2}
   attackRange:
     UseUnique: 0
     UniqueValue: 0
     Variable: {fileID: 11400000, guid: 081cef8b5c4ab654fa3b8c990f375f8a, type: 2}
+  swipeTimeThreshold:
+    UseUnique: 0
+    UniqueValue: 0
+    Variable: {fileID: 11400000, guid: 76d6d489be169344f8087ed31294e00c, type: 2}
+  radius:
+    UseUnique: 0
+    UniqueValue: 0
+    Variable: {fileID: 11400000, guid: 2ba7ed972f6e3a740b27636fabad48e7, type: 2}
+  attackDegree:
+    UseUnique: 0
+    UniqueValue: 0
+    Variable: {fileID: 11400000, guid: db9f6d06529c36640a10564378bec7a0, type: 2}
   swipePixelDistance:
     UseUnique: 0
     UniqueValue: 0
     Variable: {fileID: 11400000, guid: c884f35f8e4e4304eb5dc5b1e0da785c, type: 2}
+  ghostJumpHeight:
+    UseUnique: 0
+    UniqueValue: 0
+    Variable: {fileID: 11400000, guid: f3fcfd93e458d3b40aaf525d6795823d, type: 2}
+  currentSpeed: {fileID: 11400000, guid: 6f04acf1fc8e6a24791f3fdc75e797ea, type: 2}
   moveState: {fileID: 11400000, guid: 064acbb0600eace4e969fd76909dcac8, type: 2}
   leftHeelPos: {fileID: 1621144628}
   rightHeelPos: {fileID: 2035943864}
   rightToePos: {fileID: 1360902429}
   leftToePos: {fileID: 2111332318}
-  jumpMaterial: {fileID: 0}
   idleThreshold: 0.1
   sneakThreshold: 0.25
-  runThreshold: 0.26
+  runThreshold: 0.7
   tagsToInteractWith:
   - Enemy
   - Interactable
   interactableObjects: []
+  jumpPlatformTag: []
+  jumpPlatforms: []
 --- !u!114 &5865448813341310185
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2366,6 +2376,42 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   isDefaultListener: 1
   listenerId: 0
+--- !u!114 &6342135361023566537
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5865448813341310187}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 635296c0989c9ee49aaf3f6c9a0db0a8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  joints: 00000000050000000600000009000000
+  animContainer: {fileID: 11400000, guid: bb37ea0515a28f0469bc40358b2d1e27, type: 2}
+  states:
+  - Idle
+  - Sneak
+  - Walk
+  - Run
+  _preProcess: 1
+  _playAnimationMode: 0
+  pointsPerTrajectory: 5
+  framesBetweenTrajectoryPoints: 10
+  _isMotionMatching: 0
+  _isIdling: 0
+  queryRateInFrames: 15
+  candidatesPerMisc: 10
+  animationFrameRate: 30
+  weightRootVel: 1
+  weightLFootVel: 1
+  weightRFootVel: 1
+  weightNeckVel: 1
+  weightNeckPos: 1
+  weightFeetPos: 1
+  weightTrajPoints: 1
+  weightTrajForwards: 1
 --- !u!1 &6016816948309197438
 GameObject:
   m_ObjectHideFlags: 0
@@ -2419,7 +2465,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6109177712309719340}
-  m_LocalRotation: {x: -0.032254003, y: -0.082799576, z: 0.17146309, w: 0.98117495}
+  m_LocalRotation: {x: -0.032254007, y: -0.082799576, z: 0.1714631, w: 0.98117495}
   m_LocalPosition: {x: -0.01542324, y: 0.025793979, z: -0.0010599256}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:

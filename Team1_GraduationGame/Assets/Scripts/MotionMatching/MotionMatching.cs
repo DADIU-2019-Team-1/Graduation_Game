@@ -1,6 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+#if UNITY_EDITOR
 using UnityEditor;
+#endif
 using UnityEngine;
 
 [RequireComponent(typeof(Animator))]
@@ -71,7 +73,6 @@ public class MotionMatching : MonoBehaviour
 	    animator = GetComponent<Animator>();
         preProcessing = new PreProcessing();
 
-        allClips = animContainer.animationClips;
 #if UNITY_EDITOR
         if (_preProcess)
         {

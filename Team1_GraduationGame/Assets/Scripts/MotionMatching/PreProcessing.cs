@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using UnityEditor;
 using UnityEngine;
 
 public class PreProcessing
@@ -83,7 +82,6 @@ public class PreProcessing
             }
         }
         csvHandler.WriteCSV(allPoses, allPoints, allClipNames, allFrames);
-        
     }
     public List<FeatureVector> LoadData(int pointsPerTrajectory, int framesBetweenTrajectoryPoints)
     {

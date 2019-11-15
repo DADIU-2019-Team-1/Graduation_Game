@@ -49,8 +49,8 @@ public class RippleEffect : MonoBehaviour
 
         public void Reset(Vector2 pos)
         {
-            position = new Vector2(pos.x, pos.y);
-            position = new Vector2(0, 0);
+            //position = new Vector2(pos.x, pos.y);
+            position = new Vector2(2220/pos.x, 1080/pos.y);
             time = 0;
         }
 
@@ -59,9 +59,9 @@ public class RippleEffect : MonoBehaviour
             time += Time.deltaTime;
         }
 
-        public Vector4 MakeShaderParameter(float aspect, Vector2 pos)
+        public Vector4 MakeShaderParameter(float aspect)
         {
-            return new Vector4(pos.x * aspect, pos.y, time, 0);
+            return new Vector4(position.x * aspect, position.y, time, 0);
         }
     }
 
@@ -77,9 +77,9 @@ public class RippleEffect : MonoBehaviour
 
 
         Vector2 screenPos = cam.WorldToScreenPoint(target.position);
-        material.SetVector("_Drop1", droplets[0].MakeShaderParameter(c.aspect, screenPos));
-        material.SetVector("_Drop2", droplets[1].MakeShaderParameter(c.aspect, screenPos));
-        material.SetVector("_Drop3", droplets[2].MakeShaderParameter(c.aspect, screenPos));
+        material.SetVector("_Drop1", droplets[0].MakeShaderParameter(c.aspect));
+        material.SetVector("_Drop2", droplets[1].MakeShaderParameter(c.aspect));
+        material.SetVector("_Drop3", droplets[2].MakeShaderParameter(c.aspect));
 
         material.SetColor("_Reflection", reflectionColor);
         material.SetVector("_Params1", new Vector4(c.aspect, 1, 1 / waveSpeed, 0));
@@ -139,9 +139,6 @@ public class RippleEffect : MonoBehaviour
     {
         Vector2 screenPos = cam.WorldToScreenPoint(target.position);
         Debug.Log(screenPos);
-        droplets[0].position = screenPos;
-        droplets[1].position = screenPos;
-        droplets[2].position = screenPos;
 
         droplets[dropCount++ % droplets.Length].Reset(screenPos);
     }

@@ -2166,7 +2166,6 @@ GameObject:
   - component: {fileID: 5865448813341310185}
   - component: {fileID: 5865448813341310186}
   - component: {fileID: 8724323518715605681}
-  - component: {fileID: 6342135361023566537}
   m_Layer: 0
   m_Name: Mother
   m_TagString: Player
@@ -2215,7 +2214,7 @@ Animator:
   m_GameObject: {fileID: 5865448813341310187}
   m_Enabled: 1
   m_Avatar: {fileID: 9000000, guid: 9235eb15ba2e4494f9d172e6334b20a2, type: 3}
-  m_Controller: {fileID: 9100000, guid: 0dc8e1d9544524f438dded959db0ac00, type: 2}
+  m_Controller: {fileID: 9100000, guid: 38beef35852dfc7418f84808297801e2, type: 2}
   m_CullingMode: 1
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -2383,42 +2382,6 @@ MonoBehaviour:
     positionOffset: {x: 0, y: 0, z: 0}
   m_posOffsetData: {fileID: 0}
   listenerMask: 1
---- !u!114 &6342135361023566537
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5865448813341310187}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 635296c0989c9ee49aaf3f6c9a0db0a8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  joints: 00000000050000000600000009000000
-  animContainer: {fileID: 11400000, guid: bb37ea0515a28f0469bc40358b2d1e27, type: 2}
-  states:
-  - Idle
-  - Sneak
-  - Walk
-  - Run
-  _preProcess: 1
-  _playAnimationMode: 0
-  pointsPerTrajectory: 5
-  framesBetweenTrajectoryPoints: 10
-  _isMotionMatching: 0
-  _isIdling: 0
-  queryRateInFrames: 15
-  candidatesPerMisc: 10
-  animationFrameRate: 30
-  weightRootVel: 1
-  weightLFootVel: 1
-  weightRFootVel: 1
-  weightNeckVel: 1
-  weightNeckPos: 1
-  weightFeetPos: 1
-  weightTrajPoints: 1
-  weightTrajForwards: 1
 --- !u!1 &6016816948309197438
 GameObject:
   m_ObjectHideFlags: 0

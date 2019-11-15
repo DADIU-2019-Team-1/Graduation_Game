@@ -31,7 +31,7 @@
         public float wayPointReachRange = 1.0f, hearingSensitivity = 2.0f, minimumAlwaysDetectRange = 1.3f;
         public bool drawGizmos = true, useWaitTime, rotateAtWaypoints, loopWaypointRoutine = true, alwaysAggro;
         public Color normalConeColor = Color.yellow, aggroConeColor = Color.red;
-        public float animNoiseHeardTime = 2.0f;
+        public float animNoiseHeardTime = 2.0f, animAttackTime = 3.0f;
         [HideInInspector] public bool useGlobalWaitTime = true;
         [HideInInspector] public float waitTime = 0.0f;
 
@@ -381,7 +381,7 @@
                 _navMeshAgent.isStopped = true;
 
                 _animator?.SetBool("Motion", false);
-                _animator?.SetTrigger("PushedDown"); // TODO - YYY play lie down/knocked down animation
+                _animator?.SetTrigger("PushedDown");
 
                 viewConeLight.gameObject.SetActive(true);
                 viewConeLight.color = Color.green;
@@ -491,23 +491,26 @@
             if (_movement != null)
             {
                 _movement.Frozen(true);
-                /*_player.transform.forward = _player.transform.position - transform.position;*/ // TODO: Test if works
+                _player.transform.LookAt(new Vector3(transform.position.x, _player.transform.position.y, transform.position.z)); // TODO: Test if works
             }
 
             yield return new WaitForSeconds(thisEnemy.embraceDelay);
 
             if (Vector3.Distance(transform.position, _player.transform.position) <
-                thisEnemy.embraceDistance)
+                thisEnemy.embraceDistance + 1.0f)
             {
+                viewConeLight?.gameObject.SetActive(false);
                 _animator?.SetBool("Motion", false);
-                _animator?.SetTrigger("Attack"); // TODO - YYY play hug/attack animation
+                _animator?.SetTrigger("Attack");
+
+                yield return new WaitForSeconds(animAttackTime);
 
                 Debug.Log("PLAYER DIED");
-
+                viewConeLight?.gameObject.SetActive(true);
                 playerDiedEvent?.Raise();
             }
 
-            alwaysAggro = false;    // TODO: This is temporary
+            alwaysAggro = false;
             _active = true;
             _isHugging = false;
             if (!alwaysAggro)

@@ -27,6 +27,11 @@ namespace Team1_GraduationGame.Events
                 {
                     Debug.Log("EventManager Notice: event number " + i + " is not set up correctly!");
                 }
+
+                if ((int) events[i].function == 8)
+                {
+                    events[i].eventToFire?.Invoke();
+                }
             }
         }
 
@@ -113,6 +118,21 @@ namespace Team1_GraduationGame.Events
         {
             Application.Quit();
         }
+
+        public void RaiseVoidEvent(VoidEvent thisEvent)
+        {
+            thisEvent?.Raise();
+        }
+
+        public void RaiseFloatEvent(FloatEvent thisEvent, float value)
+        {
+            thisEvent?.Raise(value);
+        }
+
+        public void RaiseIntEvent(IntEvent thisEvent, int value)
+        {
+            thisEvent?.Raise(value);
+        }
     }
 
     [System.Serializable]
@@ -134,7 +154,8 @@ namespace Team1_GraduationGame.Events
             TimedEvent,
             OnObjectMoving,
             OnObjectsRotateDirection,
-            OnInteractablesToggle
+            OnInteractablesToggle,
+            OnStart
         };
 
         [HideInInspector] public UnityEvent eventToFire;
@@ -523,6 +544,11 @@ namespace Team1_GraduationGame.Events
                                 }
                             }
                             EditorGUILayout.HelpBox("Specify the amount of interactable gameobjects you want to check. The event will fire when they all their states are true.", MessageType.Info);
+                        }
+
+                        if ((int)script.events[i].function == 7)
+                        {
+                            EditorGUILayout.HelpBox("This event will fire during start()", MessageType.Info);
                         }
 
                         GUILayout.Space(10);

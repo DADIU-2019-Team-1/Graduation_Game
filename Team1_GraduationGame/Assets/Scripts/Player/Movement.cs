@@ -54,6 +54,7 @@ public class Movement : MonoBehaviour
 
     private int leftTouch = 99;
     private int rightTouch = 98;
+    private int attackCooldown;
     private Vector3 _previousPosition = Vector3.zero;
     [Header("Idle until this has been reached must be smaller than sneak threshold!")]
     [SerializeField]
@@ -80,6 +81,8 @@ public class Movement : MonoBehaviour
     
     [TagSelector] [SerializeField] private string[] jumpPlatformTag;
     [SerializeField] private List<GameObject> jumpPlatforms;
+
+    public event Action attack; 
 
     private void Awake()
     {
@@ -285,8 +288,11 @@ public class Movement : MonoBehaviour
             touchStart = false;
         }
 
-        if (Input.GetMouseButtonUp(0))
+        if (attackCooldown > 0) attackCooldown--;
+
+        if (Input.GetMouseButtonUp(0) && attackCooldown <= 0)
         {
+            attackCooldown = 5;
             swipeEndPos = Input.mousePosition;
             Vector2 swipeOffSet = new Vector2(swipeEndPos.x - swipeStartPos.x, swipeEndPos.y - swipeStartPos.y);
             swipeDirection = swipeOffSet.normalized;
@@ -294,7 +300,6 @@ public class Movement : MonoBehaviour
             //Debug.Log("End phase: " + Time.time);
             if (swipeOffSet.magnitude > swipePixelDistance.value && Input.mousePosition.x > Screen.width /2 && !canMove)
             {
-                
                 playerAttack(worldDirection);
                 //Debug.Log("Swipe");
                 //Debug.DrawLine(swipeStartPos, swipeStartPos + swipeDirection * 300, Color.red, 5);
@@ -466,9 +471,8 @@ public class Movement : MonoBehaviour
         //canJump = false;
     }
 
-    private void playerAttack(Vector3 direction)
+    public void playerAttack(Vector3 direction)
     {
-
         float angle = ((float)attackDegree.value * Mathf.Deg2Rad) / 2;
         for (float j = -angle; j <= angle; j += 0.02f)
         {
@@ -506,6 +510,7 @@ public class Movement : MonoBehaviour
                 }
             }
         }
+        attack?.Invoke();
     }
 
     public float GetSpeed()

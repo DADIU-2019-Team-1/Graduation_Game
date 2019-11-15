@@ -1,5 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq.Expressions;
+using Team1_GraduationGame.Events;
+using Team1_GraduationGame.Managers;
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
@@ -17,9 +20,7 @@ public class MotionMatching : MonoBehaviour
     // TODO: Revise how transitions are used (currently state takes priority, IdleToRun can be called from both Idle and Run - should only be called from Idle)
     // TODO: Start and stop motion matching based on movement (and events)
     // TODO: Convert system to Unity DOTS - can only take NativeArrays<float3>
-
-
-
+    
     // Should have
     // TODO: Simpler comparison and weight system
     // TODO: Extrapolate empty trajectorypoints (points that go over the frame size for that clip)
@@ -54,6 +55,8 @@ public class MotionMatching : MonoBehaviour
     public int pointsPerTrajectory = 4, framesBetweenTrajectoryPoints = 10;
     [SerializeField] private bool _isMotionMatching, _isIdling;
     [SerializeField] private int queryRateInFrames = 10, candidatesPerMisc = 10;
+    [Tooltip("The time in frames that it takes for the animaton layers to blend.")]
+    [SerializeField] private float animLayerWeightChange = 50.0f;
 
     private AnimationClip currentClip;
     private int currentFrame, currentID;
@@ -80,6 +83,8 @@ public class MotionMatching : MonoBehaviour
             if (animator != null)
             {
                 allClips = animator.runtimeAnimatorController.animationClips;
+                if (allClips == null)
+                    Debug.LogError("Durnig preprocessing, tried to find animation clips in the animator controller, but there was none!");
             }
             else
             {
@@ -92,11 +97,7 @@ public class MotionMatching : MonoBehaviour
 
             preProcessing.Preprocess(allClips, joints, gameObject, animator, animationFrameRate);
         }
-
-        if (allClips == null)
-            Debug.LogError("AnimationClips load error: selected scriptable object file empty or none referenced");
 #endif
-
         allClips = animContainer.animationClips;
         featureVectors = preProcessing.LoadData(pointsPerTrajectory, framesBetweenTrajectoryPoints);
 
@@ -124,8 +125,35 @@ public class MotionMatching : MonoBehaviour
     {
         if (!_playAnimationMode)
         {
-	        UpdateAnimation(0, 0);
-	        StartCoroutine(MotionMatch());
+            movement.attack += DetectAttack;
+
+
+            UpdateAnimation(0, 0);
+            StartCoroutine(MotionMatch());
+        }
+    }
+
+    private void DetectAttack()
+    {
+        animator.SetTrigger("Push");
+    }
+
+    public void ChangeLayerWeight(int layerIndex, int desiredWeight)
+    {
+        StopAllCoroutines();
+        StartCoroutine(MotionMatch());
+        StartCoroutine(ChangeLayerWeightOverTime(layerIndex, desiredWeight));
+    }
+
+    private IEnumerator ChangeLayerWeightOverTime(int layerIndex, int desiredWeight)
+    {
+        Debug.Log("5");
+        float counter = 0.0f;
+        while (counter <= animLayerWeightChange)
+        {
+            animator.SetLayerWeight(layerIndex, Mathf.Lerp(animator.GetLayerWeight(layerIndex), desiredWeight, counter / animLayerWeightChange));
+            yield return new WaitForSeconds(Time.fixedDeltaTime);
+            counter++;
         }
     }
 
@@ -133,10 +161,16 @@ public class MotionMatching : MonoBehaviour
     {
         if (!_playAnimationMode)
         {
-            if (!_isMotionMatching)
+            if (movement.isJumping)
+            {
+                Debug.Log("Motion matching detected player is jumping or falling!");
+                StopCoroutine(MotionMatch());
+                animator.Play("MotionMatching");
+                animator.SetTrigger("Jump");
+            }
+            else if (!_isMotionMatching && !animator.GetCurrentAnimatorStateInfo(1).IsName("Pushing"))
 		    {
-			    StopAllCoroutines();
-			    StartCoroutine(MotionMatch());
+                Debug.Log("Starting motionmatching");
 		    }
         }
     }
@@ -146,6 +180,7 @@ public class MotionMatching : MonoBehaviour
     {
         if (_playAnimationMode)
 	    {
+            StopCoroutine(MotionMatch());
 		    if (Input.GetKeyDown(KeyCode.Space))
 		    {
 			    if (currentEnumerator != null)
@@ -232,7 +267,7 @@ public class MotionMatching : MonoBehaviour
     {
         SetBoolsInList(enumeratorBools, false);
 	    _isMotionMatching = true;
-	    while (true)
+	    while (_isMotionMatching)
 	    {
 		    currentID += queryRateInFrames;
             List<FeatureVector> candidates = TrajectoryMatching(movement.GetMovementTrajectory(), ref _trajCandidatesRef, ref _trajPossibleCandidatesRef);

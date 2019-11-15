@@ -940,13 +940,13 @@ ParticleSystem:
     m_UseMeshMaterialIndex: 0
     m_UseMeshColors: 1
     alignToDirection: 0
-    m_Texture: {fileID: 2800000, guid: 5c2648ca28264174bb6327fed6ac1346, type: 3}
+    m_Texture: {fileID: 2800000, guid: e63922aeead26dc4ea8e6d2b5759cedf, type: 3}
     m_TextureClipChannel: 3
     m_TextureClipThreshold: 0.3
     m_TextureUVChannel: 0
     m_TextureColorAffectsParticles: 1
     m_TextureAlphaAffectsParticles: 1
-    m_TextureBilinearFiltering: 0
+    m_TextureBilinearFiltering: 1
     randomDirectionAmount: 0
     sphericalDirectionAmount: 0
     randomPositionAmount: 0
@@ -15664,7 +15664,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5803217923746824317}
-  - component: {fileID: 4468459467088375047}
   - component: {fileID: 1581782969262856557}
   - component: {fileID: 1581782969262856556}
   m_Layer: 0
@@ -15690,25 +15689,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!95 &4468459467088375047
-Animator:
-  serializedVersion: 3
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7409109872908366446}
-  m_Enabled: 1
-  m_Avatar: {fileID: 9000000, guid: 44d66f0fc4187644d8599af09d4c18f7, type: 3}
-  m_Controller: {fileID: 0}
-  m_CullingMode: 1
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 1
-  m_LinearVelocityBlending: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorControllerStateOnDisable: 0
 --- !u!198 &1581782969262856557
 ParticleSystem:
   m_ObjectHideFlags: 0
@@ -22003,7 +21983,7 @@ PrefabInstance:
     - target: {fileID: 19867468, guid: 7b8f8a4d0ee5ffb4aaa6b54181380640, type: 3}
       propertyPath: ShapeModule.m_Texture
       value: 
-      objectReference: {fileID: 2800000, guid: 5c2648ca28264174bb6327fed6ac1346, type: 3}
+      objectReference: {fileID: 2800000, guid: e63922aeead26dc4ea8e6d2b5759cedf, type: 3}
     - target: {fileID: 19867468, guid: 7b8f8a4d0ee5ffb4aaa6b54181380640, type: 3}
       propertyPath: ShapeModule.m_TextureClipThreshold
       value: 0.27
@@ -22132,6 +22112,10 @@ PrefabInstance:
       propertyPath: ShapeModule.radiusThickness
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 19867468, guid: 7b8f8a4d0ee5ffb4aaa6b54181380640, type: 3}
+      propertyPath: ShapeModule.m_TextureBilinearFiltering
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 19860412, guid: 7b8f8a4d0ee5ffb4aaa6b54181380640, type: 3}
       propertyPath: InitialModule.startSizeY.minMaxState
       value: 3
@@ -22175,7 +22159,7 @@ PrefabInstance:
     - target: {fileID: 19879722, guid: 7b8f8a4d0ee5ffb4aaa6b54181380640, type: 3}
       propertyPath: ShapeModule.m_Texture
       value: 
-      objectReference: {fileID: 2800000, guid: 5c2648ca28264174bb6327fed6ac1346, type: 3}
+      objectReference: {fileID: 2800000, guid: e63922aeead26dc4ea8e6d2b5759cedf, type: 3}
     - target: {fileID: 19879722, guid: 7b8f8a4d0ee5ffb4aaa6b54181380640, type: 3}
       propertyPath: ShapeModule.radius.value
       value: 0.3
@@ -22246,6 +22230,14 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 19879722, guid: 7b8f8a4d0ee5ffb4aaa6b54181380640, type: 3}
       propertyPath: ShapeModule.radiusThickness
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 19879722, guid: 7b8f8a4d0ee5ffb4aaa6b54181380640, type: 3}
+      propertyPath: ShapeModule.m_TextureClipThreshold
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 19879722, guid: 7b8f8a4d0ee5ffb4aaa6b54181380640, type: 3}
+      propertyPath: ShapeModule.m_TextureBilinearFiltering
       value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []

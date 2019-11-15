@@ -31,12 +31,14 @@ namespace AK
 
             namespace STATE
             {
+                static const AkUniqueID END_SCENE = 755051661U;
                 static const AkUniqueID EXIT_MEMORY = 4198270385U;
                 static const AkUniqueID GRIEF_APPEARS = 3170210169U;
                 static const AkUniqueID HUB = 646625282U;
                 static const AkUniqueID MEMORY_LULLABY = 3074462064U;
                 static const AkUniqueID MENU = 2607556080U;
                 static const AkUniqueID OUTSIDE = 438105790U;
+                static const AkUniqueID PLAYER_DIED = 2295196519U;
             } // namespace STATE
         } // namespace GAMESTATE
 
@@ -96,6 +98,7 @@ namespace AK
         static const AkUniqueID FS_WETTISH = 1688601825U;
         static const AkUniqueID IMMERSION_FA_SSGRAIN = 2481728872U;
         static const AkUniqueID INSTRUMENT_FA_SSGRAIN = 2317409760U;
+        static const AkUniqueID MEMORYCALL_VOLUME_FOR_ANIMATION = 1254966522U;
         static const AkUniqueID METER_WIND = 3084119761U;
         static const AkUniqueID PLAYBACK_RATE = 1524500807U;
         static const AkUniqueID PROXIMITY_FA_SSGRAIN = 1791284502U;

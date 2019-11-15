@@ -41,7 +41,6 @@ GameObject:
   m_Component:
   - component: {fileID: 3248805873239350787}
   - component: {fileID: 224384012366284789}
-  - component: {fileID: 2002077940818040955}
   - component: {fileID: 8146179077844130381}
   m_Layer: 0
   m_Name: CutsceneCamera
@@ -107,14 +106,6 @@ Camera:
   m_OcclusionCulling: 1
   m_StereoConvergence: 10
   m_StereoSeparation: 0.022
---- !u!81 &2002077940818040955
-AudioListener:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4979457865118496249}
-  m_Enabled: 1
 --- !u!95 &8146179077844130381
 Animator:
   serializedVersion: 3
@@ -469,6 +460,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 28432783687220642}
     m_Modifications:
+    - target: {fileID: 6118607757890776001, guid: 1fb0ef5b686df544ea0929b232b93d07,
+        type: 3}
+      propertyPath: m_Name
+      value: MotherCutcenePrefab
+      objectReference: {fileID: 0}
     - target: {fileID: 7112011255968274898, guid: 1fb0ef5b686df544ea0929b232b93d07,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -523,11 +519,6 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6118607757890776001, guid: 1fb0ef5b686df544ea0929b232b93d07,
-        type: 3}
-      propertyPath: m_Name
-      value: MotherCutcenePrefab
       objectReference: {fileID: 0}
     - target: {fileID: 5439928161403673778, guid: 1fb0ef5b686df544ea0929b232b93d07,
         type: 3}

@@ -38,7 +38,7 @@ namespace Team1_GraduationGame.SaveLoadSystem
 
         private void Start()
         {
-            if (FindObjectOfType<HubMenu>() != null )
+            if (FindObjectOfType<HubMenu>() != null)
             {
                 //FindObjectOfType<HubMenu>().startGameEvent += NewGame;
                 FindObjectOfType<HubMenu>().continueGameEvent += Continue;

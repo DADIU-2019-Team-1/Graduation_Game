@@ -29,6 +29,7 @@ namespace Team1_GraduationGame.DevelopmentTools
         public bool setUpEnable = false;
 
         // Private:
+        private bool _devToolActive = false;
         string _dLog;
         Queue _dLogQueue = new Queue();
 
@@ -45,6 +46,9 @@ namespace Team1_GraduationGame.DevelopmentTools
             }
 
             Application.logMessageReceived += Log;
+
+            if (FindObjectOfType<HubMenu>() != null)
+                FindObjectOfType<HubMenu>().cheatModeEvent += ToggleDevelopmentToolPanel;
         }
 
         void OnEnable()
@@ -98,6 +102,15 @@ namespace Team1_GraduationGame.DevelopmentTools
             {
                 mainPanel.SetActive(false);
             }
+        }
+
+        public void ToggleDevelopmentToolPanel()
+        {
+            Debug.Log("Debug Mode Active");
+
+            _devToolActive = !_devToolActive;
+
+            SetDevelopmentToolPanel(_devToolActive);
         }
 
         public void TeleportToSavePoint()

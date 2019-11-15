@@ -3862,6 +3862,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 57f10f26dc2bfb048b505753cd7efe99, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  isJumping: 0
   accelerationFactor: 0.1
   jumpEvent: {fileID: 0}
   attackEvent: {fileID: 0}
@@ -3920,6 +3921,10 @@ MonoBehaviour:
     UseUnique: 0
     UniqueValue: 0
     Variable: {fileID: 11400000, guid: f3fcfd93e458d3b40aaf525d6795823d, type: 2}
+  jumpLength:
+    UseUnique: 0
+    UniqueValue: 0
+    Variable: {fileID: 11400000, guid: 390146430935efa4ea6af853776e51c2, type: 2}
   currentSpeed: {fileID: 11400000, guid: 6f04acf1fc8e6a24791f3fdc75e797ea, type: 2}
   moveState: {fileID: 11400000, guid: 064acbb0600eace4e969fd76909dcac8, type: 2}
   leftHeelPos: {fileID: 3170145165998217760}
@@ -3929,6 +3934,7 @@ MonoBehaviour:
   idleThreshold: 0.1
   sneakThreshold: 0.35
   runThreshold: 0.75
+  zoneSneakThreshold: 0
   tagsToInteractWith:
   - Enemy
   - Interactable
@@ -4016,6 +4022,7 @@ MonoBehaviour:
   _isIdling: 0
   queryRateInFrames: 15
   candidatesPerMisc: 25
+  animLayerWeightChange: 0.1
   animationFrameRate: 30
   weightRootVel: 1
   weightLFootVel: 1

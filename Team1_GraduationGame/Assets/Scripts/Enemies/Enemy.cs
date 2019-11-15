@@ -130,7 +130,7 @@
 
         private void Start()
         {
-            _animator?.SetBool("Motion", true);
+            //_animator?.SetBool("Motion", true);
         }
 
         /// <summary>
@@ -380,7 +380,7 @@
                 _active = false;
                 _navMeshAgent.isStopped = true;
 
-                _animator?.SetBool("Motion", false);
+                //_animator?.SetBool("Motion", false);
                 _animator?.SetTrigger("PushedDown");
 
                 viewConeLight.gameObject.SetActive(true);
@@ -444,11 +444,11 @@
             _active = false;
             _lastSighting = _player.transform.position;
             _animator?.SetTrigger("NoiseHeard");
-            _animator?.SetBool("Motion", false);
+            //_animator?.SetBool("Motion", false);
 
             yield return new WaitForSeconds(animNoiseHeardTime);
 
-            _animator?.SetBool("Motion", true);
+            //_animator?.SetBool("Motion", true);
             if (!_isAggro)
                 StartCoroutine(EnemyAggro());
 
@@ -486,7 +486,7 @@
             SwitchState(2); // Switch to attacking
 
             transform.LookAt(_player.transform.position);
-            alwaysAggro = true;
+            //alwaysAggro = true;
 
             if (_movement != null)
             {
@@ -500,7 +500,7 @@
                 thisEnemy.embraceDistance + 1.0f)
             {
                 viewConeLight?.gameObject.SetActive(false);
-                _animator?.SetBool("Motion", false);
+                //_animator?.SetBool("Motion", false);
                 _animator?.SetTrigger("Attack");
 
                 yield return new WaitForSeconds(animAttackTime);
@@ -510,7 +510,7 @@
                 playerDiedEvent?.Raise();
             }
 
-            alwaysAggro = false;
+            //alwaysAggro = false;
             _active = true;
             _isHugging = false;
             if (!alwaysAggro)
@@ -552,6 +552,9 @@
         public bool GetHearing() { return _hearingDisabled; }
         public NavMeshAgent getNavMeshAgent() { return _navMeshAgent; }
         public void SetAggro(bool _aggro) { _isAggro = _aggro; }
+        public bool GetAggro() { return _isAggro; }
+        public int GetCurrentWaypoint() { return _currentWayPoint; }
+        public void SetCurrentWaypoint(int index) { _currentWayPoint = index; }
         public void SetLastSighting(Vector3 location) { _lastSighting = location; }
         #endregion
 

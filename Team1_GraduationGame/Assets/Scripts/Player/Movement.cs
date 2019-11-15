@@ -11,9 +11,11 @@ using UnityEditor;
 public class Movement : MonoBehaviour
 {
     private Rigidbody playerRB;
-    private bool touchStart = false, canMove = false, canJump = true, canPush, isJumping = false, moveFrozen = false, inSneakZone = false;
+    private bool touchStart = false, canMove = false, canJump = true, canPush, moveFrozen = false, inSneakZone = false;
     private float rotationSpeedCurrent, rotationSpeedMax = 5.0f, rotationSpeedGoal, rotationAccelerationFactor = 0.1f, rotationAngleReactionFactor = 0.1f,
         targetSpeed;
+
+    public bool isJumping = false;
 
     [SerializeField] private float accelerationFactor = 0.1f;
     private float swipeTimeTimer;
@@ -35,6 +37,8 @@ public class Movement : MonoBehaviour
     private PhysicMaterial _jumpMaterial;
     [Tooltip("Height in meters for checking jump")]
     public FloatReference ghostJumpHeight;
+
+    public FloatReference jumpLength;
 
     public FloatVariable currentSpeed;
     public IntVariable moveState;
@@ -81,8 +85,11 @@ public class Movement : MonoBehaviour
     {
         playerRB = GetComponent<Rigidbody>();
         moveState.value = 0;
-        mm = GetComponent<MotionMatching>();
-        trajPoints = new TrajectoryPoint[mm.pointsPerTrajectory];
+        if (GetComponent<MotionMatching>() != null)
+        {
+            mm = GetComponent<MotionMatching>();
+            trajPoints = new TrajectoryPoint[mm.pointsPerTrajectory];
+        }
 
         //playerTrigger = GetComponent<SphereCollider>();
         //playerTrigger.radius = attackRange.value;
@@ -224,7 +231,7 @@ public class Movement : MonoBehaviour
                     else if (/*swipeTimeTimer + swipeTimeThreshold.value >= Time.time &&*/ !moveFrozen)
                     {
                         // Jump feels sluggish inside else if, but when only if, triggers every time and you never swipe/do both always.
-                        playerJump(Vector3.up + direction, jumpHeight.value);
+                        playerJump(direction, jumpHeight.value);
                         //Debug.Log("Jump");
                     }
 
@@ -295,11 +302,12 @@ public class Movement : MonoBehaviour
 
 
             }
-            else if (swipeTimeTimer + swipeTimeThreshold.value >= Time.time && !moveFrozen)
-            {
-                playerJump(Vector3.up + direction, jumpHeight.value);
-                //Debug.Log("Jump");
-            }
+
+            //else if (swipeTimeTimer + swipeTimeThreshold.value >= Time.time && !moveFrozen)
+            //{
+            //    playerJump(Vector3.up + direction, jumpHeight.value);
+            //    //Debug.Log("Jump");
+            //}
         }
 
         if (touchStart && canMove && !moveFrozen)
@@ -323,6 +331,11 @@ public class Movement : MonoBehaviour
             direction = Vector3.zero;
             rotationSpeedCurrent = 0.0f;
             targetSpeed = 0.0f;
+        }
+
+        if (Input.GetKey(KeyCode.Space) && !isJumping)
+        {
+            playerJump(direction, jumpHeight.value);
         }
 #endif
         SetState();
@@ -354,13 +367,14 @@ public class Movement : MonoBehaviour
                 }
                 else if (dragDist < radius.value * zoneSneakThreshold)
                 {
-                    movePlayer(direction, sneakSpeed.value);
+                    targetSpeed = sneakSpeed.value;
+                    movePlayer(direction);
                     //moveState.value = 1;
                 }
-                else 
+                else
                 {
-
-                    movePlayer(direction, walkSpeed.value);
+                    targetSpeed = walkSpeed.value;
+                    movePlayer(direction);
                     //moveState.value = 2;
                 }
 
@@ -408,11 +422,19 @@ public class Movement : MonoBehaviour
         else
         {
 #if UNITY_EDITOR
-            playerRB.MovePosition(transform.position + (direction * speedMove * Time.deltaTime));
+            playerRB.MovePosition(transform.position + (direction * targetSpeed * Time.deltaTime));
 #endif
 #if UNITY_ANDROID
-            playerRB.AddForce(direction * jumpSpeed.value * Time.deltaTime, ForceMode.Impulse);
+            playerRB.AddForce(direction * targetSpeed * Time.deltaTime, ForceMode.Impulse);
 #endif
+        }
+
+        if (!isJumping && !(Physics.Raycast(leftToePos.transform.position, Vector3.down, ghostJumpHeight.value) ||
+                           Physics.Raycast(rightToePos.transform.position, Vector3.down, ghostJumpHeight.value) ||
+                           Physics.Raycast(leftHeelPos.transform.position, Vector3.down, ghostJumpHeight.value) ||
+                           Physics.Raycast(rightHeelPos.transform.position, Vector3.down, ghostJumpHeight.value)))
+        {
+            isJumping = true;
         }
     }
 
@@ -424,7 +446,7 @@ public class Movement : MonoBehaviour
             {
                 jumpPlatforms[j].GetComponent<Collider>().material = _jumpMaterial;
             }
-            playerRB.AddForce(direction * jumpHeight, ForceMode.Impulse);
+            playerRB.AddForce((Vector3.up + (direction * jumpLength.value)) * jumpHeight, ForceMode.Impulse);
             /*         if(playerRB.velocity.y <= 0) {
                         //playerRB.mass * fallMultiplier.value;
                         playerRB.velocity += Vector3.up * Physics.gravity.y * (fallMultiplier.value -1) * Time.deltaTime;

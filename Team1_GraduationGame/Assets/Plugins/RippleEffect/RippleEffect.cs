@@ -28,10 +28,10 @@ public class RippleEffect : MonoBehaviour
     [Range(0.01f, 1.0f)]
     public float reflectionStrength = 0.7f;
 
-    [Range(1.0f, 3.0f)]
+    [Range(0.01f, 3.0f)]
     public float waveSpeed = 1.25f;
 
-    [Range(0.0f, 2.0f)]
+    [Range(0.0f, 6.0f)]
     public float dropInterval = 0.5f;
 
     [SerializeField, HideInInspector]
@@ -50,7 +50,7 @@ public class RippleEffect : MonoBehaviour
         public void Reset(Vector2 pos)
         {
             //position = new Vector2(pos.x, pos.y);
-            position = new Vector2(2220/pos.x, 1080/pos.y);
+            position = new Vector2(pos.x/2220, pos.y/1080);
             time = 0;
         }
 

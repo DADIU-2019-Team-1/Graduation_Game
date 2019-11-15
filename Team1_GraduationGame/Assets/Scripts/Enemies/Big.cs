@@ -228,6 +228,7 @@ namespace Team1_GraduationGame.Enemies
 
             if (isActive)
             {
+                _animator?.ResetTrigger("Appearing");
                 _animator?.SetBool("Patrolling", true);
                 _isRotating = true;
                 _isSpawned = true;
@@ -235,6 +236,7 @@ namespace Team1_GraduationGame.Enemies
             }
             else
             {
+                _animator?.ResetTrigger("Disappearing");
                 _animator?.SetBool("Patrolling", false);
                 _isRotating = false;
                 _isSpawned = false;

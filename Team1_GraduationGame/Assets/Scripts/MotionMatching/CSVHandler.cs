@@ -1,7 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+#if UNITY_EDITOR
 using UnityEditor;
+#endif
 using UnityEngine;
 
 public class CSVHandler
@@ -34,6 +36,7 @@ public class CSVHandler
 
     public void WriteCSV(List<MMPose> poseData, List<TrajectoryPoint> pointData, List<string> clipNames, List<int> frames)
     {
+#if UNITY_EDITOR
         if (!AssetDatabase.IsValidFolder(path))
         {
             if (!AssetDatabase.IsValidFolder("Assets/Resources"))
@@ -42,6 +45,7 @@ public class CSVHandler
             }
             AssetDatabase.CreateFolder("Assets/Resources", "MotionMatching");
         }
+#endif
         using (var file = File.CreateText(path + "/" + fileName))
         {
             file.WriteLine(string.Join(",", csvLabels));

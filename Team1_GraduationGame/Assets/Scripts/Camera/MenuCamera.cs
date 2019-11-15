@@ -112,8 +112,8 @@ public class MenuCamera : MonoBehaviour
     {
         if (_startingGame)
         {
-            SaveLoadManager man = new SaveLoadManager();
-            man.NewGame();
+            //SaveLoadManager man = new SaveLoadManager();
+            //man.NewGame();
             startingTimeline.Play();
         }
         _startingGame = true;

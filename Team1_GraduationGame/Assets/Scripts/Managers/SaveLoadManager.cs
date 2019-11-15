@@ -15,6 +15,7 @@ namespace Team1_GraduationGame.SaveLoadSystem
         // References:
         private GameObject _player;
         private GameObject[] _enemies;
+        private GameObject[] _interactables;
 
 
         public void NewGame()
@@ -97,6 +98,10 @@ namespace Team1_GraduationGame.SaveLoadSystem
                 PlayerPrefs.SetString("enemySave", tempSaveString);
             }
 
+            //// Interactable save: ////
+            _interactables = GameObject.FindGameObjectsWithTag("Interactable");
+            // TODO: YYY - make this
+
             //// SavePoint State: ////
             SavePoint[] tempSavePoints = GameObject.FindObjectsOfType<SavePoint>();
             tempSaveString = "";
@@ -138,27 +143,27 @@ namespace Team1_GraduationGame.SaveLoadSystem
 
             if (_player != null)
             {
-                //// SavePoint State load: ////
-                SavePoint[] tempSavePoints = GameObject.FindObjectsOfType<SavePoint>();
-                tempLoadString = PlayerPrefs.GetString("savePointStateSave");
+                //// SavePoint State load: //// BUG: Does not work correctly atm. Fix it YYY
+                //SavePoint[] tempSavePoints = GameObject.FindObjectsOfType<SavePoint>();
+                //tempLoadString = PlayerPrefs.GetString("savePointStateSave");
 
-                if (tempSavePoints != null)
-                {
-                    string[] tempDataString1 = tempLoadString.Split(new[] { SAVE_SEPERATOR }, System.StringSplitOptions.None);
-                    List<SavePointContainer> tempSavePointContainers = new List<SavePointContainer>();
+                //if (tempSavePoints != null)
+                //{
+                //    string[] tempDataString1 = tempLoadString.Split(new[] { SAVE_SEPERATOR }, System.StringSplitOptions.None);
+                //    List<SavePointContainer> tempSavePointContainers = new List<SavePointContainer>();
 
-                    for (int i = 1; i < tempDataString1.Length; i++) // Must start at 1
-                    {
-                        SavePointContainer tempSavePointContainer =
-                            JsonUtility.FromJson<SavePointContainer>(tempDataString1[i]);
+                //    for (int i = 1; i < tempDataString1.Length; i++) // Must start at 1
+                //    {
+                //        SavePointContainer tempSavePointContainer =
+                //            JsonUtility.FromJson<SavePointContainer>(tempDataString1[i]);
 
-                        for (int j = 0; j < tempSavePoints.Length; j++)
-                        {
-                            if (tempSavePointContainer.thisID == tempSavePoints[j].thisID)
-                                tempSavePoints[j].savePointUsed = tempSavePointContainer.savePointUsed;
-                        }
-                    }
-                }
+                //        for (int j = 0; j < tempSavePoints.Length; j++)
+                //        {
+                //            if (tempSavePointContainer.thisID == tempSavePoints[j].thisID)
+                //                tempSavePoints[j].savePointUsed = tempSavePointContainer.savePointUsed;
+                //        }
+                //    }
+                //}
 
                 //// Enemy load: ////
                 tempLoadString = PlayerPrefs.GetString("enemySave");
@@ -170,7 +175,7 @@ namespace Team1_GraduationGame.SaveLoadSystem
                 {
                     EnemyContainer tempEnemyContainer = new EnemyContainer();
 
-                    for (int i = 1; i < _enemies.Length; i++)
+                    for (int i = 0; i < _enemies.Length; i++)
                     {
                         tempEnemyContainer = JsonUtility.FromJson<EnemyContainer>(tempDataString2[i]);
                         Enemy tempEnemyComponent = _enemies[i].GetComponent<Enemy>();
@@ -182,6 +187,10 @@ namespace Team1_GraduationGame.SaveLoadSystem
                         tempEnemyComponent.SetCurrentWaypoint(tempEnemyContainer.currentWayPoint);
                     }
                 }
+
+                //// Pushable load: ////
+                _interactables = GameObject.FindGameObjectsWithTag("Interactable");
+                // TODO: YYY - Make this
 
                 //// Player load: ////
                 tempLoadString = PlayerPrefs.GetString("playerSave");
@@ -215,6 +224,11 @@ namespace Team1_GraduationGame.SaveLoadSystem
             public Quaternion rot;
             public bool isAggro;
             public int currentWayPoint;
+        }
+
+        public class InteractableContainer
+        {
+
         }
     }
 }

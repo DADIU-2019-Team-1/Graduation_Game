@@ -491,7 +491,7 @@
             if (_movement != null)
             {
                 _movement.Frozen(true);
-                /*_player.transform.forward = _player.transform.position - transform.position;*/ // TODO: Test if works
+                _player.transform.LookAt(new Vector3(transform.position.x, _player.transform.position.y, transform.position.z)); // TODO: Test if works
             }
 
             yield return new WaitForSeconds(thisEnemy.embraceDelay);
@@ -499,13 +499,14 @@
             if (Vector3.Distance(transform.position, _player.transform.position) <
                 thisEnemy.embraceDistance + 1.0f)
             {
+                viewConeLight?.gameObject.SetActive(false);
                 _animator?.SetBool("Motion", false);
                 _animator?.SetTrigger("Attack");
 
                 yield return new WaitForSeconds(animAttackTime);
 
                 Debug.Log("PLAYER DIED");
-
+                viewConeLight?.gameObject.SetActive(true);
                 playerDiedEvent?.Raise();
             }
 

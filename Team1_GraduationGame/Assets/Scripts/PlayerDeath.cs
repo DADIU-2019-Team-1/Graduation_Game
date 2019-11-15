@@ -16,11 +16,14 @@ public class PlayerDeath : MonoBehaviour
     public void Start()
     {
         fadeBlackAnimator = GetComponent<Animator>();
+        spManager = FindObjectOfType<SavePointManager>();
         
+
     }
 
     public void PlayerRespawn()
     {
+        if(spManager != null)
         StartCoroutine(FadeHandler());
 
 
@@ -36,6 +39,7 @@ public class PlayerDeath : MonoBehaviour
     
     private IEnumerator FadeHandler()
     {
+
         fadeBlackAnimator.SetTrigger(("FadeOut"));
         yield return new WaitForSeconds(animationDuration);
 

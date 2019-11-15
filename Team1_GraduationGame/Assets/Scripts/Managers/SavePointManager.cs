@@ -38,7 +38,7 @@ namespace Team1_GraduationGame.SaveLoadSystem
 
         private void Start()
         {
-            if (FindObjectOfType<HubMenu>() != null )
+            if (FindObjectOfType<HubMenu>() != null)
             {
                 //FindObjectOfType<HubMenu>().startGameEvent += NewGame;
                 FindObjectOfType<HubMenu>().continueGameEvent += Continue;
@@ -84,8 +84,10 @@ namespace Team1_GraduationGame.SaveLoadSystem
                 {
                     GameObject tempPlayer = GameObject.FindGameObjectWithTag("Player");
 
-                    tempPlayer.transform.position =
-                        savePoints[previousCheckPoint - 1].transform.position + transform.up;
+                    //tempPlayer.transform.position =
+                    //    savePoints[previousCheckPoint - 1].transform.position + transform.up;
+
+                    LoadGame();
 
                     tempPlayer.GetComponent<Movement>().Frozen(false);
                 }

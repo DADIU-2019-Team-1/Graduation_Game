@@ -8,6 +8,7 @@ public class HubMenu : MonoBehaviour
     public event Action continueGameEvent; // TODO: Continue is not yet implemented 
     public event Action<int> menuChangeEvent;
     public event Action<string> languageChangeEvent; // TODO: Localization is not yet implemented
+    public event Action cheatModeEvent;
 
     public void ChangeLanguage(string s)
     {
@@ -24,6 +25,10 @@ public class HubMenu : MonoBehaviour
     public void ContinueGame()
     {
         continueGameEvent?.Invoke();
+    }
+    public void CheatMode()
+    {
+        cheatModeEvent?.Invoke();
     }
 
     public void ExitGame()

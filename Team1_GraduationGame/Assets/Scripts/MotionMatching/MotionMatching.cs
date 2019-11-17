@@ -237,7 +237,7 @@ public class MotionMatching : MonoBehaviour
             List<FeatureVector> candidates = TrajectoryMatching(movement.GetMovementTrajectory(), ref _trajCandidatesRef, ref _trajPossibleCandidatesRef);
             int candidateID = PoseMatching(candidates);
 			UpdateAnimation(candidateID, featureVectors[candidateID].GetFrame());
-            yield return new WaitForSeconds(queryRateInFrames / currentClip.frameRate);
+            yield return new WaitForSeconds(queryRateInFrames / animationFrameRate);
 	    }
     }
     private IEnumerator PlayAnimation()

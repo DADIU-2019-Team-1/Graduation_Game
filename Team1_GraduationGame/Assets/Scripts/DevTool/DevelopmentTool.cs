@@ -11,7 +11,6 @@ namespace Team1_GraduationGame.DevelopmentTools
 
 #if UNITY_EDITOR
     using UnityEditor;
-#endif
 
     public class DevelopmentTool : MonoBehaviour
     {
@@ -153,8 +152,7 @@ namespace Team1_GraduationGame.DevelopmentTools
         }
 
     }
-
-#if UNITY_EDITOR
+    
     [CustomEditor(typeof(DevelopmentTool))]
     public class DevelopmentTool_Editor : UnityEditor.Editor
     {

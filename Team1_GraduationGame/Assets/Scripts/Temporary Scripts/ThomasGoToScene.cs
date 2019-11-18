@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿// Codeowner: Nicolai Hansen
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -17,6 +18,8 @@ public class ThomasGoToScene : MonoBehaviour
     private Movement _movement;
 
     private Vector3 memoryDirection;
+
+    private bool destinationReached;
     // Start is called before the first frame update
     void Start()
     {
@@ -25,9 +28,9 @@ public class ThomasGoToScene : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
-        if (atOrbTrigger.value == 0 && _movement != null)
+        if (atOrbTrigger.value == 0 && _movement != null  && !destinationReached)
         {
             memoryDirection = (transform.position - _movement.gameObject.transform.position).normalized;
             _movement.direction = memoryDirection;
@@ -39,6 +42,7 @@ public class ThomasGoToScene : MonoBehaviour
                 Debug.Log("Reached timeline");
                 _movement.targetSpeed = 0;
                 memoryDirection = Vector3.zero;
+                destinationReached = true;
             }
         }
         
@@ -48,6 +52,7 @@ public class ThomasGoToScene : MonoBehaviour
         atOrbTrigger.value = 1;
         Debug.Log("going to scene '" +name+"'");
         SceneManager.LoadScene(name);
+        destinationReached = false;
     } 
     
     private void OnTriggerEnter(Collider other)

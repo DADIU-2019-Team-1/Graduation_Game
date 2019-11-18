@@ -31,6 +31,8 @@ public class Movement : MonoBehaviour
 
     public IntVariable _atOrbTrigger;
 
+    public Animator animator;
+
     private Vector2 swipeStartPos, swipeEndPos, swipeDirection;
 
     [Tooltip("Put the joystick here")]
@@ -123,6 +125,7 @@ public class Movement : MonoBehaviour
     void Update()
     {
         currentSpeed.value = Vector3.Distance(transform.position, _previousPosition) / Time.fixedDeltaTime;
+        animator.SetFloat("Speed", currentSpeed.value);
         lookRotation = direction != Vector3.zero ? Quaternion.LookRotation(direction) : Quaternion.identity;
         velocity = direction.normalized * currentSpeed.value;
     }
@@ -320,11 +323,11 @@ public class Movement : MonoBehaviour
 
             }
 
-            //else if (swipeTimeTimer + swipeTimeThreshold.value >= Time.time && !moveFrozen)
-            //{
-            //    playerJump(Vector3.up + direction, jumpHeight.value);
-            //    //Debug.Log("Jump");
-            //}
+            else if (swipeTimeTimer + swipeTimeThreshold.value >= Time.time && !moveFrozen)
+            {
+                playerJump(Vector3.up + direction, jumpHeight.value);
+                //Debug.Log("Jump");
+            }
         }
 
         if (touchStart && canMove && !moveFrozen)

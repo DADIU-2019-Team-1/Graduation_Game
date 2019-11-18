@@ -1,4 +1,7 @@
 ﻿// Script by Jakob Elkjær Husted
+
+using System.Linq;
+
 namespace Team1_GraduationGame.Enemies
 {
     using System.Collections;
@@ -45,7 +48,7 @@ namespace Team1_GraduationGame.Enemies
         private SphereCollider _thisCollider;
         private int _currentWayPoint = 0, _state = 0, _layerMask;
         private float[] _waitTimes;
-        private float _targetSpeed, _hearingDistance;
+        private float _targetSpeed, _hearingDistance, _lightConeIntensity;
 
         #endregion
 
@@ -116,6 +119,7 @@ namespace Team1_GraduationGame.Enemies
                     viewConeLight.range = thisEnemy.viewDistance;
                     viewConeLight.color = normalConeColor;
                     viewConeLight.spotAngle = thisEnemy.fieldOfView;
+                    _lightConeIntensity = viewConeLight.intensity;
                     if (_hearingDisabled)
                         viewConeLight.gameObject.SetActive(false);
                 }
@@ -250,7 +254,7 @@ namespace Team1_GraduationGame.Enemies
                     }
                 }
 
-                if (!_hearingDisabled /*&& !_isAggro*/)  // Enemy hearing:  // TODO: Add pause after player heard to play animation
+                if (!_hearingDisabled /*&& !_isAggro*/)  // Enemy hearing:  //
                 {
                     _hearingDistance = thisEnemy.hearingDistance;
                     if (playerMoveState.value == 2)
@@ -261,10 +265,9 @@ namespace Team1_GraduationGame.Enemies
                     {
                         _lastSighting = _player.transform.position;
 
-                        if (!_isAggro)
-                            StartCoroutine(EnemyAggro());
+                        if (!_isAggro && !_playerHeard)
+                            StartCoroutine(PlayerHeard());
 
-                        //StartCoroutine(PlayerHeard());    // TODO: Enable later YYY
                     }
                     else if (Vector3.Distance(transform.position, _player.transform.position) < minimumAlwaysDetectRange
                     ) // If very very close the enemy will "hear" the player no matter what
@@ -278,17 +281,18 @@ namespace Team1_GraduationGame.Enemies
 
                 ViewLightConeControl();
 
-                if (!alwaysAggro)
-                {
-                    if (_inTriggerZone && _giveUpPursuitRunning)    // this part is used to time out the pursuit, if enemy cannot reach player last sighting
-                    {
-                        StopCoroutine(PursuitTimeout());
-                    }
-                    else if (!_inTriggerZone && !_giveUpPursuitRunning)
-                    {
-                        StartCoroutine(PursuitTimeout());
-                    }
-                }
+                //if (!alwaysAggro) // BUG: This does not work currently
+                //{
+                //    if (_inTriggerZone && _giveUpPursuitRunning)    // this part is used to time out the pursuit, if enemy cannot reach player last sighting
+                //    {
+                //        _giveUpPursuitRunning = false;
+                //        StopCoroutine(PursuitTimeout());
+                //    }
+                //    else if (!_inTriggerZone && !_giveUpPursuitRunning && _isAggro)
+                //    {
+                //        StartCoroutine(PursuitTimeout());
+                //    }
+                //}
             }
         }
 
@@ -352,7 +356,7 @@ namespace Team1_GraduationGame.Enemies
                                     StartCoroutine(EnemyAggro());
                             }
                     }
-                    else if (_isAggro)
+                    else if (_isAggro && !_playerHeard)
                     {
                         _lastSighting = _player.transform.position;
                     }
@@ -402,10 +406,17 @@ namespace Team1_GraduationGame.Enemies
                 if (playerMoveState.value == 0 || playerMoveState.value == 1)
                 {
                     if (!viewConeLight.gameObject.activeSelf)
+                    {
+                        viewConeLight.intensity = 0;
                         viewConeLight.gameObject.SetActive(true);
+                        StartCoroutine(LightConeFade());
+                    }
                 }
                 else if (viewConeLight.gameObject.activeSelf)
+                {
+                    StopCoroutine(LightConeFade());
                     viewConeLight.gameObject.SetActive(false);
+                }
             }
         }
 
@@ -434,6 +445,19 @@ namespace Team1_GraduationGame.Enemies
 
         #region Co-Routines
 
+        private IEnumerator LightConeFade()
+        {
+            bool loop = true;
+            while (loop)
+            {
+                viewConeLight.intensity += 1;
+                yield return new WaitForSeconds(0.05f);
+
+                if (viewConeLight.intensity >= _lightConeIntensity)
+                    loop = false;
+            }
+        }
+
         private IEnumerator PlayerHeard()
         {
             _playerHeard = true;
@@ -443,11 +467,15 @@ namespace Team1_GraduationGame.Enemies
 
             yield return new WaitForSeconds(animNoiseHeardTime);
 
+            _animator?.ResetTrigger("NoiseHeard");
+
             if (!_isAggro)
                 StartCoroutine(EnemyAggro());
 
-            _playerHeard = false;
             _active = true;
+
+            yield return new WaitForSeconds(thisEnemy.aggroTime);
+            _playerHeard = false;
         }
 
         private IEnumerator WaitTimer()
@@ -513,8 +541,7 @@ namespace Team1_GraduationGame.Enemies
         private IEnumerator PursuitTimeout()
         {
             _giveUpPursuitRunning = true;
-            yield return new WaitForSeconds(10);
-
+            yield return new WaitForSeconds(15.0f);
             _destinationSet = false;
             _isAggro = false;
 
@@ -610,28 +637,31 @@ namespace Team1_GraduationGame.Enemies
                 {
                     for (int i = 0; i < wayPoints.Count; i++)
                     {
-                        Gizmos.color = Color.blue;
-                        Gizmos.DrawWireSphere(wayPoints[i].transform.position, 0.2f);
-                        Handles.Label(wayPoints[i].transform.position + (Vector3.up * 0.6f), (i + 1).ToString());
-
-                        Gizmos.DrawLine(transform.position, wayPoints[i].transform.position);
-
-                        Gizmos.color = Color.yellow;
-                        if (i + 1 < wayPoints.Count)
+                        if (wayPoints.ElementAtOrDefault(i))
                         {
-                            Gizmos.DrawLine(wayPoints[i].transform.position, wayPoints[i + 1].transform.position);
+                            Gizmos.color = Color.blue;
+                            Gizmos.DrawWireSphere(wayPoints[i].transform.position, 0.2f);
+                            Handles.Label(wayPoints[i].transform.position + (Vector3.up * 0.6f), (i + 1).ToString());
 
-                        }
-                        else if (i == wayPoints.Count - 1 && wayPoints.Count > 1 && loopWaypointRoutine)
-                        {
-                            Gizmos.DrawLine(wayPoints[wayPoints.Count - 1].transform.position, wayPoints[0].transform.position);
-                        }
+                            Gizmos.DrawLine(transform.position, wayPoints[i].transform.position);
 
-                        if (thisEnemy != null)
-                        {
-                            Gizmos.color = Color.red;
-                            Gizmos.DrawLine(transform.position + transform.up, transform.forward * thisEnemy.viewDistance + (transform.position + transform.up));
+                            Gizmos.color = Color.yellow;
+                            if (i + 1 < wayPoints.Count)
+                            {
+                                Gizmos.DrawLine(wayPoints[i].transform.position, wayPoints[i + 1].transform.position);
 
+                            }
+                            else if (i == wayPoints.Count - 1 && wayPoints.Count > 1 && loopWaypointRoutine)
+                            {
+                                Gizmos.DrawLine(wayPoints[wayPoints.Count - 1].transform.position, wayPoints[0].transform.position);
+                            }
+
+                            if (thisEnemy != null)
+                            {
+                                Gizmos.color = Color.red;
+                                Gizmos.DrawLine(transform.position + transform.up, transform.forward * thisEnemy.viewDistance + (transform.position + transform.up));
+
+                            }
                         }
                     }
                 }

@@ -278,13 +278,14 @@ namespace Team1_GraduationGame.Enemies
 
                 ViewLightConeControl();
 
-                //if (!alwaysAggro) // BUG: This does not work
+                //if (!alwaysAggro) // BUG: This does not work currently
                 //{
                 //    if (_inTriggerZone && _giveUpPursuitRunning)    // this part is used to time out the pursuit, if enemy cannot reach player last sighting
                 //    {
+                //        _giveUpPursuitRunning = false;
                 //        StopCoroutine(PursuitTimeout());
                 //    }
-                //    else if (!_inTriggerZone && !_giveUpPursuitRunning && !_isAggro)
+                //    else if (!_inTriggerZone && !_giveUpPursuitRunning && _isAggro)
                 //    {
                 //        StartCoroutine(PursuitTimeout());
                 //    }
@@ -537,8 +538,7 @@ namespace Team1_GraduationGame.Enemies
         private IEnumerator PursuitTimeout()
         {
             _giveUpPursuitRunning = true;
-            yield return new WaitForSeconds(10);
-
+            yield return new WaitForSeconds(15.0f);
             _destinationSet = false;
             _isAggro = false;
 

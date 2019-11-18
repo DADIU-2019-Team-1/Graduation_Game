@@ -6,7 +6,7 @@ using Team1_GraduationGame.Interaction;
 using Team1_GraduationGame.Events;
 using UnityEditor;
 
-[RequireComponent(typeof(Rigidbody), typeof(SphereCollider), typeof(Animator))]
+[RequireComponent(typeof(Rigidbody), typeof(SphereCollider))]
 
 public class Movement : MonoBehaviour
 {

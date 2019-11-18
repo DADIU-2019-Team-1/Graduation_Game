@@ -125,7 +125,7 @@ public class Movement : MonoBehaviour
     void Update()
     {
         currentSpeed.value = Vector3.Distance(transform.position, _previousPosition) / Time.fixedDeltaTime;
-        animator.SetFloat("Speed", currentSpeed.value);
+        //animator.SetFloat("Speed", currentSpeed.value);
         lookRotation = direction != Vector3.zero ? Quaternion.LookRotation(direction) : Quaternion.identity;
         velocity = direction.normalized * currentSpeed.value;
     }
@@ -350,7 +350,7 @@ public class Movement : MonoBehaviour
             canMove = false;
             direction = Vector3.zero;
             rotationSpeedCurrent = 0.0f;
-            if (_atOrbTrigger.value == 1)
+            if (_atOrbTrigger != null && _atOrbTrigger.value == 1)
             {
                 targetSpeed = 0.0f;
             }
@@ -435,10 +435,12 @@ public class Movement : MonoBehaviour
 
     public void movePlayer(Vector3 direction)
     {
-        if (_atOrbTrigger.value != 1)
+        if (_atOrbTrigger != null && _atOrbTrigger.value != 1)
         {
-            targetSpeed = walkSpeed.value;
+                targetSpeed = walkSpeed.value;
         }
+        
+
         int wayToRotate = CrossProductPositive(transform.forward, direction) ? 1 : -1;
         rotationSpeedGoal = Mathf.Min(rotationSpeed.value, Vector3.Angle(transform.forward, direction) * rotationAngleReactionFactor) * wayToRotate;
         rotationSpeedCurrent += (rotationSpeedGoal - rotationSpeedCurrent) * rotationAccelerationFactor;

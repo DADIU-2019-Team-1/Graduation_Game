@@ -159,7 +159,7 @@ public class MotionMatching : MonoBehaviour
         {
             if (movement.isJumping)
             {
-                Debug.Log("Motion matching detected player is jumping or falling!");
+                //Debug.Log("Motion matching detected player is jumping or falling!");
                 StopCoroutine(MotionMatch());
                 animator.Play("MotionMatching");
                 animator.SetTrigger("Jump");

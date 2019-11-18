@@ -288,7 +288,6 @@ GameObject:
   - component: {fileID: 8838853396806325500}
   - component: {fileID: 346318754347584992}
   - component: {fileID: 5576515081703728568}
-  - component: {fileID: 3760585219882731501}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -398,27 +397,6 @@ MonoBehaviour:
   previousTrackIndex: 0
   nextTrackIndex: 0
   trackX: 0
---- !u!114 &3760585219882731501
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3760585219882731500}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ab2fd0b11cfb2fb4ca4ed47adfcc3b26, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Shader: {fileID: 4800000, guid: 9d7e8f87435780644abb4acdfd72a2f0, type: 3}
-  LookupTexture: {fileID: 0}
-  Amount: 1
-  TintColor: {r: 1, g: 1, b: 1, a: 1}
-  Hue: 0
-  Saturation: 0.382
-  Brightness: 0.29
-  Contrast: -0.07
-  Sharpness: 0.183
 --- !u!1 &4782054170772721125
 GameObject:
   m_ObjectHideFlags: 0
@@ -747,7 +725,6 @@ GameObject:
   - component: {fileID: 4782054171472148443}
   - component: {fileID: 4782054171472148455}
   - component: {fileID: 4782054171472148454}
-  - component: {fileID: 4782054171472148440}
   - component: {fileID: 4782054171472148441}
   m_Layer: 0
   m_Name: Main Camera
@@ -821,27 +798,6 @@ AudioListener:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4782054171472148442}
   m_Enabled: 1
---- !u!114 &4782054171472148440
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4782054171472148442}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ab2fd0b11cfb2fb4ca4ed47adfcc3b26, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Shader: {fileID: 4800000, guid: 9d7e8f87435780644abb4acdfd72a2f0, type: 3}
-  LookupTexture: {fileID: 0}
-  Amount: 1
-  TintColor: {r: 1, g: 1, b: 1, a: 1}
-  Hue: 0
-  Saturation: 0.382
-  Brightness: 0.29
-  Contrast: -0.07
-  Sharpness: 0.183
 --- !u!114 &4782054171472148441
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1415,6 +1371,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 6650199727750192058}
     m_Modifications:
+    - target: {fileID: 5865448813341310187, guid: 40d7b7e0c162d044da6bbf24d3eda68e,
+        type: 3}
+      propertyPath: m_Name
+      value: Mother
+      objectReference: {fileID: 0}
     - target: {fileID: 7439132148707561208, guid: 40d7b7e0c162d044da6bbf24d3eda68e,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -1469,11 +1430,6 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5865448813341310187, guid: 40d7b7e0c162d044da6bbf24d3eda68e,
-        type: 3}
-      propertyPath: m_Name
-      value: Mother
       objectReference: {fileID: 0}
     - target: {fileID: 5865448813341310184, guid: 40d7b7e0c162d044da6bbf24d3eda68e,
         type: 3}

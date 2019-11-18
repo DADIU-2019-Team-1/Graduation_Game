@@ -48,8 +48,6 @@ public class MotionMatching : MonoBehaviour
 
     [SerializeField] private string[] states;
 
-    private List<bool> enumeratorBools;
-
     // --- Variables 
     public bool _preProcess, _playAnimationMode;
     public int pointsPerTrajectory = 4, framesBetweenTrajectoryPoints = 10;
@@ -118,7 +116,6 @@ public class MotionMatching : MonoBehaviour
         
         _trajCandidatesRef = new List<FeatureVector>();
         _trajPossibleCandidatesRef = new List<FeatureVector>();
-        enumeratorBools = AddEnumeratorBoolsToList();
     }
 
     private void Start()
@@ -147,7 +144,6 @@ public class MotionMatching : MonoBehaviour
 
     private IEnumerator ChangeLayerWeightOverTime(int layerIndex, int desiredWeight)
     {
-        Debug.Log("5");
         float counter = 0.0f;
         while (counter <= animLayerWeightChange)
         {
@@ -248,24 +244,8 @@ public class MotionMatching : MonoBehaviour
         currentFrame = frame;
     }
 
-    #region IEnumerators
-    private List<bool> AddEnumeratorBoolsToList()
-    {
-		List<bool> list = new List<bool>();
-		list = new List<bool>();
-		list.Add(_isMotionMatching);
-		list.Add(_isIdling);
-		return list;
-    }
-    private void SetBoolsInList(List<bool> list, bool booleanVal)
-    {
-	    for (int i = 0; i < list.Count; i++)
-		    list[i] = booleanVal;
-    }
-
     private IEnumerator MotionMatch()
     {
-        SetBoolsInList(enumeratorBools, false);
 	    _isMotionMatching = true;
 	    while (_isMotionMatching)
 	    {
@@ -303,7 +283,6 @@ public class MotionMatching : MonoBehaviour
             currentID += queryRateInFrames;
         }
     }
-    #endregion
 
     List<FeatureVector> TrajectoryMatching(Trajectory movementTraj, ref List<FeatureVector> candidates, ref List<FeatureVector> possibleCandidates)
     {

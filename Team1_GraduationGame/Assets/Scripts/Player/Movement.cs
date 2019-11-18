@@ -31,8 +31,6 @@ public class Movement : MonoBehaviour
 
     public IntVariable _atOrbTrigger;
 
-    private Animator animator;
-
     private Vector2 swipeStartPos, swipeEndPos, swipeDirection;
 
     [Tooltip("Put the joystick here")]
@@ -98,7 +96,6 @@ public class Movement : MonoBehaviour
     private void Awake()
     {
         playerRB = GetComponent<Rigidbody>();
-        animator = GetComponent<Animator>();
         moveState.value = 0;
         if (GetComponent<MotionMatching>() != null)
         {
@@ -126,9 +123,6 @@ public class Movement : MonoBehaviour
     void Update()
     {
         currentSpeed.value = Vector3.Distance(transform.position, _previousPosition) / Time.fixedDeltaTime;
-        if(animator.runtimeAnimatorController != null)
-            animator.SetFloat("Speed", currentSpeed.value);
-
         lookRotation = direction != Vector3.zero ? Quaternion.LookRotation(direction) : Quaternion.identity;
         velocity = direction.normalized * currentSpeed.value;
     }

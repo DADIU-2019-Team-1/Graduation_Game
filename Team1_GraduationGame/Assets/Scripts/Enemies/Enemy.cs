@@ -488,7 +488,6 @@ namespace Team1_GraduationGame.Enemies
 
         private IEnumerator EnemyAggro()
         {
-            Debug.Log("IS NOW AGGRO");
             _isAggro = true;
             yield return new WaitForSeconds(thisEnemy.aggroTime);
 
@@ -537,10 +536,8 @@ namespace Team1_GraduationGame.Enemies
 
         private IEnumerator PursuitTimeout()
         {
-            Debug.Log("About to give up");
             _giveUpPursuitRunning = true;
             yield return new WaitForSeconds(10);
-            Debug.Log("gave up!");
 
             _destinationSet = false;
             _isAggro = false;

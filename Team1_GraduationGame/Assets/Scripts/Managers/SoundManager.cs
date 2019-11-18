@@ -1,11 +1,12 @@
-﻿using System.Collections;
+﻿// Script by Jakob Elkjær Husted
+using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using Team1_GraduationGame.Events;
 using UnityEngine;
 using UnityEngine.Events;
 
-// NOTE: This script requires Wwise to work //
+//// NOTE: This script requires Wwise to work ////
 
 namespace Team1_GraduationGame.Managers
 {

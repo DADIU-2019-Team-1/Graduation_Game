@@ -1,4 +1,5 @@
-﻿using Team1_GraduationGame.Enemies;
+﻿// Script by Jakob Elkjær Husted
+using Team1_GraduationGame.Enemies;
 using UnityEngine;
 
 #if UNITY_EDITOR

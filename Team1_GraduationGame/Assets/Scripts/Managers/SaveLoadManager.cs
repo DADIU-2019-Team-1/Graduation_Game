@@ -1,6 +1,8 @@
-﻿using System.Collections;
+﻿// Script by Jakob Elkjær Husted
+using System.Collections;
 using System.Collections.Generic;
 using Team1_GraduationGame.Enemies;
+using Team1_GraduationGame.Interaction;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -99,8 +101,24 @@ namespace Team1_GraduationGame.SaveLoadSystem
             }
 
             //// Interactable save: ////
+            tempSaveString = "";
             _interactables = GameObject.FindGameObjectsWithTag("Interactable");
-            // TODO: YYY - make this
+
+            if (_interactables != null)
+            {
+                InteractableContainer tempInteractableContainer = new InteractableContainer();
+
+                for (int i = 0; i < _interactables.Length; i++)
+                {
+                    tempInteractableContainer.pos = _interactables[i].transform.position;
+                    tempInteractableContainer.toggleState =
+                        _interactables[i].GetComponent<Interactable>().toggleState;
+
+                    tempSaveString += JsonUtility.ToJson(tempInteractableContainer) + SAVE_SEPERATOR;
+                }
+
+                PlayerPrefs.SetString("interactableSave", tempSaveString);
+            }
 
             //// SavePoint State: ////
             SavePoint[] tempSavePoints = GameObject.FindObjectsOfType<SavePoint>();
@@ -133,6 +151,47 @@ namespace Team1_GraduationGame.SaveLoadSystem
             Debug.Log("Save/Load Manager: Succesfully saved the game");
         }
 
+        /// <summary>
+        /// Load game to savepoint (checkpoint reached in scene). This does not load to scene, use 'Continue' for that.
+        /// </summary>
+        /// <param name="loadSavePointState">Only set true if loading using 'continue' button</param>
+        public void LoadGame(bool loadSavePointState)
+        {
+            if (loadSavePointState)
+            {
+                // SavePoint State load:
+                SavePoint[] tempSavePoints = GameObject.FindObjectsOfType<SavePoint>();
+                string tempLoadString = PlayerPrefs.GetString("savePointStateSave");
+
+                if (tempSavePoints != null)
+                {
+                    string[] tempDataString1 = tempLoadString.Split(new[] { SAVE_SEPERATOR }, System.StringSplitOptions.None);
+                    List<SavePointContainer> tempSavePointContainers = new List<SavePointContainer>();
+
+                    for (int i = 1; i < tempDataString1.Length; i++) // Must start at 1
+                    {
+                        SavePointContainer tempSavePointContainer =
+                            JsonUtility.FromJson<SavePointContainer>(tempDataString1[i]);
+
+                        for (int j = 0; j < tempSavePoints.Length; j++)
+                        {
+                            if (tempSavePointContainer.thisID == tempSavePoints[j].thisID)
+                                tempSavePoints[j].savePointUsed = tempSavePointContainer.savePointUsed;
+                        }
+                    }
+                }
+
+                LoadGame();
+            }
+            else
+            {
+                LoadGame();
+            }
+        }
+
+        /// <summary>
+        /// Load game to savepoint (checkpoint reached in scene). This does not load to scene, use 'Continue' for that.
+        /// </summary>
         public void LoadGame()
         {
             string tempLoadString = "";
@@ -143,27 +202,6 @@ namespace Team1_GraduationGame.SaveLoadSystem
 
             if (_player != null)
             {
-                //// SavePoint State load: //// BUG: Does not work correctly atm. Fix it YYY
-                //SavePoint[] tempSavePoints = GameObject.FindObjectsOfType<SavePoint>();
-                //tempLoadString = PlayerPrefs.GetString("savePointStateSave");
-
-                //if (tempSavePoints != null)
-                //{
-                //    string[] tempDataString1 = tempLoadString.Split(new[] { SAVE_SEPERATOR }, System.StringSplitOptions.None);
-                //    List<SavePointContainer> tempSavePointContainers = new List<SavePointContainer>();
-
-                //    for (int i = 1; i < tempDataString1.Length; i++) // Must start at 1
-                //    {
-                //        SavePointContainer tempSavePointContainer =
-                //            JsonUtility.FromJson<SavePointContainer>(tempDataString1[i]);
-
-                //        for (int j = 0; j < tempSavePoints.Length; j++)
-                //        {
-                //            if (tempSavePointContainer.thisID == tempSavePoints[j].thisID)
-                //                tempSavePoints[j].savePointUsed = tempSavePointContainer.savePointUsed;
-                //        }
-                //    }
-                //}
 
                 //// Enemy load: ////
                 tempLoadString = PlayerPrefs.GetString("enemySave");
@@ -188,9 +226,24 @@ namespace Team1_GraduationGame.SaveLoadSystem
                     }
                 }
 
-                //// Pushable load: ////
+                //// Pushable/interactable load: ////
                 _interactables = GameObject.FindGameObjectsWithTag("Interactable");
-                // TODO: YYY - Make this
+
+                if (_interactables != null)
+                {
+                    tempLoadString = PlayerPrefs.GetString("interactableSave");
+                    tempDataString2 = tempLoadString.Split(new[] { SAVE_SEPERATOR }, System.StringSplitOptions.None);
+
+                    InteractableContainer tempInteractableContainer = new InteractableContainer();
+
+                    for (int i = 0; i < _interactables.Length; i++)
+                    {
+                        tempInteractableContainer = JsonUtility.FromJson<InteractableContainer>(tempDataString2[i]);
+                        _interactables[i].transform.position = tempInteractableContainer.pos;
+                        _interactables[i].GetComponent<Interactable>().toggleState =
+                            tempInteractableContainer.toggleState;
+                    }
+                }
 
                 //// Player load: ////
                 tempLoadString = PlayerPrefs.GetString("playerSave");
@@ -228,7 +281,9 @@ namespace Team1_GraduationGame.SaveLoadSystem
 
         public class InteractableContainer
         {
-
+            public Vector3 pos;
+            //public Quaternion rot;    // Ideally rotation should not be saved as interaction is on "rails"
+            public bool toggleState;
         }
     }
 }

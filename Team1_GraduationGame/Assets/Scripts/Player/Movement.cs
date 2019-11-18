@@ -142,6 +142,7 @@ public class Movement : MonoBehaviour
             if (Physics.Raycast(leftToePos.transform.position, Vector3.down, ghostJumpHeight.value) || Physics.Raycast(rightToePos.transform.position, Vector3.down, ghostJumpHeight.value) || Physics.Raycast(leftHeelPos.transform.position, Vector3.down, ghostJumpHeight.value) || Physics.Raycast(rightHeelPos.transform.position, Vector3.down, ghostJumpHeight.value) || Physics.Raycast(transform.position + Vector3.up, Vector3.down, ghostJumpHeight.value + 1.0f))
             {
                 isJumping = false;
+                _collider.material = null;
                 for (int j = 0; j < jumpPlatforms.Count; j++)
                 {
                     jumpPlatforms[j].GetComponent<Collider>().material = null;
@@ -453,12 +454,12 @@ public class Movement : MonoBehaviour
         }
         else
         {
-#if UNITY_EDITOR
+//#if UNITY_EDITOR
             playerRB.MovePosition(transform.position + (direction * targetSpeed * Time.deltaTime));
-#endif
-#if UNITY_ANDROID
-            playerRB.AddForce(direction * targetSpeed * Time.deltaTime, ForceMode.Impulse);
-#endif
+//#endif
+//#if UNITY_ANDROID
+//            playerRB.AddForce(direction * targetSpeed * Time.deltaTime, ForceMode.Impulse);
+//#endif
         }
 
         if (!isJumping && !(Physics.Raycast(leftToePos.transform.position, Vector3.down, ghostJumpHeight.value) ||
@@ -475,6 +476,7 @@ public class Movement : MonoBehaviour
     {
         if (!isJumping && (Physics.Raycast(leftToePos.transform.position, Vector3.down, ghostJumpHeight.value) || Physics.Raycast(rightToePos.transform.position, Vector3.down, ghostJumpHeight.value) || Physics.Raycast(leftHeelPos.transform.position, Vector3.down, ghostJumpHeight.value) || Physics.Raycast(rightHeelPos.transform.position, Vector3.down, ghostJumpHeight.value)))
         {
+            _collider.material = _jumpMaterial;
             for (int j = 0; j < jumpPlatforms.Count; j++)
             {
                 jumpPlatforms[j].GetComponent<Collider>().material = _jumpMaterial;

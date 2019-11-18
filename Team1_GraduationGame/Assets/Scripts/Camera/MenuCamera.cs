@@ -29,7 +29,7 @@ public class MenuCamera : MonoBehaviour
         if (startingTimeline == null)
             startingTimeline = FindObjectOfType<PlayableDirector>();
 
-            FindObjectOfType<HubMenu>().menuChangeEvent += ChangeLookAt;
+        FindObjectOfType<HubMenu>().menuChangeEvent += ChangeLookAt;
         FindObjectOfType<HubMenu>().startGameEvent += StartGame;
     }
 

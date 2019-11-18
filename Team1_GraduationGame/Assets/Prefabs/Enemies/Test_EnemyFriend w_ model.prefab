@@ -19,7 +19,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &5244557079581699283
 Transform:
   m_ObjectHideFlags: 0
@@ -354,9 +354,9 @@ MonoBehaviour:
   playerMoveState: {fileID: 11400000, guid: 064acbb0600eace4e969fd76909dcac8, type: 2}
   wayPoints: []
   parentWayPoint: {fileID: 0}
-  wayPointReachRange: 1
-  hearingSensitivity: 6
-  minimumAlwaysDetectRange: 1.3
+  wayPointReachRange: 1.5
+  hearingSensitivity: 5
+  minimumAlwaysDetectRange: 1.4
   drawGizmos: 1
   useWaitTime: 0
   rotateAtWaypoints: 0
@@ -365,6 +365,7 @@ MonoBehaviour:
   normalConeColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
   aggroConeColor: {r: 1, g: 0, b: 0, a: 1}
   animNoiseHeardTime: 2
+  animAttackTime: 2.5
   useGlobalWaitTime: 1
   waitTime: 0
 --- !u!114 &6687820084175197433
@@ -428,6 +429,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 6373199372352939544}
     m_Modifications:
+    - target: {fileID: 7409109872908366446, guid: 18d146ee5e7f77447a68cefb68f8697a,
+        type: 3}
+      propertyPath: m_Name
+      value: FriendPrefab
+      objectReference: {fileID: 0}
     - target: {fileID: 5803217923746824317, guid: 18d146ee5e7f77447a68cefb68f8697a,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -497,11 +503,6 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalScale.y
       value: 1.4631101
-      objectReference: {fileID: 0}
-    - target: {fileID: 7409109872908366446, guid: 18d146ee5e7f77447a68cefb68f8697a,
-        type: 3}
-      propertyPath: m_Name
-      value: FriendPrefab
       objectReference: {fileID: 0}
     - target: {fileID: 4468459467088375047, guid: 18d146ee5e7f77447a68cefb68f8697a,
         type: 3}

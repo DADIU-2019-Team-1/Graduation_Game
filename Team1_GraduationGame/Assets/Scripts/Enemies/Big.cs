@@ -14,6 +14,7 @@ namespace Team1_GraduationGame.Enemies
         private Animator _animator;
         public Light fieldOfViewLight;
         public VoidEvent playerDiedEvent;
+        public GameObject visionGameObject;
         [HideInInspector] public List<GameObject> lookPoints;
 
         // Private:
@@ -51,10 +52,13 @@ namespace Team1_GraduationGame.Enemies
                 fieldOfViewLight.spotAngle = fieldOfView;
             }
 
-            _unSpawnedPos = transform.position;
-            _spawnedPos = transform.position + (transform.up * 6);
+            _unSpawnedPos = visionGameObject.transform.position;
+            _spawnedPos = visionGameObject.transform.position + (visionGameObject.transform.up * 8);
 
-            _active = true;
+            if (visionGameObject != null)
+                _active = true;
+            else
+                Debug.LogError("Big Enemy Error: Vision gameobject missing, please attach one!");
 
             _animator?.SetBool("Patrolling", false);
         }
@@ -68,61 +72,62 @@ namespace Team1_GraduationGame.Enemies
                     if (!_lightOn)
                         UpdateFOVLight(true, false);
 
-                    if (_isRotating)
-                    {
-                        if (_updateRotation)
-                        {
-                            _updateRotation = false;
+                    // Rotation code:   TODO: uncomment if neeeded again
+                    //if (_isRotating)
+                    //{
+                    //    if (_updateRotation)
+                    //    {
+                    //        _updateRotation = false;
 
-                            if (_turnLeft)
-                                _lookRotation = Quaternion.Euler(_lookRangeToVector) != Quaternion.identity ? Quaternion.Euler(_lookRangeToVector) : transform.rotation;
-                            else
-                                _lookRotation = Quaternion.Euler(_lookRangeFromVector) != Quaternion.identity ? Quaternion.Euler(_lookRangeFromVector) : transform.rotation;
-                        }
+                    //        if (_turnLeft)
+                    //            _lookRotation = Quaternion.Euler(_lookRangeToVector) != Quaternion.identity ? Quaternion.Euler(_lookRangeToVector) : transform.rotation;
+                    //        else
+                    //            _lookRotation = Quaternion.Euler(_lookRangeFromVector) != Quaternion.identity ? Quaternion.Euler(_lookRangeFromVector) : transform.rotation;
+                    //    }
 
-                        transform.rotation = Quaternion.RotateTowards(transform.rotation, _lookRotation, rotateDegreesPerSecond * Time.fixedDeltaTime);
+                    //    transform.rotation = Quaternion.RotateTowards(transform.rotation, _lookRotation, rotateDegreesPerSecond * Time.fixedDeltaTime);
 
-                        if (transform.rotation.eulerAngles.y >= lookRangeTo - 3.0f && _turnLeft)
-                        {
-                            if (rotateWaitTime > 0 && !_timerRunning)
-                            {
-                                _turnLeft = false;
-                                StartCoroutine(WaitTimer());
-                            }
-                            else if (!_timerRunning)
-                            {
-                                _turnLeft = false;
-                                _updateRotation = true;
-                            }
-                        }
-                        else if (transform.rotation.eulerAngles.y <= lookRangeFrom + 3.0f && !_turnLeft)
-                        {
-                            if (rotateWaitTime > 0 && !_timerRunning)
-                            {
-                                _turnLeft = true;
-                                _updateRotation = true;
-                                StartCoroutine(WaitTimer());
-                            }
-                            else if (!_timerRunning)
-                            {
-                                _turnLeft = true;
-                                _updateRotation = true;
-                            }
-                        }
-                    }
+                    //    if (transform.rotation.eulerAngles.y >= lookRangeTo - 3.0f && _turnLeft)
+                    //    {
+                    //        if (rotateWaitTime > 0 && !_timerRunning)
+                    //        {
+                    //            _turnLeft = false;
+                    //            StartCoroutine(WaitTimer());
+                    //        }
+                    //        else if (!_timerRunning)
+                    //        {
+                    //            _turnLeft = false;
+                    //            _updateRotation = true;
+                    //        }
+                    //    }
+                    //    else if (transform.rotation.eulerAngles.y <= lookRangeFrom + 3.0f && !_turnLeft)
+                    //    {
+                    //        if (rotateWaitTime > 0 && !_timerRunning)
+                    //        {
+                    //            _turnLeft = true;
+                    //            _updateRotation = true;
+                    //            StartCoroutine(WaitTimer());
+                    //        }
+                    //        else if (!_timerRunning)
+                    //        {
+                    //            _turnLeft = true;
+                    //            _updateRotation = true;
+                    //        }
+                    //    }
+                    //}
 
                     if (!_playerSpotted)
                     {
                         if (_player != null)
                         {
-                            Vector3 dir = _player.transform.position - transform.position;
-                            float enemyToPlayerAngle = Vector3.Angle(transform.forward, dir);
+                            Vector3 dir = _player.transform.position - visionGameObject.transform.position;
+                            float enemyToPlayerAngle = Vector3.Angle(visionGameObject.transform.forward, dir);
 
                             if (enemyToPlayerAngle < fieldOfView / 2)
                             {
                                 RaycastHit hit;
 
-                                if (Physics.Raycast(transform.position + transform.up, dir, out hit, viewDistance, _layerMask))
+                                if (Physics.Raycast(visionGameObject.transform.position + transform.up, dir, out hit, viewDistance, _layerMask))
                                     if (hit.collider.tag == _player.tag)
                                     {
                                         _active = false;
@@ -164,23 +169,23 @@ namespace Team1_GraduationGame.Enemies
                     }
                 }
 
-                if (_animator == null)
-                {
-                    if (_appear && !_disappear) // TODO: This section is a temporary, until an animation is in place
-                    {
-                        transform.position = Vector3.Lerp(transform.position, _spawnedPos, Time.fixedDeltaTime);
+                //if (visionGameObject != null) // TODO: Enable again if needed
+                //{
+                //    if (_appear && !_disappear)
+                //    {
+                //        visionGameObject.transform.position = Vector3.Lerp(visionGameObject.transform.position, _spawnedPos, Time.fixedDeltaTime);
 
-                        if (transform.position == _spawnedPos)
-                            _appear = false;
-                    }
-                    else if (_disappear && !_appear)
-                    {
-                        transform.position = Vector3.Lerp(transform.position, _unSpawnedPos, Time.fixedDeltaTime);
+                //        if (transform.position == _spawnedPos)
+                //            _appear = false;
+                //    }
+                //    else if (_disappear && !_appear)
+                //    {
+                //        visionGameObject.transform.position = Vector3.Lerp(visionGameObject.transform.position, _unSpawnedPos, Time.fixedDeltaTime);
 
-                        if (transform.position == _unSpawnedPos)
-                            _disappear = false;
-                    }
-                }
+                //        if (visionGameObject.transform.position == _unSpawnedPos)
+                //            _disappear = false;
+                //    }
+                //}
             }
 
             if (_isAggro && !_active)
@@ -223,6 +228,7 @@ namespace Team1_GraduationGame.Enemies
 
             if (isActive)
             {
+                _animator?.ResetTrigger("Appearing");
                 _animator?.SetBool("Patrolling", true);
                 _isRotating = true;
                 _isSpawned = true;
@@ -230,6 +236,7 @@ namespace Team1_GraduationGame.Enemies
             }
             else
             {
+                _animator?.ResetTrigger("Disappearing");
                 _animator?.SetBool("Patrolling", false);
                 _isRotating = false;
                 _isSpawned = false;
@@ -241,12 +248,14 @@ namespace Team1_GraduationGame.Enemies
         private IEnumerator PlayerDied()
         {
             _player.GetComponent<Movement>().Frozen(true);
+            _active = false;
 
             _animator?.SetTrigger("Attack"); // TODO - YYY play Big attack animation
 
             yield return new WaitForSeconds(animAttackTime);
             Debug.Log("Player died from Big");
 
+            _active = true;
             playerDiedEvent?.Raise();
         }
 
@@ -258,10 +267,10 @@ namespace Team1_GraduationGame.Enemies
 
             yield return new WaitForSeconds(aggroTime);
 
-            Vector3 dir = _player.transform.position - transform.position;
+            Vector3 dir = _player.transform.position - visionGameObject.transform.position;
             RaycastHit hit;
 
-            if (Physics.Raycast(transform.position + transform.up, dir, out hit, viewDistance, _layerMask))
+            if (Physics.Raycast(visionGameObject.transform.position, dir, out hit, viewDistance, _layerMask))
             {
                 if (hit.collider.tag == _player.tag)
                 {
@@ -298,11 +307,11 @@ namespace Team1_GraduationGame.Enemies
         #if UNITY_EDITOR
         private void OnDrawGizmos()
         {
-            if (drawGizmos && Application.isEditor)
+            if (drawGizmos && Application.isEditor && visionGameObject != null)
             {
                 Gizmos.color = Color.red;
 
-                Gizmos.DrawLine(transform.position + transform.up, transform.forward * viewDistance + (transform.position + transform.up));
+                Gizmos.DrawLine(visionGameObject.transform.position + visionGameObject.transform.up, visionGameObject.transform.forward * viewDistance + (visionGameObject.transform.position + visionGameObject.transform.up));
             }
         }
 

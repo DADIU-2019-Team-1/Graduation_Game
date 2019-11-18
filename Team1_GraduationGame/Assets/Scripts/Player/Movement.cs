@@ -54,6 +54,9 @@ public class Movement : MonoBehaviour
     public GameObject leftHeelPos, rightHeelPos, rightToePos, leftToePos;
 
     private CapsuleCollider _collider;
+    
+    //Comment out this when motionmatching works!
+    private Animator animator;
 
     //private SphereCollider playerTrigger;
 
@@ -96,6 +99,7 @@ public class Movement : MonoBehaviour
     private void Awake()
     {
         playerRB = GetComponent<Rigidbody>();
+        animator = GetComponent<Animator>();
         moveState.value = 0;
         if (GetComponent<MotionMatching>() != null)
         {
@@ -123,6 +127,7 @@ public class Movement : MonoBehaviour
     void Update()
     {
         currentSpeed.value = Vector3.Distance(transform.position, _previousPosition) / Time.fixedDeltaTime;
+        animator.SetFloat("Speed", currentSpeed.value);
         lookRotation = direction != Vector3.zero ? Quaternion.LookRotation(direction) : Quaternion.identity;
         velocity = direction.normalized * currentSpeed.value;
     }

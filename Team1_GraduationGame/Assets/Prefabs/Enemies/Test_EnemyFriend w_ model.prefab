@@ -19,7 +19,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &5244557079581699283
 Transform:
   m_ObjectHideFlags: 0
@@ -216,6 +216,7 @@ GameObject:
   - component: {fileID: 6373199372352939523}
   - component: {fileID: 6373199372352939522}
   - component: {fileID: 6687820084175197433}
+  - component: {fileID: 8149302464962685694}
   m_Layer: 9
   m_Name: Test_EnemyFriend w_ model
   m_TagString: Enemy
@@ -311,7 +312,7 @@ SphereCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 1
+  m_Radius: 0.61
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!195 &6373199372352939523
 NavMeshAgent:
@@ -353,9 +354,9 @@ MonoBehaviour:
   playerMoveState: {fileID: 11400000, guid: 064acbb0600eace4e969fd76909dcac8, type: 2}
   wayPoints: []
   parentWayPoint: {fileID: 0}
-  wayPointReachRange: 1
-  hearingSensitivity: 6
-  minimumAlwaysDetectRange: 1.3
+  wayPointReachRange: 1.5
+  hearingSensitivity: 5
+  minimumAlwaysDetectRange: 1.4
   drawGizmos: 1
   useWaitTime: 0
   rotateAtWaypoints: 0
@@ -363,6 +364,8 @@ MonoBehaviour:
   alwaysAggro: 0
   normalConeColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
   aggroConeColor: {r: 1, g: 0, b: 0, a: 1}
+  animNoiseHeardTime: 2
+  animAttackTime: 2.5
   useGlobalWaitTime: 1
   waitTime: 0
 --- !u!114 &6687820084175197433
@@ -400,6 +403,25 @@ MonoBehaviour:
   animationDefault: 
   animationAction: 
   toggleState: 0
+--- !u!95 &8149302464962685694
+Animator:
+  serializedVersion: 3
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6373199372352939521}
+  m_Enabled: 1
+  m_Avatar: {fileID: 9000000, guid: 44d66f0fc4187644d8599af09d4c18f7, type: 3}
+  m_Controller: {fileID: 9100000, guid: e2c1e18cb51064c408d2db9359d3375a, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorControllerStateOnDisable: 0
 --- !u!1001 &3999479858330557818
 PrefabInstance:
   m_ObjectHideFlags: 0

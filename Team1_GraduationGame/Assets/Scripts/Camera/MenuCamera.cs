@@ -29,7 +29,7 @@ public class MenuCamera : MonoBehaviour
         if (startingTimeline == null)
             startingTimeline = FindObjectOfType<PlayableDirector>();
 
-            FindObjectOfType<HubMenu>().menuChangeEvent += ChangeLookAt;
+        FindObjectOfType<HubMenu>().menuChangeEvent += ChangeLookAt;
         FindObjectOfType<HubMenu>().startGameEvent += StartGame;
     }
 
@@ -112,8 +112,8 @@ public class MenuCamera : MonoBehaviour
     {
         if (_startingGame)
         {
-            SaveLoadManager man = new SaveLoadManager();
-            man.NewGame();
+            //SaveLoadManager man = new SaveLoadManager();
+            //man.NewGame();
             startingTimeline.Play();
         }
         _startingGame = true;

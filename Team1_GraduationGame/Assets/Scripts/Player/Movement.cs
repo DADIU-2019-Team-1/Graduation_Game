@@ -11,9 +11,11 @@ using UnityEditor;
 public class Movement : MonoBehaviour
 {
     private Rigidbody playerRB;
-    private bool touchStart = false, canMove = false, canJump = true, canPush, isJumping = false, moveFrozen = false;
+    private bool touchStart = false, canMove = false, canJump = true, canPush, moveFrozen = false, inSneakZone = false;
     private float rotationSpeedCurrent, rotationSpeedMax = 5.0f, rotationSpeedGoal, rotationAccelerationFactor = 0.1f, rotationAngleReactionFactor = 0.1f,
         targetSpeed;
+
+    public bool isJumping = false;
 
     [SerializeField] private float accelerationFactor = 0.1f;
     private float swipeTimeTimer;
@@ -21,6 +23,8 @@ public class Movement : MonoBehaviour
     private Quaternion lookRotation;
     public VoidEvent jumpEvent, attackEvent;
     public IntEvent stateChangeEvent;
+
+    public Animator animator;
 
     private Vector2 swipeStartPos, swipeEndPos, swipeDirection;
 
@@ -36,6 +40,8 @@ public class Movement : MonoBehaviour
     [Tooltip("Height in meters for checking jump")]
     public FloatReference ghostJumpHeight;
 
+    public FloatReference jumpLength;
+
     public FloatVariable currentSpeed;
     public IntVariable moveState;
     private RaycastHit[] hit;
@@ -50,6 +56,7 @@ public class Movement : MonoBehaviour
 
     private int leftTouch = 99;
     private int rightTouch = 98;
+    private int attackCooldown;
     private Vector3 _previousPosition = Vector3.zero;
     [Header("Idle until this has been reached must be smaller than sneak threshold!")]
     [SerializeField]
@@ -64,6 +71,9 @@ public class Movement : MonoBehaviour
     [Range(0.0f, 1.0f)]
     private float runThreshold;
 
+    [Header("This is for SneakZones")] [SerializeField] [Range(0.0f, 0.99f)]
+    private float zoneSneakThreshold;
+
     [Header("Motion Matching variables")]
     private MotionMatching mm;
     private TrajectoryPoint[] trajPoints;
@@ -74,12 +84,17 @@ public class Movement : MonoBehaviour
     [TagSelector] [SerializeField] private string[] jumpPlatformTag;
     [SerializeField] private List<GameObject> jumpPlatforms;
 
+    public event Action attack; 
+
     private void Awake()
     {
         playerRB = GetComponent<Rigidbody>();
         moveState.value = 0;
-        mm = GetComponent<MotionMatching>();
-        trajPoints = new TrajectoryPoint[mm.pointsPerTrajectory];
+        if (GetComponent<MotionMatching>() != null)
+        {
+            mm = GetComponent<MotionMatching>();
+            trajPoints = new TrajectoryPoint[mm.pointsPerTrajectory];
+        }
 
         //playerTrigger = GetComponent<SphereCollider>();
         //playerTrigger.radius = attackRange.value;
@@ -100,6 +115,7 @@ public class Movement : MonoBehaviour
 
     void Update() {
         currentSpeed.value = Vector3.Distance(transform.position, _previousPosition) / Time.fixedDeltaTime;
+        animator.SetFloat("Speed", currentSpeed.value);
         lookRotation = direction != Vector3.zero ? Quaternion.LookRotation(direction) : Quaternion.identity;
         velocity = direction.normalized * currentSpeed.value;
     }
@@ -107,15 +123,14 @@ public class Movement : MonoBehaviour
     void FixedUpdate()
     {
         _previousPosition = transform.position;
-        if (playerRB.velocity.y <= 0 && isJumping)
+        if (playerRB.velocity.y < 0 && isJumping)
         {
             //playerRB.mass * fallMultiplier.value;
-
             playerRB.velocity += Vector3.up * Physics.gravity.y * (fallMultiplier.value - 1) * Time.deltaTime;
 
             if (Physics.Raycast(leftToePos.transform.position, Vector3.down, ghostJumpHeight.value) || Physics.Raycast(rightToePos.transform.position, Vector3.down, ghostJumpHeight.value) || Physics.Raycast(leftHeelPos.transform.position, Vector3.down, ghostJumpHeight.value) || Physics.Raycast(rightHeelPos.transform.position, Vector3.down, ghostJumpHeight.value))
             {
-                Debug.Log(true);
+                //Debug.Log(true);
                 isJumping = false;
                 for (int j = 0; j < jumpPlatforms.Count; j++)
                 {
@@ -222,7 +237,7 @@ public class Movement : MonoBehaviour
                     else if (/*swipeTimeTimer + swipeTimeThreshold.value >= Time.time &&*/ !moveFrozen)
                     {
                         // Jump feels sluggish inside else if, but when only if, triggers every time and you never swipe/do both always.
-                        playerJump(Vector3.up + direction, jumpHeight.value);
+                        playerJump(direction, jumpHeight.value);
                         //Debug.Log("Jump");
                     }
 
@@ -276,8 +291,11 @@ public class Movement : MonoBehaviour
             touchStart = false;
         }
 
-        if (Input.GetMouseButtonUp(0))
+        if (attackCooldown > 0) attackCooldown--;
+
+        if (Input.GetMouseButtonUp(0) && attackCooldown <= 0)
         {
+            attackCooldown = 5;
             swipeEndPos = Input.mousePosition;
             Vector2 swipeOffSet = new Vector2(swipeEndPos.x - swipeStartPos.x, swipeEndPos.y - swipeStartPos.y);
             swipeDirection = swipeOffSet.normalized;
@@ -285,7 +303,6 @@ public class Movement : MonoBehaviour
             //Debug.Log("End phase: " + Time.time);
             if (swipeOffSet.magnitude > swipePixelDistance.value && Input.mousePosition.x > Screen.width /2 && !canMove)
             {
-                
                 playerAttack(worldDirection);
                 //Debug.Log("Swipe");
                 //Debug.DrawLine(swipeStartPos, swipeStartPos + swipeDirection * 300, Color.red, 5);
@@ -293,9 +310,10 @@ public class Movement : MonoBehaviour
 
 
             }
+
             else if (swipeTimeTimer + swipeTimeThreshold.value >= Time.time && !moveFrozen)
             {
-                playerJump(Vector3.up, jumpHeight.value);
+                playerJump(Vector3.up + direction, jumpHeight.value);
                 //Debug.Log("Jump");
             }
         }
@@ -322,12 +340,54 @@ public class Movement : MonoBehaviour
             rotationSpeedCurrent = 0.0f;
             targetSpeed = 0.0f;
         }
+
+        if (Input.GetKey(KeyCode.Space) && !isJumping)
+        {
+            playerJump(direction, jumpHeight.value);
+        }
 #endif
         SetState();
     }
 
+    private void OnTriggerEnter(Collider sneakZone)
+    {
+        if (sneakZone.tag == "Sneakzone")
+        {
+            inSneakZone = true;
+        }
+    }
+
+    private void OnTriggerExit(Collider sneakZone)
+    {
+        if (sneakZone.tag == "Sneakzone")
+        { 
+            inSneakZone = false;
+        }
+    }
     private void PlayerMoveRequest(float dragDist)
     {
+            if (inSneakZone)
+            {
+                if (dragDist < radius.value * idleThreshold)
+                {
+                    //movePlayer(direction, 0);
+                    //moveState.value = 0;
+                }
+                else if (dragDist < radius.value * zoneSneakThreshold)
+                {
+                    targetSpeed = sneakSpeed.value;
+                    movePlayer(direction);
+                    //moveState.value = 1;
+                }
+                else
+                {
+                    targetSpeed = walkSpeed.value;
+                    movePlayer(direction);
+                    //moveState.value = 2;
+                }
+
+            }
+        else {
         if (dragDist < radius.value * idleThreshold) // Idle
         {
             // Empty
@@ -346,6 +406,7 @@ public class Movement : MonoBehaviour
         {
             targetSpeed = runSpeed.value;
             movePlayer(direction);
+        }
         }
     }
 
@@ -368,7 +429,20 @@ public class Movement : MonoBehaviour
         }
         else
         {
-            playerRB.AddForce(direction * jumpSpeed.value * Time.deltaTime, ForceMode.VelocityChange);
+#if UNITY_EDITOR
+            playerRB.MovePosition(transform.position + (direction * targetSpeed * Time.deltaTime));
+#endif
+#if UNITY_ANDROID
+            playerRB.AddForce(direction * targetSpeed * Time.deltaTime, ForceMode.Impulse);
+#endif
+        }
+
+        if (!isJumping && !(Physics.Raycast(leftToePos.transform.position, Vector3.down, ghostJumpHeight.value) ||
+                           Physics.Raycast(rightToePos.transform.position, Vector3.down, ghostJumpHeight.value) ||
+                           Physics.Raycast(leftHeelPos.transform.position, Vector3.down, ghostJumpHeight.value) ||
+                           Physics.Raycast(rightHeelPos.transform.position, Vector3.down, ghostJumpHeight.value)))
+        {
+            isJumping = true;
         }
     }
 
@@ -380,7 +454,7 @@ public class Movement : MonoBehaviour
             {
                 jumpPlatforms[j].GetComponent<Collider>().material = _jumpMaterial;
             }
-            playerRB.AddForce(direction * jumpHeight, ForceMode.Impulse);
+            playerRB.AddForce((Vector3.up + (direction * jumpLength.value)) * jumpHeight, ForceMode.Impulse);
             /*         if(playerRB.velocity.y <= 0) {
                         //playerRB.mass * fallMultiplier.value;
                         playerRB.velocity += Vector3.up * Physics.gravity.y * (fallMultiplier.value -1) * Time.deltaTime;
@@ -400,9 +474,8 @@ public class Movement : MonoBehaviour
         //canJump = false;
     }
 
-    private void playerAttack(Vector3 direction)
+    public void playerAttack(Vector3 direction)
     {
-
         float angle = ((float)attackDegree.value * Mathf.Deg2Rad) / 2;
         for (float j = -angle; j <= angle; j += 0.02f)
         {
@@ -440,6 +513,7 @@ public class Movement : MonoBehaviour
                 }
             }
         }
+        attack?.Invoke();
     }
 
     public float GetSpeed()

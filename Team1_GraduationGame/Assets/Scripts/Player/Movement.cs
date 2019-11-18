@@ -31,7 +31,7 @@ public class Movement : MonoBehaviour
 
     public IntVariable _atOrbTrigger;
 
-    public Animator animator;
+    //public Animator animator;
 
     private Vector2 swipeStartPos, swipeEndPos, swipeDirection;
 
@@ -125,7 +125,7 @@ public class Movement : MonoBehaviour
     void Update()
     {
         currentSpeed.value = Vector3.Distance(transform.position, _previousPosition) / Time.fixedDeltaTime;
-        animator.SetFloat("Speed", currentSpeed.value);
+        //animator.SetFloat("Speed", currentSpeed.value);
         lookRotation = direction != Vector3.zero ? Quaternion.LookRotation(direction) : Quaternion.identity;
         velocity = direction.normalized * currentSpeed.value;
     }

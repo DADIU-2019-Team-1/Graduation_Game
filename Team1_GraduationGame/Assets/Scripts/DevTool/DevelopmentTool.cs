@@ -27,6 +27,7 @@ namespace Team1_GraduationGame.DevelopmentTools
         [HideInInspector] public Text debugText;
         [HideInInspector] public Text fpsText;
         [HideInInspector] public Text vertsText;
+        [HideInInspector] public Text visibleAnimsText;
 
         // Bools:
         public bool setUpEnable = false;
@@ -89,7 +90,7 @@ namespace Team1_GraduationGame.DevelopmentTools
             if (_devToolActive)
             {
                 if (fpsText != null)
-                    fpsText.text = "FPS: " + (1.0f / Time.deltaTime);
+                    fpsText.text = "FPS: " + (int)(1 / Time.deltaTime);
             }
         }
 
@@ -101,7 +102,10 @@ namespace Team1_GraduationGame.DevelopmentTools
                     debugText.text = _dLog;
 
                 if (vertsText != null)
-                    vertsText.text = "Verts: " + UnityStats.vertices;
+                    vertsText.text = "Verts/Tris: " + UnityStats.vertices + " / " + UnityStats.triangles;
+
+                if (visibleAnimsText != null)
+                    visibleAnimsText.text = "Visible anims: " + UnityStats.visibleAnimations;
             }
         }
 
@@ -185,6 +189,9 @@ namespace Team1_GraduationGame.DevelopmentTools
 
                 SerializedProperty vertsTextProp = serializedObject.FindProperty("vertsText");
                 EditorGUILayout.PropertyField(vertsTextProp);
+
+                SerializedProperty animsTextProp = serializedObject.FindProperty("visibleAnimsText");
+                EditorGUILayout.PropertyField(animsTextProp);
             }
 
             serializedObject.ApplyModifiedProperties();

@@ -9,6 +9,8 @@ public class HubMenu : MonoBehaviour
     public event Action<int> menuChangeEvent;
     public event Action<string> languageChangeEvent; // TODO: Localization is not yet implemented
     public event Action cheatModeEvent;
+    public event Action<float> musicSliderEvent;
+    public event Action<float> sfxSliderEvent;
 
     public void ChangeLanguage(string s)
     {
@@ -29,6 +31,14 @@ public class HubMenu : MonoBehaviour
     public void CheatMode()
     {
         cheatModeEvent?.Invoke();
+    }
+    public void ChangeMusicSlider(float value)
+    {
+        musicSliderEvent?.Invoke(value);
+    }
+    public void ChangeSFXSlider(float value)
+    {
+        sfxSliderEvent?.Invoke(value);
     }
 
     public void ExitGame()

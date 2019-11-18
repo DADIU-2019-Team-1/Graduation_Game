@@ -1,7 +1,4 @@
 ﻿// Script by Jakob Elkjær Husted
-using Team1_GraduationGame.Enemies;
-using UnityEngine.Events;
-
 namespace Team1_GraduationGame.DevelopmentTools
 {
     using System.Collections;
@@ -9,6 +6,10 @@ namespace Team1_GraduationGame.DevelopmentTools
     using Team1_GraduationGame.SaveLoadSystem;
     using UnityEngine;
     using UnityEngine.UI;
+    using Team1_GraduationGame.Enemies;
+    using UnityEngine.Events;
+
+#if UNITY_EDITOR
     using UnityEditor;
 
     public class DevelopmentTool : MonoBehaviour
@@ -98,11 +99,11 @@ namespace Team1_GraduationGame.DevelopmentTools
                 if (debugText != null)
                     debugText.text = _dLog;
 
-                // if (vertsText != null)
-                //     vertsText.text = "Verts/Tris: " + UnityStats.vertices + " / " + UnityStats.triangles;
+                //if (vertsText != null)
+                //    vertsText.text = "Verts/Tris: " + UnityStats.vertices + " / " + UnityStats.triangles;
 
-                // if (visibleAnimsText != null)
-                //     visibleAnimsText.text = "Visible anims: " + UnityStats.visibleAnimations;
+                //if (visibleAnimsText != null)
+                //    visibleAnimsText.text = "Visible anims: " + UnityStats.visibleAnimations;
             }
         }
 

@@ -11,7 +11,6 @@ public class ThomasGoToScene : MonoBehaviour
 
     // Global booleans as ints, instead of script dependencies. 0 = true, 1 = false. It's reverse, i know.
     public IntVariable atOrbTrigger;
-    public IntVariable movingToOrb;
     private SphereCollider _collider;
 
     [SerializeField] [Range(0f,1f)]
@@ -27,6 +26,9 @@ public class ThomasGoToScene : MonoBehaviour
     {
         _collider = GetComponent<SphereCollider>();
         _movement = GetComponent<Movement>();
+
+        if(FindObjectOfType<HubMenu>() != null)
+            FindObjectOfType<HubMenu>().startGameEvent += SetOrbTrigger;
     }
 
     // Update is called once per frame
@@ -85,6 +87,12 @@ public class ThomasGoToScene : MonoBehaviour
     public void MemoryTimeLineEnded()
     {
         GoToSceneWithName("Mem01");
+    }
+
+    public void SetOrbTrigger()
+    {
+        if(atOrbTrigger != null) 
+            atOrbTrigger.value = 1;
     }
 }
 

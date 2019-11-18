@@ -45,7 +45,7 @@ namespace Team1_GraduationGame.Enemies
         private SphereCollider _thisCollider;
         private int _currentWayPoint = 0, _state = 0, _layerMask;
         private float[] _waitTimes;
-        private float _targetSpeed, _hearingDistance;
+        private float _targetSpeed, _hearingDistance, _lightConeIntensity;
 
         #endregion
 
@@ -116,6 +116,7 @@ namespace Team1_GraduationGame.Enemies
                     viewConeLight.range = thisEnemy.viewDistance;
                     viewConeLight.color = normalConeColor;
                     viewConeLight.spotAngle = thisEnemy.fieldOfView;
+                    _lightConeIntensity = viewConeLight.intensity;
                     if (_hearingDisabled)
                         viewConeLight.gameObject.SetActive(false);
                 }
@@ -402,10 +403,17 @@ namespace Team1_GraduationGame.Enemies
                 if (playerMoveState.value == 0 || playerMoveState.value == 1)
                 {
                     if (!viewConeLight.gameObject.activeSelf)
+                    {
+                        viewConeLight.intensity = 0;
                         viewConeLight.gameObject.SetActive(true);
+                        StartCoroutine(LightConeFade());
+                    }
                 }
                 else if (viewConeLight.gameObject.activeSelf)
+                {
+                    StopCoroutine(LightConeFade());
                     viewConeLight.gameObject.SetActive(false);
+                }
             }
         }
 
@@ -433,6 +441,19 @@ namespace Team1_GraduationGame.Enemies
         }
 
         #region Co-Routines
+
+        private IEnumerator LightConeFade()
+        {
+            bool loop = true;
+            while (loop)
+            {
+                viewConeLight.intensity += 1;
+                yield return new WaitForSeconds(0.05f);
+
+                if (viewConeLight.intensity >= _lightConeIntensity)
+                    loop = false;
+            }
+        }
 
         private IEnumerator PlayerHeard()
         {

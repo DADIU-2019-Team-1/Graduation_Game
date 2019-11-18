@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿// Script by Jakob Elkjær Husted
+using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
 #if UNITY_EDITOR

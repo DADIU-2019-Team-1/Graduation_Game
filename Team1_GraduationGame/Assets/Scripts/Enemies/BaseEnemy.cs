@@ -1,4 +1,5 @@
-﻿namespace Team1_GraduationGame.Enemies
+﻿// Script by Jakob Elkjær Husted
+namespace Team1_GraduationGame.Enemies
 {
     using UnityEngine;
 #if UNITY_EDITOR

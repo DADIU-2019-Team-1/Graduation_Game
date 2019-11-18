@@ -1,4 +1,4 @@
-﻿using System;
+﻿// Script by Jakob Elkjær Husted
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -32,7 +32,7 @@ namespace Team1_GraduationGame.SaveLoadSystem
             if (PlayerPrefs.GetInt("loadGameOnAwake") == 1)
             {
                 PlayerPrefs.SetInt("loadGameOnAwake", 0);
-                saveLoadManager.LoadGame();
+                saveLoadManager.LoadGame(true);
             }
         }
 
@@ -83,9 +83,6 @@ namespace Team1_GraduationGame.SaveLoadSystem
                 if (GameObject.FindGameObjectWithTag("Player") != null)
                 {
                     GameObject tempPlayer = GameObject.FindGameObjectWithTag("Player");
-
-                    //tempPlayer.transform.position =
-                    //    savePoints[previousCheckPoint - 1].transform.position + transform.up;
 
                     LoadGame();
 

@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿// Script by Jakob Elkjær Husted
+using System.Collections;
 using System.Collections.Generic;
 using Team1_GraduationGame.Enemies;
 using Team1_GraduationGame.Events;

@@ -1,4 +1,5 @@
-﻿namespace Team1_GraduationGame.Enemies
+﻿// Script by Jakob Elkjær Husted
+namespace Team1_GraduationGame.Enemies
 {
     using System.Collections;
     using System.Collections.Generic;
@@ -128,11 +129,6 @@
         }
         #endregion
 
-        private void Start()
-        {
-            //_animator?.SetBool("Motion", true);
-        }
-
         /// <summary>
         /// Switches the state of this enemy. 0 = Walking, 1 = Running, 2 = Attacking
         /// </summary>
@@ -254,7 +250,7 @@
                     }
                 }
 
-                if (!_hearingDisabled /*&& !_isAggro*/)  // Enemy hearing:
+                if (!_hearingDisabled /*&& !_isAggro*/)  // Enemy hearing:  // TODO: Add pause after player heard to play animation
                 {
                     _hearingDistance = thisEnemy.hearingDistance;
                     if (playerMoveState.value == 2)
@@ -380,13 +376,13 @@
                 _active = false;
                 _navMeshAgent.isStopped = true;
 
-                //_animator?.SetBool("Motion", false);
                 _animator?.SetTrigger("PushedDown");
 
                 viewConeLight.gameObject.SetActive(true);
                 viewConeLight.color = Color.green;
 
                 StopCoroutine(EnemyHug());  // Stop hug if hugging
+                StopCoroutine(EnemyAggro());    // Stop aggro
 
                 _movement?.Frozen(false);
                 
@@ -444,11 +440,9 @@
             _active = false;
             _lastSighting = _player.transform.position;
             _animator?.SetTrigger("NoiseHeard");
-            //_animator?.SetBool("Motion", false);
 
             yield return new WaitForSeconds(animNoiseHeardTime);
 
-            //_animator?.SetBool("Motion", true);
             if (!_isAggro)
                 StartCoroutine(EnemyAggro());
 
@@ -486,7 +480,6 @@
             SwitchState(2); // Switch to attacking
 
             transform.LookAt(_player.transform.position);
-            //alwaysAggro = true;
 
             if (_movement != null)
             {
@@ -500,7 +493,6 @@
                 thisEnemy.embraceDistance + 1.0f)
             {
                 viewConeLight?.gameObject.SetActive(false);
-                //_animator?.SetBool("Motion", false);
                 _animator?.SetTrigger("Attack");
 
                 yield return new WaitForSeconds(animAttackTime);
@@ -510,7 +502,6 @@
                 playerDiedEvent?.Raise();
             }
 
-            //alwaysAggro = false;
             _active = true;
             _isHugging = false;
             if (!alwaysAggro)

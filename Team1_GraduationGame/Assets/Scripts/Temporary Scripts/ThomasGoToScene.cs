@@ -27,6 +27,9 @@ public class ThomasGoToScene : MonoBehaviour
     {
         _collider = GetComponent<SphereCollider>();
         _movement = GetComponent<Movement>();
+
+        if(FindObjectOfType<HubMenu>() != null)
+            FindObjectOfType<HubMenu>().startGameEvent += SetOrbTrigger;
     }
 
     // Update is called once per frame
@@ -85,6 +88,12 @@ public class ThomasGoToScene : MonoBehaviour
     public void MemoryTimeLineEnded()
     {
         GoToSceneWithName("Mem01");
+    }
+
+    public void SetOrbTrigger()
+    {
+        if(atOrbTrigger != null) 
+            atOrbTrigger.value = 1;
     }
 }
 

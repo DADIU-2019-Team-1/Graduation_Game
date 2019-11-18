@@ -94,6 +94,7 @@ namespace Team1_GraduationGame.SaveLoadSystem
                     tempEnemyContainer.rot = _enemies[i].transform.rotation;
                     tempEnemyContainer.isAggro = tempEnemyComponent.GetAggro();
                     tempEnemyContainer.currentWayPoint = tempEnemyComponent.GetCurrentWaypoint();
+                    tempEnemyContainer.lastSighting = tempEnemyComponent.GetLastSighting();
 
                     tempSaveString += JsonUtility.ToJson(tempEnemyContainer) + SAVE_SEPERATOR;
                 }
@@ -223,6 +224,7 @@ namespace Team1_GraduationGame.SaveLoadSystem
 
                         tempEnemyComponent.SetAggro(tempEnemyContainer.isAggro);
                         tempEnemyComponent.SetCurrentWaypoint(tempEnemyContainer.currentWayPoint);
+                        tempEnemyComponent.SetLastSighting(tempEnemyContainer.lastSighting);
                     }
                 }
 
@@ -277,6 +279,7 @@ namespace Team1_GraduationGame.SaveLoadSystem
             public Quaternion rot;
             public bool isAggro;
             public int currentWayPoint;
+            public Vector3 lastSighting;
         }
 
         public class InteractableContainer

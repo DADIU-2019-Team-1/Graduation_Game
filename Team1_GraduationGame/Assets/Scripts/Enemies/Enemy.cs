@@ -547,6 +547,7 @@ namespace Team1_GraduationGame.Enemies
         public int GetCurrentWaypoint() { return _currentWayPoint; }
         public void SetCurrentWaypoint(int index) { _currentWayPoint = index; }
         public void SetLastSighting(Vector3 location) { _lastSighting = location; }
+        public Vector3 GetLastSighting() { return _lastSighting; }
         #endregion
 
 #if UNITY_EDITOR

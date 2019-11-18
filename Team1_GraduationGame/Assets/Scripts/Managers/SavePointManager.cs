@@ -14,8 +14,6 @@ namespace Team1_GraduationGame.SaveLoadSystem
     {
         // References:
         public SaveLoadManager saveLoadManager;
-        public VoidEvent newGameEvent;
-        public VoidEvent inMenuEvent;
 
         // Public
         public int firstSceneBuildIndex = 0;
@@ -42,12 +40,6 @@ namespace Team1_GraduationGame.SaveLoadSystem
             {
                 //FindObjectOfType<HubMenu>().startGameEvent += NewGame;
                 FindObjectOfType<HubMenu>().continueGameEvent += Continue;
-                newGameEvent?.Raise();
-            }
-
-            if (FindObjectOfType<InGameUI>() != null)
-            {
-                FindObjectOfType<InGameUI>().gamePauseState += InMenu;
             }
         }
 
@@ -89,11 +81,6 @@ namespace Team1_GraduationGame.SaveLoadSystem
                     tempPlayer.GetComponent<Movement>().Frozen(false);
                 }
             }
-        }
-
-        public void InMenu(bool inMenu)
-        {
-            inMenuEvent?.Raise();
         }
 
         public void NewGame()

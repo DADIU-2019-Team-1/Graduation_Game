@@ -46,14 +46,14 @@ public class MotionMatching : MonoBehaviour
     private AnimationClip[] allClips;
     public HumanBodyBones[] joints;
     public AnimContainer animContainer; // put ref to chosen animation container scriptable object
-
+    [SerializeField] private Queue<int> banQueue;
     [SerializeField] private string[] states;
 
     // --- Variables 
     public bool _preProcess, _playAnimationMode;
     public int pointsPerTrajectory = 4, framesBetweenTrajectoryPoints = 10;
     [SerializeField] private bool _isMotionMatching, _isIdling;
-    [SerializeField] private int queryRateInFrames = 10, candidatesPerMisc = 10;
+    [SerializeField] private int queryRateInFrames = 10, candidatesPerMisc = 10, banQueueSize = 10;
     [Tooltip("The time in frames that it takes for the animaton layers to blend.")]
     [SerializeField] private float animLayerWeightChange = 50.0f;
 
@@ -68,6 +68,7 @@ public class MotionMatching : MonoBehaviour
     // --- Debugstuff
     private int animIterator = -1;
     private IEnumerator currentEnumerator;
+    private List<string> debugStringList;
 
     private void Awake() // Load animation data
     {
@@ -118,6 +119,8 @@ public class MotionMatching : MonoBehaviour
         _trajCandidatesRef = new List<FeatureVector>();
         _trajPossibleCandidatesRef = new List<FeatureVector>();
         _trajCandidateValuesRef = new List<float>();
+        debugStringList = new List<string>();
+        banQueue = new Queue<int>();
     }
 
     private void Start()
@@ -233,10 +236,13 @@ public class MotionMatching : MonoBehaviour
 			    break;
 		    }
 		}
-		//Debug.Log("Updating to animation " + currentClip.name + " to frame " + frame + " with ID " + id + " from id " + currentID + " of frame " + currentFrame);
+		Debug.Log("Updating to animation " + currentClip.name + " to frame " + frame + " with ID " + id + " from id " + currentID + " of frame " + currentFrame);
         animator.CrossFadeInFixedTime(currentClip.name, 0.3f, 0, frame / animationFrameRate); // 0.3f was recommended by Magnus
         currentID = id;
         currentFrame = frame;
+        banQueue.Enqueue(currentID);
+        if (banQueue.Count > banQueueSize)
+            banQueue.Dequeue();
     }
 
     private IEnumerator MotionMatch()
@@ -296,7 +302,7 @@ public class MotionMatching : MonoBehaviour
                 continue;
             }
             if ((featureVectors[i].GetID() > currentID ||  featureVectors[i].GetID() < currentID - queryRateInFrames) &&
-                 featureVectors[i].GetFrame() + queryRateInFrames <=  featureVectors[i].GetFrameCountForID())
+                 featureVectors[i].GetFrame() + queryRateInFrames <=  featureVectors[i].GetFrameCountForID() && !banQueue.Contains(featureVectors[i].GetID()))
             {
                 float comparison = featureVectors[i].GetTrajectory().CompareTrajectories(movementTraj, transform.worldToLocalMatrix.inverse, weightTrajPoints, weightTrajForwards);
                 for (int j = 0; j < candidatesPerMisc; j++)
@@ -347,12 +353,20 @@ public class MotionMatching : MonoBehaviour
                 currentDif = candidateDif;
             }
         }
+        
+        // TODO: Maybe remove?
+        if (featureVectors[bestId].GetClipName() == featureVectors[currentID].GetClipName() && featureVectors[currentID].GetFrame() + queryRateInFrames <= featureVectors[currentID].GetFrameCountForID())
+            bestId = currentID;
 		return bestId;
     }
     private bool AnimDiscarder(string candidateName, int stateNumber)
     {
-	    if (candidateName.ToLower().Contains(states[stateNumber]))
-		    return true;
+        string candidateNameLowerCase = candidateName.ToLower();
+        if (candidateNameLowerCase.Contains(states[stateNumber]))
+        {
+            if (!candidateNameLowerCase.Contains("from" + states[stateNumber]))
+                return true;
+        }
         return false;
     }
     public List<FeatureVector> GetFeatureVectors()

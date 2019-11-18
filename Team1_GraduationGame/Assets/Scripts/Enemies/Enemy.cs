@@ -1,4 +1,7 @@
 ﻿// Script by Jakob Elkjær Husted
+
+using System.Linq;
+
 namespace Team1_GraduationGame.Enemies
 {
     using System.Collections;
@@ -634,28 +637,31 @@ namespace Team1_GraduationGame.Enemies
                 {
                     for (int i = 0; i < wayPoints.Count; i++)
                     {
-                        Gizmos.color = Color.blue;
-                        Gizmos.DrawWireSphere(wayPoints[i].transform.position, 0.2f);
-                        Handles.Label(wayPoints[i].transform.position + (Vector3.up * 0.6f), (i + 1).ToString());
-
-                        Gizmos.DrawLine(transform.position, wayPoints[i].transform.position);
-
-                        Gizmos.color = Color.yellow;
-                        if (i + 1 < wayPoints.Count)
+                        if (wayPoints.ElementAtOrDefault(i))
                         {
-                            Gizmos.DrawLine(wayPoints[i].transform.position, wayPoints[i + 1].transform.position);
+                            Gizmos.color = Color.blue;
+                            Gizmos.DrawWireSphere(wayPoints[i].transform.position, 0.2f);
+                            Handles.Label(wayPoints[i].transform.position + (Vector3.up * 0.6f), (i + 1).ToString());
 
-                        }
-                        else if (i == wayPoints.Count - 1 && wayPoints.Count > 1 && loopWaypointRoutine)
-                        {
-                            Gizmos.DrawLine(wayPoints[wayPoints.Count - 1].transform.position, wayPoints[0].transform.position);
-                        }
+                            Gizmos.DrawLine(transform.position, wayPoints[i].transform.position);
 
-                        if (thisEnemy != null)
-                        {
-                            Gizmos.color = Color.red;
-                            Gizmos.DrawLine(transform.position + transform.up, transform.forward * thisEnemy.viewDistance + (transform.position + transform.up));
+                            Gizmos.color = Color.yellow;
+                            if (i + 1 < wayPoints.Count)
+                            {
+                                Gizmos.DrawLine(wayPoints[i].transform.position, wayPoints[i + 1].transform.position);
 
+                            }
+                            else if (i == wayPoints.Count - 1 && wayPoints.Count > 1 && loopWaypointRoutine)
+                            {
+                                Gizmos.DrawLine(wayPoints[wayPoints.Count - 1].transform.position, wayPoints[0].transform.position);
+                            }
+
+                            if (thisEnemy != null)
+                            {
+                                Gizmos.color = Color.red;
+                                Gizmos.DrawLine(transform.position + transform.up, transform.forward * thisEnemy.viewDistance + (transform.position + transform.up));
+
+                            }
                         }
                     }
                 }

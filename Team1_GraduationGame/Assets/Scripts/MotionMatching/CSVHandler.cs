@@ -9,6 +9,7 @@ using UnityEngine;
 public class CSVHandler
 {
     private string path = "Assets/Resources/MotionMatching";
+    private string pathInResources = "MotionMatching";
     private string fileName = "AnimData.csv";
     private static string[] csvLabels =
     {
@@ -97,7 +98,7 @@ public class CSVHandler
     }
     public List<FeatureVector> ReadCSV(int trajPointsLength, int trajStepSize)
     {
-        StreamReader reader = new StreamReader(path + "/" + fileName);
+        StreamReader reader = new StreamReader(new MemoryStream((Resources.Load("MotionMatching/AnimData") as TextAsset).bytes));
 
         bool ignoreHeaders = true;
 

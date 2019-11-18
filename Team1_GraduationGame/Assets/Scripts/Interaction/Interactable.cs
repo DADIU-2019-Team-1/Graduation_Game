@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿// Script by Jakob Elkjær Husted
+using System.Collections;
 using Team1_GraduationGame.Enemies;
 using UnityEngine;
 using UnityEngine.AI;
@@ -27,7 +28,7 @@ namespace Team1_GraduationGame.Interaction
             interactConditions, checkForObstructions, emitSound, useCooldown;
         public UnityEvent eventOnInteraction;
         public string animationDefault, animationAction;
-        [HideInInspector] public bool toggleState;
+        [HideInInspector] public bool toggleState = false;
 
         // Private:
         private bool _isEnemy, _interacted;
@@ -71,6 +72,9 @@ namespace Team1_GraduationGame.Interaction
 
         public void Interact()
         {
+            if (interactableOnce && toggleState)
+                return;
+
             if (!_interacted)
             {
                 if (pushable)

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿// Script by Jakob Elkjær Husted
+using System.Collections.Generic;
 using Team1_GraduationGame.Enemies;
 using UnityEngine;
 #if UNITY_EDITOR

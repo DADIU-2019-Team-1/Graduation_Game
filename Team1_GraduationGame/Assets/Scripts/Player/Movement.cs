@@ -6,7 +6,7 @@ using Team1_GraduationGame.Interaction;
 using Team1_GraduationGame.Events;
 using UnityEditor;
 
-[RequireComponent(typeof(Rigidbody), typeof(SphereCollider))]
+[RequireComponent(typeof(Rigidbody), typeof(SphereCollider), typeof(Animator))]
 
 public class Movement : MonoBehaviour
 {
@@ -31,7 +31,7 @@ public class Movement : MonoBehaviour
 
     public IntVariable _atOrbTrigger;
 
-    //public Animator animator;
+    private Animator animator;
 
     private Vector2 swipeStartPos, swipeEndPos, swipeDirection;
 
@@ -98,6 +98,7 @@ public class Movement : MonoBehaviour
     private void Awake()
     {
         playerRB = GetComponent<Rigidbody>();
+        animator = GetComponent<Animator>();
         moveState.value = 0;
         if (GetComponent<MotionMatching>() != null)
         {
@@ -133,14 +134,13 @@ public class Movement : MonoBehaviour
     void FixedUpdate()
     {
         _previousPosition = transform.position;
-        if (playerRB.velocity.y < 0 && isJumping)
+        if (playerRB.velocity.y <= 0.05f && isJumping)
         {
             //playerRB.mass * fallMultiplier.value;
             playerRB.velocity += Vector3.up * Physics.gravity.y * (fallMultiplier.value - 1) * Time.deltaTime;
 
-            if (Physics.Raycast(leftToePos.transform.position, Vector3.down, ghostJumpHeight.value) || Physics.Raycast(rightToePos.transform.position, Vector3.down, ghostJumpHeight.value) || Physics.Raycast(leftHeelPos.transform.position, Vector3.down, ghostJumpHeight.value) || Physics.Raycast(rightHeelPos.transform.position, Vector3.down, ghostJumpHeight.value))
+            if (Physics.Raycast(leftToePos.transform.position, Vector3.down, ghostJumpHeight.value) || Physics.Raycast(rightToePos.transform.position, Vector3.down, ghostJumpHeight.value) || Physics.Raycast(leftHeelPos.transform.position, Vector3.down, ghostJumpHeight.value) || Physics.Raycast(rightHeelPos.transform.position, Vector3.down, ghostJumpHeight.value) || Physics.Raycast(transform.position + Vector3.up, Vector3.down, ghostJumpHeight.value + 1.0f))
             {
-                //Debug.Log(true);
                 isJumping = false;
                 for (int j = 0; j < jumpPlatforms.Count; j++)
                 {
@@ -350,7 +350,7 @@ public class Movement : MonoBehaviour
             canMove = false;
             direction = Vector3.zero;
             rotationSpeedCurrent = 0.0f;
-            if (_atOrbTrigger.value == 1)
+            if (_atOrbTrigger != null && _atOrbTrigger.value == 1)
             {
                 targetSpeed = 0.0f;
             }
@@ -435,10 +435,12 @@ public class Movement : MonoBehaviour
 
     public void movePlayer(Vector3 direction)
     {
-        if (_atOrbTrigger.value != 1)
+        if (_atOrbTrigger != null && _atOrbTrigger.value != 1)
         {
-            targetSpeed = walkSpeed.value;
+                targetSpeed = walkSpeed.value;
         }
+        
+
         int wayToRotate = CrossProductPositive(transform.forward, direction) ? 1 : -1;
         rotationSpeedGoal = Mathf.Min(rotationSpeed.value, Vector3.Angle(transform.forward, direction) * rotationAngleReactionFactor) * wayToRotate;
         rotationSpeedCurrent += (rotationSpeedGoal - rotationSpeedCurrent) * rotationAccelerationFactor;
@@ -462,7 +464,8 @@ public class Movement : MonoBehaviour
         if (!isJumping && !(Physics.Raycast(leftToePos.transform.position, Vector3.down, ghostJumpHeight.value) ||
                            Physics.Raycast(rightToePos.transform.position, Vector3.down, ghostJumpHeight.value) ||
                            Physics.Raycast(leftHeelPos.transform.position, Vector3.down, ghostJumpHeight.value) ||
-                           Physics.Raycast(rightHeelPos.transform.position, Vector3.down, ghostJumpHeight.value)))
+                           Physics.Raycast(rightHeelPos.transform.position, Vector3.down, ghostJumpHeight.value) ||
+                           Physics.Raycast(transform.position + Vector3.up, Vector3.down, ghostJumpHeight.value + 1.0f)))
         {
             isJumping = true;
         }
@@ -485,8 +488,6 @@ public class Movement : MonoBehaviour
             isJumping = true;
             if (jumpEvent != null)
                 jumpEvent.Raise();
-
-            Debug.Log("Is Jumping: " + isJumping);
             //_collider.material = _jumpMaterial;
 
 

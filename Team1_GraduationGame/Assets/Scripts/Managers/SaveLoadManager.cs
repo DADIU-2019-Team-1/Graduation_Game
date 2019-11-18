@@ -1,6 +1,8 @@
-﻿using System.Collections;
+﻿// Script by Jakob Elkjær Husted
+using System.Collections;
 using System.Collections.Generic;
 using Team1_GraduationGame.Enemies;
+using Team1_GraduationGame.Interaction;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -15,6 +17,7 @@ namespace Team1_GraduationGame.SaveLoadSystem
         // References:
         private GameObject _player;
         private GameObject[] _enemies;
+        private GameObject[] _interactables;
 
 
         public void NewGame()
@@ -97,6 +100,26 @@ namespace Team1_GraduationGame.SaveLoadSystem
                 PlayerPrefs.SetString("enemySave", tempSaveString);
             }
 
+            //// Interactable save: ////
+            tempSaveString = "";
+            _interactables = GameObject.FindGameObjectsWithTag("Interactable");
+
+            if (_interactables != null)
+            {
+                InteractableContainer tempInteractableContainer = new InteractableContainer();
+
+                for (int i = 0; i < _interactables.Length; i++)
+                {
+                    tempInteractableContainer.pos = _interactables[i].transform.position;
+                    tempInteractableContainer.toggleState =
+                        _interactables[i].GetComponent<Interactable>().toggleState;
+
+                    tempSaveString += JsonUtility.ToJson(tempInteractableContainer) + SAVE_SEPERATOR;
+                }
+
+                PlayerPrefs.SetString("interactableSave", tempSaveString);
+            }
+
             //// SavePoint State: ////
             SavePoint[] tempSavePoints = GameObject.FindObjectsOfType<SavePoint>();
             tempSaveString = "";
@@ -128,19 +151,17 @@ namespace Team1_GraduationGame.SaveLoadSystem
             Debug.Log("Save/Load Manager: Succesfully saved the game");
         }
 
-        public void LoadGame()
+        /// <summary>
+        /// Load game to savepoint (checkpoint reached in scene). This does not load to scene, use 'Continue' for that.
+        /// </summary>
+        /// <param name="loadSavePointState">Only set true if loading using 'continue' button</param>
+        public void LoadGame(bool loadSavePointState)
         {
-            string tempLoadString = "";
-            _player = GameObject.FindWithTag("Player");
-
-            if (PlayerPrefs.GetInt("previousGame") != 1)
-                return;
-
-            if (_player != null)
+            if (loadSavePointState)
             {
-                //// SavePoint State load: ////
+                // SavePoint State load:
                 SavePoint[] tempSavePoints = GameObject.FindObjectsOfType<SavePoint>();
-                tempLoadString = PlayerPrefs.GetString("savePointStateSave");
+                string tempLoadString = PlayerPrefs.GetString("savePointStateSave");
 
                 if (tempSavePoints != null)
                 {
@@ -160,6 +181,28 @@ namespace Team1_GraduationGame.SaveLoadSystem
                     }
                 }
 
+                LoadGame();
+            }
+            else
+            {
+                LoadGame();
+            }
+        }
+
+        /// <summary>
+        /// Load game to savepoint (checkpoint reached in scene). This does not load to scene, use 'Continue' for that.
+        /// </summary>
+        public void LoadGame()
+        {
+            string tempLoadString = "";
+            _player = GameObject.FindWithTag("Player");
+
+            if (PlayerPrefs.GetInt("previousGame") != 1)
+                return;
+
+            if (_player != null)
+            {
+
                 //// Enemy load: ////
                 tempLoadString = PlayerPrefs.GetString("enemySave");
                 string[] tempDataString2 = tempLoadString.Split(new[] { SAVE_SEPERATOR }, System.StringSplitOptions.None);
@@ -170,7 +213,7 @@ namespace Team1_GraduationGame.SaveLoadSystem
                 {
                     EnemyContainer tempEnemyContainer = new EnemyContainer();
 
-                    for (int i = 1; i < _enemies.Length; i++)
+                    for (int i = 0; i < _enemies.Length; i++)
                     {
                         tempEnemyContainer = JsonUtility.FromJson<EnemyContainer>(tempDataString2[i]);
                         Enemy tempEnemyComponent = _enemies[i].GetComponent<Enemy>();
@@ -180,6 +223,25 @@ namespace Team1_GraduationGame.SaveLoadSystem
 
                         tempEnemyComponent.SetAggro(tempEnemyContainer.isAggro);
                         tempEnemyComponent.SetCurrentWaypoint(tempEnemyContainer.currentWayPoint);
+                    }
+                }
+
+                //// Pushable/interactable load: ////
+                _interactables = GameObject.FindGameObjectsWithTag("Interactable");
+
+                if (_interactables != null)
+                {
+                    tempLoadString = PlayerPrefs.GetString("interactableSave");
+                    tempDataString2 = tempLoadString.Split(new[] { SAVE_SEPERATOR }, System.StringSplitOptions.None);
+
+                    InteractableContainer tempInteractableContainer = new InteractableContainer();
+
+                    for (int i = 0; i < _interactables.Length; i++)
+                    {
+                        tempInteractableContainer = JsonUtility.FromJson<InteractableContainer>(tempDataString2[i]);
+                        _interactables[i].transform.position = tempInteractableContainer.pos;
+                        _interactables[i].GetComponent<Interactable>().toggleState =
+                            tempInteractableContainer.toggleState;
                     }
                 }
 
@@ -215,6 +277,13 @@ namespace Team1_GraduationGame.SaveLoadSystem
             public Quaternion rot;
             public bool isAggro;
             public int currentWayPoint;
+        }
+
+        public class InteractableContainer
+        {
+            public Vector3 pos;
+            //public Quaternion rot;    // Ideally rotation should not be saved as interaction is on "rails"
+            public bool toggleState;
         }
     }
 }

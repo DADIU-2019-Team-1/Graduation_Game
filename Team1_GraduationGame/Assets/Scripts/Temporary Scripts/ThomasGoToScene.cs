@@ -12,6 +12,7 @@ public class ThomasGoToScene : MonoBehaviour
     // Global booleans as ints, instead of script dependencies. 0 = true, 1 = false. It's reverse, i know.
     public IntVariable atOrbTrigger;
     private SphereCollider _collider;
+    private Collider _Collider;
 
     [SerializeField] [Range(0f,1f)]
     private float timelineThreshold;
@@ -36,21 +37,28 @@ public class ThomasGoToScene : MonoBehaviour
     {
         if (atOrbTrigger != null)
         {
+
             if (atOrbTrigger.value == 0 && _movement != null  && !destinationReached)
             {
                 memoryDirection = (transform.position - _movement.gameObject.transform.position).normalized;
                 _movement.direction = memoryDirection;
                 _movement.movePlayer(memoryDirection);
-                if (Vector3.Distance(_movement.gameObject.transform.position, transform.position) <=
-                     _collider.radius * timelineThreshold)
-                {
-                    Debug.Log("Reached timeline");
-                    _movement.targetSpeed = 0;
-                    memoryDirection = Vector3.zero;
-                    //destinationReached = true;
-                    atOrbTrigger.value = 1;
 
-                }
+                    if (Vector3.Distance(_movement.gameObject.transform.position, transform.position) <=
+                         _collider.radius * timelineThreshold)
+                    {
+                        Debug.Log("Reached timeline");
+                        _movement.targetSpeed = 0;
+                        memoryDirection = Vector3.zero;
+                        //destinationReached = true;
+                        atOrbTrigger.value = 1;
+                        destinationReached = true;
+
+                        if (SceneManager.GetActiveScene().name.Contains("mem"))
+                        {
+                            MemoryTimeLineEnded();
+                        }
+                    }
             }
         }
 
@@ -62,6 +70,7 @@ public class ThomasGoToScene : MonoBehaviour
         Debug.Log("going to scene '" +name+"'");
         SceneManager.LoadScene(name);
         destinationReached = false;
+        _movement.Frozen(false);
         //movingToOrb.value = 1;
     } 
     

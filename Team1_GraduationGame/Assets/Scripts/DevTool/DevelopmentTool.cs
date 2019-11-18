@@ -1,5 +1,6 @@
 ﻿// Script by Jakob Elkjær Husted
 using Team1_GraduationGame.Enemies;
+using UnityEngine.Events;
 
 namespace Team1_GraduationGame.DevelopmentTools
 {
@@ -25,6 +26,8 @@ namespace Team1_GraduationGame.DevelopmentTools
         [HideInInspector] public GameObject mainPanel;
         [HideInInspector] public Text debugText;
         [HideInInspector] public Text fpsText;
+        [HideInInspector] public Text vertsText;
+        [HideInInspector] public Text visibleAnimsText;
 
         // Bools:
         public bool setUpEnable = false;
@@ -50,6 +53,9 @@ namespace Team1_GraduationGame.DevelopmentTools
 
             if (FindObjectOfType<HubMenu>() != null)
                 FindObjectOfType<HubMenu>().cheatModeEvent += ToggleDevelopmentToolPanel;
+
+            if (mainPanel.activeSelf == true)
+                _devToolActive = true;
         }
 
         void OnEnable()
@@ -81,12 +87,26 @@ namespace Team1_GraduationGame.DevelopmentTools
 
         private void Update()
         {
-            if (debugText != null)
-                debugText.text = _dLog;
+            if (_devToolActive)
+            {
+                if (fpsText != null)
+                    fpsText.text = "FPS: " + (int)(1 / Time.deltaTime);
+            }
+        }
 
-            if (fpsText != null)
-                fpsText.text = (1.0f / Time.deltaTime).ToString();
+        private void FixedUpdate()
+        {
+            if (_devToolActive)
+            {
+                if (debugText != null)
+                    debugText.text = _dLog;
 
+                if (vertsText != null)
+                    vertsText.text = "Verts/Tris: " + UnityStats.vertices + " / " + UnityStats.triangles;
+
+                if (visibleAnimsText != null)
+                    visibleAnimsText.text = "Visible anims: " + UnityStats.visibleAnimations;
+            }
         }
 
         /// <summary>
@@ -166,6 +186,12 @@ namespace Team1_GraduationGame.DevelopmentTools
 
                 SerializedProperty fpsTextProp = serializedObject.FindProperty("fpsText");
                 EditorGUILayout.PropertyField(fpsTextProp);
+
+                SerializedProperty vertsTextProp = serializedObject.FindProperty("vertsText");
+                EditorGUILayout.PropertyField(vertsTextProp);
+
+                SerializedProperty animsTextProp = serializedObject.FindProperty("visibleAnimsText");
+                EditorGUILayout.PropertyField(animsTextProp);
             }
 
             serializedObject.ApplyModifiedProperties();

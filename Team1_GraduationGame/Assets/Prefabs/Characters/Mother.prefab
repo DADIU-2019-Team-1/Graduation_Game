@@ -402,12 +402,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 57f10f26dc2bfb048b505753cd7efe99, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  targetSpeed: 0
   isJumping: 0
   accelerationFactor: 0.1
   jumpEvent: {fileID: 11400000, guid: 53612299c0a461b47b14f3ef651011d9, type: 2}
   attackEvent: {fileID: 0}
   stateChangeEvent: {fileID: 0}
-  animator: {fileID: 700055238516908930}
+  direction: {x: 0, y: 0, z: 0}
+  _atOrbTrigger: {fileID: 0}
   stick: {fileID: 0}
   stickLimit: {fileID: 0}
   sneakSpeed:
@@ -480,7 +482,8 @@ MonoBehaviour:
   - Enemy
   - Interactable
   interactableObjects: []
-  jumpPlatformTag: []
+  jumpPlatformTag:
+  - Platform
   jumpPlatforms: []
 --- !u!114 &5865448813341310185
 MonoBehaviour:

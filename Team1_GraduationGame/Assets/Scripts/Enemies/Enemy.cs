@@ -251,7 +251,7 @@ namespace Team1_GraduationGame.Enemies
                     }
                 }
 
-                if (!_hearingDisabled /*&& !_isAggro*/)  // Enemy hearing:  // TODO: Add pause after player heard to play animation
+                if (!_hearingDisabled /*&& !_isAggro*/)  // Enemy hearing:  //
                 {
                     _hearingDistance = thisEnemy.hearingDistance;
                     if (playerMoveState.value == 2)
@@ -262,10 +262,9 @@ namespace Team1_GraduationGame.Enemies
                     {
                         _lastSighting = _player.transform.position;
 
-                        if (!_isAggro)
-                            StartCoroutine(EnemyAggro());
+                        if (!_isAggro && !_playerHeard)
+                            StartCoroutine(PlayerHeard());
 
-                        //StartCoroutine(PlayerHeard());    // TODO: Enable later YYY
                     }
                     else if (Vector3.Distance(transform.position, _player.transform.position) < minimumAlwaysDetectRange
                     ) // If very very close the enemy will "hear" the player no matter what
@@ -279,17 +278,17 @@ namespace Team1_GraduationGame.Enemies
 
                 ViewLightConeControl();
 
-                if (!alwaysAggro)
-                {
-                    if (_inTriggerZone && _giveUpPursuitRunning)    // this part is used to time out the pursuit, if enemy cannot reach player last sighting
-                    {
-                        StopCoroutine(PursuitTimeout());
-                    }
-                    else if (!_inTriggerZone && !_giveUpPursuitRunning)
-                    {
-                        StartCoroutine(PursuitTimeout());
-                    }
-                }
+                //if (!alwaysAggro) // BUG: This does not work
+                //{
+                //    if (_inTriggerZone && _giveUpPursuitRunning)    // this part is used to time out the pursuit, if enemy cannot reach player last sighting
+                //    {
+                //        StopCoroutine(PursuitTimeout());
+                //    }
+                //    else if (!_inTriggerZone && !_giveUpPursuitRunning && !_isAggro)
+                //    {
+                //        StartCoroutine(PursuitTimeout());
+                //    }
+                //}
             }
         }
 
@@ -353,7 +352,7 @@ namespace Team1_GraduationGame.Enemies
                                     StartCoroutine(EnemyAggro());
                             }
                     }
-                    else if (_isAggro)
+                    else if (_isAggro && !_playerHeard)
                     {
                         _lastSighting = _player.transform.position;
                     }
@@ -464,11 +463,15 @@ namespace Team1_GraduationGame.Enemies
 
             yield return new WaitForSeconds(animNoiseHeardTime);
 
+            _animator?.ResetTrigger("NoiseHeard");
+
             if (!_isAggro)
                 StartCoroutine(EnemyAggro());
 
-            _playerHeard = false;
             _active = true;
+
+            yield return new WaitForSeconds(thisEnemy.aggroTime);
+            _playerHeard = false;
         }
 
         private IEnumerator WaitTimer()
@@ -485,6 +488,7 @@ namespace Team1_GraduationGame.Enemies
 
         private IEnumerator EnemyAggro()
         {
+            Debug.Log("IS NOW AGGRO");
             _isAggro = true;
             yield return new WaitForSeconds(thisEnemy.aggroTime);
 
@@ -533,8 +537,10 @@ namespace Team1_GraduationGame.Enemies
 
         private IEnumerator PursuitTimeout()
         {
+            Debug.Log("About to give up");
             _giveUpPursuitRunning = true;
             yield return new WaitForSeconds(10);
+            Debug.Log("gave up!");
 
             _destinationSet = false;
             _isAggro = false;

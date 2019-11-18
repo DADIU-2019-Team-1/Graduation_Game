@@ -11,7 +11,6 @@ public class ThomasGoToScene : MonoBehaviour
 
     // Global booleans as ints, instead of script dependencies. 0 = true, 1 = false. It's reverse, i know.
     public IntVariable atOrbTrigger;
-    public IntVariable movingToOrb;
     private SphereCollider _collider;
 
     [SerializeField] [Range(0f,1f)]

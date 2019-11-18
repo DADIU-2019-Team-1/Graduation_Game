@@ -126,7 +126,7 @@ public class Movement : MonoBehaviour
     void Update()
     {
         currentSpeed.value = Vector3.Distance(transform.position, _previousPosition) / Time.fixedDeltaTime;
-        animator.SetFloat("Speed", currentSpeed.value);
+        //animator.SetFloat("Speed", currentSpeed.value);
         lookRotation = direction != Vector3.zero ? Quaternion.LookRotation(direction) : Quaternion.identity;
         velocity = direction.normalized * currentSpeed.value;
     }
@@ -142,6 +142,7 @@ public class Movement : MonoBehaviour
             if (Physics.Raycast(leftToePos.transform.position, Vector3.down, ghostJumpHeight.value) || Physics.Raycast(rightToePos.transform.position, Vector3.down, ghostJumpHeight.value) || Physics.Raycast(leftHeelPos.transform.position, Vector3.down, ghostJumpHeight.value) || Physics.Raycast(rightHeelPos.transform.position, Vector3.down, ghostJumpHeight.value) || Physics.Raycast(transform.position + Vector3.up, Vector3.down, ghostJumpHeight.value + 1.0f))
             {
                 isJumping = false;
+                _collider.material = null;
                 for (int j = 0; j < jumpPlatforms.Count; j++)
                 {
                     jumpPlatforms[j].GetComponent<Collider>().material = null;
@@ -350,7 +351,7 @@ public class Movement : MonoBehaviour
             canMove = false;
             direction = Vector3.zero;
             rotationSpeedCurrent = 0.0f;
-            if (_atOrbTrigger.value == 1)
+            if (_atOrbTrigger != null && _atOrbTrigger.value == 1)
             {
                 targetSpeed = 0.0f;
             }
@@ -435,10 +436,12 @@ public class Movement : MonoBehaviour
 
     public void movePlayer(Vector3 direction)
     {
-        if (_atOrbTrigger.value != 1)
+        if (_atOrbTrigger != null && _atOrbTrigger.value != 1)
         {
-            targetSpeed = walkSpeed.value;
+                targetSpeed = walkSpeed.value;
         }
+        
+
         int wayToRotate = CrossProductPositive(transform.forward, direction) ? 1 : -1;
         rotationSpeedGoal = Mathf.Min(rotationSpeed.value, Vector3.Angle(transform.forward, direction) * rotationAngleReactionFactor) * wayToRotate;
         rotationSpeedCurrent += (rotationSpeedGoal - rotationSpeedCurrent) * rotationAccelerationFactor;
@@ -451,12 +454,12 @@ public class Movement : MonoBehaviour
         }
         else
         {
-#if UNITY_EDITOR
+//#if UNITY_EDITOR
             playerRB.MovePosition(transform.position + (direction * targetSpeed * Time.deltaTime));
-#endif
-#if UNITY_ANDROID
-            playerRB.AddForce(direction * targetSpeed * Time.deltaTime, ForceMode.Impulse);
-#endif
+//#endif
+//#if UNITY_ANDROID
+//            playerRB.AddForce(direction * targetSpeed * Time.deltaTime, ForceMode.Impulse);
+//#endif
         }
 
         if (!isJumping && !(Physics.Raycast(leftToePos.transform.position, Vector3.down, ghostJumpHeight.value) ||
@@ -473,6 +476,7 @@ public class Movement : MonoBehaviour
     {
         if (!isJumping && (Physics.Raycast(leftToePos.transform.position, Vector3.down, ghostJumpHeight.value) || Physics.Raycast(rightToePos.transform.position, Vector3.down, ghostJumpHeight.value) || Physics.Raycast(leftHeelPos.transform.position, Vector3.down, ghostJumpHeight.value) || Physics.Raycast(rightHeelPos.transform.position, Vector3.down, ghostJumpHeight.value)))
         {
+            _collider.material = _jumpMaterial;
             for (int j = 0; j < jumpPlatforms.Count; j++)
             {
                 jumpPlatforms[j].GetComponent<Collider>().material = _jumpMaterial;

@@ -9,7 +9,9 @@ public class ThomasGoToScene : MonoBehaviour
 {
     public bool forceSwitch;
 
+    // Global booleans as ints, instead of script dependencies. 0 = true, 1 = false. It's reverse, i know.
     public IntVariable atOrbTrigger;
+    public IntVariable movingToOrb;
     private SphereCollider _collider;
 
     [SerializeField] [Range(0f,1f)]
@@ -30,29 +32,35 @@ public class ThomasGoToScene : MonoBehaviour
     // Update is called once per frame
     void FixedUpdate()
     {
-        if (atOrbTrigger.value == 0 && _movement != null  && !destinationReached)
+        if (atOrbTrigger != null)
         {
-            memoryDirection = (transform.position - _movement.gameObject.transform.position).normalized;
-            _movement.direction = memoryDirection;
-            _movement.movePlayer(memoryDirection);
-            Debug.Log("Direction is: " + memoryDirection);
-            if (Vector3.Distance(_movement.gameObject.transform.position, transform.position) <=
-                 _collider.radius * timelineThreshold)
+            if (atOrbTrigger.value == 0 && _movement != null  && !destinationReached)
             {
-                Debug.Log("Reached timeline");
-                _movement.targetSpeed = 0;
-                memoryDirection = Vector3.zero;
-                destinationReached = true;
+                memoryDirection = (transform.position - _movement.gameObject.transform.position).normalized;
+                _movement.direction = memoryDirection;
+                _movement.movePlayer(memoryDirection);
+                if (Vector3.Distance(_movement.gameObject.transform.position, transform.position) <=
+                     _collider.radius * timelineThreshold)
+                {
+                    Debug.Log("Reached timeline");
+                    _movement.targetSpeed = 0;
+                    memoryDirection = Vector3.zero;
+                    //destinationReached = true;
+                    atOrbTrigger.value = 1;
+
+                }
             }
         }
+
         
     }
     public void GoToSceneWithName(string name)
     { 
-        atOrbTrigger.value = 1;
+        
         Debug.Log("going to scene '" +name+"'");
         SceneManager.LoadScene(name);
         destinationReached = false;
+        //movingToOrb.value = 1;
     } 
     
     private void OnTriggerEnter(Collider other)
@@ -62,6 +70,7 @@ public class ThomasGoToScene : MonoBehaviour
         {
             _movement.Frozen(true);
             atOrbTrigger.value = 0;
+            //movingToOrb.value = 0;
             //if (Vector3.Distance(transform.position, other.transform.position) <= collider.radius * timelineThreshold)
             //{
             //    _movement.targetSpeed = 0;

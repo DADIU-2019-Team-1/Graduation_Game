@@ -126,7 +126,9 @@ public class Movement : MonoBehaviour
     void Update()
     {
         currentSpeed.value = Vector3.Distance(transform.position, _previousPosition) / Time.fixedDeltaTime;
-        //animator.SetFloat("Speed", currentSpeed.value);
+        if(animator.runtimeAnimatorController != null)
+            animator.SetFloat("Speed", currentSpeed.value);
+
         lookRotation = direction != Vector3.zero ? Quaternion.LookRotation(direction) : Quaternion.identity;
         velocity = direction.normalized * currentSpeed.value;
     }
@@ -137,6 +139,7 @@ public class Movement : MonoBehaviour
         if (playerRB.velocity.y <= 0.05f && isJumping)
         {
             //playerRB.mass * fallMultiplier.value;
+            //Debug.Log("Applying extra gravity");
             playerRB.velocity += Vector3.up * Physics.gravity.y * (fallMultiplier.value - 1) * Time.deltaTime;
 
             if (Physics.Raycast(leftToePos.transform.position, Vector3.down, ghostJumpHeight.value) || Physics.Raycast(rightToePos.transform.position, Vector3.down, ghostJumpHeight.value) || Physics.Raycast(leftHeelPos.transform.position, Vector3.down, ghostJumpHeight.value) || Physics.Raycast(rightHeelPos.transform.position, Vector3.down, ghostJumpHeight.value) || Physics.Raycast(transform.position + Vector3.up, Vector3.down, ghostJumpHeight.value + 1.0f))

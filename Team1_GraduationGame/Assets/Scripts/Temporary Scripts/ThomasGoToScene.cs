@@ -3,11 +3,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using Team1_GraduationGame.SaveLoadSystem;
+using UnityEngine.Playables;
 
 [RequireComponent(typeof(SphereCollider))]
 public class ThomasGoToScene : MonoBehaviour
 {
     public bool forceSwitch;
+    public GameObject Director;
 
     // Global booleans as ints, instead of script dependencies. 0 = true, 1 = false. It's reverse, i know.
     public IntVariable atOrbTrigger;
@@ -53,6 +56,8 @@ public class ThomasGoToScene : MonoBehaviour
                         //destinationReached = true;
                         atOrbTrigger.value = 1;
                         destinationReached = true;
+                        if(_movement.gameObject.GetComponent<PlayableDirector>() != null)
+                            _movement.gameObject.GetComponent<PlayableDirector>().Play();
 
                         if (SceneManager.GetActiveScene().name.Contains("mem"))
                         {
@@ -80,7 +85,8 @@ public class ThomasGoToScene : MonoBehaviour
         if (forceSwitch && other.tag == "Player")
         {
             _movement.Frozen(true);
-            atOrbTrigger.value = 0;
+            Director.SetActive(true);
+            //atOrbTrigger.value = 0;
             //movingToOrb.value = 0;
             //if (Vector3.Distance(transform.position, other.transform.position) <= collider.radius * timelineThreshold)
             //{
@@ -95,7 +101,12 @@ public class ThomasGoToScene : MonoBehaviour
 
     public void MemoryTimeLineEnded()
     {
-        GoToSceneWithName("Mem01");
+        if(FindObjectOfType<SavePointManager>() != null)
+            FindObjectOfType<SavePointManager>().NextLevel();
+        else
+            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
+        destinationReached = false;
+        _movement.Frozen(false);
     }
 
     public void SetOrbTrigger()

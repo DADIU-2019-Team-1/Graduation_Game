@@ -6,7 +6,7 @@ using Team1_GraduationGame.Interaction;
 using Team1_GraduationGame.Events;
 using UnityEditor;
 
-[RequireComponent(typeof(Rigidbody), typeof(SphereCollider), typeof(Animator))]
+[RequireComponent(typeof(Rigidbody), typeof(SphereCollider))]
 
 public class Movement : MonoBehaviour
 {
@@ -54,6 +54,9 @@ public class Movement : MonoBehaviour
     public GameObject leftHeelPos, rightHeelPos, rightToePos, leftToePos;
 
     private CapsuleCollider _collider;
+    
+    //Comment out this when motionmatching works!
+    private Animator animator;
 
     //private SphereCollider playerTrigger;
 
@@ -96,6 +99,7 @@ public class Movement : MonoBehaviour
     private void Awake()
     {
         playerRB = GetComponent<Rigidbody>();
+        animator = GetComponent<Animator>();
         moveState.value = 0;
         if (GetComponent<MotionMatching>() != null)
         {
@@ -123,6 +127,13 @@ public class Movement : MonoBehaviour
     void Update()
     {
         currentSpeed.value = Vector3.Distance(transform.position, _previousPosition) / Time.fixedDeltaTime;
+
+        // I set a temp Speed animator if we arent using motion matching
+        if (animator.runtimeAnimatorController.name == "MotherAnimator")
+        {
+            animator.SetFloat("Speed", currentSpeed.value);
+        }
+
         lookRotation = direction != Vector3.zero ? Quaternion.LookRotation(direction) : Quaternion.identity;
         velocity = direction.normalized * currentSpeed.value;
     }
@@ -139,6 +150,12 @@ public class Movement : MonoBehaviour
             if (Physics.Raycast(leftToePos.transform.position, Vector3.down, ghostJumpHeight.value) || Physics.Raycast(rightToePos.transform.position, Vector3.down, ghostJumpHeight.value) || Physics.Raycast(leftHeelPos.transform.position, Vector3.down, ghostJumpHeight.value) || Physics.Raycast(rightHeelPos.transform.position, Vector3.down, ghostJumpHeight.value) || Physics.Raycast(transform.position + Vector3.up, Vector3.down, ghostJumpHeight.value + 1.0f))
             {
                 isJumping = false;
+
+                if (animator.runtimeAnimatorController.name == "MotherAnimator")
+                {
+                    animator.SetBool("Jump", false);
+                }
+
                 _collider.material = null;
                 for (int j = 0; j < jumpPlatforms.Count; j++)
                 {
@@ -314,6 +331,15 @@ public class Movement : MonoBehaviour
             if (swipeOffSet.magnitude > swipePixelDistance.value && Input.mousePosition.x > Screen.width / 2 && !canMove)
             {
                 playerAttack(worldDirection);
+
+                // I set a temp push animator if we arent using motion matching
+                if (animator.runtimeAnimatorController.name == "MotherAnimator")
+                {
+                    animator.SetTrigger("Attack");
+                    Debug.Log("Using Test Animator not motion matching");
+                }
+
+
                 //Debug.Log("Swipe");
                 //Debug.DrawLine(swipeStartPos, swipeStartPos + swipeDirection * 300, Color.red, 5);
                 //Debug.DrawLine(playerRB.transform.position, playerRB.transform.position + worldDirection * 5, Color.green, 5);
@@ -324,6 +350,7 @@ public class Movement : MonoBehaviour
             else if (swipeTimeTimer + swipeTimeThreshold.value >= Time.time && !moveFrozen)
             {
                 playerJump(Vector3.up + direction, jumpHeight.value);
+
                 //Debug.Log("Jump");
             }
         }
@@ -358,6 +385,7 @@ public class Movement : MonoBehaviour
         if (Input.GetKey(KeyCode.Space) && !isJumping)
         {
             playerJump(direction, jumpHeight.value);
+
         }
 #endif
         SetState();
@@ -466,6 +494,12 @@ public class Movement : MonoBehaviour
                            Physics.Raycast(transform.position + Vector3.up, Vector3.down, ghostJumpHeight.value + 1.0f)))
         {
             isJumping = true;
+
+            // also setting jump on temp Animator
+            if (animator.runtimeAnimatorController.name == "MotherAnimator")
+            {
+                animator.SetBool("Jump", true);
+            }
         }
     }
 
@@ -485,6 +519,13 @@ public class Movement : MonoBehaviour
                     } */
             // If the feet are atleast 10 cm away from the ground. 
             isJumping = true;
+
+            // also setting jump on temp Animator
+            if (animator.runtimeAnimatorController.name == "MotherAnimator")
+            {
+                animator.SetBool("Jump", true);
+            }
+
             if (jumpEvent != null)
                 jumpEvent.Raise();
             //_collider.material = _jumpMaterial;

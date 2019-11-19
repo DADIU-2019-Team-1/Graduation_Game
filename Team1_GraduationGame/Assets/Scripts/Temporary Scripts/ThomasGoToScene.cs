@@ -10,6 +10,7 @@ using UnityEngine.Playables;
 public class ThomasGoToScene : MonoBehaviour
 {
     public bool forceSwitch;
+    public GameObject Director;
 
     // Global booleans as ints, instead of script dependencies. 0 = true, 1 = false. It's reverse, i know.
     public IntVariable atOrbTrigger;
@@ -84,7 +85,8 @@ public class ThomasGoToScene : MonoBehaviour
         if (forceSwitch && other.tag == "Player")
         {
             _movement.Frozen(true);
-            atOrbTrigger.value = 0;
+            Director.SetActive(true);
+            //atOrbTrigger.value = 0;
             //movingToOrb.value = 0;
             //if (Vector3.Distance(transform.position, other.transform.position) <= collider.radius * timelineThreshold)
             //{

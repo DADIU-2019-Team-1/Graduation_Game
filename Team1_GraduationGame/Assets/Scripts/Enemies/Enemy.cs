@@ -1,7 +1,4 @@
 ﻿// Script by Jakob Elkjær Husted
-
-using System.Linq;
-
 namespace Team1_GraduationGame.Enemies
 {
     using System.Collections;
@@ -9,6 +6,7 @@ namespace Team1_GraduationGame.Enemies
     using UnityEngine;
     using Team1_GraduationGame.Events;
     using Team1_GraduationGame.Interaction;
+    using System.Linq;
     using UnityEngine.AI;
 
 #if UNITY_EDITOR
@@ -48,7 +46,7 @@ namespace Team1_GraduationGame.Enemies
         private SphereCollider _thisCollider;
         private int _currentWayPoint = 0, _state = 0, _layerMask;
         private float[] _waitTimes;
-        private float _targetSpeed, _hearingDistance, _lightConeIntensity;
+        private float _targetSpeed, _hearingDistance, _lightConeIntensity, _speed;
 
         #endregion
 
@@ -133,6 +131,11 @@ namespace Team1_GraduationGame.Enemies
         }
         #endregion
 
+        private void Start()
+        {
+            InvokeRepeating("CustomUpdate", 1.0f, 0.5f);
+        }
+
         /// <summary>
         /// Switches the state of this enemy. 0 = Walking, 1 = Running, 2 = Attacking
         /// </summary>
@@ -166,7 +169,6 @@ namespace Team1_GraduationGame.Enemies
             }
 
             _accelerating = true; // Enables accelerating in the update loop to desired state
-
         }
 
         private void FixedUpdate()
@@ -296,13 +298,17 @@ namespace Team1_GraduationGame.Enemies
             }
         }
 
-        private void LateUpdate()
+        private void CustomUpdate()
         {
             if (_navMeshAgent != null)
+            {
+                _speed = _navMeshAgent.velocity.magnitude;
+
                 if (_animator != null)
                 {
-                    _animator?.SetFloat("Speed", _navMeshAgent.velocity.magnitude);
+                    _animator?.SetFloat("Speed", _speed);
                 }
+            }
         }
 
         private void UpdatePathRoutine()    // Updates destination to next waypoint
@@ -596,6 +602,8 @@ namespace Team1_GraduationGame.Enemies
         public void SetCurrentWaypoint(int index) { _currentWayPoint = index; }
         public void SetLastSighting(Vector3 location) { _lastSighting = location; }
         public Vector3 GetLastSighting() { return _lastSighting; }
+        public float GetSpeed() { return _speed; }
+        public int GetState() { return _state; }
         #endregion
 
 #if UNITY_EDITOR

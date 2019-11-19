@@ -222,6 +222,7 @@ namespace Team1_GraduationGame.SaveLoadSystem
                         _enemies[i].transform.position = tempEnemyContainer.pos;
                         _enemies[i].transform.rotation = tempEnemyContainer.rot;
 
+                        tempEnemyComponent.ResetEnemy();
                         tempEnemyComponent.SetAggro(tempEnemyContainer.isAggro);
                         tempEnemyComponent.SetCurrentWaypoint(tempEnemyContainer.currentWayPoint);
                         tempEnemyComponent.SetLastSighting(tempEnemyContainer.lastSighting);

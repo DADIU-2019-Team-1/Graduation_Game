@@ -101,6 +101,8 @@ namespace AK
         static const AkUniqueID FS_WETTISH = 1688601825U;
         static const AkUniqueID IMMERSION_FA_SSGRAIN = 2481728872U;
         static const AkUniqueID INSTRUMENT_FA_SSGRAIN = 2317409760U;
+        static const AkUniqueID MASTER_MUSIC_INMENUSLIDER = 708145369U;
+        static const AkUniqueID MASTER_SFX_INMENUSLIDER = 2198029213U;
         static const AkUniqueID MEMORYCALL_VOLUME_FOR_ANIMATION = 1254966522U;
         static const AkUniqueID METER_WIND = 3084119761U;
         static const AkUniqueID PLAYBACK_RATE = 1524500807U;

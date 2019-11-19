@@ -19,7 +19,6 @@ namespace AK
         static const AkUniqueID PLAY_FS_SYSTEM = 2874393337U;
         static const AkUniqueID PLAY_HMC_MUSIC_SYSTEM_LEVEL1 = 2367316274U;
         static const AkUniqueID PLAY_RUMBLE_BLEND = 728827549U;
-        static const AkUniqueID PLAY_UI_TONECALL = 3222526703U;
         static const AkUniqueID PLAY_UI_TONECALL_01 = 1794915827U;
         static const AkUniqueID STOP_ECHOCALL_MEMORY_PLAYLIST = 3307487220U;
     } // namespace EVENTS

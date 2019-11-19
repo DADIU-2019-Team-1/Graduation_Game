@@ -399,11 +399,12 @@ MonoBehaviour:
   playerDiedEvent: {fileID: 11400000, guid: a91b977e02bad9345b91ce4665a3b978, type: 2}
   viewConeLight: {fileID: 5763609035621239976}
   playerMoveState: {fileID: 11400000, guid: 064acbb0600eace4e969fd76909dcac8, type: 2}
+  _animator: {fileID: 3129185098952159906}
   wayPoints: []
   parentWayPoint: {fileID: 0}
-  wayPointReachRange: 2
-  hearingSensitivity: 5
-  minimumAlwaysDetectRange: 2
+  wayPointReachRange: 2.8
+  hearingSensitivity: 6
+  minimumAlwaysDetectRange: 2.8
   drawGizmos: 1
   useWaitTime: 0
   rotateAtWaypoints: 0
@@ -411,8 +412,8 @@ MonoBehaviour:
   alwaysAggro: 0
   normalConeColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
   aggroConeColor: {r: 1, g: 0, b: 0, a: 1}
-  animNoiseHeardTime: 2.5
-  animAttackTime: 3
+  animNoiseHeardTime: 0.1
+  animAttackTime: 2.5
   useGlobalWaitTime: 1
   waitTime: 0
 --- !u!114 &5763609037245267759
@@ -522,6 +523,12 @@ PrefabInstance:
 --- !u!4 &5037023867263623128 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 604648888706825171, guid: 0bec691022ee19b45b77d6cbb4ce6ab3,
+    type: 3}
+  m_PrefabInstance: {fileID: 5585376617592382475}
+  m_PrefabAsset: {fileID: 0}
+--- !u!95 &3129185098952159906 stripped
+Animator:
+  m_CorrespondingSourceObject: {fileID: 7416908742213555881, guid: 0bec691022ee19b45b77d6cbb4ce6ab3,
     type: 3}
   m_PrefabInstance: {fileID: 5585376617592382475}
   m_PrefabAsset: {fileID: 0}

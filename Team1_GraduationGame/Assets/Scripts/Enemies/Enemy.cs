@@ -27,7 +27,7 @@ namespace Team1_GraduationGame.Enemies
         private GameObject _player;
         private Movement _movement;
         private NavMeshAgent _navMeshAgent;
-        private Animator _animator;
+        [Tooltip("Animator will automatically be found - So ONLY add one if it is not on this object")] public Animator _animator;
         [HideInInspector] public List<GameObject> wayPoints;
         [HideInInspector] public GameObject parentWayPoint;
 
@@ -35,7 +35,7 @@ namespace Team1_GraduationGame.Enemies
         public float wayPointReachRange = 1.0f, hearingSensitivity = 2.0f, minimumAlwaysDetectRange = 1.3f;
         public bool drawGizmos = true, useWaitTime, rotateAtWaypoints, loopWaypointRoutine = true, alwaysAggro;
         public Color normalConeColor = Color.yellow, aggroConeColor = Color.red;
-        public float animNoiseHeardTime = 2.0f, animAttackTime = 3.0f;
+        public float animNoiseHeardTime = 2.0f, animAttackTime = 3.0f, animGettingUpTime = 2.0f;
         [HideInInspector] public bool useGlobalWaitTime = true;
         [HideInInspector] public float waitTime = 0.0f;
 
@@ -525,7 +525,6 @@ namespace Team1_GraduationGame.Enemies
 
                 yield return new WaitForSeconds(animAttackTime);
 
-                Debug.Log("PLAYER DIED");
                 viewConeLight?.gameObject.SetActive(true);
                 playerDiedEvent?.Raise();
             }
@@ -554,7 +553,11 @@ namespace Team1_GraduationGame.Enemies
             _active = true;
             _navMeshAgent.isStopped = false;
             viewConeLight.color = normalConeColor;
+            _animator?.ResetTrigger("PushedDown");
             _animator?.SetTrigger("GettingUp");
+
+            yield return new WaitForSeconds(animGettingUpTime);
+            _animator?.ResetTrigger("GettingUp");
 
             if (!alwaysAggro)
                 _destinationSet = false;
@@ -565,6 +568,22 @@ namespace Team1_GraduationGame.Enemies
         #endregion
 
         #region Setter and Getters
+
+        public void ResetEnemy()
+        {
+            StopAllCoroutines();
+            _timerRunning = false;
+            _active = true;
+            _playerHeard = false;
+            _isHugging = false;
+            _navMeshAgent.isStopped = false;
+            _giveUpPursuitRunning = false;
+            _destinationSet = false;
+            _animator?.ResetTrigger("PushedDown");
+            _animator?.ResetTrigger("GettingUp");
+            _animator?.ResetTrigger("Attack");
+        }
+
         public void SetIsActive(bool isActive) { _active = isActive; }
         public bool GetIsActive() { return _active; }
         public bool GetHearing() { return _hearingDisabled; }

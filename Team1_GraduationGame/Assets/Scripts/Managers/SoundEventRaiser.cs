@@ -12,6 +12,7 @@ namespace Team1_GraduationGame.Events
         public VoidEvent inMenuEvent;
         public VoidEvent inHubEvent;
         public VoidEvent inMemoryEvent;
+        public VoidEvent menuButtonPressEvent;
         public FloatEvent musicSliderEvent;
         public FloatEvent sfxSliderEvent;
 
@@ -23,6 +24,7 @@ namespace Team1_GraduationGame.Events
                 tempHubMenu.startGameEvent += NewGameEvent;
                 tempHubMenu.musicSliderEvent += MusicSliderEvent;
                 tempHubMenu.sfxSliderEvent += SFXSliderEvent;
+                tempHubMenu.menuButtonPressEvent += MenuButtonPressEvent;
             }
 
             if (FindObjectOfType<InGameUI>() != null)
@@ -55,6 +57,10 @@ namespace Team1_GraduationGame.Events
         public void InMemoryEvent()
         {
             inMemoryEvent?.Raise();
+        }
+        public void MenuButtonPressEvent()
+        {
+            menuButtonPressEvent?.Raise();
         }
     }
 

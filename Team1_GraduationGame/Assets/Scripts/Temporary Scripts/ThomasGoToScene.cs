@@ -59,10 +59,10 @@ public class ThomasGoToScene : MonoBehaviour
                         if(_movement.gameObject.GetComponent<PlayableDirector>() != null)
                             _movement.gameObject.GetComponent<PlayableDirector>().Play();
 
-                        if (SceneManager.GetActiveScene().name.Contains("mem"))
-                        {
-                            MemoryTimeLineEnded();
-                        }
+                        //if (SceneManager.GetActiveScene().name.Contains("mem"))
+                        //{
+                        //    MemoryTimeLineEnded();
+                        //}
                     }
             }
         }
@@ -76,6 +76,7 @@ public class ThomasGoToScene : MonoBehaviour
         SceneManager.LoadScene(name);
         destinationReached = false;
         _movement.Frozen(false);
+        
         //movingToOrb.value = 1;
     } 
     

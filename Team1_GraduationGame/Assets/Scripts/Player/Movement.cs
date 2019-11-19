@@ -129,7 +129,8 @@ public class Movement : MonoBehaviour
         currentSpeed.value = Vector3.Distance(transform.position, _previousPosition) / Time.fixedDeltaTime;
 
         // I set a temp Speed animator if we arent using motion matching
-        if (animator.runtimeAnimatorController.name == "MotherAnimator")
+
+        if (animator.runtimeAnimatorController != null && animator.runtimeAnimatorController.name == "MotherAnimator")
         {
             animator.SetFloat("Speed", currentSpeed.value);
         }
@@ -151,7 +152,7 @@ public class Movement : MonoBehaviour
             {
                 isJumping = false;
 
-                if (animator.runtimeAnimatorController.name == "MotherAnimator")
+                if (animator.runtimeAnimatorController != null && animator.runtimeAnimatorController.name == "MotherAnimator")
                 {
                     animator.SetBool("Jump", false);
                 }
@@ -333,7 +334,7 @@ public class Movement : MonoBehaviour
                 playerAttack(worldDirection);
 
                 // I set a temp push animator if we arent using motion matching
-                if (animator.runtimeAnimatorController.name == "MotherAnimator")
+                if (animator.runtimeAnimatorController != null && animator.runtimeAnimatorController.name == "MotherAnimator")
                 {
                     animator.SetTrigger("Attack");
                     Debug.Log("Using Test Animator not motion matching");
@@ -496,7 +497,7 @@ public class Movement : MonoBehaviour
             isJumping = true;
 
             // also setting jump on temp Animator
-            if (animator.runtimeAnimatorController.name == "MotherAnimator")
+            if (animator.runtimeAnimatorController != null && animator.runtimeAnimatorController.name == "MotherAnimator")
             {
                 animator.SetBool("Jump", true);
             }
@@ -521,7 +522,7 @@ public class Movement : MonoBehaviour
             isJumping = true;
 
             // also setting jump on temp Animator
-            if (animator.runtimeAnimatorController.name == "MotherAnimator")
+            if (animator.runtimeAnimatorController != null && animator.runtimeAnimatorController.name == "MotherAnimator")
             {
                 animator.SetBool("Jump", true);
             }

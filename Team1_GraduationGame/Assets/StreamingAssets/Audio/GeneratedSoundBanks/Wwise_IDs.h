@@ -32,7 +32,7 @@ namespace AK
 
             namespace STATE
             {
-                static const AkUniqueID END_SCENE = 755051661U;
+                static const AkUniqueID END_MEMORY = 576569430U;
                 static const AkUniqueID EXIT_MEMORY = 4198270385U;
                 static const AkUniqueID GRIEF_APPEARS = 3170210169U;
                 static const AkUniqueID HUB = 646625282U;

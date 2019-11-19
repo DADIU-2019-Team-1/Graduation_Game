@@ -236,7 +236,7 @@ public class MotionMatching : MonoBehaviour
 			    break;
 		    }
 		}
-		Debug.Log("Updating to animation " + currentClip.name + " to frame " + frame + " with ID " + id + " from id " + currentID + " of frame " + currentFrame);
+		//Debug.Log("Updating to animation " + currentClip.name + " to frame " + frame + " with ID " + id + " from id " + currentID + " of frame " + currentFrame);
         animator.CrossFadeInFixedTime(currentClip.name, 0.3f, 0, frame / animationFrameRate); // 0.3f was recommended by Magnus
         currentID = id;
         currentFrame = frame;
@@ -274,11 +274,11 @@ public class MotionMatching : MonoBehaviour
             }
 	    }
 	    int startofIdForClip = currentID;
-	    Debug.Log("Current playing " + allClips[animIterator].name + ", which is " + allClips[animIterator].length + " seconds long!");
-		Debug.Log("While loop condition: Frame " + featureVectors[currentID].GetFrame() + " < " + featureVectors[currentID].GetFrameCountForID() + " && Clip " + featureVectors[currentID].GetClipName() + " == " + allClips[animIterator].name);
+	    //Debug.Log("Current playing " + allClips[animIterator].name + ", which is " + allClips[animIterator].length + " seconds long!");
+		//Debug.Log("While loop condition: Frame " + featureVectors[currentID].GetFrame() + " < " + featureVectors[currentID].GetFrameCountForID() + " && Clip " + featureVectors[currentID].GetClipName() + " == " + allClips[animIterator].name);
         while (featureVectors[currentID].GetFrame() < featureVectors[currentID].GetFrameCountForID() && featureVectors[currentID].GetClipName() == allClips[animIterator].name)
         {
-            Debug.Log("Current ID is now " + currentID + ", which started at ID " + startofIdForClip +"!");
+            //Debug.Log("Current ID is now " + currentID + ", which started at ID " + startofIdForClip +"!");
 		    UpdateAnimation(currentID, featureVectors[currentID].GetFrame());
             yield return new WaitForSeconds(queryRateInFrames / currentClip.frameRate);
             currentID += queryRateInFrames;

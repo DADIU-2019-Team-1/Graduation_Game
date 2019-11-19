@@ -218,6 +218,19 @@ namespace Team1_GraduationGame.Enemies
             }
         }
 
+        public void ResetBig()
+        {
+            StopAllCoroutines();
+            _active = true;
+            _disappear = true;
+            _appear = false;
+            _isAggro = false;
+            _isSpawned = false;
+            _playerSpotted = false;
+            _timerRunning = false;
+            UpdateFOVLight(false, false);
+        }
+
         private IEnumerator ChangeState(bool isActive)
         {
             if (isActive)

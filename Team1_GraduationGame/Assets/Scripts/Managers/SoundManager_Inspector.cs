@@ -261,7 +261,7 @@ namespace Team1_GraduationGame.Managers
                                     EditorGUILayout.Toggle("Set RTPC role",
                                         script.soundEvents[i].rtpcRoleBool);
 
-                                if ((int)script.soundEvents[i].triggerTypeSelector == 1 && !script.soundEvents[i].setCustomRtpcFloat && script.soundEvents[i].rtpcRoleBool)
+                                if ((int)script.soundEvents[i].triggerTypeSelector == 1 || (int)script.soundEvents[i].triggerTypeSelector == 6 && !script.soundEvents[i].setCustomRtpcFloat && script.soundEvents[i].rtpcRoleBool)
                                 {
                                     script.soundEvents[i].useValueFromEvent = EditorGUILayout.Toggle("Use value from event?",
                                         script.soundEvents[i].useValueFromEvent);
@@ -301,10 +301,9 @@ namespace Team1_GraduationGame.Managers
                     }
                     #endregion
 
+                    EditorGUI.indentLevel = EditorGUI.indentLevel - 2;
                     DrawUILine(true);
                 }
-
-            EditorGUI.indentLevel = EditorGUI.indentLevel - 2;
 
             serializedObject.ApplyModifiedProperties();
 

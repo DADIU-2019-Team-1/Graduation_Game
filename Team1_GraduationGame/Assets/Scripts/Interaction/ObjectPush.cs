@@ -29,6 +29,7 @@ namespace Team1_GraduationGame.Interaction
             _thisRigidBody = GetComponent<Rigidbody>();
 
             _thisRigidBody.mass = 100;
+            _thisRigidBody.freezeRotation = true;
             
             if (wayPoints == null)
                 wayPoints = new List<GameObject>();

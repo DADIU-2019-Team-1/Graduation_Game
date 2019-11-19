@@ -18,7 +18,6 @@ namespace AK
         static const AkUniqueID PLAY_FS_JUMPANDLAND = 1125157986U;
         static const AkUniqueID PLAY_FS_SYSTEM = 2874393337U;
         static const AkUniqueID PLAY_HMC_MUSIC_SYSTEM_LEVEL1 = 2367316274U;
-        static const AkUniqueID PLAY_M_BREATH_SWITCH = 4294494999U;
         static const AkUniqueID PLAY_RUMBLE_BLEND = 728827549U;
         static const AkUniqueID PLAY_UI_TONECALL_01 = 1794915827U;
         static const AkUniqueID STOP_ECHOCALL_MEMORY_PLAYLIST = 3307487220U;
@@ -98,6 +97,7 @@ namespace AK
         static const AkUniqueID AMB_INTENSITY = 752028789U;
         static const AkUniqueID DENSITY_FA_SSGRAIN = 2715217995U;
         static const AkUniqueID DIST_TO_MEMORY = 2843219839U;
+        static const AkUniqueID FOOTSTEP_STATE_CALCULATOR = 3250563732U;
         static const AkUniqueID FS_WETTISH = 1688601825U;
         static const AkUniqueID IMMERSION_FA_SSGRAIN = 2481728872U;
         static const AkUniqueID INSTRUMENT_FA_SSGRAIN = 2317409760U;

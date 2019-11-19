@@ -22,12 +22,12 @@
 			<Path>HMC_Start_Bank.bnk</Path>
 			<IncludedEvents>
 				<Event Id="121174090" Name="Play_Amb_Outside" ObjectPath="\Events\Default Work Unit\AMBIENCE\Play_Amb_Outside" DurationType="Infinite"/>
-				<Event Id="3698047240" Name="Play_Breath" ObjectPath="\Events\Default Work Unit\PLAYER\Play_Breath" DurationType="OneShot" DurationMin="0.000000" DurationMax="0.000000"/>
 				<Event Id="3108390310" Name="Play_EchoCall_Memory_playlist" ObjectPath="\Events\Default Work Unit\MEMORIES\Play_EchoCall_Memory_playlist" MaxAttenuation="60.000000" DurationType="Infinite"/>
-				<Event Id="741775033" Name="Play_FS_Land" ObjectPath="\Events\Default Work Unit\PLAYER\Play_FS_Land" DurationType="OneShot" DurationMin="0.388902" DurationMax="1.078785"/>
-				<Event Id="2874393337" Name="Play_FS_System" ObjectPath="\Events\Default Work Unit\PLAYER\Play_FS_System" DurationType="OneShot" DurationMin="0.597895" DurationMax="1.380145"/>
+				<Event Id="1125157986" Name="Play_FS_Jumpandland" ObjectPath="\Events\Default Work Unit\PLAYER\Play_FS_Jumpandland" DurationType="Infinite"/>
+				<Event Id="2874393337" Name="Play_FS_System" ObjectPath="\Events\Default Work Unit\PLAYER\Play_FS_System" DurationType="Infinite"/>
 				<Event Id="2367316274" Name="Play_HMC_Music_System_Level1" ObjectPath="\Events\Default Work Unit\MUSIC\Play_HMC_Music_System_Level1" DurationType="Infinite"/>
 				<Event Id="728827549" Name="Play_Rumble_Blend" ObjectPath="\Events\Default Work Unit\AMBIENCE\Play_Rumble_Blend" DurationType="Infinite"/>
+				<Event Id="1794915827" Name="Play_UI_ToneCall_01" ObjectPath="\Events\Default Work Unit\UI\Play_UI_ToneCall_01" DurationType="OneShot" DurationMin="3.977033" DurationMax="5.403701"/>
 				<Event Id="3307487220" Name="Stop_EchoCall_Memory_playlist" ObjectPath="\Events\Default Work Unit\MEMORIES\Stop_EchoCall_Memory_playlist" MaxAttenuation="0.000000" DurationType="OneShot" DurationMin="0.000000" DurationMax="0.000000"/>
 			</IncludedEvents>
 			<IncludedMemoryFiles>
@@ -47,9 +47,21 @@
 					<ShortName>Outside_Short_E_1p_3x--Drone STEM.wav</ShortName>
 					<Path>SFX\Outside_Short_E_1p_3x--Drone STEM_5F79D6EF.wem</Path>
 				</File>
+				<File Id="31332997" Language="SFX">
+					<ShortName>FootstepsCarRoof_BW.7360.wav</ShortName>
+					<Path>SFX\FootstepsCarRoof_BW.7360_271EA5E4.wem</Path>
+				</File>
 				<File Id="31759832" Language="SFX">
 					<ShortName>Outside_Short_Loop_1p_3x--Drone STEM.wav</ShortName>
 					<Path>SFX\Outside_Short_Loop_1p_3x--Drone STEM_5F79D6EF.wem</Path>
+				</File>
+				<File Id="41019095" Language="SFX">
+					<ShortName>NormalWood_Barefeet_Running.wav</ShortName>
+					<Path>SFX\NormalWood_Barefeet_Running_78283990.wem</Path>
+				</File>
+				<File Id="44020551" Language="SFX">
+					<ShortName>NormalWood_Barefeet_Running.wav</ShortName>
+					<Path>SFX\NormalWood_Barefeet_Running_372D51F0.wem</Path>
 				</File>
 				<File Id="44819897" Language="SFX">
 					<ShortName>Foley Footstep Soft Sole Dress Shoes Leaves And Twigs Debris Jump Quick 01.wav</ShortName>
@@ -63,6 +75,10 @@
 					<ShortName>Outside_Short_PureF_1p_3x--Medium Intensity STEM.wav</ShortName>
 					<Path>SFX\Outside_Short_PureF_1p_3x--Medium Intensity STEM_5F79D6EF.wem</Path>
 				</File>
+				<File Id="73991205" Language="SFX">
+					<ShortName>5th Ave - E_1b--5th Ave - LowInt.wav</ShortName>
+					<Path>SFX\5th Ave - E_1b--5th Ave - LowInt_5F79D6EF.wem</Path>
+				</File>
 				<File Id="74355450" Language="SFX">
 					<ShortName>Hub_thm_1_1pre_2b1ex--Melody STEM.wav</ShortName>
 					<Path>SFX\Hub_thm_1_1pre_2b1ex--Melody STEM_5F79D6EF.wem</Path>
@@ -71,9 +87,25 @@
 					<ShortName>Hub_end_2_2bpre_0ex--Low Intensity STEM.wav</ShortName>
 					<Path>SFX\Hub_end_2_2bpre_0ex--Low Intensity STEM_5F79D6EF.wem</Path>
 				</File>
+				<File Id="76253458" Language="SFX">
+					<ShortName>Concrete_Barefoot_Walking.wav</ShortName>
+					<Path>SFX\Concrete_Barefoot_Walking_EF42D6EA.wem</Path>
+				</File>
 				<File Id="78146972" Language="SFX">
 					<ShortName>Hub_thm_1_1pre_2b1ex--Harmony STEM.wav</ShortName>
 					<Path>SFX\Hub_thm_1_1pre_2b1ex--Harmony STEM_5F79D6EF.wem</Path>
+				</File>
+				<File Id="79312821" Language="SFX">
+					<ShortName>M_Breath_Walk.wav</ShortName>
+					<Path>SFX\M_Breath_Walk_445A8AF0.wem</Path>
+				</File>
+				<File Id="88538600" Language="SFX">
+					<ShortName>Concrete_Barefoot_Walking.wav</ShortName>
+					<Path>SFX\Concrete_Barefoot_Walking_31A4FACB.wem</Path>
+				</File>
+				<File Id="91605466" Language="SFX">
+					<ShortName>UI ToneCall Gb - 0004.wav</ShortName>
+					<Path>SFX\UI ToneCall Gb - 0004_C5B1BD37.wem</Path>
 				</File>
 				<File Id="91934864" Language="SFX">
 					<ShortName>Hub_end_2_2bpre_0ex--Medium Intensity STEM.wav</ShortName>
@@ -95,6 +127,10 @@
 					<ShortName>SoftCarpet_Barefeet_Running.wav</ShortName>
 					<Path>SFX\SoftCarpet_Barefeet_Running_0FA949CA.wem</Path>
 				</File>
+				<File Id="110382679" Language="SFX">
+					<ShortName>Outside_Short_D_1p_3x--Form NM.wav</ShortName>
+					<Path>SFX\Outside_Short_D_1p_3x--Form NM_5F79D6EF.wem</Path>
+				</File>
 				<File Id="113061331" Language="SFX">
 					<ShortName>Hub_end_2_2bpre_0ex--Melody STEM.wav</ShortName>
 					<Path>SFX\Hub_end_2_2bpre_0ex--Melody STEM_5F79D6EF.wem</Path>
@@ -111,6 +147,14 @@
 					<ShortName>Impact Stick Drag Through Dirt And Rocks 01.wav</ShortName>
 					<Path>SFX\Impact Stick Drag Through Dirt And Rocks 01_EFA52C2F.wem</Path>
 				</File>
+				<File Id="155269836" Language="SFX">
+					<ShortName>NormalWood_Barefeet_Walking.wav</ShortName>
+					<Path>SFX\NormalWood_Barefeet_Walking_E909497F.wem</Path>
+				</File>
+				<File Id="163907373" Language="SFX">
+					<ShortName>Concrete_Barefoot_Running.wav</ShortName>
+					<Path>SFX\Concrete_Barefoot_Running_74DD05F4.wem</Path>
+				</File>
 				<File Id="164575669" Language="SFX">
 					<ShortName>Impact Stick Drag Through Dirt And Rocks 01.wav</ShortName>
 					<Path>SFX\Impact Stick Drag Through Dirt And Rocks 01_4594DE0E.wem</Path>
@@ -118,6 +162,10 @@
 				<File Id="167738262" Language="SFX">
 					<ShortName>Hub_thm_2_2bpre_2b1ex--Low Intensity STEM_MoreNotes.wav</ShortName>
 					<Path>SFX\Hub_thm_2_2bpre_2b1ex--Low Intensity STEM_MoreNotes_5F79D6EF.wem</Path>
+				</File>
+				<File Id="176432661" Language="SFX">
+					<ShortName>NormalWood_Barefeet_Running.wav</ShortName>
+					<Path>SFX\NormalWood_Barefeet_Running_0734F2AE.wem</Path>
 				</File>
 				<File Id="176973898" Language="SFX">
 					<ShortName>Outside_Short_Loop_1p_3x--High Intensity STEM.wav</ShortName>
@@ -127,6 +175,10 @@
 					<ShortName>Impact Stick Drag Through Dirt And Rocks 01.wav</ShortName>
 					<Path>SFX\Impact Stick Drag Through Dirt And Rocks 01_EB24910F.wem</Path>
 				</File>
+				<File Id="178840957" Language="SFX">
+					<ShortName>Outside_Short_Loop_1p_3x--Form NM.wav</ShortName>
+					<Path>SFX\Outside_Short_Loop_1p_3x--Form NM_5F79D6EF.wem</Path>
+				</File>
 				<File Id="181337532" Language="SFX">
 					<ShortName>SoftCarpet_Barefeet_Running.wav</ShortName>
 					<Path>SFX\SoftCarpet_Barefeet_Running_F2F9708F.wem</Path>
@@ -134,6 +186,10 @@
 				<File Id="181425310" Language="SFX">
 					<ShortName>SoftCarpet_Barefeet_Walking.wav</ShortName>
 					<Path>SFX\SoftCarpet_Barefeet_Walking_DB2D42C7.wem</Path>
+				</File>
+				<File Id="184152154" Language="SFX">
+					<ShortName>M_Breath_Walk.wav</ShortName>
+					<Path>SFX\M_Breath_Walk_BA7E3CA5.wem</Path>
 				</File>
 				<File Id="185130781" Language="SFX">
 					<ShortName>SoftCarpet_Barefeet_Running.wav</ShortName>
@@ -143,13 +199,33 @@
 					<ShortName>HMC_Memory_Note--EchoCall.wav</ShortName>
 					<Path>SFX\HMC_Memory_Note--EchoCall_5F79D6EF.wem</Path>
 				</File>
+				<File Id="215852634" Language="SFX">
+					<ShortName>FootstepsCarRoof_BW.7360.wav</ShortName>
+					<Path>SFX\FootstepsCarRoof_BW.7360_2DB9C5FB.wem</Path>
+				</File>
+				<File Id="220804287" Language="SFX">
+					<ShortName>NormalWood_Barefeet_Walking.wav</ShortName>
+					<Path>SFX\NormalWood_Barefeet_Walking_86DEC531.wem</Path>
+				</File>
+				<File Id="221881605" Language="SFX">
+					<ShortName>5th Ave - D_1b--5th Ave - HighInt.wav</ShortName>
+					<Path>SFX\5th Ave - D_1b--5th Ave - HighInt_5F79D6EF.wem</Path>
+				</File>
 				<File Id="230944729" Language="SFX">
 					<ShortName>Impact Stick Drag Through Dirt And Rocks 01.wav</ShortName>
 					<Path>SFX\Impact Stick Drag Through Dirt And Rocks 01_1D9A86C2.wem</Path>
 				</File>
+				<File Id="235960557" Language="SFX">
+					<ShortName>Concrete_Barefoot_Running.wav</ShortName>
+					<Path>SFX\Concrete_Barefoot_Running_963ECD89.wem</Path>
+				</File>
 				<File Id="242671252" Language="SFX">
 					<ShortName>Outside_Short_Eb_1p_3x--Medium Intensity STEM.wav</ShortName>
 					<Path>SFX\Outside_Short_Eb_1p_3x--Medium Intensity STEM_5F79D6EF.wem</Path>
+				</File>
+				<File Id="245155558" Language="SFX">
+					<ShortName>M_Breath_Jump.wav</ShortName>
+					<Path>SFX\M_Breath_Jump_D1AD3D87.wem</Path>
 				</File>
 				<File Id="260761436" Language="SFX">
 					<ShortName>Hub_thm_2_2bpre_2b1ex--Rythm STEM.wav</ShortName>
@@ -179,9 +255,17 @@
 					<ShortName>Weather Snow Shoe Stepping On Snow 05.wav</ShortName>
 					<Path>SFX\Weather Snow Shoe Stepping On Snow 05_4FCDE720.wem</Path>
 				</File>
+				<File Id="277832637" Language="SFX">
+					<ShortName>FootstepsCarRoof_BW.7360.wav</ShortName>
+					<Path>SFX\FootstepsCarRoof_BW.7360_CA75831B.wem</Path>
+				</File>
 				<File Id="278697385" Language="SFX">
 					<ShortName>SoftCarpet_Barefeet_Running.wav</ShortName>
 					<Path>SFX\SoftCarpet_Barefeet_Running_3BBFD547.wem</Path>
+				</File>
+				<File Id="293031768" Language="SFX">
+					<ShortName>NormalWood_Barefeet_Running.wav</ShortName>
+					<Path>SFX\NormalWood_Barefeet_Running_3D3A911A.wem</Path>
 				</File>
 				<File Id="294140860" Language="SFX">
 					<ShortName>SoftCarpet_Barefeet_Running.wav</ShortName>
@@ -191,6 +275,10 @@
 					<ShortName>Impact Stick Drag Through Dirt And Rocks 01.wav</ShortName>
 					<Path>SFX\Impact Stick Drag Through Dirt And Rocks 01_37E17730.wem</Path>
 				</File>
+				<File Id="306847909" Language="SFX">
+					<ShortName>NormalWood_Barefeet_Walking.wav</ShortName>
+					<Path>SFX\NormalWood_Barefeet_Walking_C9FF7F4E.wem</Path>
+				</File>
 				<File Id="317869895" Language="SFX">
 					<ShortName>Hub_end_1_1bpre_0ex--Low Intensity STEM.wav</ShortName>
 					<Path>SFX\Hub_end_1_1bpre_0ex--Low Intensity STEM_5F79D6EF.wem</Path>
@@ -198,6 +286,10 @@
 				<File Id="322350777" Language="SFX">
 					<ShortName>SoftCarpet_Barefeet_Running.wav</ShortName>
 					<Path>SFX\SoftCarpet_Barefeet_Running_13EFC66B.wem</Path>
+				</File>
+				<File Id="324967984" Language="SFX">
+					<ShortName>5th Ave - E_1b--5th Ave - HighInt.wav</ShortName>
+					<Path>SFX\5th Ave - E_1b--5th Ave - HighInt_5F79D6EF.wem</Path>
 				</File>
 				<File Id="328870386" Language="SFX">
 					<ShortName>Ambience Rain From Inside Car 01.wav</ShortName>
@@ -211,6 +303,18 @@
 					<ShortName>FootstepsSnow_BW.61297.wav</ShortName>
 					<Path>SFX\FootstepsSnow_BW.61297_94C6A41D.wem</Path>
 				</File>
+				<File Id="352735986" Language="SFX">
+					<ShortName>M_Breath_Run.wav</ShortName>
+					<Path>SFX\M_Breath_Run_445A8AF0.wem</Path>
+				</File>
+				<File Id="361634728" Language="SFX">
+					<ShortName>NormalWood_Barefeet_Running.wav</ShortName>
+					<Path>SFX\NormalWood_Barefeet_Running_08FE53BA.wem</Path>
+				</File>
+				<File Id="365959922" Language="SFX">
+					<ShortName>Concrete_Barefoot_Walking.wav</ShortName>
+					<Path>SFX\Concrete_Barefoot_Walking_1DF74E93.wem</Path>
+				</File>
 				<File Id="374682982" Language="SFX">
 					<ShortName>Outside_Short_PureF_1p_3x--High Intensity STEM.wav</ShortName>
 					<Path>SFX\Outside_Short_PureF_1p_3x--High Intensity STEM_5F79D6EF.wem</Path>
@@ -218,6 +322,10 @@
 				<File Id="390057961" Language="SFX">
 					<ShortName>Liquid Water Swirling 01.wav</ShortName>
 					<Path>SFX\Liquid Water Swirling 01_92AA77B1.wem</Path>
+				</File>
+				<File Id="393392629" Language="SFX">
+					<ShortName>UI ToneCall B - 0001.wav</ShortName>
+					<Path>SFX\UI ToneCall B - 0001_9021A095.wem</Path>
 				</File>
 				<File Id="397732764" Language="SFX">
 					<ShortName>Outside_Short_Eb_1p_3x--Low Intensity STEM.wav</ShortName>
@@ -227,17 +335,41 @@
 					<ShortName>SoftCarpet_Barefeet_Running.wav</ShortName>
 					<Path>SFX\SoftCarpet_Barefeet_Running_503037BE.wem</Path>
 				</File>
+				<File Id="410827857" Language="SFX">
+					<ShortName>5th Ave - ShortLoop_1b--5th Ave - HighInt.wav</ShortName>
+					<Path>SFX\5th Ave - ShortLoop_1b--5th Ave - HighInt_5F79D6EF.wem</Path>
+				</File>
+				<File Id="417530895" Language="SFX">
+					<ShortName>FootstepsCarRoof_BW.7360.wav</ShortName>
+					<Path>SFX\FootstepsCarRoof_BW.7360_FFC2B527.wem</Path>
+				</File>
+				<File Id="419240058" Language="SFX">
+					<ShortName>5th Ave - Eb--5th Ave - MidInt.wav</ShortName>
+					<Path>SFX\5th Ave - Eb--5th Ave - MidInt_5F79D6EF.wem</Path>
+				</File>
 				<File Id="429605494" Language="SFX">
 					<ShortName>Hub_end_1_1bpre_0ex--Rythm STEM_Evolved.wav</ShortName>
 					<Path>SFX\Hub_end_1_1bpre_0ex--Rythm STEM_Evolved_5F79D6EF.wem</Path>
+				</File>
+				<File Id="429628063" Language="SFX">
+					<ShortName>UI ToneCall Db_Low - 0006.wav</ShortName>
+					<Path>SFX\UI ToneCall Db_Low - 0006_83C5B3FD.wem</Path>
+				</File>
+				<File Id="443374095" Language="SFX">
+					<ShortName>M_Breath_Sneak_.wav</ShortName>
+					<Path>SFX\M_Breath_Sneak__6C6EF63B.wem</Path>
 				</File>
 				<File Id="449947602" Language="SFX">
 					<ShortName>Outside_Short_D_1p_3x--Rythm STEM.wav</ShortName>
 					<Path>SFX\Outside_Short_D_1p_3x--Rythm STEM_5F79D6EF.wem</Path>
 				</File>
+				<File Id="456897267" Language="SFX">
+					<ShortName>NormalWood_Barefeet_Running.wav</ShortName>
+					<Path>SFX\NormalWood_Barefeet_Running_BCF00EA6.wem</Path>
+				</File>
 				<File Id="462953483" Language="SFX">
 					<ShortName>Foley Cloth Flap Jacket 03.wav</ShortName>
-					<Path>SFX\Foley Cloth Flap Jacket 03_0F55CEAD.wem</Path>
+					<Path>SFX\Foley Cloth Flap Jacket 03_F3052948.wem</Path>
 				</File>
 				<File Id="465931306" Language="SFX">
 					<ShortName>Outside_Short_E_1p_3x--Rythm STEM.wav</ShortName>
@@ -250,6 +382,14 @@
 				<File Id="476671711" Language="SFX">
 					<ShortName>SoftCarpet_Barefeet_Walking.wav</ShortName>
 					<Path>SFX\SoftCarpet_Barefeet_Walking_991BDE5C.wem</Path>
+				</File>
+				<File Id="476723092" Language="SFX">
+					<ShortName>FootstepsCarRoof_BW.7360.wav</ShortName>
+					<Path>SFX\FootstepsCarRoof_BW.7360_6BE01081.wem</Path>
+				</File>
+				<File Id="478196460" Language="SFX">
+					<ShortName>Outside_Short_PureF_1p_3x--Form NM.wav</ShortName>
+					<Path>SFX\Outside_Short_PureF_1p_3x--Form NM_5F79D6EF.wem</Path>
 				</File>
 				<File Id="479831297" Language="SFX">
 					<ShortName>Hub_end_1_1bpre_0ex--High Intensity STEM.wav</ShortName>
@@ -271,6 +411,10 @@
 					<ShortName>Weather Ambience Wind Blizzard Snow Whistle Gust 01.wav</ShortName>
 					<Path>SFX\Weather Ambience Wind Blizzard Snow Whistle Gust 01_17FF5ED1.wem</Path>
 				</File>
+				<File Id="501948630" Language="SFX">
+					<ShortName>M_Breath_Jump.wav</ShortName>
+					<Path>SFX\M_Breath_Jump_09AF3FF4.wem</Path>
+				</File>
 				<File Id="516399843" Language="SFX">
 					<ShortName>Impact Stick Drag Through Dirt And Rocks 01.wav</ShortName>
 					<Path>SFX\Impact Stick Drag Through Dirt And Rocks 01_E2B75089.wem</Path>
@@ -278,6 +422,10 @@
 				<File Id="516771926" Language="SFX">
 					<ShortName>SoftCarpet_Barefeet_Running.wav</ShortName>
 					<Path>SFX\SoftCarpet_Barefeet_Running_B39AE95A.wem</Path>
+				</File>
+				<File Id="520705105" Language="SFX">
+					<ShortName>FootstepsCarRoof_BW.7360.wav</ShortName>
+					<Path>SFX\FootstepsCarRoof_BW.7360_82FEE622.wem</Path>
 				</File>
 				<File Id="520705334" Language="SFX">
 					<ShortName>Walking Barefoot over grass.wav</ShortName>
@@ -295,29 +443,73 @@
 					<ShortName>trans_to_Outside_1p_1x--Drone STEM.wav</ShortName>
 					<Path>SFX\trans_to_Outside_1p_1x--Drone STEM_5F79D6EF.wem</Path>
 				</File>
+				<File Id="537179277" Language="SFX">
+					<ShortName>NormalWood_Barefeet_Walking.wav</ShortName>
+					<Path>SFX\NormalWood_Barefeet_Walking_E4AA523C.wem</Path>
+				</File>
+				<File Id="539060036" Language="SFX">
+					<ShortName>M_Breath_Jump.wav</ShortName>
+					<Path>SFX\M_Breath_Jump_FBE8F15C.wem</Path>
+				</File>
 				<File Id="544915248" Language="SFX">
 					<ShortName>Walking Barefoot over grass.wav</ShortName>
 					<Path>SFX\Walking Barefoot over grass_FB181D7E.wem</Path>
+				</File>
+				<File Id="553919741" Language="SFX">
+					<ShortName>5th Ave - Eb--5th Ave - LowInt.wav</ShortName>
+					<Path>SFX\5th Ave - Eb--5th Ave - LowInt_5F79D6EF.wem</Path>
+				</File>
+				<File Id="555376330" Language="SFX">
+					<ShortName>5th Ave - E_1b--5th Ave - MidInt.wav</ShortName>
+					<Path>SFX\5th Ave - E_1b--5th Ave - MidInt_5F79D6EF.wem</Path>
 				</File>
 				<File Id="556992362" Language="SFX">
 					<ShortName>Foley Footstep Soft Sole Dress Shoes Leaves And Twigs Debris Jump 01.wav</ShortName>
 					<Path>SFX\Foley Footstep Soft Sole Dress Shoes Leaves And Twigs Debris Jump 01_7E0161E9.wem</Path>
 				</File>
+				<File Id="561582865" Language="SFX">
+					<ShortName>M_Breath_Jump.wav</ShortName>
+					<Path>SFX\M_Breath_Jump_9E38FBA6.wem</Path>
+				</File>
 				<File Id="561877516" Language="SFX">
 					<ShortName>SoftCarpet_Barefeet_Walking.wav</ShortName>
 					<Path>SFX\SoftCarpet_Barefeet_Walking_1A16C851.wem</Path>
+				</File>
+				<File Id="566417972" Language="SFX">
+					<ShortName>NormalWood_Barefeet_Walking.wav</ShortName>
+					<Path>SFX\NormalWood_Barefeet_Walking_3E12CF97.wem</Path>
+				</File>
+				<File Id="582805684" Language="SFX">
+					<ShortName>UI ToneCall Ab - 0003.wav</ShortName>
+					<Path>SFX\UI ToneCall Ab - 0003_7C499684.wem</Path>
 				</File>
 				<File Id="586272547" Language="SFX">
 					<ShortName>Outside_Short_Eb_1p_3x--Drone STEM.wav</ShortName>
 					<Path>SFX\Outside_Short_Eb_1p_3x--Drone STEM_5F79D6EF.wem</Path>
 				</File>
+				<File Id="599428364" Language="SFX">
+					<ShortName>UI ToneCall Eb - 0005.wav</ShortName>
+					<Path>SFX\UI ToneCall Eb - 0005_AD1A814D.wem</Path>
+				</File>
+				<File Id="608660253" Language="SFX">
+					<ShortName>Concrete_Barefoot_Walking.wav</ShortName>
+					<Path>SFX\Concrete_Barefoot_Walking_3846E0A9.wem</Path>
+				</File>
 				<File Id="628869065" Language="SFX">
 					<ShortName>Outside_Short_E_1p_3x--Melody STEM.wav</ShortName>
 					<Path>SFX\Outside_Short_E_1p_3x--Melody STEM_5F79D6EF.wem</Path>
 				</File>
+				<File Id="630225089" Language="SFX">
+					<ShortName>5th Ave - ShortLoop_1b--5th Ave - MidInt.wav</ShortName>
+					<Path>SFX\5th Ave - ShortLoop_1b--5th Ave - MidInt_5F79D6EF.wem</Path>
+				</File>
 				<File Id="637577314" Language="SFX">
 					<ShortName>Foley Cloth Flap Jacket 03.wav</ShortName>
-					<Path>SFX\Foley Cloth Flap Jacket 03_FC5F7BDC.wem</Path>
+					<Path>SFX\Foley Cloth Flap Jacket 03_AA830445.wem</Path>
+				</File>
+				<File Id="638155992" Language="SFX">
+					<ShortName>FootstepsCarRoof_BW.7360.wav</ShortName>
+					<Path>SFX\FootstepsCarRoof_BW.7360_6FBB4DDC.wem</Path>
 				</File>
 				<File Id="652610312" Language="SFX">
 					<ShortName>Liquid Water Dripping In Water 05.wav</ShortName>
@@ -331,6 +523,10 @@
 					<ShortName>trans_to_Outside_1p_1x--Low Intensity STEM.wav</ShortName>
 					<Path>SFX\trans_to_Outside_1p_1x--Low Intensity STEM_5F79D6EF.wem</Path>
 				</File>
+				<File Id="675137898" Language="SFX">
+					<ShortName>FootstepsCarRoof_BW.7360.wav</ShortName>
+					<Path>SFX\FootstepsCarRoof_BW.7360_2BE91932.wem</Path>
+				</File>
 				<File Id="678589255" Language="SFX">
 					<ShortName>Outside_Short_Eb_1p_3x--Rythm STEM.wav</ShortName>
 					<Path>SFX\Outside_Short_Eb_1p_3x--Rythm STEM_5F79D6EF.wem</Path>
@@ -338,6 +534,18 @@
 				<File Id="680090600" Language="SFX">
 					<ShortName>Outside_Short_Loop_1p_3x--Low Intensity STEM.wav</ShortName>
 					<Path>SFX\Outside_Short_Loop_1p_3x--Low Intensity STEM_5F79D6EF.wem</Path>
+				</File>
+				<File Id="681647550" Language="SFX">
+					<ShortName>Concrete_Barefoot_Walking.wav</ShortName>
+					<Path>SFX\Concrete_Barefoot_Walking_979632E4.wem</Path>
+				</File>
+				<File Id="694903029" Language="SFX">
+					<ShortName>UI ToneCall Bb - 0002.wav</ShortName>
+					<Path>SFX\UI ToneCall Bb - 0002_30D6502F.wem</Path>
+				</File>
+				<File Id="702401897" Language="SFX">
+					<ShortName>Concrete_Barefoot_Running.wav</ShortName>
+					<Path>SFX\Concrete_Barefoot_Running_7EE6D246.wem</Path>
 				</File>
 				<File Id="703832205" Language="SFX">
 					<ShortName>Outside_Short_E_1p_3x--High Intensity STEM.wav</ShortName>
@@ -359,6 +567,10 @@
 					<ShortName>Outside_Short_PureF_1p_3x--Melody STEM.wav</ShortName>
 					<Path>SFX\Outside_Short_PureF_1p_3x--Melody STEM_5F79D6EF.wem</Path>
 				</File>
+				<File Id="722880257" Language="SFX">
+					<ShortName>NormalWood_Barefeet_Walking.wav</ShortName>
+					<Path>SFX\NormalWood_Barefeet_Walking_C1EC2C9A.wem</Path>
+				</File>
 				<File Id="734056982" Language="SFX">
 					<ShortName>Hub_end_2_2bpre_0ex--Harmony STEM.wav</ShortName>
 					<Path>SFX\Hub_end_2_2bpre_0ex--Harmony STEM_5F79D6EF.wem</Path>
@@ -374,6 +586,10 @@
 				<File Id="742873753" Language="SFX">
 					<ShortName>HMC_Memory_Chord--EchoCall.wav</ShortName>
 					<Path>SFX\HMC_Memory_Chord--EchoCall_5F79D6EF.wem</Path>
+				</File>
+				<File Id="743491269" Language="SFX">
+					<ShortName>5th Ave - D_1b--5th Ave - LowInt.wav</ShortName>
+					<Path>SFX\5th Ave - D_1b--5th Ave - LowInt_5F79D6EF.wem</Path>
 				</File>
 				<File Id="754508068" Language="SFX">
 					<ShortName>Walking Barefoot over grass.wav</ShortName>
@@ -395,9 +611,17 @@
 					<ShortName>Outside_Short_E_1p_3x--Low Intensity STEM.wav</ShortName>
 					<Path>SFX\Outside_Short_E_1p_3x--Low Intensity STEM_5F79D6EF.wem</Path>
 				</File>
+				<File Id="775220630" Language="SFX">
+					<ShortName>M_Breath_Jump.wav</ShortName>
+					<Path>SFX\M_Breath_Jump_B7EC2298.wem</Path>
+				</File>
 				<File Id="775949302" Language="SFX">
 					<ShortName>Liquid Water Swirling 01.wav</ShortName>
 					<Path>SFX\Liquid Water Swirling 01_A37E598E.wem</Path>
+				</File>
+				<File Id="787968383" Language="SFX">
+					<ShortName>UI ToneCall Db_High - 0000.wav</ShortName>
+					<Path>SFX\UI ToneCall Db_High - 0000_CA079A71.wem</Path>
 				</File>
 				<File Id="790022682" Language="SFX">
 					<ShortName>Outside_Short_Loop_1p_3x--Melody STEM.wav</ShortName>
@@ -418,6 +642,22 @@
 				<File Id="806874276" Language="SFX">
 					<ShortName>SoftCarpet_Barefeet_Walking.wav</ShortName>
 					<Path>SFX\SoftCarpet_Barefeet_Walking_7A7DBAF0.wem</Path>
+				</File>
+				<File Id="808977665" Language="SFX">
+					<ShortName>5th Ave - D_1b--5th Ave - MidInt.wav</ShortName>
+					<Path>SFX\5th Ave - D_1b--5th Ave - MidInt_5F79D6EF.wem</Path>
+				</File>
+				<File Id="812380124" Language="SFX">
+					<ShortName>Concrete_Barefoot_Walking.wav</ShortName>
+					<Path>SFX\Concrete_Barefoot_Walking_7485C480.wem</Path>
+				</File>
+				<File Id="823714893" Language="SFX">
+					<ShortName>5th Ave - Eb--5th Ave - HighInt.wav</ShortName>
+					<Path>SFX\5th Ave - Eb--5th Ave - HighInt_5F79D6EF.wem</Path>
+				</File>
+				<File Id="825110849" Language="SFX">
+					<ShortName>FootstepsCarRoof_BW.7360.wav</ShortName>
+					<Path>SFX\FootstepsCarRoof_BW.7360_BB6F4360.wem</Path>
 				</File>
 				<File Id="828846589" Language="SFX">
 					<ShortName>Foley Footstep Soft Sole Dress Shoes Leaves And Twigs Debris Jump Quick 01.wav</ShortName>
@@ -449,7 +689,7 @@
 				</File>
 				<File Id="851603309" Language="SFX">
 					<ShortName>Foley Cloth Flap Jacket 03.wav</ShortName>
-					<Path>SFX\Foley Cloth Flap Jacket 03_EE5D8126.wem</Path>
+					<Path>SFX\Foley Cloth Flap Jacket 03_EFCCDEBF.wem</Path>
 				</File>
 				<File Id="860735776" Language="SFX">
 					<ShortName>SoftCarpet_Barefeet_Walking.wav</ShortName>
@@ -458,6 +698,10 @@
 				<File Id="864242234" Language="SFX">
 					<ShortName>Hub_thm_2_2bpre_2b1ex--Medium Intensity STEM.wav</ShortName>
 					<Path>SFX\Hub_thm_2_2bpre_2b1ex--Medium Intensity STEM_5F79D6EF.wem</Path>
+				</File>
+				<File Id="875962399" Language="SFX">
+					<ShortName>M_Breath_Jump.wav</ShortName>
+					<Path>SFX\M_Breath_Jump_6EB81DAA.wem</Path>
 				</File>
 				<File Id="876072219" Language="SFX">
 					<ShortName>FootstepsSnow_BW.61297.wav</ShortName>
@@ -487,6 +731,14 @@
 					<ShortName>Hub_thm_1_1pre_2b1ex--Low Intensity STEM.wav</ShortName>
 					<Path>SFX\Hub_thm_1_1pre_2b1ex--Low Intensity STEM_5F79D6EF.wem</Path>
 				</File>
+				<File Id="895393981" Language="SFX">
+					<ShortName>Concrete_Barefoot_Running.wav</ShortName>
+					<Path>SFX\Concrete_Barefoot_Running_111C3D47.wem</Path>
+				</File>
+				<File Id="898224754" Language="SFX">
+					<ShortName>M_Breath_Jump.wav</ShortName>
+					<Path>SFX\M_Breath_Jump_3D8A7AD3.wem</Path>
+				</File>
 				<File Id="898919645" Language="SFX">
 					<ShortName>SoftCarpet_Barefeet_Running.wav</ShortName>
 					<Path>SFX\SoftCarpet_Barefeet_Running_1941B34B.wem</Path>
@@ -497,19 +749,31 @@
 				</File>
 				<File Id="905603766" Language="SFX">
 					<ShortName>Foley Cloth Flap Jacket 03.wav</ShortName>
-					<Path>SFX\Foley Cloth Flap Jacket 03_E815B262.wem</Path>
+					<Path>SFX\Foley Cloth Flap Jacket 03_00AD1747.wem</Path>
 				</File>
 				<File Id="913482529" Language="SFX">
 					<ShortName>Foley Cloth Flap Jacket 03.wav</ShortName>
-					<Path>SFX\Foley Cloth Flap Jacket 03_F200DB66.wem</Path>
+					<Path>SFX\Foley Cloth Flap Jacket 03_0C8EB66B.wem</Path>
+				</File>
+				<File Id="915273443" Language="SFX">
+					<ShortName>FootstepsCarRoof_BW.7360.wav</ShortName>
+					<Path>SFX\FootstepsCarRoof_BW.7360_5C205022.wem</Path>
 				</File>
 				<File Id="920011855" Language="SFX">
 					<ShortName>Hub_thm_2_2bpre_2b1ex--Low Intensity STEM.wav</ShortName>
 					<Path>SFX\Hub_thm_2_2bpre_2b1ex--Low Intensity STEM_5F79D6EF.wem</Path>
 				</File>
+				<File Id="924471870" Language="SFX">
+					<ShortName>FootstepsCarRoof_BW.7360.wav</ShortName>
+					<Path>SFX\FootstepsCarRoof_BW.7360_4D6BF359.wem</Path>
+				</File>
 				<File Id="938076815" Language="SFX">
 					<ShortName>HMC_Memory_Undisolved_A1--HMC_Lull.wav</ShortName>
 					<Path>SFX\HMC_Memory_Undisolved_A1--HMC_Lull_5F79D6EF.wem</Path>
+				</File>
+				<File Id="938598703" Language="SFX">
+					<ShortName>Outside_Short_Eb_1p_3x--Form NM.wav</ShortName>
+					<Path>SFX\Outside_Short_Eb_1p_3x--Form NM_5F79D6EF.wem</Path>
 				</File>
 				<File Id="939124358" Language="SFX">
 					<ShortName>Outside_Short_PureF_1p_3x--Drone STEM.wav</ShortName>
@@ -525,7 +789,7 @@
 				</File>
 				<File Id="977710187" Language="SFX">
 					<ShortName>Foley Cloth Flap Jacket 03.wav</ShortName>
-					<Path>SFX\Foley Cloth Flap Jacket 03_2D6D8EB5.wem</Path>
+					<Path>SFX\Foley Cloth Flap Jacket 03_3892A424.wem</Path>
 				</File>
 				<File Id="982323041" Language="SFX">
 					<ShortName>Outside_Short_D_1p_3x--Low Intensity STEM.wav</ShortName>
@@ -535,13 +799,29 @@
 					<ShortName>Liquid Water Swirling 01.wav</ShortName>
 					<Path>SFX\Liquid Water Swirling 01_97E61034.wem</Path>
 				</File>
+				<File Id="991037263" Language="SFX">
+					<ShortName>5th Ave - ShortLoop_1b--5th Ave - LowInt.wav</ShortName>
+					<Path>SFX\5th Ave - ShortLoop_1b--5th Ave - LowInt_5F79D6EF.wem</Path>
+				</File>
 				<File Id="1003211385" Language="SFX">
 					<ShortName>Hub_thm_1_1pre_2b1ex--Rythm STEM_Evolved.wav</ShortName>
 					<Path>SFX\Hub_thm_1_1pre_2b1ex--Rythm STEM_Evolved_5F79D6EF.wem</Path>
 				</File>
+				<File Id="1003872805" Language="SFX">
+					<ShortName>FootstepsCarRoof_BW.7360.wav</ShortName>
+					<Path>SFX\FootstepsCarRoof_BW.7360_EE73A787.wem</Path>
+				</File>
 				<File Id="1006747127" Language="SFX">
 					<ShortName>Walking Barefoot over grass.wav</ShortName>
 					<Path>SFX\Walking Barefoot over grass_48CCD321.wem</Path>
+				</File>
+				<File Id="1024803332" Language="SFX">
+					<ShortName>M_Breath_Sneak_.wav</ShortName>
+					<Path>SFX\M_Breath_Sneak__C4E9B6C5.wem</Path>
+				</File>
+				<File Id="1029214979" Language="SFX">
+					<ShortName>Concrete_Barefoot_Running.wav</ShortName>
+					<Path>SFX\Concrete_Barefoot_Running_69E95B4E.wem</Path>
 				</File>
 				<File Id="1032844881" Language="SFX">
 					<ShortName>Outside_Short_Loop_1p_3x--Medium Intensity STEM.wav</ShortName>
@@ -567,9 +847,21 @@
 					<ShortName>Hub_thm_2_2bpre_2b1ex--Melody STEM.wav</ShortName>
 					<Path>SFX\Hub_thm_2_2bpre_2b1ex--Melody STEM_5F79D6EF.wem</Path>
 				</File>
+				<File Id="1056178605" Language="SFX">
+					<ShortName>M_Breath_Jump.wav</ShortName>
+					<Path>SFX\M_Breath_Jump_B2D31987.wem</Path>
+				</File>
+				<File Id="1062741783" Language="SFX">
+					<ShortName>Concrete_Barefoot_Running.wav</ShortName>
+					<Path>SFX\Concrete_Barefoot_Running_4C3013F2.wem</Path>
+				</File>
 				<File Id="1068589853" Language="SFX">
 					<ShortName>Impact Stick Drag Through Dirt And Rocks 01.wav</ShortName>
 					<Path>SFX\Impact Stick Drag Through Dirt And Rocks 01_592C07BD.wem</Path>
+				</File>
+				<File Id="1069741801" Language="SFX">
+					<ShortName>Outside_Short_E_1p_3x--Form NM.wav</ShortName>
+					<Path>SFX\Outside_Short_E_1p_3x--Form NM_5F79D6EF.wem</Path>
 				</File>
 				<File Id="1071657207" Language="SFX">
 					<ShortName>Hub_end_1_1bpre_0ex--Low Intensity STEM_MoreNotes.wav</ShortName>

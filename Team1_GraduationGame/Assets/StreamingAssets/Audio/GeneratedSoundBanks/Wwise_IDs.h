@@ -14,12 +14,12 @@ namespace AK
     namespace EVENTS
     {
         static const AkUniqueID PLAY_AMB_OUTSIDE = 121174090U;
-        static const AkUniqueID PLAY_BREATH = 3698047240U;
         static const AkUniqueID PLAY_ECHOCALL_MEMORY_PLAYLIST = 3108390310U;
-        static const AkUniqueID PLAY_FS_LAND = 741775033U;
+        static const AkUniqueID PLAY_FS_JUMPANDLAND = 1125157986U;
         static const AkUniqueID PLAY_FS_SYSTEM = 2874393337U;
         static const AkUniqueID PLAY_HMC_MUSIC_SYSTEM_LEVEL1 = 2367316274U;
         static const AkUniqueID PLAY_RUMBLE_BLEND = 728827549U;
+        static const AkUniqueID PLAY_UI_TONECALL_01 = 1794915827U;
         static const AkUniqueID STOP_ECHOCALL_MEMORY_PLAYLIST = 3307487220U;
     } // namespace EVENTS
 
@@ -31,7 +31,7 @@ namespace AK
 
             namespace STATE
             {
-                static const AkUniqueID END_SCENE = 755051661U;
+                static const AkUniqueID END_MEMORY = 576569430U;
                 static const AkUniqueID EXIT_MEMORY = 4198270385U;
                 static const AkUniqueID GRIEF_APPEARS = 3170210169U;
                 static const AkUniqueID HUB = 646625282U;
@@ -65,13 +65,15 @@ namespace AK
 
             namespace SWITCH
             {
+                static const AkUniqueID CAR_METAL = 2288369521U;
                 static const AkUniqueID DIRT = 2195636714U;
                 static const AkUniqueID DRUM = 2247793849U;
                 static const AkUniqueID GRASS = 4248645337U;
-                static const AkUniqueID LEAVES = 582824249U;
                 static const AkUniqueID SNOW = 787898836U;
                 static const AkUniqueID STONE = 1216965916U;
-                static const AkUniqueID WOOD = 2058049674U;
+                static const AkUniqueID WOOD_BIG = 481842361U;
+                static const AkUniqueID WOOD_MEDIUM = 623457828U;
+                static const AkUniqueID WOOD_SMALL = 1989532614U;
             } // namespace SWITCH
         } // namespace FOOTSTEP_MATERIAL_SWITCHER
 
@@ -95,9 +97,12 @@ namespace AK
         static const AkUniqueID AMB_INTENSITY = 752028789U;
         static const AkUniqueID DENSITY_FA_SSGRAIN = 2715217995U;
         static const AkUniqueID DIST_TO_MEMORY = 2843219839U;
+        static const AkUniqueID FOOTSTEP_STATE_CALCULATOR = 3250563732U;
         static const AkUniqueID FS_WETTISH = 1688601825U;
         static const AkUniqueID IMMERSION_FA_SSGRAIN = 2481728872U;
         static const AkUniqueID INSTRUMENT_FA_SSGRAIN = 2317409760U;
+        static const AkUniqueID MASTER_MUSIC_INMENUSLIDER = 708145369U;
+        static const AkUniqueID MASTER_SFX_INMENUSLIDER = 2198029213U;
         static const AkUniqueID MEMORYCALL_VOLUME_FOR_ANIMATION = 1254966522U;
         static const AkUniqueID METER_WIND = 3084119761U;
         static const AkUniqueID PLAYBACK_RATE = 1524500807U;
@@ -127,7 +132,7 @@ namespace AK
     {
         static const AkUniqueID AMB = 1117531639U;
         static const AkUniqueID AMB_INSIDE = 1564366702U;
-        static const AkUniqueID AMB_OUTISDE = 2126883203U;
+        static const AkUniqueID AMB_OUTSIDE = 1013211851U;
         static const AkUniqueID COLLECTABLES_MEMORIES = 3437558086U;
         static const AkUniqueID MASTER_AUDIO_BUS = 3803692087U;
         static const AkUniqueID MEMORYCALL = 2008754984U;

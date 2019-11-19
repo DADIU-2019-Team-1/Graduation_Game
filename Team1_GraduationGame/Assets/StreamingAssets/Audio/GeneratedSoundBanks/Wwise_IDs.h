@@ -131,7 +131,7 @@ namespace AK
     {
         static const AkUniqueID AMB = 1117531639U;
         static const AkUniqueID AMB_INSIDE = 1564366702U;
-        static const AkUniqueID AMB_OUTISDE = 2126883203U;
+        static const AkUniqueID AMB_OUTSIDE = 1013211851U;
         static const AkUniqueID COLLECTABLES_MEMORIES = 3437558086U;
         static const AkUniqueID MASTER_AUDIO_BUS = 3803692087U;
         static const AkUniqueID MEMORYCALL = 2008754984U;

@@ -251,11 +251,12 @@ namespace Team1_GraduationGame.Enemies
             _player.GetComponent<Movement>().Frozen(true);
             _active = false;
 
-            _animator?.SetTrigger("Attack"); // TODO - YYY play Big attack animation
+            _animator?.SetTrigger("Attack");
 
             yield return new WaitForSeconds(animAttackTime);
             Debug.Log("Player died from Big");
 
+            _animator?.ResetTrigger("Attack");
             _active = true;
             playerDiedEvent?.Raise();
         }
@@ -283,6 +284,7 @@ namespace Team1_GraduationGame.Enemies
                     _isAggro = false;
                     _active = true;
                     _animator?.SetBool("Patrolling", true);
+                    _animator?.ResetTrigger("Spotted");
                 }
             }
             else
@@ -291,6 +293,7 @@ namespace Team1_GraduationGame.Enemies
                 _isAggro = false;
                 _active = true;
                 _animator?.SetBool("Patrolling", true);
+                _animator?.ResetTrigger("Spotted");
             }
         }
 

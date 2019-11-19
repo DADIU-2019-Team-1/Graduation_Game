@@ -27,7 +27,7 @@ namespace Team1_GraduationGame.Enemies
         private GameObject _player;
         private Movement _movement;
         private NavMeshAgent _navMeshAgent;
-        private Animator _animator;
+        [Tooltip("Animator will automatically be found - So ONLY add one if it is not on this object")] public Animator _animator;
         [HideInInspector] public List<GameObject> wayPoints;
         [HideInInspector] public GameObject parentWayPoint;
 

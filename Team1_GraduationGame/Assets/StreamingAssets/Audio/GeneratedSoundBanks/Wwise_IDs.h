@@ -98,6 +98,7 @@ namespace AK
         static const AkUniqueID AMB_INTENSITY = 752028789U;
         static const AkUniqueID DENSITY_FA_SSGRAIN = 2715217995U;
         static const AkUniqueID DIST_TO_MEMORY = 2843219839U;
+        static const AkUniqueID FOOTSTEP_STATE_CALCULATOR = 3250563732U;
         static const AkUniqueID FS_WETTISH = 1688601825U;
         static const AkUniqueID IMMERSION_FA_SSGRAIN = 2481728872U;
         static const AkUniqueID INSTRUMENT_FA_SSGRAIN = 2317409760U;

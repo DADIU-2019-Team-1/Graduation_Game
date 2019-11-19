@@ -301,10 +301,9 @@ namespace Team1_GraduationGame.Managers
                     }
                     #endregion
 
+                    EditorGUI.indentLevel = EditorGUI.indentLevel - 2;
                     DrawUILine(true);
                 }
-
-            EditorGUI.indentLevel = EditorGUI.indentLevel - 2;
 
             serializedObject.ApplyModifiedProperties();
 

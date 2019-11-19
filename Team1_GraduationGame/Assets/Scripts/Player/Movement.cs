@@ -27,7 +27,7 @@ public class Movement : MonoBehaviour
     public VoidEvent jumpEvent, attackEvent, miniJump;
     public IntEvent stateChangeEvent;
     [HideInInspector]
-    public Vector3 direction = Vector3.zero, worldDirection = Vector3.zero;
+    public Vector3 direction = Vector3.zero, pushDirection = Vector3.zero;
 
     public IntVariable _atOrbTrigger;
 
@@ -216,7 +216,7 @@ public class Movement : MonoBehaviour
                 Vector2 joyDiff = t.position - new Vector2(stickLimit.transform.position.x, stickLimit.transform.position.y);
                 // Need new clamping.
                 joyDiff = Vector2.ClampMagnitude(joyDiff, radius.value);
-
+                //Debug.Log("Android calling player move");
                 PlayerMoveRequest(dragDist);
 
                 stick.transform.position = joyDiff + new Vector2(stickLimit.transform.position.x, stickLimit.transform.position.y);
@@ -256,18 +256,23 @@ public class Movement : MonoBehaviour
                     swipeEndPos = t.position;
                     Vector2 swipeOffSet = new Vector2(swipeEndPos.x - swipeStartPos.x, swipeEndPos.y - swipeStartPos.y);
                     swipeDirection = swipeOffSet.normalized;
-                    Vector3 worldDirection = new Vector3(swipeDirection.x, 0, swipeDirection.y);
+                    
                     //Debug.Log("End phase: " + Time.time);
-                    if (swipeOffSet.magnitude > swipePixelDistance.value && attackCooldown <= 0)
+                    if (swipeOffSet.magnitude > swipePixelDistance.value)
                     {
-                        attackCooldown = attackCoolDown.value;
-                        // I set a temp push animator if we arent using motion matching
-                        if (animator.runtimeAnimatorController != null && animator.runtimeAnimatorController.name == "MotherAnimator")
+                        if (attackCooldown <= 0)
                         {
-                            animator.SetTrigger("Attack");
-                            Debug.Log("Using Test Animator not motion matching");
+                            pushDirection = new Vector3(swipeDirection.x, 0, swipeDirection.y);
+                            // I set a temp push animator if we arent using motion matching
+                            if (animator.runtimeAnimatorController != null && animator.runtimeAnimatorController.name == "MotherAnimator")
+                            {
+                                animator.SetTrigger("Attack");
+                                //Debug.Log("Using Test Animator not motion matching");
+                            }
+                            //Debug.Log("Attack start phone");
+                            playerAttack(pushDirection);
                         }
-                        playerAttack(worldDirection);
+
                     }
                     else if (/*swipeTimeTimer + swipeTimeThreshold.value >= Time.time &&*/ !moveFrozen)
                     {
@@ -328,29 +333,34 @@ public class Movement : MonoBehaviour
 
         
 
-        if (Input.GetMouseButtonUp(0) && attackCooldown <= 0)
+        if (Input.GetMouseButtonUp(0))
         {
-            attackCooldown = attackCoolDown.value;
             swipeEndPos = Input.mousePosition;
             Vector2 swipeOffSet = new Vector2(swipeEndPos.x - swipeStartPos.x, swipeEndPos.y - swipeStartPos.y);
             swipeDirection = swipeOffSet.normalized;
-            worldDirection = new Vector3(swipeDirection.x, 0, swipeDirection.y);
+            
             //Debug.Log("End phase: " + Time.time);
             if (swipeOffSet.magnitude > swipePixelDistance.value && Input.mousePosition.x > Screen.width / 2 && !canMove)
             {
-                playerAttack(worldDirection);
-
-                // I set a temp push animator if we arent using motion matching
-                if (animator.runtimeAnimatorController != null && animator.runtimeAnimatorController.name == "MotherAnimator")
+                if (attackCooldown <= 0)
                 {
-                    animator.SetTrigger("Attack");
-                    Debug.Log("Using Test Animator not motion matching");
+                    pushDirection = new Vector3(swipeDirection.x, 0, swipeDirection.y);
+                    playerAttack(pushDirection);
+
+                    // I set a temp push animator if we arent using motion matching
+                    if (animator.runtimeAnimatorController != null && animator.runtimeAnimatorController.name == "MotherAnimator")
+                    {
+                        animator.SetTrigger("Attack");
+                    }
                 }
+                
+
+
 
 
                 //Debug.Log("Swipe");
                 //Debug.DrawLine(swipeStartPos, swipeStartPos + swipeDirection * 300, Color.red, 5);
-                //Debug.DrawLine(playerRB.transform.position, playerRB.transform.position + worldDirection * 5, Color.green, 5);
+                //Debug.DrawLine(playerRB.transform.position, playerRB.transform.position + pushDirection * 5, Color.green, 5);
 
 
             }
@@ -371,7 +381,7 @@ public class Movement : MonoBehaviour
             float dragDist = Vector2.Distance(stick.transform.position, stickLimit.transform.position);
             Vector2 joyDiff = Input.mousePosition - stickLimit.transform.position;
             joyDiff = Vector2.ClampMagnitude(joyDiff, radius.value);
-
+            //Debug.Log("PC calling move player");
             PlayerMoveRequest(dragDist);
 
             stick.transform.position = joyDiff + new Vector2(stickLimit.transform.position.x, stickLimit.transform.position.y);
@@ -400,11 +410,15 @@ public class Movement : MonoBehaviour
 
         if (isPushing)
         {
-            if(attackCooldown >= 0)
-                movePlayer(worldDirection);
+            if(attackCooldown > 0)
+                // Was pushdirection before
+                movePlayer(pushDirection);
             else
+            {
                 isPushing = false;
-            
+                Debug.Log("Is pushing false");
+            }
+
         }
 
 
@@ -412,7 +426,7 @@ public class Movement : MonoBehaviour
         if (attackCooldown > 0)
         {
             attackCooldown--; 
-            Debug.Log(attackCooldown);
+            
         }
     }
 
@@ -433,6 +447,7 @@ public class Movement : MonoBehaviour
     }
     private void PlayerMoveRequest(float dragDist)
     {
+        //Debug.Log(dragDist);
         if (!isPushing)
         {
             if (inSneakZone)
@@ -464,16 +479,19 @@ public class Movement : MonoBehaviour
                 }
                 else if (dragDist < radius.value * sneakThreshold) // Sneak
                 {
+                    //Debug.Log("Should sneak");
                     targetSpeed = sneakSpeed.value;
                     movePlayer(direction);
                 }
                 else if (dragDist < radius.value * runThreshold) // Walk
                 {
+                    //Debug.Log("Should walk");
                     targetSpeed = walkSpeed.value;
                     movePlayer(direction);
                 }
                 else // Run
                 {
+                    //Debug.Log("Should run");
                     targetSpeed = runSpeed.value;
                     movePlayer(direction);
                 }
@@ -489,6 +507,7 @@ public class Movement : MonoBehaviour
 
     public void movePlayer(Vector3 direction)
     {
+        //Debug.Log("Move player");
         if (_atOrbTrigger != null && _atOrbTrigger.value != 1)
         {
                 targetSpeed = walkSpeed.value;
@@ -576,7 +595,10 @@ public class Movement : MonoBehaviour
             Vector3 newPoint = new Vector3(x, 0, z);
             Debug.DrawLine(playerRB.transform.position, playerRB.transform.position + newPoint * attackRange.value, Color.magenta, 0.5f);
         }
-
+        //Debug.Log("Attacking");
+        attackCooldown = attackCoolDown.value;
+        targetSpeed = runSpeed.value;
+        isPushing = true;
         // check all objects
         for (int i = 0; i < interactableObjects.Count; i++)
         {
@@ -587,8 +609,7 @@ public class Movement : MonoBehaviour
             float refDistance = Vector3.Distance(closestPoint, transform.position);
             //transform.rotation = Quaternion.LookRotation(direction);
             //playerRB.AddForce(direction.normalized * pushForce.value, ForceMode.Impulse);
-            targetSpeed = runSpeed.value;
-            isPushing = true;
+
 
             
             if (refDistance <= attackRange.value)
@@ -602,6 +623,7 @@ public class Movement : MonoBehaviour
                 if (angleToObject <= attackDegree.value / 2)
                 {
                     // interact
+                    // Sometimes returns nullreference errors.
                     interactableObjects[i].GetComponent<Interactable>().Interact();
                     
                     if (attackEvent != null)

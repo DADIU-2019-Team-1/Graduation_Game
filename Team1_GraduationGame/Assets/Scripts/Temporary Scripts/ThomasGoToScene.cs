@@ -75,6 +75,7 @@ public class ThomasGoToScene : MonoBehaviour
         SceneManager.LoadScene(name);
         destinationReached = false;
         _movement.Frozen(false);
+        _movement.inSneakZone = false;
         //movingToOrb.value = 1;
     } 
     
@@ -98,13 +99,15 @@ public class ThomasGoToScene : MonoBehaviour
     }
 
     public void MemoryTimeLineEnded()
-    {
+    {        
+        destinationReached = false;
+        _movement.Frozen(false);
+        _movement.inSneakZone = false;
         if(FindObjectOfType<SavePointManager>() != null)
             FindObjectOfType<SavePointManager>().NextLevel();
         else
             SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
-        destinationReached = false;
-        _movement.Frozen(false);
+
     }
 
     public void SetOrbTrigger()

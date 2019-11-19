@@ -11,12 +11,12 @@ using UnityEditor;
 public class Movement : MonoBehaviour
 {
     private Rigidbody playerRB;
-    private bool touchStart = false, canMove = false, canJump = true, canPush, moveFrozen = false, inSneakZone = false;
+    private bool touchStart = false, canMove = false, canJump = true, canPush, moveFrozen = false;
     private float rotationSpeedCurrent, rotationSpeedMax = 5.0f, rotationSpeedGoal, rotationAccelerationFactor = 0.1f, rotationAngleReactionFactor = 0.1f;
     
     [HideInInspector]
     public float targetSpeed;
-    public bool isJumping = false;    
+    public bool isJumping = false, inSneakZone = false;    
     
 
 

@@ -17,7 +17,7 @@ namespace Team1_GraduationGame.Interaction
 
         // Public:
         public bool drawGizmos = true;
-        [Range(0.1f, 5.0f)] public float thrustAmount = 1.0f;
+        [Range(0.1f, 75.0f)] public float thrustAmount = 5.0f;
         [HideInInspector] public List<GameObject> wayPoints;
         [HideInInspector] public GameObject parentWayPoint;
 

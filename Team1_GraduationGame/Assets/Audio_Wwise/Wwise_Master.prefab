@@ -9,6 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5370165979892479981}
+  - component: {fileID: -8306628863337441553}
   - component: {fileID: 6897269567999987109}
   - component: {fileID: -6456021586074892776}
   - component: {fileID: 2186950586717431779}
@@ -36,6 +37,32 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &-8306628863337441553
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6086938879507949215}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 98cc0f18d4280c246a666866306da54b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  InitializationSettings: {fileID: 0}
+  basePath: 
+  language: 
+  defaultPoolSize: 0
+  lowerPoolSize: 0
+  streamingPoolSize: 0
+  memoryCutoffThreshold: 0
+  monitorPoolSize: 0
+  monitorQueuePoolSize: 0
+  callbackManagerBufferSize: 0
+  spatialAudioPoolSize: 0
+  maxSoundPropagationDepth: 0
+  diffractionFlags: 11
+  engineLogging: 0
 --- !u!114 &6897269567999987109
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -469,14 +496,14 @@ MonoBehaviour:
     soundEventId: 0
     triggerTypeSelector: 0
     triggerDelay: 0
-    triggerEvent: {fileID: 11400000, guid: 046e544e62402bf4ba94cb5f0f0b25b1, type: 2}
+    triggerEvent: {fileID: 11400000, guid: 68f196de844c84f4d8765e377c819052, type: 2}
     triggerFloatEvent: {fileID: 11400000, guid: b0ff7149e720d3e42a8ee8e1b99b3494,
       type: 2}
     triggerIntEvent: {fileID: 0}
     rtpcRoleBool: 1
     customValue: 0
     transitionDuration: 0
-    behaviorSelector: 3
+    behaviorSelector: 0
     soundManagerGameObject: {fileID: 6086938879507949215}
     targetGameObject: {fileID: 0}
     secondGameObject: {fileID: 0}
@@ -484,7 +511,8 @@ MonoBehaviour:
     wwiseEvent:
       idInternal: 0
       valueGuidInternal: 
-      WwiseObjectReference: {fileID: 0}
+      WwiseObjectReference: {fileID: 11400000, guid: 6adc52c498ff83c468ad2bd014dafb31,
+        type: 2}
     wwiseState:
       idInternal: 0
       valueGuidInternal: 

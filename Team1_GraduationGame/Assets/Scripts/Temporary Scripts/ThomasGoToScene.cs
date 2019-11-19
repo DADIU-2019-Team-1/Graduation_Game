@@ -64,10 +64,10 @@ public class ThomasGoToScene : MonoBehaviour
                             gameObject.GetComponentInChildren<PlayableDirector>().Play();
                         }
 
-                        if (SceneManager.GetActiveScene().name.Contains("mem"))
-                        {
-                            MemoryTimeLineEnded();
-                        }
+                        //if (SceneManager.GetActiveScene().name.Contains("mem"))
+                        //{
+                        //    MemoryTimeLineEnded();
+                        //}
                     }
             }
         }

@@ -14,7 +14,7 @@
 
         private void OnCollisionEnter(Collision col)
         {
-            Debug.Log(col.gameObject.name);
+            // Debug.Log(col.gameObject.name);
 
             if (col.gameObject.GetComponent<Terrain>() != null)
             {

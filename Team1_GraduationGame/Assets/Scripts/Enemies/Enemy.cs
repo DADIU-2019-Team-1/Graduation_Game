@@ -299,8 +299,10 @@ namespace Team1_GraduationGame.Enemies
         private void LateUpdate()
         {
             if (_navMeshAgent != null)
-                if (_animator?.runtimeAnimatorController != null)
+                if (_animator != null)
+                {
                     _animator?.SetFloat("Speed", _navMeshAgent.velocity.magnitude);
+                }
         }
 
         private void UpdatePathRoutine()    // Updates destination to next waypoint

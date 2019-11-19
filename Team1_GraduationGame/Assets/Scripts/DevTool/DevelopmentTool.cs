@@ -23,6 +23,7 @@ namespace Team1_GraduationGame.DevelopmentTools
         [HideInInspector] public InputField goToLevelNum;
         [HideInInspector] public Text warningText;
         [HideInInspector] public GameObject mainPanel;
+        [HideInInspector] public GameObject devPanel;
         [HideInInspector] public Text debugText;
         [HideInInspector] public Text fpsText;
         [HideInInspector] public Text vertsText;
@@ -120,6 +121,7 @@ namespace Team1_GraduationGame.DevelopmentTools
             }
             else if (mainPanel != null)
             {
+                PauseGame(false);
                 mainPanel.SetActive(false);
             }
         }
@@ -143,6 +145,7 @@ namespace Team1_GraduationGame.DevelopmentTools
 
         public void goToLevel()
         {
+            PauseGame(false);
             if (goToLevelNum != null)
                 new SaveLoadManager().OpenLevel(int.Parse(goToLevelNum.text));
         }
@@ -150,6 +153,11 @@ namespace Team1_GraduationGame.DevelopmentTools
         public void DisableSaving()
         {
             thisSavePointManager?.DisableSavingOnSavePoints();
+        }
+
+        public void PauseGame(bool pause)
+        {
+            Time.timeScale = pause ? 0 : 1;
         }
 
     }

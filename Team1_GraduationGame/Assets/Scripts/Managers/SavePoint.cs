@@ -17,7 +17,7 @@ namespace Team1_GraduationGame.SaveLoadSystem
 
         // Public:
         public bool savingDisabled;
-        public int thisID;
+        [HideInInspector] public int thisID;
         public bool savePointUsed;
         public enum colliderTypes
         {

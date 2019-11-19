@@ -221,7 +221,7 @@ namespace Team1_GraduationGame.Enemies
                     {
                         _destinationSet = false;
                         _isAggro = false;
-                        StopCoroutine(PursuitTimeout()); // Stop pursuit timeout, as enemy reached last sighting
+                        //StopCoroutine(PursuitTimeout()); // Stop pursuit timeout, as enemy reached last sighting
                     }
                 }
 
@@ -299,8 +299,10 @@ namespace Team1_GraduationGame.Enemies
         private void LateUpdate()
         {
             if (_navMeshAgent != null)
-                if (_animator?.runtimeAnimatorController != null)
+                if (_animator != null)
+                {
                     _animator?.SetFloat("Speed", _navMeshAgent.velocity.magnitude);
+                }
         }
 
         private void UpdatePathRoutine()    // Updates destination to next waypoint
@@ -537,15 +539,15 @@ namespace Team1_GraduationGame.Enemies
                 _isAggro = true;
         }
 
-        private IEnumerator PursuitTimeout()
-        {
-            _giveUpPursuitRunning = true;
-            yield return new WaitForSeconds(15.0f);
-            _destinationSet = false;
-            _isAggro = false;
+        //private IEnumerator PursuitTimeout()
+        //{
+        //    _giveUpPursuitRunning = true;
+        //    yield return new WaitForSeconds(15.0f);
+        //    _destinationSet = false;
+        //    _isAggro = false;
 
-            _giveUpPursuitRunning = false;
-        }
+        //    _giveUpPursuitRunning = false;
+        //}
 
         private IEnumerator PushDownDelay()
         {

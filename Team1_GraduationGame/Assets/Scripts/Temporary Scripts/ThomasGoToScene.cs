@@ -12,7 +12,6 @@ public class ThomasGoToScene : MonoBehaviour
     public bool forceSwitch;
 
     // Global booleans as ints, instead of script dependencies. 0 = true, 1 = false. It's reverse, i know.
-    public IntVariable atOrbTrigger;
     private SphereCollider _collider;
     private Collider _Collider;
 
@@ -23,7 +22,10 @@ public class ThomasGoToScene : MonoBehaviour
 
     private Vector3 memoryDirection;
 
-    private bool destinationReached;
+    private bool destinationReached = false;
+
+    [SerializeField]
+    private BoolVariable _atOrbTrigger;
     // Start is called before the first frame update
     void Start()
     {
@@ -32,15 +34,17 @@ public class ThomasGoToScene : MonoBehaviour
 
         if(FindObjectOfType<HubMenu>() != null)
             FindObjectOfType<HubMenu>().startGameEvent += SetOrbTrigger;
+
+        SetOrbTrigger();
     }
 
     // Update is called once per frame
     void FixedUpdate()
     {
-        if (atOrbTrigger != null)
+        if (_atOrbTrigger != null)
         {
 
-            if (atOrbTrigger.value == 0 && _movement != null  && !destinationReached)
+            if (_atOrbTrigger.value && _movement != null  && !destinationReached)
             {
                 memoryDirection = (transform.position - _movement.gameObject.transform.position).normalized;
                 _movement.direction = memoryDirection;
@@ -53,7 +57,7 @@ public class ThomasGoToScene : MonoBehaviour
                         _movement.targetSpeed = 0;
                         memoryDirection = Vector3.zero;
                         //destinationReached = true;
-                        atOrbTrigger.value = 1;
+                        _atOrbTrigger.value = false;
                         destinationReached = true;
                         //if(transform.GetChild(2).GetComponent<PlayableDirector>() != null)
                         //    transform.GetChild(2).GetComponent<PlayableDirector>().Play();
@@ -90,9 +94,10 @@ public class ThomasGoToScene : MonoBehaviour
         _movement = other.GetComponent<Movement>();
         if (forceSwitch && other.tag == "Player")
         {
+            _atOrbTrigger.value = true;
             _movement.Frozen(true);
             //Director.SetActive(true);
-            atOrbTrigger.value = 0;
+            
             //movingToOrb.value = 0;
             //if (Vector3.Distance(transform.position, other.transform.position) <= collider.radius * timelineThreshold)
             //{
@@ -119,8 +124,8 @@ public class ThomasGoToScene : MonoBehaviour
 
     public void SetOrbTrigger()
     {
-        if(atOrbTrigger != null) 
-            atOrbTrigger.value = 1;
+        if(_atOrbTrigger != null) 
+            _atOrbTrigger.value = false;
     }
 }
 

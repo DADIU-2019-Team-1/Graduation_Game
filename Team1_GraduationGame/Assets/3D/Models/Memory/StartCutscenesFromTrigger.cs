@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Playables;
 
-public class FadeBackAfterMemory : MonoBehaviour
+public class StartCutscenesFromTrigger : MonoBehaviour
 {
 
-    private Collider _Collider;
+    public Collider _Collider;
     // Start is called before the first frame update
     void Start()
     {

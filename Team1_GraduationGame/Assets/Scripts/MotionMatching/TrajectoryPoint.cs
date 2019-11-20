@@ -1,10 +1,11 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Unity.Mathematics;
 using UnityEngine;
 
 public class TrajectoryPoint
 {
-    public Vector3 point, forward;
+    public float3 point, forward;
     private const float angleFactor = 0.1f, distFactor = 1.0f;
     public TrajectoryPoint()
     {
@@ -16,11 +17,11 @@ public class TrajectoryPoint
         point = _point;
         forward = _forward;
     }
-    public Vector3 GetPoint()
+    public float3 GetPoint()
     {
         return point;
     }
-    public Vector3 GetForward()
+    public float3 GetForward()
     {
         return forward;
     }

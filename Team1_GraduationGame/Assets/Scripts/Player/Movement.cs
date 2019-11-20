@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Team1_GraduationGame.Interaction;
 using Team1_GraduationGame.Events;
+using Team1_GraduationGame.MotionMatching;
 using UnityEditor;
 
 [RequireComponent(typeof(Rigidbody), typeof(SphereCollider))]

@@ -12,7 +12,7 @@ public class Movement : MonoBehaviour
 {
     private Rigidbody playerRB;
     private bool touchStart = false, canMove = false, canJump = true, isPushing = false, moveFrozen = false;
-    private float rotationSpeedCurrent, rotationSpeedMax = 5.0f, rotationSpeedGoal, rotationAccelerationFactor = 0.1f, rotationAngleReactionFactor = 0.1f;
+    private float rotationSpeedCurrent, rotationSpeedMax = 5.0f, rotationSpeedGoal, rotationAccelerationFactor = 0.1f, pushRotationAccelerationFactor = 0.7f, rotationAngleReactionFactor = 0.1f, pushRotationAngleReactionFactor = 0.7f;
     
     [HideInInspector]
     public float targetSpeed;
@@ -23,7 +23,7 @@ public class Movement : MonoBehaviour
     [SerializeField] private float accelerationFactor = 0.1f;
     private float swipeTimeTimer;
     private Vector3 initTouchPos, currTouchPos, joystickPos, stickLimitPos, velocity;
-    private Quaternion lookRotation;
+    private Quaternion lookRotation, pushRotation;
     public VoidEvent jumpEvent, attackEvent, miniJump;
     public IntEvent stateChangeEvent;
     [HideInInspector]
@@ -263,6 +263,7 @@ public class Movement : MonoBehaviour
                         if (attackCooldown <= 0)
                         {
                             pushDirection = new Vector3(swipeDirection.x, 0, swipeDirection.y);
+                            pushRotation = pushDirection != Vector3.zero ? Quaternion.LookRotation(pushDirection) : Quaternion.identity;
                             // I set a temp push animator if we arent using motion matching
                             if (animator.runtimeAnimatorController != null && animator.runtimeAnimatorController.name == "MotherAnimator")
                             {
@@ -345,6 +346,8 @@ public class Movement : MonoBehaviour
                 if (attackCooldown <= 0)
                 {
                     pushDirection = new Vector3(swipeDirection.x, 0, swipeDirection.y);
+                    pushRotation = pushDirection != Vector3.zero ? Quaternion.LookRotation(pushDirection) : Quaternion.identity;
+                    Debug.Log("Push Direction is: " + pushDirection);
                     playerAttack(pushDirection);
 
                     // I set a temp push animator if we arent using motion matching
@@ -410,13 +413,17 @@ public class Movement : MonoBehaviour
 
         if (isPushing)
         {
-            if(attackCooldown > 0)
+            if (attackCooldown > 0)
+            {
                 // Was pushdirection before
+                targetSpeed = runSpeed.value;
                 movePlayer(pushDirection);
+            }
+
             else
             {
                 isPushing = false;
-                Debug.Log("Is pushing false");
+                
             }
 
         }
@@ -505,29 +512,28 @@ public class Movement : MonoBehaviour
         return a.x * b.z - a.z * b.x >= 0;
     }
 
-    public void movePlayer(Vector3 direction)
+    public void movePlayer(Vector3 _direction)
     {
         //Debug.Log("Move player");
         if (_atOrbTrigger != null && _atOrbTrigger.value != 1)
         {
-                targetSpeed = walkSpeed.value;
+            targetSpeed = walkSpeed.value;
         }
+
+        int wayToRotate = CrossProductPositive(transform.forward, _direction) ? 1 : -1;
+        rotationSpeedGoal = Mathf.Min(rotationSpeed.value, Vector3.Angle(transform.forward, _direction) * (isPushing? pushRotationAngleReactionFactor: rotationAngleReactionFactor)) * wayToRotate;
+        rotationSpeedCurrent += (rotationSpeedGoal - rotationSpeedCurrent) * (isPushing? pushRotationAccelerationFactor: rotationAccelerationFactor);
         
-
-        int wayToRotate = CrossProductPositive(transform.forward, direction) ? 1 : -1;
-        rotationSpeedGoal = Mathf.Min(rotationSpeed.value, Vector3.Angle(transform.forward, direction) * rotationAngleReactionFactor) * wayToRotate;
-        rotationSpeedCurrent += (rotationSpeedGoal - rotationSpeedCurrent) * rotationAccelerationFactor;
-
-        transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * Mathf.Abs(rotationSpeedCurrent));
-
+        transform.rotation = Quaternion.Slerp(transform.rotation,isPushing? pushRotation: lookRotation, Time.deltaTime * Mathf.Abs(rotationSpeedCurrent));
+        
         if (!isJumping)
         {
-            playerRB.MovePosition(transform.position + (direction + transform.forward /* * rotation factor can be inserted  here*/).normalized * ((targetSpeed - currentSpeed.value) * accelerationFactor + currentSpeed.value) * Time.fixedDeltaTime);
+            playerRB.MovePosition(transform.position + (_direction + transform.forward /* * rotation factor can be inserted  here*/).normalized * ((targetSpeed - currentSpeed.value) * accelerationFactor + currentSpeed.value) * Time.fixedDeltaTime);
         }
         else
         {
 //#if UNITY_EDITOR
-            playerRB.MovePosition(transform.position + (direction * targetSpeed * Time.deltaTime));
+            playerRB.MovePosition(transform.position + (_direction * targetSpeed * Time.deltaTime));
 //#endif
 //#if UNITY_ANDROID
 //            playerRB.AddForce(direction * targetSpeed * Time.deltaTime, ForceMode.Impulse);
@@ -597,7 +603,7 @@ public class Movement : MonoBehaviour
         }
         //Debug.Log("Attacking");
         attackCooldown = attackCoolDown.value;
-        targetSpeed = runSpeed.value;
+        
         isPushing = true;
         // check all objects
         for (int i = 0; i < interactableObjects.Count; i++)
@@ -699,7 +705,7 @@ public class Movement : MonoBehaviour
             float newRotationSpeedGoal = Mathf.Min(rotationSpeed.value, Vector3.Angle(playerForward, direction) * rotationAngleReactionFactor) * wayToRotate;
             newRotationSpeedCurrent += (newRotationSpeedGoal - newRotationSpeedCurrent) * rotationAccelerationFactor;
 
-            playerRot = Quaternion.Slerp(playerRot, lookRotation, Time.deltaTime * Mathf.Abs(rotationSpeedCurrent));
+            playerRot = Quaternion.Slerp(playerRot, lookRotation, Time.deltaTime * Mathf.Abs(newRotationSpeedCurrent));
             playerForward = playerRot * Vector3.forward;
             playerPos += (direction + playerForward).normalized * ((targetSpeed - simulatedSpeed) * accelerationFactor + simulatedSpeed) * Time.fixedDeltaTime;
 

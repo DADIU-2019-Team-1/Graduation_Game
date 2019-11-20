@@ -293,7 +293,7 @@ namespace Team1_GraduationGame.Enemies
             _isAggro = true;
             _animator?.SetBool("Patrolling", false);
             _animator?.SetTrigger("Spotted");
-            _enemySoundManager?.aggro();
+            _enemySoundManager?.spotted();
 
             yield return new WaitForSeconds(aggroTime);
 

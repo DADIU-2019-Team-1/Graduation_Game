@@ -1,4 +1,5 @@
-﻿namespace Team1_GraduationGame.Sound
+﻿// Script by Jakob Elkjær Husted
+namespace Team1_GraduationGame.Sound
 {
     using System.Collections;
     using System.Collections.Generic;
@@ -7,7 +8,6 @@
 
     public class FootStepSystem : MonoBehaviour
     {
-
         public string[] materialTypes;
         public IntEvent footStepEvent;
 
@@ -28,10 +28,12 @@
                 if (thisTerrain.terrainData.terrainLayers.Length > 0)
                 {
                     FootStepRaise(thisTerrain.terrainData.terrainLayers[0].diffuseTexture.ToString());
-                    Debug.Log(thisTerrain.terrainData.terrainLayers[0].diffuseTexture);
                 }
             }
-
+            else if (col.gameObject.GetComponent<Collider>() != null)
+            {
+                FootStepRaise(col.gameObject.name);
+            }
         }
 
         private void FootStepRaise(string matLayerName)
@@ -43,7 +45,7 @@
 
             for (int i = 0; i < materialTypes.Length; i++)
             {
-                if (materialTypes[i].Contains(matLayerName))
+                if (matLayerName.Contains(materialTypes[i]))
                 {
                     footStepEvent?.Raise(i);
                     return;

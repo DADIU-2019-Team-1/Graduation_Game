@@ -38,7 +38,6 @@ namespace Team1_GraduationGame.SaveLoadSystem
         {
             if (FindObjectOfType<HubMenu>() != null)
             {
-                //FindObjectOfType<HubMenu>().startGameEvent += NewGame;
                 FindObjectOfType<HubMenu>().continueGameEvent += Continue;
             }
         }

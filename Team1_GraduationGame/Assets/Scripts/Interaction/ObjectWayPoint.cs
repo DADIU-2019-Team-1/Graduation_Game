@@ -13,7 +13,7 @@ namespace Team1_GraduationGame.Interaction
         [HideInInspector] public GameObject parentObject;
         [HideInInspector] public GameObject parentWayPoint;
         [HideInInspector] public bool isParent = false;
-        public int wayPointId;
+        [HideInInspector] public int wayPointId;
 
 
         void OnDestroy()

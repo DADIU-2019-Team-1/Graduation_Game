@@ -1,18 +1,19 @@
 ﻿// Script by Jakob Elkjær Husted
-using System.Collections;
-using System.Collections.Generic;
-using Team1_GraduationGame.Enemies;
-using Team1_GraduationGame.Events;
-using UnityEditor;
-using UnityEngine;
-
 namespace Team1_GraduationGame.Enemies
 {
+    using System.Collections;
+    using System.Collections.Generic;
+    using Team1_GraduationGame.Enemies;
+    using Team1_GraduationGame.Events;
+    using Team1_GraduationGame.Sound;
+    using UnityEngine;
+
     public class Big : MonoBehaviour
     {
         //References:
         private GameObject _player;
         private Animator _playerAnimator;
+        private EnemySoundManager _enemySoundManager;
         private Animator _animator;
         public Light fieldOfViewLight;
         public VoidEvent playerDiedEvent;
@@ -44,6 +45,9 @@ namespace Team1_GraduationGame.Enemies
 
             if (GetComponent<Animator>() != null)
                 _animator = GetComponent<Animator>();
+
+            if (GetComponent<EnemySoundManager>() != null)
+                _enemySoundManager = gameObject.GetComponent<EnemySoundManager>();
 
             _layerMask = ~LayerMask.GetMask("Enemies");
 
@@ -237,9 +241,15 @@ namespace Team1_GraduationGame.Enemies
         private IEnumerator ChangeState(bool isActive)
         {
             if (isActive)
+            {
                 _animator?.SetTrigger("Appearing");
+                _enemySoundManager?.gettingUp();
+            }
             else
+            {
                 _animator?.SetTrigger("Disappearing");
+                _enemySoundManager?.pushedDown();
+            }
 
             yield return new WaitForSeconds(changeStateTime);
 
@@ -259,7 +269,6 @@ namespace Team1_GraduationGame.Enemies
                 _isSpawned = false;
                 _updateRotation = false;
             }
-
         }
 
         private IEnumerator PlayerDied()
@@ -269,6 +278,7 @@ namespace Team1_GraduationGame.Enemies
 
             _animator?.SetTrigger("Attack");
             _playerAnimator?.SetTrigger("BigAttack");
+            _enemySoundManager?.attackPlayer();
 
             yield return new WaitForSeconds(animAttackTime);
 
@@ -283,6 +293,7 @@ namespace Team1_GraduationGame.Enemies
             _isAggro = true;
             _animator?.SetBool("Patrolling", false);
             _animator?.SetTrigger("Spotted");
+            _enemySoundManager?.spotted();
 
             yield return new WaitForSeconds(aggroTime);
 

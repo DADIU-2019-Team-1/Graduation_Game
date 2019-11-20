@@ -12,7 +12,6 @@ public class ThomasGoToScene : MonoBehaviour
     public bool forceSwitch;
 
     // Global booleans as ints, instead of script dependencies. 0 = true, 1 = false. It's reverse, i know.
-    public IntVariable atOrbTrigger;
     private SphereCollider _collider;
     private Collider _Collider;
 
@@ -23,15 +22,20 @@ public class ThomasGoToScene : MonoBehaviour
 
     private Vector3 memoryDirection;
 
-    private bool destinationReached;
+    private bool destinationReached = false;
+
+
+    public BoolVariable atOrbTrigger;
     // Start is called before the first frame update
     void Start()
     {
         _collider = GetComponent<SphereCollider>();
         _movement = GetComponent<Movement>();
 
-        if(FindObjectOfType<HubMenu>() != null)
-            FindObjectOfType<HubMenu>().startGameEvent += SetOrbTrigger;
+        //if(FindObjectOfType<HubMenu>() != null)
+        //    FindObjectOfType<HubMenu>().startGameEvent += SetOrbTrigger;
+
+        atOrbTrigger.value = false;
     }
 
     // Update is called once per frame
@@ -40,25 +44,23 @@ public class ThomasGoToScene : MonoBehaviour
         if (atOrbTrigger != null)
         {
 
-            if (atOrbTrigger.value == 0 && _movement != null  && !destinationReached)
+            if (atOrbTrigger.value && _movement != null  && !destinationReached)
             {
                 memoryDirection = (transform.position - _movement.gameObject.transform.position).normalized;
                 _movement.direction = memoryDirection;
                 _movement.movePlayer(memoryDirection);
-
-                    if (Vector3.Distance(_movement.gameObject.transform.position, transform.position) <=
+                if (Vector3.Distance(_movement.gameObject.transform.position, transform.position) <=
                          _collider.radius * timelineThreshold)
                     {
-                        Debug.Log("Reached timeline");
                         _movement.targetSpeed = 0;
                         memoryDirection = Vector3.zero;
-                        //destinationReached = true;
-                        atOrbTrigger.value = 1;
+
+                        atOrbTrigger.value = false;
                         destinationReached = true;
                         //if(transform.GetChild(2).GetComponent<PlayableDirector>() != null)
                         //    transform.GetChild(2).GetComponent<PlayableDirector>().Play();
 
-                        Debug.Log("Playable Director child: " + gameObject.GetComponentInChildren<PlayableDirector>().name);
+                        //Debug.Log("Playable Director child: " + gameObject.GetComponentInChildren<PlayableDirector>().name);
                         if (gameObject.GetComponentInChildren<PlayableDirector>() != null)
                         {
                             gameObject.GetComponentInChildren<PlayableDirector>().Play();
@@ -87,29 +89,42 @@ public class ThomasGoToScene : MonoBehaviour
     
     private void OnTriggerEnter(Collider other)
     {
-        _movement = other.GetComponent<Movement>();
-        if (forceSwitch && other.tag == "Player")
+        if (other is CapsuleCollider)
         {
-            _movement.Frozen(true);
-            //Director.SetActive(true);
-            atOrbTrigger.value = 0;
-            //movingToOrb.value = 0;
-            //if (Vector3.Distance(transform.position, other.transform.position) <= collider.radius * timelineThreshold)
-            //{
-            //    _movement.targetSpeed = 0;
-            //    memoryDirection = Vector3.zero;
+            if (forceSwitch && other.tag == "Player")
+            {
+                
+                _movement = other.GetComponent<Movement>();
+                if (_movement != null)
+                {
+                    atOrbTrigger.value = true;
+                    _movement.Frozen(true);
+                }
 
-            //    // Start timeline
-            //}
+                //Director.SetActive(true);
+                
+                //movingToOrb.value = 0;
+                //if (Vector3.Distance(transform.position, other.transform.position) <= collider.radius * timelineThreshold)
+                //{
+                //    _movement.targetSpeed = 0;
+                //    memoryDirection = Vector3.zero;
+
+                //    // Start timeline
+                //}
+            }
         }
+
 
     }
 
     public void MemoryTimeLineEnded()
     {        
         destinationReached = false;
-        _movement.Frozen(false);
-        _movement.inSneakZone = false;
+        if(_movement != null) {
+            _movement.Frozen(false);
+            _movement.inSneakZone = false;
+        }
+
         if(FindObjectOfType<SavePointManager>() != null)
             FindObjectOfType<SavePointManager>().NextLevel();
         else
@@ -119,8 +134,12 @@ public class ThomasGoToScene : MonoBehaviour
 
     public void SetOrbTrigger()
     {
-        if(atOrbTrigger != null) 
-            atOrbTrigger.value = 1;
+        if (atOrbTrigger != null)
+        {
+            atOrbTrigger.value = false;
+            //Debug.Log("Orb has been reset to: " + atOrbTrigger.value);
+        }
+
     }
 }
 

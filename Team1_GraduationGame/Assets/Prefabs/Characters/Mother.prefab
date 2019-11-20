@@ -509,11 +509,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   targetSpeed: 0
   isJumping: 0
+  inSneakZone: 0
   accelerationFactor: 0.1
   jumpEvent: {fileID: 11400000, guid: 53612299c0a461b47b14f3ef651011d9, type: 2}
   attackEvent: {fileID: 11400000, guid: 73763e5143480e04e9f18b13c6d76f2c, type: 2}
+  miniJump: {fileID: 11400000, guid: 721c1366f62d85649b54e8c1ecc33735, type: 2}
   stateChangeEvent: {fileID: 11400000, guid: f54ab983b71f4ca489948989e5ce38fa, type: 2}
   direction: {x: 0, y: 0, z: 0}
+  worldDirection: {x: 0, y: 0, z: 0}
   _atOrbTrigger: {fileID: 11400000, guid: 4762486ae963b3b4fb6a6ea99b71d200, type: 2}
   stick: {fileID: 0}
   stickLimit: {fileID: 0}
@@ -553,6 +556,14 @@ MonoBehaviour:
     UseUnique: 0
     UniqueValue: 0
     Variable: {fileID: 11400000, guid: 76d6d489be169344f8087ed31294e00c, type: 2}
+  defaultPushForce:
+    UseUnique: 0
+    UniqueValue: 0
+    Variable: {fileID: 11400000, guid: b624296cd89918941bfbc52d9fbcabfc, type: 2}
+  pushForce:
+    UseUnique: 0
+    UniqueValue: 0
+    Variable: {fileID: 11400000, guid: f826013e125f9dc4994b177d6eb602c7, type: 2}
   radius:
     UseUnique: 0
     UniqueValue: 0
@@ -565,6 +576,10 @@ MonoBehaviour:
     UseUnique: 0
     UniqueValue: 0
     Variable: {fileID: 11400000, guid: c884f35f8e4e4304eb5dc5b1e0da785c, type: 2}
+  attackCoolDown:
+    UseUnique: 0
+    UniqueValue: 0
+    Variable: {fileID: 11400000, guid: bcd15ef10b8238f498444bfa17f8ad78, type: 2}
   ghostJumpHeight:
     UseUnique: 0
     UniqueValue: 0

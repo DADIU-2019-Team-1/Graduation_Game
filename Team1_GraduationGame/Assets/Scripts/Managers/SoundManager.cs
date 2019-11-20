@@ -285,6 +285,7 @@ namespace Team1_GraduationGame.Managers
         public void EventRaised(float value)
         {
             _parsedValue = value;
+            Debug.Log("Event raised with value: " + value);
 
             if (!_eventFired)
             {

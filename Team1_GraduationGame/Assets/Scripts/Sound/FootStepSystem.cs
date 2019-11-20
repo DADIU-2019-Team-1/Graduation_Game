@@ -10,6 +10,8 @@ namespace Team1_GraduationGame.Sound
     {
         public string[] materialTypes;
         public IntEvent footStepEvent;
+        public VoidEvent testVoidEvent;
+        public FloatEvent testFloatEvent;
 
         private void Awake()
         {
@@ -48,7 +50,10 @@ namespace Team1_GraduationGame.Sound
             {
                 if (matLayerName.Contains(materialTypes[i]))
                 {
+                    Debug.Log("Contains: " + materialTypes[i]);
                     footStepEvent?.Raise(i);
+                    testFloatEvent?.Raise(i);
+                    testVoidEvent?.Raise();
                     return;
                 }
             }

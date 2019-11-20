@@ -525,16 +525,13 @@ namespace Team1_GraduationGame.Managers
             else if (item.GetType() == typeof(float))
             {
                 float tempFloat = float.Parse(item.ToString());
-                Debug.Log(tempFloat);
                 SoundEventClass.EventRaised(tempFloat);
             }
             else if (item.GetType() == typeof(int))
             {
-                float tempInt = int.Parse(item.ToString());
-                Debug.Log(tempInt);
+                int tempInt = int.Parse(item.ToString());
                 SoundEventClass.EventRaised(tempInt);
             }
-
         }
     }
 

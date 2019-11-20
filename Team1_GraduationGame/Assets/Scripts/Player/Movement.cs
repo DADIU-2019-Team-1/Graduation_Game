@@ -153,9 +153,9 @@ public class Movement : MonoBehaviour
             {
                 isJumping = false;
 
-                if (animator.runtimeAnimatorController != null && animator.runtimeAnimatorController.name == "MotherAnimator")
+                if (animator.runtimeAnimatorController != null)
                 {
-                    animator.SetBool("Jump", false);
+                    animator.SetTrigger("Land");
                 }
 
                 _collider.material = null;
@@ -266,10 +266,9 @@ public class Movement : MonoBehaviour
                             pushDirection = new Vector3(swipeDirection.x, 0, swipeDirection.y);
                             pushRotation = pushDirection != Vector3.zero ? Quaternion.LookRotation(pushDirection) : Quaternion.identity;
                             // I set a temp push animator if we arent using motion matching
-                            if (animator.runtimeAnimatorController != null && animator.runtimeAnimatorController.name == "MotherAnimator")
+                            if (animator.runtimeAnimatorController != null)
                             {
                                 animator.SetTrigger("Attack");
-                                //Debug.Log("Using Test Animator not motion matching");
                             }
                             //Debug.Log("Attack start phone");
                             playerAttack(pushDirection);
@@ -351,7 +350,7 @@ public class Movement : MonoBehaviour
                     playerAttack(pushDirection);
 
                     // I set a temp push animator if we arent using motion matching
-                    if (animator.runtimeAnimatorController != null && animator.runtimeAnimatorController.name == "MotherAnimator")
+                    if (animator.runtimeAnimatorController != null)
                     {
                         animator.SetTrigger("Attack");
                     }
@@ -550,9 +549,9 @@ public class Movement : MonoBehaviour
             miniJump?.Raise();
 
             // also setting jump on temp Animator
-            if (animator.runtimeAnimatorController != null && animator.runtimeAnimatorController.name == "MotherAnimator")
+            if (animator.runtimeAnimatorController != null)
             {
-                animator.SetBool("Jump", true);
+                animator.SetTrigger("Jump");
             }
         }
     }
@@ -575,9 +574,9 @@ public class Movement : MonoBehaviour
             isJumping = true;
 
             // also setting jump on temp Animator
-            if (animator.runtimeAnimatorController != null && animator.runtimeAnimatorController.name == "MotherAnimator")
+            if (animator.runtimeAnimatorController != null)
             {
-                animator.SetBool("Jump", true);
+                animator.SetTrigger("Jump");
             }
 
             if (jumpEvent != null)

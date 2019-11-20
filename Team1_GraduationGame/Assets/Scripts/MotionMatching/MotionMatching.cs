@@ -165,7 +165,6 @@ namespace Team1_GraduationGame.MotionMatching
 
             if (!_playAnimationMode)
             {
-                movement.attack += DetectAttack;
 
 
                 UpdateAnimation(0, 0);
@@ -173,10 +172,6 @@ namespace Team1_GraduationGame.MotionMatching
             }
         }
 
-        private void DetectAttack()
-        {
-            animator.SetTrigger("Push");
-        }
 
         public void ChangeLayerWeight(int layerIndex, int desiredWeight)
         {
@@ -196,16 +191,6 @@ namespace Team1_GraduationGame.MotionMatching
             }
         }
 
-        private void FixedUpdate()
-        {
-            if (!_playAnimationMode)
-            {
-                if (movement.isJumping)
-                {
-                    animator.SetTrigger("Jump");
-                }
-            }
-        }
 
 #if UNITY_EDITOR
         private void Update()

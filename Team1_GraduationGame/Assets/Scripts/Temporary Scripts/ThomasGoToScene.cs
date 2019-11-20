@@ -24,45 +24,43 @@ public class ThomasGoToScene : MonoBehaviour
 
     private bool destinationReached = false;
 
-    [SerializeField]
-    private BoolVariable _atOrbTrigger;
+
+    public BoolVariable atOrbTrigger;
     // Start is called before the first frame update
     void Start()
     {
         _collider = GetComponent<SphereCollider>();
         _movement = GetComponent<Movement>();
 
-        if(FindObjectOfType<HubMenu>() != null)
-            FindObjectOfType<HubMenu>().startGameEvent += SetOrbTrigger;
+        //if(FindObjectOfType<HubMenu>() != null)
+        //    FindObjectOfType<HubMenu>().startGameEvent += SetOrbTrigger;
 
-        SetOrbTrigger();
+        atOrbTrigger.value = false;
     }
 
     // Update is called once per frame
     void FixedUpdate()
     {
-        if (_atOrbTrigger != null)
+        if (atOrbTrigger != null)
         {
 
-            if (_atOrbTrigger.value && _movement != null  && !destinationReached)
+            if (atOrbTrigger.value && _movement != null  && !destinationReached)
             {
                 memoryDirection = (transform.position - _movement.gameObject.transform.position).normalized;
                 _movement.direction = memoryDirection;
                 _movement.movePlayer(memoryDirection);
-
-                    if (Vector3.Distance(_movement.gameObject.transform.position, transform.position) <=
+                if (Vector3.Distance(_movement.gameObject.transform.position, transform.position) <=
                          _collider.radius * timelineThreshold)
                     {
-                        Debug.Log("Reached timeline");
                         _movement.targetSpeed = 0;
                         memoryDirection = Vector3.zero;
-                        //destinationReached = true;
-                        _atOrbTrigger.value = false;
+
+                        atOrbTrigger.value = false;
                         destinationReached = true;
                         //if(transform.GetChild(2).GetComponent<PlayableDirector>() != null)
                         //    transform.GetChild(2).GetComponent<PlayableDirector>().Play();
 
-                        Debug.Log("Playable Director child: " + gameObject.GetComponentInChildren<PlayableDirector>().name);
+                        //Debug.Log("Playable Director child: " + gameObject.GetComponentInChildren<PlayableDirector>().name);
                         if (gameObject.GetComponentInChildren<PlayableDirector>() != null)
                         {
                             gameObject.GetComponentInChildren<PlayableDirector>().Play();
@@ -91,22 +89,31 @@ public class ThomasGoToScene : MonoBehaviour
     
     private void OnTriggerEnter(Collider other)
     {
-        _movement = other.GetComponent<Movement>();
-        if (forceSwitch && other.tag == "Player")
+        if (other is CapsuleCollider)
         {
-            _atOrbTrigger.value = true;
-            _movement.Frozen(true);
-            //Director.SetActive(true);
-            
-            //movingToOrb.value = 0;
-            //if (Vector3.Distance(transform.position, other.transform.position) <= collider.radius * timelineThreshold)
-            //{
-            //    _movement.targetSpeed = 0;
-            //    memoryDirection = Vector3.zero;
+            if (forceSwitch && other.tag == "Player")
+            {
+                
+                _movement = other.GetComponent<Movement>();
+                if (_movement != null)
+                {
+                    atOrbTrigger.value = true;
+                    _movement.Frozen(true);
+                }
 
-            //    // Start timeline
-            //}
+                //Director.SetActive(true);
+                
+                //movingToOrb.value = 0;
+                //if (Vector3.Distance(transform.position, other.transform.position) <= collider.radius * timelineThreshold)
+                //{
+                //    _movement.targetSpeed = 0;
+                //    memoryDirection = Vector3.zero;
+
+                //    // Start timeline
+                //}
+            }
         }
+
 
     }
 
@@ -124,8 +131,12 @@ public class ThomasGoToScene : MonoBehaviour
 
     public void SetOrbTrigger()
     {
-        if(_atOrbTrigger != null) 
-            _atOrbTrigger.value = false;
+        if (atOrbTrigger != null)
+        {
+            atOrbTrigger.value = false;
+            //Debug.Log("Orb has been reset to: " + atOrbTrigger.value);
+        }
+
     }
 }
 

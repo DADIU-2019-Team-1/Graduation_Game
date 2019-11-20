@@ -43,14 +43,13 @@ namespace Team1_GraduationGame.Sound
             if (materialTypes == null)
                 return;
 
-            Debug.Log("COLLIDED: " + matLayerName);
             matLayerName = matLayerName.ToLower();
 
             for (int i = 0; i < materialTypes.Length; i++)
             {
                 if (matLayerName.Contains(materialTypes[i]))
                 {
-                    Debug.Log("Contains: " + materialTypes[i]);
+                    // Debug.Log("Foot colision contains: " + materialTypes[i]);
                     footStepEvent?.Raise(i);
                     testFloatEvent?.Raise(i);
                     testVoidEvent?.Raise();

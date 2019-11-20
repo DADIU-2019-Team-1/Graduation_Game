@@ -6,6 +6,7 @@ namespace Team1_GraduationGame.Enemies
     using UnityEngine;
     using Team1_GraduationGame.Events;
     using Team1_GraduationGame.Interaction;
+    using Team1_GraduationGame.Sound;
     using System.Linq;
     using UnityEngine.AI;
 
@@ -26,7 +27,7 @@ namespace Team1_GraduationGame.Enemies
         private Animator _playerAnimator;
         private Movement _movement;
         private NavMeshAgent _navMeshAgent;
-        private SoundEventRaiser _soundEventRaise;
+        private EnemySoundManager _enemySoundManager;
         [Tooltip("Animator will automatically be found - So ONLY add one if it is not on this object")] public Animator _animator;
         [HideInInspector] public List<GameObject> wayPoints;
         [HideInInspector] public GameObject parentWayPoint;
@@ -57,7 +58,7 @@ namespace Team1_GraduationGame.Enemies
         {
             _player = GameObject.FindGameObjectWithTag("Player");
             _layerMask = ~LayerMask.GetMask("Enemies"); // Use later for raycast to ignore other enemies
-            _soundEventRaise = GameObject.FindObjectOfType<SoundEventRaiser>();
+            _enemySoundManager = gameObject.GetComponent<EnemySoundManager>();
 
             if (_player != null && thisEnemy != null)
             {
@@ -394,6 +395,7 @@ namespace Team1_GraduationGame.Enemies
                 _navMeshAgent.isStopped = true;
 
                 _animator?.SetTrigger("PushedDown");
+                _enemySoundManager?.pushedDown();
 
                 viewConeLight.gameObject.SetActive(true);
                 viewConeLight.color = Color.green;
@@ -536,6 +538,7 @@ namespace Team1_GraduationGame.Enemies
                 viewConeLight?.gameObject.SetActive(false);
                 _playerAnimator?.SetTrigger("EnemyAttack" + thisEnemy.typeId);
                 _animator?.SetTrigger("Attack");
+                _enemySoundManager?.attackPlayer();
 
                 yield return new WaitForSeconds(animAttackTime);
 
@@ -570,6 +573,7 @@ namespace Team1_GraduationGame.Enemies
             viewConeLight.color = normalConeColor;
             _animator?.ResetTrigger("PushedDown");
             _animator?.SetTrigger("GettingUp");
+            _enemySoundManager?.gettingUp();
 
             yield return new WaitForSeconds(animGettingUpTime);
             _animator?.ResetTrigger("GettingUp");

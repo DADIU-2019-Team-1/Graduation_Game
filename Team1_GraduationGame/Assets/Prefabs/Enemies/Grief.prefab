@@ -265,6 +265,8 @@ GameObject:
   - component: {fileID: 5763609037245267758}
   - component: {fileID: 5763609037245267760}
   - component: {fileID: 5763609037245267759}
+  - component: {fileID: 8222563566817980349}
+  - component: {fileID: 1641082429314421809}
   m_Layer: 9
   m_Name: Grief
   m_TagString: Enemy
@@ -414,6 +416,7 @@ MonoBehaviour:
   aggroConeColor: {r: 1, g: 0, b: 0, a: 1}
   animNoiseHeardTime: 0.1
   animAttackTime: 2.5
+  animGettingUpTime: 2
   useGlobalWaitTime: 1
   waitTime: 0
 --- !u!114 &5763609037245267759
@@ -451,6 +454,62 @@ MonoBehaviour:
   animationDefault: 
   animationAction: 
   toggleState: 0
+--- !u!114 &8222563566817980349
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5763609037245267761}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f56c9a8239fcd2e468d4759dd7119fb1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_listeners:
+    initialListenerList: []
+    useDefaultListeners: 1
+  isEnvironmentAware: 1
+  isStaticObject: 0
+  m_positionOffsetData:
+    KeepMe: 0
+    positionOffset: {x: 0, y: 0, z: 0}
+  m_posOffsetData: {fileID: 0}
+  listenerMask: 1
+--- !u!114 &1641082429314421809
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5763609037245267761}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7391925d3bbbc1649beda3fb77b8a181, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  useRtpc: 1
+  useGlobalRtpcs: 0
+  speedRTPC:
+    idInternal: 0
+    valueGuidInternal: 
+    WwiseObjectReference: {fileID: 0}
+  stateRTPC:
+    idInternal: 0
+    valueGuidInternal: 
+    WwiseObjectReference: {fileID: 0}
+  attackingPlayerEvent:
+    idInternal: 0
+    valueGuidInternal: 
+    WwiseObjectReference: {fileID: 0}
+  pushedDownEvent:
+    idInternal: 0
+    valueGuidInternal: 
+    WwiseObjectReference: {fileID: 0}
+  gettingUpEvent:
+    idInternal: 0
+    valueGuidInternal: 
+    WwiseObjectReference: {fileID: 0}
 --- !u!1001 &5585376617592382475
 PrefabInstance:
   m_ObjectHideFlags: 0

@@ -5,14 +5,19 @@ namespace Team1_GraduationGame.Sound
     using System.Collections.Generic;
     using UnityEngine;
     using Team1_GraduationGame.Enemies;
+#if UNITY_EDITOR
+    using UnityEditor;
+#endif
 
+    [RequireComponent(typeof(AkGameObj))]
     public class EnemySoundManager : MonoBehaviour
     {
-        public bool useGlobalRtpcs = false;
+        public bool useRtpc = false;
+        [HideInInspector] public bool useGlobalRtpcs = false;
 
         // Wwise:
-        public AK.Wwise.RTPC speedRTPC;
-        public AK.Wwise.RTPC stateRTPC;
+        [HideInInspector] public AK.Wwise.RTPC speedRTPC, stateRTPC;
+        public AK.Wwise.Event attackingPlayerEvent, pushedDownEvent, gettingUpEvent;
 
         private Enemy _thisEnemy;
 
@@ -21,26 +26,77 @@ namespace Team1_GraduationGame.Sound
             if (gameObject.GetComponent<Enemy>())
             {
                 _thisEnemy = gameObject.GetComponent<Enemy>();
-                InvokeRepeating("CustomUpdate", 1.0f, 0.5f);
+                InvokeRepeating("CustomUpdate", 0.3f, 0.7f);
             }
         }
 
         private void CustomUpdate()
         {
-            if (speedRTPC != null)
+            if (useRtpc)
             {
-                if (useGlobalRtpcs)
-                    speedRTPC.SetGlobalValue(_thisEnemy.GetSpeed());
-                else
-                    speedRTPC.SetValue(gameObject, _thisEnemy.GetSpeed());
+                if (speedRTPC != null)
+                {
+                    if (useGlobalRtpcs)
+                        speedRTPC.SetGlobalValue(_thisEnemy.GetSpeed());
+                    else
+                        speedRTPC.SetValue(gameObject, _thisEnemy.GetSpeed());
+                }
+                if (stateRTPC != null)
+                {
+                    if (useGlobalRtpcs)
+                        stateRTPC.SetGlobalValue(_thisEnemy.GetState());
+                    else
+                        stateRTPC.SetValue(gameObject, _thisEnemy.GetState());
+                }
             }
-            if (stateRTPC != null)
+        }
+
+        public void killingPlayer()
+        {
+            attackingPlayerEvent?.Post(gameObject);
+        }
+
+        public void pushedDown()
+        {
+            pushedDownEvent?.Post(gameObject);
+        }
+
+        public void gettingUp()
+        {
+            gettingUpEvent?.Post(gameObject);
+        }
+    }
+
+#if UNITY_EDITOR
+    #region Custom Inspector
+    [CustomEditor(typeof(EnemySoundManager))]
+    public class EnemySoundManager_Inspector : UnityEditor.Editor
+    {
+        public override void OnInspectorGUI()
+        {
+            DrawDefaultInspector();
+
+            var script = target as EnemySoundManager;
+
+            if (script.useRtpc)
             {
-                if (useGlobalRtpcs)
-                    stateRTPC.SetGlobalValue(_thisEnemy.GetState());
-                else
-                    stateRTPC.SetValue(gameObject,_thisEnemy.GetState());
+                script.useGlobalRtpcs = EditorGUILayout.Toggle("Use global RTPC?", script.useGlobalRtpcs);
+
+                SerializedProperty speedRTPCProp = serializedObject.FindProperty("speedRTPC");
+                EditorGUILayout.PropertyField(speedRTPCProp);
+
+                SerializedProperty stateRTPCProp = serializedObject.FindProperty("stateRTPC");
+                EditorGUILayout.PropertyField(stateRTPCProp);
+
+                serializedObject.ApplyModifiedProperties();
+            }
+
+            if (GUI.changed)
+            {
+                EditorUtility.SetDirty(script);
             }
         }
     }
+    #endregion
+#endif
 }

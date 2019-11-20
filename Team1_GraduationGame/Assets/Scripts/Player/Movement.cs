@@ -17,7 +17,10 @@ public class Movement : MonoBehaviour
     
     [HideInInspector]
     public float targetSpeed;
-    public bool isJumping = false, inSneakZone = false;    
+    public bool isJumping = false, inSneakZone = false;
+
+    // Tried a particle system for the ground
+    public ParticleSystem Groundparticles;
     
 
 
@@ -129,6 +132,13 @@ public class Movement : MonoBehaviour
     {
         currentSpeed.value = Vector3.Distance(transform.position, _previousPosition) / Time.fixedDeltaTime;
 
+        // Tried a particle system for the ground
+        if (currentSpeed.value > 4 && isJumping == false)
+        {
+            Groundparticles.Play();
+        } else {
+            Groundparticles.Stop();
+        }
         // I set a temp Speed animator if we arent using motion matching
 
         if (animator.runtimeAnimatorController != null && animator.runtimeAnimatorController.name == "MotherAnimator")

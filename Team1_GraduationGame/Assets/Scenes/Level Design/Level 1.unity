@@ -15592,12 +15592,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 6897269567999987109, guid: bffd6909a73269946945f759803e30be,
-        type: 3}
-      propertyPath: data.WwiseObjectReference
-      value: 
-      objectReference: {fileID: 11400000, guid: 6e15fda18d5b32248af14786e0f2abfd,
-        type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: bffd6909a73269946945f759803e30be, type: 3}
 --- !u!1001 &1697106526
@@ -20352,6 +20346,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Layer
       value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 6374042520474391193, guid: 40d7b7e0c162d044da6bbf24d3eda68e,
+        type: 3}
+      propertyPath: soundEvents.Array.data[1].triggerDelay
+      value: 0.1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 40d7b7e0c162d044da6bbf24d3eda68e, type: 3}
@@ -33077,8 +33076,44 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2302374889825985434, guid: 4224ed8a0b9da664aaa320506e043f21,
         type: 3}
+      propertyPath: soundEvents.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2302374889825985434, guid: 4224ed8a0b9da664aaa320506e043f21,
+        type: 3}
       propertyPath: soundEvents.Array.data[0].triggerDelay
       value: 14
+      objectReference: {fileID: 0}
+    - target: {fileID: 2302374889825985434, guid: 4224ed8a0b9da664aaa320506e043f21,
+        type: 3}
+      propertyPath: soundEvents.Array.data[1].triggerTypeSelector
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2302374889825985434, guid: 4224ed8a0b9da664aaa320506e043f21,
+        type: 3}
+      propertyPath: soundEvents.Array.data[1].triggerDelay
+      value: 14
+      objectReference: {fileID: 0}
+    - target: {fileID: 2302374889825985434, guid: 4224ed8a0b9da664aaa320506e043f21,
+        type: 3}
+      propertyPath: soundEvents.Array.data[1].behaviorSelector
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2302374889825985434, guid: 4224ed8a0b9da664aaa320506e043f21,
+        type: 3}
+      propertyPath: soundEvents.Array.data[1].soundManagerGameObject
+      value: 
+      objectReference: {fileID: 8243931934421571219}
+    - target: {fileID: 2302374889825985434, guid: 4224ed8a0b9da664aaa320506e043f21,
+        type: 3}
+      propertyPath: soundEvents.Array.data[1].wwiseState.WwiseObjectReference
+      value: 
+      objectReference: {fileID: 11400000, guid: d5b0aea41cae83d48bf86b76d78da4ca,
+        type: 2}
+    - target: {fileID: 2302374889825985434, guid: 4224ed8a0b9da664aaa320506e043f21,
+        type: 3}
+      propertyPath: soundEvents.Array.data[1].isActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 1082137837, guid: 4224ed8a0b9da664aaa320506e043f21, type: 3}
@@ -33133,6 +33168,12 @@ MonoBehaviour:
             m_StringArgument: 
             m_BoolArgument: 0
           m_CallState: 2
+--- !u!1 &8243931934421571219 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8243931935069967907, guid: 4224ed8a0b9da664aaa320506e043f21,
+    type: 3}
+  m_PrefabInstance: {fileID: 8243931934421571216}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &8493331936540625042
 Transform:
   m_ObjectHideFlags: 0

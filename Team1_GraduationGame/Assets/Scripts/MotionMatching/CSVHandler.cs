@@ -16,29 +16,29 @@ namespace Team1_GraduationGame.MotionMatching
         private static string[] csvLabels =
         {
             // General info
-            "ClipName" /*[0]*/, "Frame" /*[1]*/,
+            "ClipName" /*[0]*/, "Frame" /*[1]*/, "State" /*[2]*/,
 
             // Pose data
-            "RootPos.x" /*[2]*/, "RootPos.z" /*[3]*/,
-            "LFootPos.x" /*[4]*/, "LFootPos.y" /*[5]*/, "LFootPos.z" /*[6]*/,
-            "RFootPos.x" /*[7]*/, "RFootPos.y" /*[8]*/, "RFootPos.z" /*[9]*/,
-            "NeckPos.x" /*[10]*/, "NeckPos.y" /*[11]*/, "NeckPos.z" /*[12]*/,
+            "RootPos.x" /*[3]*/, "RootPos.z" /*[4]*/,
+            "LFootPos.x" /*[5]*/, "LFootPos.y" /*[6]*/, "LFootPos.z" /*[7]*/,
+            "RFootPos.x" /*[8]*/, "RFootPos.y" /*[9]*/, "RFootPos.z" /*[10]*/,
+            "NeckPos.x" /*[11]*/, "NeckPos.y" /*[12]*/, "NeckPos.z" /*[13]*/,
 
-            "RootVel.x" /*[13]*/, "RootVel.z" /*[14]*/,
-            "LFootVel.x" /*[15]*/, "LFootVel.y" /*[16]*/, "LFootVel.z" /*[17]*/,
-            "RFootVel.x" /*[18]*/, "RFootVel.y" /*[19]*/, "RFootVel.z" /*[20]*/,
-            "NeckVel.x" /*[21]*/, "NeckVel.y" /*[22]*/, "NeckVel.z" /*[23]*/,
+            "RootVel.x" /*[14]*/, "RootVel.z" /*[15]*/,
+            "LFootVel.x" /*[16]*/, "LFootVel.y" /*[17]*/, "LFootVel.z" /*[18]*/,
+            "RFootVel.x" /*[19]*/, "RFootVel.y" /*[20]*/, "RFootVel.z" /*[21]*/,
+            "NeckVel.x" /*[22]*/, "NeckVel.y" /*[23]*/, "NeckVel.z" /*[24]*/,
 
             // TrajectoryPoint data
-            "Forward.x" /*[24]*/, "Forward.z" /*[25]*/
+            "Forward.x" /*[25]*/, "Forward.z" /*[26]*/
         };
 
         private List<string> allClipNames;
-        private List<int> allFrames;
+        private List<int> allFrames, allStates;
         private List<MMPose> allPoses;
         private List<TrajectoryPoint> allPoints;
 
-        public void WriteCSV(List<MMPose> poseData, List<TrajectoryPoint> pointData, List<string> clipNames, List<int> frames)
+        public void WriteCSV(List<MMPose> poseData, List<TrajectoryPoint> pointData, List<string> clipNames, List<int> frames, List<int> states)
         {
 #if UNITY_EDITOR
             if (!AssetDatabase.IsValidFolder(path))
@@ -65,6 +65,7 @@ namespace Team1_GraduationGame.MotionMatching
                     {
                         // General info
                         clipNames[i], frames[i].ToString(spec, ci),
+                        states[i].ToString(spec, ci),
 
                         // Pose data
                         poseData[i].GetRootPos().x.ToString(spec, ci),
@@ -110,6 +111,7 @@ namespace Team1_GraduationGame.MotionMatching
 
             allClipNames = new List<string>();
             allFrames = new List<int>();
+            allStates = new List<int>();
             allPoses = new List<MMPose>();
             allPoints = new List<TrajectoryPoint>();
             List<FeatureVector> featuresFromCSV = new List<FeatureVector>();
@@ -127,28 +129,26 @@ namespace Team1_GraduationGame.MotionMatching
                 {
                     allClipNames.Add(tempString[0]);
                     allFrames.Add(int.Parse(tempString[1], format));
+                    allStates.Add(int.Parse(tempString[2], format));
                     allPoses.Add(new MMPose(
                         // Positions
-                        new Vector3(float.Parse(tempString[2], format), 0.0f, float.Parse(tempString[3], format)),
-                        new Vector3(float.Parse(tempString[4], format), float.Parse(tempString[5], format),
-                            float.Parse(tempString[6], format)),
-                        new Vector3(float.Parse(tempString[7], format), float.Parse(tempString[8], format),
-                            float.Parse(tempString[9], format)),
-                        new Vector3(float.Parse(tempString[10], format), float.Parse(tempString[11], format),
-                            float.Parse(tempString[12], format)),
+                        new Vector3(float.Parse(tempString[3], format), 0.0f, float.Parse(tempString[4], format)),
+                        new Vector3(float.Parse(tempString[5], format), float.Parse(tempString[6], format), float.Parse(tempString[7], format)),
+                        new Vector3(float.Parse(tempString[8], format), float.Parse(tempString[9], format), float.Parse(tempString[10], format)),
+                        new Vector3(float.Parse(tempString[11], format), float.Parse(tempString[12], format), float.Parse(tempString[13], format)),
 
                         // Velocities
-                        new Vector3(float.Parse(tempString[13], format), 0.0f, float.Parse(tempString[14], format)),
-                        new Vector3(float.Parse(tempString[15], format), float.Parse(tempString[16], format),
-                            float.Parse(tempString[17], format)),
-                        new Vector3(float.Parse(tempString[18], format), float.Parse(tempString[19], format),
-                            float.Parse(tempString[20], format)),
-                        new Vector3(float.Parse(tempString[21], format), float.Parse(tempString[22], format),
-                            float.Parse(tempString[23], format))));
+                        new Vector3(float.Parse(tempString[14], format), 0.0f, float.Parse(tempString[15], format)),
+                        new Vector3(float.Parse(tempString[16], format), float.Parse(tempString[17], format),
+                            float.Parse(tempString[18], format)),
+                        new Vector3(float.Parse(tempString[19], format), float.Parse(tempString[20], format),
+                            float.Parse(tempString[21], format)),
+                        new Vector3(float.Parse(tempString[22], format), float.Parse(tempString[23], format),
+                            float.Parse(tempString[24], format))));
 
                     allPoints.Add(new TrajectoryPoint(
-                        new Vector3(float.Parse(tempString[2], format), 0.0f, float.Parse(tempString[3], format)),
-                        new Vector3(float.Parse(tempString[24], format), 0.0f, float.Parse(tempString[25], format))));
+                        new Vector3(float.Parse(tempString[3], format), 0.0f, float.Parse(tempString[4], format)),
+                        new Vector3(float.Parse(tempString[25], format), 0.0f, float.Parse(tempString[26], format))));
                 }
                 else
                     ignoreHeaders = false;
@@ -174,7 +174,7 @@ namespace Team1_GraduationGame.MotionMatching
                 }
 
                 featuresFromCSV.Add(new FeatureVector(allPoses[i], new Trajectory(trajPoints), i, allClipNames[i],
-                    allFrames[i]));
+                    allFrames[i], allStates[i]));
             }
 
             return featuresFromCSV;

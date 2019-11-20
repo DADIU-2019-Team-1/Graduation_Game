@@ -12,7 +12,7 @@ namespace Team1_GraduationGame.MotionMatching
 
         // --- Collections
         private List<string> allClipNames;
-        private List<int> allFrames;
+        private List<int> allFrames, allStates;
         private List<MMPose> allPoses;
         private List<TrajectoryPoint> allPoints;
         private List<Vector3> allRootVels, allLFootVels, allRFootVels;
@@ -21,12 +21,13 @@ namespace Team1_GraduationGame.MotionMatching
         private const float velFactor = 10.0f;
 
         public void Preprocess(AnimationClip[] allClips, HumanBodyBones[] joints, GameObject avatar, Animator animator,
-            float frameSampleRate)
+            float frameSampleRate, string[] states)
         {
             csvHandler = new CSVHandler();
 
             allClipNames = new List<string>();
             allFrames = new List<int>();
+            allStates = new List<int>();
             allPoses = new List<MMPose>();
             allPoints = new List<TrajectoryPoint>();
 
@@ -44,12 +45,30 @@ namespace Team1_GraduationGame.MotionMatching
                     preLFootPos = Vector3.zero,
                     preRFootPos = Vector3.zero,
                     preNeckPos = Vector3.zero;
+                string lowercaseName = allClips[i].name.ToLower();
+                int clipState = -1;
+                for (int j = 0; j < states.Length; j++)
+                {
+                    Debug.Log("Checking state for " + lowercaseName + " | Is it " + states[j] + "?");
+                    if (lowercaseName.Contains(states[j]) && !lowercaseName.Contains("from" + states[j]))
+                    {
+                        Debug.Log("Yes! Set clip state to " + j + " which is " + states[j]);
+                        clipState = j;
+                        break;
+                    }
+                }
+                if (clipState == -1)
+                {
+                    Debug.Log(i + " skipped");
+                    continue;
+                }
 
                 for (int j = 0; j < (int) (allClips[i].length * frameSampleRate); j++)
                 {
                     allClips[i].SampleAnimation(avatar, j / frameSampleRate);
                     allClipNames.Add(allClips[i].name);
                     allFrames.Add(j);
+                    allStates.Add(clipState);
                     Vector3 rootPos =
                         startSpace.inverse.MultiplyPoint3x4(animator.GetBoneTransform(joints[0]).position);
                     charSpace.SetTRS(
@@ -103,7 +122,7 @@ namespace Team1_GraduationGame.MotionMatching
                 }
             }
 
-            csvHandler.WriteCSV(allPoses, allPoints, allClipNames, allFrames);
+            csvHandler.WriteCSV(allPoses, allPoints, allClipNames, allFrames, allStates);
         }
 
         public List<FeatureVector> LoadData(int pointsPerTrajectory, int framesBetweenTrajectoryPoints)

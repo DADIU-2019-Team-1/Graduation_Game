@@ -8,6 +8,7 @@ using Unity.Mathematics;
 using UnityEditor;
 #endif
 using UnityEngine;
+using UnityEngine.XR;
 
 namespace Team1_GraduationGame.MotionMatching
 {
@@ -52,14 +53,14 @@ namespace Team1_GraduationGame.MotionMatching
         // --- Variables 
         public bool _preProcess, _playAnimationMode;
         public int pointsPerTrajectory = 4, framesBetweenTrajectoryPoints = 10;
-        [SerializeField] private bool _isMotionMatching, _isIdling;
+        [SerializeField] private bool _isMotionMatching;
         [SerializeField] private int queryRateInFrames = 10, candidatesPerMisc = 10, banQueueSize = 10;
 
-        [Tooltip("The time in frames that it takes for the animaton layers to blend.")] [SerializeField]
-        private float animLayerWeightChange = 50.0f;
+        [Tooltip("The time in frames that it takes for the animation layers to blend.")] 
+        [SerializeField] private float animLayerWeightChange = 5.0f;
 
         private AnimationClip currentClip;
-        private int currentFrame, currentID;
+        private int currentFrame, _currentID;
         [SerializeField] private float animationFrameRate = 50.0f;
 
         // --- Weights
@@ -69,23 +70,28 @@ namespace Team1_GraduationGame.MotionMatching
             weightNeckVel = 1.0f,
             weightNeckPos = 1.0f,
             weightFeetPos = 1.0f,
-            weightTrajPoints = 1.0f,
+            weightTrajPositions = 1.0f,
             weightTrajForwards = 1.0f;
 
         // --- Debugstuff
+        [Header("Debug")] [SerializeField] private bool useJobs = true;
         private int animIterator = -1;
         private IEnumerator currentEnumerator;
         private List<string> debugStringList;
-
-
-        //private NativeArray<float3> trajectoryPositions, trajectoryForwards;
-
+        
+        private NativeArray<float3> _trajectoryPositions, _trajectoryForwards;
+        private NativeArray<int> _featureIDs, _featureFrame, _frameCountForIDs, _featureState;
 
         private void Awake() // Load animation data
         {
             movement = GetComponent<Movement>();
             animator = GetComponent<Animator>();
             preProcessing = new PreProcessing();
+
+            for (int i = 0; i < states.Length; i++)
+            {
+                states[i] = states[i].ToLower();
+            }
 
 #if UNITY_EDITOR
             if (_preProcess)
@@ -109,7 +115,7 @@ namespace Team1_GraduationGame.MotionMatching
                 EditorUtility.CopySerialized(tempAnimContainer, animContainer);
                 AssetDatabase.SaveAssets();
 
-                preProcessing.Preprocess(allClips, joints, gameObject, animator, animationFrameRate);
+                preProcessing.Preprocess(allClips, joints, gameObject, animator, animationFrameRate, states);
             }
 #endif
             allClips = animContainer.animationClips;
@@ -125,10 +131,6 @@ namespace Team1_GraduationGame.MotionMatching
                 }
             }
 
-            for (int i = 0; i < states.Length; i++)
-            {
-                states[i] = states[i].ToLower();
-            }
 
             _trajCandidatesRef = new List<FeatureVector>();
             _trajPossibleCandidatesRef = new List<FeatureVector>();
@@ -139,17 +141,27 @@ namespace Team1_GraduationGame.MotionMatching
 
         private void Start()
         {
-            //trajectoryPositions = new NativeArray<float3>(featureVectors.Count * pointsPerTrajectory, Allocator.Persistent);
-            //trajectoryForwards = new NativeArray<float3>(featureVectors.Count * pointsPerTrajectory, Allocator.Persistent);
+            // Persistent native array initialization
+            _trajectoryPositions = new NativeArray<float3>(featureVectors.Count * pointsPerTrajectory, Allocator.Persistent);
+            _trajectoryForwards = new NativeArray<float3>(featureVectors.Count * pointsPerTrajectory, Allocator.Persistent);
+            _featureIDs = new NativeArray<int>(featureVectors.Count, Allocator.Persistent);
+            _featureFrame = new NativeArray<int>(featureVectors.Count, Allocator.Persistent);
+            _frameCountForIDs = new NativeArray<int>(featureVectors.Count, Allocator.Persistent);
+            _featureState = new NativeArray<int>(featureVectors.Count, Allocator.Persistent);
 
-            //for (int i = 0; i < featureVectors.Count; i++)
-            //{
-            //    for (int j = 0; j < pointsPerTrajectory; j++)
-            //    {
-            //        trajectoryPositions[i+j] = featureVectors[i].GetTrajectory().GetTrajectoryPoints()[j].GetPoint();
-            //        trajectoryForwards[i+j] = featureVectors[i].GetTrajectory().GetTrajectoryPoints()[j].GetForward();
-            //    }
-            //}
+            for (int i = 0; i < featureVectors.Count; i++)
+            {
+                _featureIDs[i] = featureVectors[i].GetID();
+                _featureFrame[i] = featureVectors[i].GetFrame();
+                _frameCountForIDs[i] = featureVectors[i].GetFrameCountForID();
+                for (int j = 0; j < pointsPerTrajectory; j++)
+                {
+                    _trajectoryPositions[i + j] = featureVectors[i].GetTrajectory().GetTrajectoryPoints()[j].GetPoint();
+                    _trajectoryForwards[i + j] = featureVectors[i].GetTrajectory().GetTrajectoryPoints()[j].GetForward();
+                }
+
+                _featureState[i] = featureVectors[i].GetState();
+            }
 
             if (!_playAnimationMode)
             {
@@ -168,18 +180,17 @@ namespace Team1_GraduationGame.MotionMatching
 
         public void ChangeLayerWeight(int layerIndex, int desiredWeight)
         {
-            StopAllCoroutines();
-            StartCoroutine(MotionMatch());
+            StopCoroutine(nameof(ChangeLayerWeightOverTime));
             StartCoroutine(ChangeLayerWeightOverTime(layerIndex, desiredWeight));
         }
 
         private IEnumerator ChangeLayerWeightOverTime(int layerIndex, int desiredWeight)
         {
             float counter = 0.0f;
+            float layerWeight = animator.GetLayerWeight(layerIndex);
             while (counter <= animLayerWeightChange)
             {
-                animator.SetLayerWeight(layerIndex,
-                    math.lerp(animator.GetLayerWeight(layerIndex), desiredWeight, counter / animLayerWeightChange));
+                animator.SetLayerWeight(layerIndex, math.lerp(layerWeight, desiredWeight, counter / animLayerWeightChange));
                 yield return new WaitForSeconds(Time.fixedDeltaTime);
                 counter++;
             }
@@ -219,7 +230,7 @@ namespace Team1_GraduationGame.MotionMatching
         //    {
         //        Matrix4x4 invCharSpace = transform.worldToLocalMatrix.inverse;
         //        Matrix4x4 animSpace = new Matrix4x4();
-        //        animSpace.SetTRS(featureVectors[currentID].GetTrajectory().GetTrajectoryPoints()[0].GetPoint(),
+        //        animSpace.SetTRS(featureVectors[_currentID].GetTrajectory().GetTrajectoryPoints()[0].GetPoint(),
         //            Quaternion.identity, Vector3.one);
 
         //        Gizmos.color = Color.red; // Movement Trajectory
@@ -241,26 +252,26 @@ namespace Team1_GraduationGame.MotionMatching
         //        }
 
         //        Gizmos.color = Color.green; // Animation Trajectory
-        //        for (int i = 0; i < featureVectors[currentID].GetTrajectory().GetTrajectoryPoints().Length; i++)
+        //        for (int i = 0; i < featureVectors[_currentID].GetTrajectory().GetTrajectoryPoints().Length; i++)
         //        {
         //            // Position
-        //            //Gizmos.DrawWireSphere(invCharSpace.MultiplyPoint3x4(animSpace.inverse.MultiplyPoint3x4(featureVectors[currentID].GetTrajectory().GetTrajectoryPoints()[i].GetPoint())), 0.2f);
+        //            //Gizmos.DrawWireSphere(invCharSpace.MultiplyPoint3x4(animSpace.inverse.MultiplyPoint3x4(featureVectors[_currentID].GetTrajectory().GetTrajectoryPoints()[i].GetPoint())), 0.2f);
 
         //            if (i != 0)
         //            {
         //                Gizmos.DrawLine(
         //                    invCharSpace.MultiplyPoint3x4(animSpace.inverse.MultiplyPoint3x4(
-        //                        featureVectors[currentID].GetTrajectory().GetTrajectoryPoints()[i - 1].GetPoint())),
+        //                        featureVectors[_currentID].GetTrajectory().GetTrajectoryPoints()[i - 1].GetPoint())),
         //                    invCharSpace.MultiplyPoint3x4(animSpace.inverse.MultiplyPoint3x4(
-        //                        featureVectors[currentID].GetTrajectory().GetTrajectoryPoints()[i].GetPoint())));
+        //                        featureVectors[_currentID].GetTrajectory().GetTrajectoryPoints()[i].GetPoint())));
         //            }
 
         //            // Forward
         //            Gizmos.DrawLine(
         //                invCharSpace.MultiplyPoint3x4(animSpace.inverse.MultiplyPoint3x4(
-        //                    featureVectors[currentID].GetTrajectory().GetTrajectoryPoints()[i].GetPoint())),
+        //                    featureVectors[_currentID].GetTrajectory().GetTrajectoryPoints()[i].GetPoint())),
         //                invCharSpace.MultiplyPoint3x4(animSpace.inverse.MultiplyPoint3x4(
-        //                    featureVectors[currentID].GetTrajectory().GetTrajectoryPoints()[i].GetForward())));
+        //                    featureVectors[_currentID].GetTrajectory().GetTrajectoryPoints()[i].GetForward())));
         //        }
         //    }
         //}
@@ -276,13 +287,12 @@ namespace Team1_GraduationGame.MotionMatching
                 }
             }
 
-            Debug.Log("Updating to animation " + currentClip.name + " to frame " + frame + " with ID " + id +
-                      " from id " + currentID + " of frame " + currentFrame);
+            //Debug.Log("Updating to animation " + currentClip.name + " to frame " + frame + " with ID " + id + " from id " + _currentID + " of frame " + currentFrame);
             animator.CrossFadeInFixedTime(currentClip.name, 0.3f, 0,
                 frame / animationFrameRate); // 0.3f was recommended by Magnus
-            currentID = id;
+            _currentID = id;
             currentFrame = frame;
-            banQueue.Enqueue(currentID);
+            banQueue.Enqueue(_currentID);
             if (banQueue.Count > banQueueSize)
                 banQueue.Dequeue();
         }
@@ -292,7 +302,7 @@ namespace Team1_GraduationGame.MotionMatching
             _isMotionMatching = true;
             while (_isMotionMatching)
             {
-                currentID += queryRateInFrames;
+                _currentID += queryRateInFrames;
                 List<FeatureVector> candidates = TrajectoryMatching(movement.GetMovementTrajectory(),
                     ref _trajCandidatesRef, ref _trajPossibleCandidatesRef, ref _trajCandidateValuesRef);
                 int candidateID = PoseMatching(candidates);
@@ -314,107 +324,129 @@ namespace Team1_GraduationGame.MotionMatching
             {
                 if (featureVectors[i].GetClipName() == allClips[animIterator].name)
                 {
-                    currentID = i;
+                    _currentID = i;
                     break;
                 }
             }
 
-            int startofIdForClip = currentID;
+            int startofIdForClip = _currentID;
             Debug.Log("Current playing " + allClips[animIterator].name + ", which is " + allClips[animIterator].length +
                       " seconds long!");
-            Debug.Log("While loop condition: Frame " + featureVectors[currentID].GetFrame() + " < " +
-                      featureVectors[currentID].GetFrameCountForID() + " && Clip " +
-                      featureVectors[currentID].GetClipName() + " == " + allClips[animIterator].name);
-            while (featureVectors[currentID].GetFrame() < featureVectors[currentID].GetFrameCountForID() &&
-                   featureVectors[currentID].GetClipName() == allClips[animIterator].name)
+            Debug.Log("While loop condition: Frame " + featureVectors[_currentID].GetFrame() + " < " +
+                      featureVectors[_currentID].GetFrameCountForID() + " && Clip " +
+                      featureVectors[_currentID].GetClipName() + " == " + allClips[animIterator].name);
+            while (featureVectors[_currentID].GetFrame() < featureVectors[_currentID].GetFrameCountForID() &&
+                   featureVectors[_currentID].GetClipName() == allClips[animIterator].name)
             {
-                Debug.Log("Current ID is now " + currentID + ", which started at ID " + startofIdForClip + "!");
-                UpdateAnimation(currentID, featureVectors[currentID].GetFrame());
+                Debug.Log("Current ID is now " + _currentID + ", which started at ID " + startofIdForClip + "!");
+                UpdateAnimation(_currentID, featureVectors[_currentID].GetFrame());
                 yield return new WaitForSeconds(queryRateInFrames / currentClip.frameRate);
-                currentID += queryRateInFrames;
+                _currentID += queryRateInFrames;
             }
         }
 
         List<FeatureVector> TrajectoryMatching(Trajectory movementTraj, ref List<FeatureVector> candidates, ref List<FeatureVector> possibleCandidates, ref List<float> candidateValues)
         {
             float startTime = Time.realtimeSinceStartup;
-            NativeArray<float3> trajectoryPositions = new NativeArray<float3>(featureVectors.Count * pointsPerTrajectory, Allocator.TempJob);
-            NativeArray<float3> trajectoryForwards = new NativeArray<float3>(featureVectors.Count * pointsPerTrajectory, Allocator.TempJob);
-
-            for (int i = 0; i < featureVectors.Count; i++)
-            {
-                for (int j = 0; j < pointsPerTrajectory; j++)
-                {
-                    trajectoryPositions[i + j] = featureVectors[i].GetTrajectory().GetTrajectoryPoints()[j].GetPoint();
-                    trajectoryForwards[i + j] = featureVectors[i].GetTrajectory().GetTrajectoryPoints()[j].GetForward();
-                }
-            }
-            TrajectoryMatchingParallelJob parallelJob = new TrajectoryMatchingParallelJob
-            {
-                positionArray = trajectoryPositions,
-                forwardArray = trajectoryForwards
-            };
-
-
-            JobHandle handle = parallelJob.Schedule(featureVectors.Count * pointsPerTrajectory, 1);
-            handle.Complete();
-
-            trajectoryPositions.Dispose();
-            trajectoryForwards.Dispose();
-
-            Debug.Log((Time.realtimeSinceStartup - startTime) * 1000f + "ms");
-
             candidates.Clear();
-            possibleCandidates.Clear();
-            candidateValues.Clear();
-            for (int i = 0; i < candidatesPerMisc; i++)
+            if (useJobs)
             {
-                possibleCandidates.Add(null);
-                candidateValues.Add(float.MaxValue);
-            }
+                NativeArray<int> trajectoryCandidateIDs = new NativeArray<int>(candidatesPerMisc, Allocator.TempJob);
+                NativeArray<float> trajectoryCandidateValues = new NativeArray<float>(candidatesPerMisc, Allocator.TempJob);
+                int movementTrajectoryLength = movementTraj.GetTrajectoryPoints().Length;
+                NativeArray<float3> movementTrajectoryPositions = new NativeArray<float3>(movementTrajectoryLength, Allocator.TempJob);
+                NativeArray<float3> movementTrajectoryForwards = new NativeArray<float3>(movementTrajectoryLength, Allocator.TempJob);
 
-            for (int i = 0; i < featureVectors.Count; i++)
-            {
-                if (!AnimDiscarder(featureVectors[i].GetClipName(), movement.moveState.value))
+                for (int i = 0; i < movementTrajectoryLength; i++)
                 {
-                    continue;
+                    movementTrajectoryPositions[i] = movementTraj.GetTrajectoryPoints()[i].GetPoint();
+                    movementTrajectoryForwards[i] = movementTraj.GetTrajectoryPoints()[i].GetForward();
                 }
 
-                if ((featureVectors[i].GetID() > currentID ||
-                     featureVectors[i].GetID() < currentID - queryRateInFrames) &&
-                    featureVectors[i].GetFrame() + queryRateInFrames <= featureVectors[i].GetFrameCountForID() &&
-                    !banQueue.Contains(featureVectors[i].GetID()))
+                TrajectoryMatchingParallelJob parallelJob = new TrajectoryMatchingParallelJob
                 {
-                    float comparison = featureVectors[i].GetTrajectory().CompareTrajectories(movementTraj,
-                        transform.worldToLocalMatrix.inverse, weightTrajPoints, weightTrajForwards);
-                    for (int j = 0; j < candidatesPerMisc; j++)
+                    animPositionArray = _trajectoryPositions,
+                    animForwardArray = _trajectoryForwards,
+                    movementPositionArray = movementTrajectoryPositions,
+                    movementForwardArray = movementTrajectoryForwards,
+                    featureIDs = _featureIDs,
+                    featureState = _featureState,
+                    featureFrame = _featureFrame,
+                    frameCountForIDs = _frameCountForIDs,
+                    candidateIDs = trajectoryCandidateIDs,
+                    candidateValues = trajectoryCandidateValues,
+                    currentID = _currentID,
+                    queryRate = queryRateInFrames,
+                    state = movement.moveState.value,
+                    trajPoints = pointsPerTrajectory,
+                    movementMatrix = transform.localToWorldMatrix.inverse,
+                    positionWeight = weightTrajPositions,
+                    forwardWeight = weightTrajForwards
+                };
+                JobHandle handle = parallelJob.Schedule();
+                handle.Complete();
+
+                for (int i = 0; i < trajectoryCandidateIDs.Length; i++)
+                {
+                    candidates.Add(featureVectors[trajectoryCandidateIDs[i]]);
+                }
+                trajectoryCandidateIDs.Dispose();
+                trajectoryCandidateValues.Dispose();
+                movementTrajectoryPositions.Dispose();
+                movementTrajectoryForwards.Dispose();
+            }
+            else
+            {
+                possibleCandidates.Clear();
+                candidateValues.Clear();
+                for (int i = 0; i < candidatesPerMisc; i++)
+                {
+                    possibleCandidates.Add(null);
+                    candidateValues.Add(float.MaxValue);
+                }
+
+                for (int i = 0; i < featureVectors.Count; i++)
+                {
+                    if (!AnimDiscarder(featureVectors[i].GetClipName(), movement.moveState.value))
                     {
-                        if (possibleCandidates[j] != null)
+                        continue;
+                    }
+
+                    if ((featureVectors[i].GetID() > _currentID ||
+                         featureVectors[i].GetID() < _currentID - queryRateInFrames) &&
+                        featureVectors[i].GetFrame() + queryRateInFrames <= featureVectors[i].GetFrameCountForID() &&
+                        !banQueue.Contains(featureVectors[i].GetID()))
+                    {
+                        float comparison = featureVectors[i].GetTrajectory().CompareTrajectories(movementTraj,
+                            transform.worldToLocalMatrix.inverse, weightTrajPositions, weightTrajForwards);
+                        for (int j = 0; j < candidatesPerMisc; j++)
                         {
-                            if (comparison < candidateValues[j])
+                            if (possibleCandidates[j] != null)
                             {
-                                possibleCandidates.Insert(j, featureVectors[i]);
-                                possibleCandidates.RemoveAt(candidatesPerMisc);
-                                candidateValues.Insert(j, comparison);
-                                candidateValues.RemoveAt(candidatesPerMisc);
+                                if (comparison < candidateValues[j])
+                                {
+                                    possibleCandidates.Insert(j, featureVectors[i]);
+                                    possibleCandidates.RemoveAt(candidatesPerMisc);
+                                    candidateValues.Insert(j, comparison);
+                                    candidateValues.RemoveAt(candidatesPerMisc);
+                                    break;
+                                }
+                            }
+                            else
+                            {
+                                possibleCandidates[j] = featureVectors[i];
+                                candidateValues[j] = featureVectors[i].GetTrajectory().CompareTrajectories(movementTraj,
+                                    transform.worldToLocalMatrix.inverse, weightTrajPositions, weightTrajForwards);
                                 break;
                             }
                         }
-                        else
-                        {
-                            possibleCandidates[j] = featureVectors[i];
-                            candidateValues[j] = featureVectors[i].GetTrajectory().CompareTrajectories(movementTraj,
-                                transform.worldToLocalMatrix.inverse, weightTrajPoints, weightTrajForwards);
-                            break;
-                        }
                     }
                 }
-            }
-
-            for (int i = 0; i < possibleCandidates.Count; i++)
-            {
-                if (possibleCandidates[i] != null)
-                    candidates.Add(possibleCandidates[i]);
+                for (int i = 0; i < possibleCandidates.Count; i++)
+                {
+                    if (possibleCandidates[i] != null)
+                        candidates.Add(possibleCandidates[i]);
+                }
             }
             return candidates;
         }
@@ -425,9 +457,9 @@ namespace Team1_GraduationGame.MotionMatching
             float currentDif = float.MaxValue;
             foreach (var candidate in candidates)
             {
-                float velDif = featureVectors[currentID].GetPose().ComparePoses(candidate.GetPose(),
+                float velDif = featureVectors[_currentID].GetPose().ComparePoses(candidate.GetPose(),
                     transform.worldToLocalMatrix.inverse, weightRootVel, weightLFootVel, weightRFootVel, weightNeckVel);
-                float feetPosDif = featureVectors[currentID].GetPose().GetJointDistance(candidate.GetPose(),
+                float feetPosDif = featureVectors[_currentID].GetPose().GetJointDistance(candidate.GetPose(),
                     transform.worldToLocalMatrix.inverse, weightFeetPos, weightNeckPos);
                 float candidateDif = velDif + feetPosDif; // TODO: Look at joint distance for idle
                 if (candidateDif < currentDif)
@@ -439,14 +471,14 @@ namespace Team1_GraduationGame.MotionMatching
             }
 
             // TODO: Maybe remove?
-            if (featureVectors[bestId].GetClipName() == featureVectors[currentID].GetClipName() &&
-                featureVectors[currentID].GetFrame() + queryRateInFrames <=
-                featureVectors[currentID].GetFrameCountForID())
-                bestId = currentID;
+            if (featureVectors[bestId].GetClipName() == featureVectors[_currentID].GetClipName() &&
+                featureVectors[_currentID].GetFrame() + queryRateInFrames <=
+                featureVectors[_currentID].GetFrameCountForID())
+                bestId = _currentID;
             return bestId;
         }
 
-        private bool AnimDiscarder(string candidateName, int stateNumber)
+        public bool AnimDiscarder(string candidateName, int stateNumber)
         {
             string candidateNameLowerCase = candidateName.ToLower();
             if (candidateNameLowerCase.Contains(states[stateNumber]))
@@ -462,17 +494,80 @@ namespace Team1_GraduationGame.MotionMatching
         {
             return featureVectors;
         }
+
+        private void OnDisable()
+        {
+            _trajectoryPositions.Dispose();
+            _trajectoryForwards.Dispose();
+            _featureIDs.Dispose();
+            _featureFrame.Dispose();
+            _frameCountForIDs.Dispose();
+            _featureState.Dispose();
+        }
     }
 
-    //[BurstCompile]
-    public struct TrajectoryMatchingParallelJob : IJobParallelFor
+    [BurstCompile]
+    public struct TrajectoryMatchingParallelJob : IJob
     {
-        public NativeArray<float3> positionArray;
-        public NativeArray<float3> forwardArray;
-        public void Execute(int index)
+        public NativeArray<float3> animPositionArray;
+        public NativeArray<float3> animForwardArray;
+        public NativeArray<float3> movementPositionArray;
+        public NativeArray<float3> movementForwardArray;
+        public NativeArray<int> featureIDs;
+        public NativeArray<int> featureState;
+        public NativeArray<int> featureFrame;
+        public NativeArray<int> frameCountForIDs;
+        public NativeArray<int> candidateIDs;
+        public NativeArray<float> candidateValues;
+        public Matrix4x4 movementMatrix;
+        public int currentID;
+        public int state;
+        public int queryRate;
+        public int trajPoints;
+
+        public float positionWeight,
+            forwardWeight;
+        public void Execute() // TODO % trajPointLength
         {
-            positionArray[index] = 1.0f;
-            forwardArray[index] = 1.0f;
+            for (int i = 0; i < featureIDs.Length; i++)
+            {
+                if (i == 0)
+                {
+                    for (int j = 0; j < candidateIDs.Length; j++)
+                    {
+                        candidateValues[j] = float.MaxValue;
+                    }
+                }
+
+                if (featureState[i] == state) // Animation has the desired state
+                {
+                    if ((featureIDs[i] > currentID || featureIDs[i] < currentID - queryRate) && featureFrame[i] + queryRate <= frameCountForIDs[i] /*&& !banQueue.Contains(featureIDs[i])*/)
+                    {
+                        float comparison = 0;
+                        for (int j = 0; j < movementPositionArray.Length; j++)
+                        {
+                            comparison += math.distancesq(movementMatrix.MultiplyPoint3x4(animPositionArray[i * trajPoints + j]), movementPositionArray[j]) * 1.0f * positionWeight;
+                            comparison += Vector3.Angle(movementMatrix.MultiplyPoint3x4(animPositionArray[i * trajPoints + j]), movementPositionArray[j]) * 0.1f * forwardWeight;
+                        }
+                        for (int j = candidateIDs.Length - 1; j >= 0; j--)
+                        {
+                            if (comparison >= candidateValues[j] || j == 0)
+                            {
+                                if (j == candidateIDs.Length - 1)
+                                    break;
+
+                                for (int k = candidateIDs.Length - 1; k > j; k--)
+                                {
+                                    candidateIDs[k] = candidateIDs[k - 1];
+                                    candidateValues[k] = candidateValues[k - 1];
+                                }
+                                candidateIDs[j] = featureIDs[i];
+                                candidateValues[j] = comparison;
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 }

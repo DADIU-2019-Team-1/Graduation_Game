@@ -88,24 +88,24 @@ public class Testing : MonoBehaviour
                 }
             }
         }
-        //if (useJobs)
-        //{
-        //    NativeList<JobHandle> jobHandleList = new NativeList<JobHandle>(Allocator.Temp);
-        //    for (int i = 0; i < 10; i++)
-        //    {
-        //        JobHandle jobHandle = ToughJobTask();
-        //        jobHandleList.Add(jobHandle);
-        //    }
-        //    JobHandle.CompleteAll(jobHandleList);
-        //    jobHandleList.Dispose();
-        //}
-        //else
-        //{
-        //    for (int i = 0; i < 10; i++)
-        //    {
-        //        Task();
-        //    }
-        //}
+        if (useJobs)
+        {
+            NativeList<JobHandle> jobHandleList = new NativeList<JobHandle>(Allocator.Temp);
+            for (int i = 0; i < 10; i++)
+            {
+                JobHandle jobHandle = ToughJobTask();
+                jobHandleList.Add(jobHandle);
+            }
+            JobHandle.CompleteAll(jobHandleList);
+            jobHandleList.Dispose();
+        }
+        else
+        {
+            for (int i = 0; i < 10; i++)
+            {
+                Task();
+            }
+        }
 
         Debug.Log((Time.realtimeSinceStartup - startTime) * 1000f + "ms");
     }

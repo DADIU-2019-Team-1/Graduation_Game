@@ -11523,7 +11523,7 @@ PrefabInstance:
     - target: {fileID: 1281680923309422536, guid: 06d569a269c164a49928e7b0bcb184b1,
         type: 3}
       propertyPath: soundEvents.Array.size
-      value: 3
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 1281680923309422536, guid: 06d569a269c164a49928e7b0bcb184b1,
         type: 3}
@@ -11534,7 +11534,7 @@ PrefabInstance:
         type: 3}
       propertyPath: soundEvents.Array.data[2].soundManagerGameObject
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 1228051002}
     - target: {fileID: 1281680923309422536, guid: 06d569a269c164a49928e7b0bcb184b1,
         type: 3}
       propertyPath: soundEvents.Array.data[2].wwiseEvent.WwiseObjectReference
@@ -11587,6 +11587,36 @@ PrefabInstance:
       propertyPath: soundEvents.Array.data[2].secondGameObject
       value: 
       objectReference: {fileID: 32954829}
+    - target: {fileID: 1281680923309422536, guid: 06d569a269c164a49928e7b0bcb184b1,
+        type: 3}
+      propertyPath: soundEvents.Array.data[3].triggerTypeSelector
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 1281680923309422536, guid: 06d569a269c164a49928e7b0bcb184b1,
+        type: 3}
+      propertyPath: soundEvents.Array.data[3].customValue
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 1281680923309422536, guid: 06d569a269c164a49928e7b0bcb184b1,
+        type: 3}
+      propertyPath: soundEvents.Array.data[3].secondGameObject
+      value: 
+      objectReference: {fileID: 32954829}
+    - target: {fileID: 1281680923309422536, guid: 06d569a269c164a49928e7b0bcb184b1,
+        type: 3}
+      propertyPath: soundEvents.Array.data[3].setCustomRtpcFloat
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1281680923309422536, guid: 06d569a269c164a49928e7b0bcb184b1,
+        type: 3}
+      propertyPath: soundEvents.Array.data[3].objDistanceToRtpc
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1281680923309422536, guid: 06d569a269c164a49928e7b0bcb184b1,
+        type: 3}
+      propertyPath: soundEvents.Array.data[3].rtpcRoleBool
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 06d569a269c164a49928e7b0bcb184b1, type: 3}
 --- !u!1 &1228051000 stripped
@@ -11661,6 +11691,12 @@ MonoBehaviour:
     checkForTag: 0
     useValueFromEvent: 0
     tag: 
+--- !u!1 &1228051002 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1281680923309422538, guid: 06d569a269c164a49928e7b0bcb184b1,
+    type: 3}
+  m_PrefabInstance: {fileID: 1228050999}
+  m_PrefabAsset: {fileID: 0}
 --- !u!43 &1251871624
 Mesh:
   m_ObjectHideFlags: 0
@@ -15592,12 +15628,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 6897269567999987109, guid: bffd6909a73269946945f759803e30be,
-        type: 3}
-      propertyPath: data.WwiseObjectReference
-      value: 
-      objectReference: {fileID: 11400000, guid: 6e15fda18d5b32248af14786e0f2abfd,
-        type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: bffd6909a73269946945f759803e30be, type: 3}
 --- !u!1001 &1697106526
@@ -20352,6 +20382,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Layer
       value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 6374042520474391193, guid: 40d7b7e0c162d044da6bbf24d3eda68e,
+        type: 3}
+      propertyPath: soundEvents.Array.data[1].triggerDelay
+      value: 0.1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 40d7b7e0c162d044da6bbf24d3eda68e, type: 3}
@@ -28787,7 +28822,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Path: {fileID: 7764927659244485010}
-  m_PathPosition: 0.2695274
+  m_PathPosition: 10.06956
   m_PositionUnits: 0
   m_PathOffset: {x: 0, y: 0, z: 0}
   m_XDamping: 0
@@ -31094,8 +31129,8 @@ MonoBehaviour:
   - offsetLook: {x: 0, y: 0, z: 0}
     offsetPos: {x: 0, y: 0, z: 0}
     offsetFOV: 0
-  camTarget: {x: 198.8567, y: -2.997016, z: -1.50621}
-  camPosOffset: {x: 0, y: 0, z: 0}
+  camTarget: {x: 119.9639, y: 0.1088526, z: -2.672097}
+  camPosOffset: {x: 0, y: 0.919143, z: 0}
 --- !u!1001 &8226223419548405265
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -33077,8 +33112,44 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2302374889825985434, guid: 4224ed8a0b9da664aaa320506e043f21,
         type: 3}
+      propertyPath: soundEvents.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2302374889825985434, guid: 4224ed8a0b9da664aaa320506e043f21,
+        type: 3}
       propertyPath: soundEvents.Array.data[0].triggerDelay
       value: 14
+      objectReference: {fileID: 0}
+    - target: {fileID: 2302374889825985434, guid: 4224ed8a0b9da664aaa320506e043f21,
+        type: 3}
+      propertyPath: soundEvents.Array.data[1].triggerTypeSelector
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2302374889825985434, guid: 4224ed8a0b9da664aaa320506e043f21,
+        type: 3}
+      propertyPath: soundEvents.Array.data[1].triggerDelay
+      value: 14
+      objectReference: {fileID: 0}
+    - target: {fileID: 2302374889825985434, guid: 4224ed8a0b9da664aaa320506e043f21,
+        type: 3}
+      propertyPath: soundEvents.Array.data[1].behaviorSelector
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2302374889825985434, guid: 4224ed8a0b9da664aaa320506e043f21,
+        type: 3}
+      propertyPath: soundEvents.Array.data[1].soundManagerGameObject
+      value: 
+      objectReference: {fileID: 8243931934421571219}
+    - target: {fileID: 2302374889825985434, guid: 4224ed8a0b9da664aaa320506e043f21,
+        type: 3}
+      propertyPath: soundEvents.Array.data[1].wwiseState.WwiseObjectReference
+      value: 
+      objectReference: {fileID: 11400000, guid: d5b0aea41cae83d48bf86b76d78da4ca,
+        type: 2}
+    - target: {fileID: 2302374889825985434, guid: 4224ed8a0b9da664aaa320506e043f21,
+        type: 3}
+      propertyPath: soundEvents.Array.data[1].isActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 1082137837, guid: 4224ed8a0b9da664aaa320506e043f21, type: 3}
@@ -33133,6 +33204,12 @@ MonoBehaviour:
             m_StringArgument: 
             m_BoolArgument: 0
           m_CallState: 2
+--- !u!1 &8243931934421571219 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8243931935069967907, guid: 4224ed8a0b9da664aaa320506e043f21,
+    type: 3}
+  m_PrefabInstance: {fileID: 8243931934421571216}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &8493331936540625042
 Transform:
   m_ObjectHideFlags: 0

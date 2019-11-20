@@ -13,9 +13,11 @@ namespace AK
 {
     namespace EVENTS
     {
+        static const AkUniqueID GRIEF_APPEAR_CUTSCENE = 3923211281U;
         static const AkUniqueID PLAY_AMB_OUTSIDE = 121174090U;
         static const AkUniqueID PLAY_ECHOCALL_MEMORY_PLAYLIST = 3108390310U;
         static const AkUniqueID PLAY_FS_JUMPANDLAND = 1125157986U;
+        static const AkUniqueID PLAY_FS_MINIJUMP = 4119942951U;
         static const AkUniqueID PLAY_FS_SYSTEM = 2874393337U;
         static const AkUniqueID PLAY_HMC_MUSIC_SYSTEM_LEVEL1 = 2367316274U;
         static const AkUniqueID PLAY_RUMBLE_BLEND = 728827549U;
@@ -31,8 +33,8 @@ namespace AK
 
             namespace STATE
             {
-                static const AkUniqueID END_MEMORY = 576569430U;
-                static const AkUniqueID EXIT_MEMORY = 4198270385U;
+                static const AkUniqueID ENDSCENE_MEMORY = 2916316574U;
+                static const AkUniqueID EXIT_MEMORIES = 247658193U;
                 static const AkUniqueID GRIEF_APPEARS = 3170210169U;
                 static const AkUniqueID HUB = 646625282U;
                 static const AkUniqueID MEMORY_LULLABY = 3074462064U;

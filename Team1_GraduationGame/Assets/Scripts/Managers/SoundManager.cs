@@ -285,7 +285,6 @@ namespace Team1_GraduationGame.Managers
         public void EventRaised(float value)
         {
             _parsedValue = value;
-            Debug.Log("Event raised with value: " + value);
 
             if (!_eventFired)
             {
@@ -332,8 +331,14 @@ namespace Team1_GraduationGame.Managers
 
         private float GetDistanceBetweenObjects(GameObject from, GameObject to)
         {
-            float distance = Vector3.Distance(from.transform.position, to.transform.position);
-            return distance;
+            if (from != null && to != null)
+            {
+                float distance = Vector3.Distance(from.transform.position, to.transform.position);
+                return distance;
+            }
+            else
+                return 0;
+            
         }
 
         #region Event (Wwise event) Handler
@@ -521,20 +526,20 @@ namespace Team1_GraduationGame.Managers
             if (item.GetType() == typeof(Void))
             {
                 SoundEventClass.EventRaised(0);
+                // Debug.Log("VOID EVENT RAISED");
             }
             else if (item.GetType() == typeof(float))
             {
+                // Debug.Log("FLOAT EVENT RAISED");
                 float tempFloat = float.Parse(item.ToString());
-                Debug.Log(tempFloat);
                 SoundEventClass.EventRaised(tempFloat);
             }
             else if (item.GetType() == typeof(int))
             {
-                float tempInt = int.Parse(item.ToString());
-                Debug.Log(tempInt);
+                // Debug.Log("INT EVENT RAISED");
+                int tempInt = int.Parse(item.ToString());
                 SoundEventClass.EventRaised(tempInt);
             }
-
         }
     }
 

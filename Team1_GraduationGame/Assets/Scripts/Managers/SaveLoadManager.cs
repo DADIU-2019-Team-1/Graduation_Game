@@ -225,8 +225,9 @@ namespace Team1_GraduationGame.SaveLoadSystem
                         NavMeshAgent tempNavMeshAgent = _enemies[i].GetComponent<NavMeshAgent>();
                         tempNavMeshAgent.updatePosition = false;
                         tempNavMeshAgent.updateRotation = false;
+                        tempNavMeshAgent.Warp(tempEnemyContainer.pos);
 
-                        _enemies[i].transform.position = tempEnemyContainer.pos;
+                        // _enemies[i].transform.position = tempEnemyContainer.pos;
                         _enemies[i].transform.rotation = tempEnemyContainer.rot;
 
                         tempEnemyComponent.ResetEnemy();

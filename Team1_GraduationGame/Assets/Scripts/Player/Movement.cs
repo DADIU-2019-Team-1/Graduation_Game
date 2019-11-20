@@ -29,8 +29,7 @@ public class Movement : MonoBehaviour
     [HideInInspector]
     public Vector3 direction = Vector3.zero, pushDirection = Vector3.zero;
 
-    [SerializeField]
-    private BoolVariable _atOrbTrigger;
+    public BoolVariable atOrbTrigger;
 
     private Vector2 swipeStartPos, swipeEndPos, swipeDirection;
 
@@ -348,7 +347,6 @@ public class Movement : MonoBehaviour
                 {
                     pushDirection = new Vector3(swipeDirection.x, 0, swipeDirection.y);
                     pushRotation = pushDirection != Vector3.zero ? Quaternion.LookRotation(pushDirection) : Quaternion.identity;
-                    Debug.Log("Push Direction is: " + pushDirection);
                     playerAttack(pushDirection);
 
                     // I set a temp push animator if we arent using motion matching
@@ -397,7 +395,7 @@ public class Movement : MonoBehaviour
             canMove = false;
             direction = Vector3.zero;
             rotationSpeedCurrent = 0.0f;
-            if (_atOrbTrigger != null && !_atOrbTrigger.value)
+            if (atOrbTrigger != null && !atOrbTrigger.value)
             {
                 targetSpeed = 0.0f;
             }
@@ -516,7 +514,7 @@ public class Movement : MonoBehaviour
     public void movePlayer(Vector3 _direction)
     {
         //Debug.Log("Move player");
-        if (_atOrbTrigger != null && _atOrbTrigger.value)
+        if (atOrbTrigger != null && atOrbTrigger.value)
         {
             targetSpeed = walkSpeed.value;
         }
@@ -652,8 +650,13 @@ public class Movement : MonoBehaviour
     public void Frozen(bool move)
     {
         moveFrozen = move;
-        if (moveFrozen && !_atOrbTrigger.value)
+
+        if (atOrbTrigger == null)
+            return;
+
+        if (moveFrozen && !atOrbTrigger.value)
         {
+            Debug.Log("Player frozen");
             playerRB.constraints = RigidbodyConstraints.FreezePositionX | RigidbodyConstraints.FreezePositionZ | RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
 
         }

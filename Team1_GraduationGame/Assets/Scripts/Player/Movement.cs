@@ -29,7 +29,8 @@ public class Movement : MonoBehaviour
     [HideInInspector]
     public Vector3 direction = Vector3.zero, pushDirection = Vector3.zero;
 
-    public IntVariable _atOrbTrigger;
+    [SerializeField]
+    private BoolVariable _atOrbTrigger;
 
     private Vector2 swipeStartPos, swipeEndPos, swipeDirection;
 
@@ -396,7 +397,7 @@ public class Movement : MonoBehaviour
             canMove = false;
             direction = Vector3.zero;
             rotationSpeedCurrent = 0.0f;
-            if (_atOrbTrigger != null && _atOrbTrigger.value == 1)
+            if (_atOrbTrigger != null && !_atOrbTrigger.value)
             {
                 targetSpeed = 0.0f;
             }
@@ -515,7 +516,7 @@ public class Movement : MonoBehaviour
     public void movePlayer(Vector3 _direction)
     {
         //Debug.Log("Move player");
-        if (_atOrbTrigger != null && _atOrbTrigger.value != 1)
+        if (_atOrbTrigger != null && _atOrbTrigger.value)
         {
             targetSpeed = walkSpeed.value;
         }
@@ -651,6 +652,21 @@ public class Movement : MonoBehaviour
     public void Frozen(bool move)
     {
         moveFrozen = move;
+        if (moveFrozen && !_atOrbTrigger.value)
+        {
+            playerRB.constraints = RigidbodyConstraints.FreezePositionX | RigidbodyConstraints.FreezePositionZ | RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
+
+        }
+            
+        else
+        {
+            playerRB.constraints = RigidbodyConstraints.None;
+            playerRB.constraints = RigidbodyConstraints.FreezeRotationZ | RigidbodyConstraints.FreezeRotationX;
+
+            
+            
+        }
+
     }
 
     public void SetState()

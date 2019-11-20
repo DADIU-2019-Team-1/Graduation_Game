@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Team1_GraduationGame.Enemies;
 using Team1_GraduationGame.Interaction;
 using UnityEngine;
+using UnityEngine.AI;
 using UnityEngine.SceneManagement;
 
 namespace Team1_GraduationGame.SaveLoadSystem
@@ -221,6 +222,10 @@ namespace Team1_GraduationGame.SaveLoadSystem
                         tempEnemyContainer = JsonUtility.FromJson<EnemyContainer>(tempDataString2[i]);
                         Enemy tempEnemyComponent = _enemies[i].GetComponent<Enemy>();
 
+                        NavMeshAgent tempNavMeshAgent = _enemies[i].GetComponent<NavMeshAgent>();
+                        tempNavMeshAgent.updatePosition = false;
+                        tempNavMeshAgent.updateRotation = false;
+
                         _enemies[i].transform.position = tempEnemyContainer.pos;
                         _enemies[i].transform.rotation = tempEnemyContainer.rot;
 
@@ -228,6 +233,9 @@ namespace Team1_GraduationGame.SaveLoadSystem
                         tempEnemyComponent.SetAggro(tempEnemyContainer.isAggro);
                         tempEnemyComponent.SetCurrentWaypoint(tempEnemyContainer.currentWayPoint);
                         tempEnemyComponent.SetLastSighting(tempEnemyContainer.lastSighting);
+
+                        tempNavMeshAgent.updatePosition = true;
+                        tempNavMeshAgent.updateRotation = true;
                     }
 
                     for (int i = 0; i < _bigs.Length; i++)

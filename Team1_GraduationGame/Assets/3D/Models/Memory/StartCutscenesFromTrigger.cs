@@ -14,6 +14,7 @@ public class StartCutscenesFromTrigger : MonoBehaviour
     }
     private void OnTriggerEnter(Collider other)
     {
+        Debug.Log("Fired event");
         gameObject.GetComponentInChildren<PlayableDirector>().Play();
     }
 

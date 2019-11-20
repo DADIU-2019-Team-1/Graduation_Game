@@ -6,6 +6,7 @@ namespace Team1_GraduationGame.Sound
     using UnityEngine;
     using Team1_GraduationGame.Enemies;
 
+    [RequireComponent(typeof(AkGameObj))]
     public class EnemySoundManager : MonoBehaviour
     {
         public bool useGlobalRtpcs = false;
@@ -13,6 +14,9 @@ namespace Team1_GraduationGame.Sound
         // Wwise:
         public AK.Wwise.RTPC speedRTPC;
         public AK.Wwise.RTPC stateRTPC;
+        public AK.Wwise.Event killingPlayerEvent;
+        public AK.Wwise.Event pushedDownEvent;
+        public AK.Wwise.Event gettingUpEvent;
 
         private Enemy _thisEnemy;
 
@@ -21,7 +25,7 @@ namespace Team1_GraduationGame.Sound
             if (gameObject.GetComponent<Enemy>())
             {
                 _thisEnemy = gameObject.GetComponent<Enemy>();
-                InvokeRepeating("CustomUpdate", 1.0f, 0.5f);
+                InvokeRepeating("CustomUpdate", 0.3f, 0.7f);
             }
         }
 
@@ -41,6 +45,21 @@ namespace Team1_GraduationGame.Sound
                 else
                     stateRTPC.SetValue(gameObject,_thisEnemy.GetState());
             }
+        }
+
+        public void killingPlayer()
+        {
+            killingPlayerEvent?.Post(gameObject);
+        }
+
+        public void pushedDown()
+        {
+            pushedDownEvent?.Post(gameObject);
+        }
+
+        public void gettingUp()
+        {
+            gettingUpEvent?.Post(gameObject);
         }
     }
 }

@@ -23,8 +23,10 @@ namespace Team1_GraduationGame.Enemies
         public Light viewConeLight;
         public IntVariable playerMoveState;
         private GameObject _player;
+        private Animator _playerAnimator;
         private Movement _movement;
         private NavMeshAgent _navMeshAgent;
+        private SoundEventRaiser _soundEventRaise;
         [Tooltip("Animator will automatically be found - So ONLY add one if it is not on this object")] public Animator _animator;
         [HideInInspector] public List<GameObject> wayPoints;
         [HideInInspector] public GameObject parentWayPoint;
@@ -55,6 +57,7 @@ namespace Team1_GraduationGame.Enemies
         {
             _player = GameObject.FindGameObjectWithTag("Player");
             _layerMask = ~LayerMask.GetMask("Enemies"); // Use later for raycast to ignore other enemies
+            _soundEventRaise = GameObject.FindObjectOfType<SoundEventRaiser>();
 
             if (_player != null && thisEnemy != null)
             {
@@ -63,6 +66,8 @@ namespace Team1_GraduationGame.Enemies
                     _hearingDisabled = true;
                     Debug.LogError("Enemy hearing and light FOV disabled: Player move state scriptable object not attached");
                 }
+
+                _playerAnimator = _player.GetComponent<Animator>();
                 _active = true;
             }
             else
@@ -517,10 +522,10 @@ namespace Team1_GraduationGame.Enemies
 
             transform.LookAt(_player.transform.position);
 
-            if (_movement != null)
+            if (_movement != null)  // Below freezes Mother movement and rotates her towards this enemy
             {
                 _movement.Frozen(true);
-                _player.transform.LookAt(new Vector3(transform.position.x, _player.transform.position.y, transform.position.z)); // TODO: Test if works
+                _player.transform.LookAt(new Vector3(transform.position.x, _player.transform.position.y, transform.position.z));
             }
 
             yield return new WaitForSeconds(thisEnemy.embraceDelay);
@@ -529,6 +534,7 @@ namespace Team1_GraduationGame.Enemies
                 thisEnemy.embraceDistance + 1.0f)
             {
                 viewConeLight?.gameObject.SetActive(false);
+                // _playerAnimator?.SetTrigger("FriendAttack"); // TODO make this
                 _animator?.SetTrigger("Attack");
 
                 yield return new WaitForSeconds(animAttackTime);

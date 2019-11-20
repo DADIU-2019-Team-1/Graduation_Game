@@ -33,6 +33,7 @@ namespace Team1_GraduationGame.DevelopmentTools
         public bool setUpEnable = false;
 
         // Private:
+        private int _fps;
         private bool _devToolActive = false;
         string _dLog;
         Queue _dLogQueue = new Queue();
@@ -56,6 +57,8 @@ namespace Team1_GraduationGame.DevelopmentTools
 
             if (mainPanel.activeSelf == true)
                 _devToolActive = true;
+
+            InvokeRepeating("CustomUpdate", 1.0f, 1.5f);
         }
 
         void OnEnable()
@@ -89,17 +92,19 @@ namespace Team1_GraduationGame.DevelopmentTools
         {
             if (_devToolActive)
             {
-                if (fpsText != null)
-                    fpsText.text = "FPS: " + (int)(1 / Time.deltaTime);
+                _fps = (int)(1 / Time.deltaTime);
             }
         }
 
-        private void FixedUpdate()
+        private void CustomUpdate()
         {
             if (_devToolActive)
             {
                 if (debugText != null)
                     debugText.text = _dLog;
+
+                if (fpsText != null)
+                    fpsText.text = "FPS: " + _fps;
 
                 //if (vertsText != null)
                 //    vertsText.text = "Verts/Tris: " + UnityStats.vertices + " / " + UnityStats.triangles;

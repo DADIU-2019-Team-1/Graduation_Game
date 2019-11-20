@@ -262,15 +262,47 @@ namespace Team1_GraduationGame.Enemies
                     }
                 }
 
-                if (!_hearingDisabled /*&& !_isAggro*/)  // Enemy hearing:  //
+                ViewLightConeControl();
+
+                //if (!alwaysAggro) // BUG: This does not work currently
+                //{
+                //    if (_inTriggerZone && _giveUpPursuitRunning)    // this part is used to time out the pursuit, if enemy cannot reach player last sighting
+                //    {
+                //        _giveUpPursuitRunning = false;
+                //        StopCoroutine(PursuitTimeout());
+                //    }
+                //    else if (!_inTriggerZone && !_giveUpPursuitRunning && _isAggro)
+                //    {
+                //        StartCoroutine(PursuitTimeout());
+                //    }
+                //}
+            }
+
+            if (_active || _playerHeard)
+            {
+                if (!_hearingDisabled /*&& !_isAggro*/)
                 {
                     _hearingDistance = thisEnemy.hearingDistance;
                     if (playerMoveState.value == 2)
                         _hearingDistance = thisEnemy.hearingDistance * hearingSensitivity;
 
-                    if (HearingPathLength() < thisEnemy.hearingDistance && playerMoveState.value != 0 &&
-                        playerMoveState.value != 1 /*&& !_playerHeard*/)
+                    float tempHearingPathLength = HearingPathLength();
+
+                    if (tempHearingPathLength < thisEnemy.hearingDistance && playerMoveState.value != 0 &&
+                        playerMoveState.value != 1)
                     {
+                        if (_playerHeard)
+                        {
+                            if (tempHearingPathLength < thisEnemy.hearingDistance / 2 && playerMoveState.value == 3)
+                            {
+                                StopCoroutine(PlayerHeard());
+                                _playerHeard = false;
+                                _active = true;
+                                _animator?.ResetTrigger("NoiseHeard");
+                                StartCoroutine(EnemyAggro());
+                            }
+                        }
+
                         _lastSighting = _player.transform.position;
 
                         if (!_isAggro && !_playerHeard)
@@ -286,21 +318,6 @@ namespace Team1_GraduationGame.Enemies
                             StartCoroutine(EnemyAggro());
                     }
                 }
-
-                ViewLightConeControl();
-
-                //if (!alwaysAggro) // BUG: This does not work currently
-                //{
-                //    if (_inTriggerZone && _giveUpPursuitRunning)    // this part is used to time out the pursuit, if enemy cannot reach player last sighting
-                //    {
-                //        _giveUpPursuitRunning = false;
-                //        StopCoroutine(PursuitTimeout());
-                //    }
-                //    else if (!_inTriggerZone && !_giveUpPursuitRunning && _isAggro)
-                //    {
-                //        StartCoroutine(PursuitTimeout());
-                //    }
-                //}
             }
         }
 
@@ -352,7 +369,7 @@ namespace Team1_GraduationGame.Enemies
 
         private void OnTriggerStay(Collider col)
         {
-            if (_active && !alwaysAggro)
+            if (_active && !alwaysAggro || _playerHeard)
                 if (col.tag == _player.tag)
                 {
                     Vector3 dir = _player.transform.position - transform.position;
@@ -365,6 +382,14 @@ namespace Team1_GraduationGame.Enemies
                         if (Physics.Raycast(transform.position + transform.up, dir, out hit, thisEnemy.viewDistance, _layerMask))
                             if (hit.collider.tag == _player.tag)
                             {
+                                if (_playerHeard)
+                                {
+                                    StopCoroutine(PlayerHeard());
+                                    _playerHeard = false;
+                                    _active = true;
+                                    _animator?.ResetTrigger("NoiseHeard");
+                                }
+
                                 _lastSighting = _player.transform.position;
                                 if (!_isAggro)
                                     StartCoroutine(EnemyAggro());

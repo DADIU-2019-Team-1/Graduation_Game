@@ -526,18 +526,18 @@ namespace Team1_GraduationGame.Managers
             if (item.GetType() == typeof(Void))
             {
                 SoundEventClass.EventRaised(0);
-                // Debug.Log("VOID EVENT RAISED");
+                //Debug.Log("VOID EVENT RAISED");
             }
             else if (item.GetType() == typeof(float))
             {
-                // Debug.Log("FLOAT EVENT RAISED");
                 float tempFloat = float.Parse(item.ToString());
+                //Debug.Log("FLOAT EVENT RAISED " + tempFloat);
                 SoundEventClass.EventRaised(tempFloat);
             }
             else if (item.GetType() == typeof(int))
             {
-                // Debug.Log("INT EVENT RAISED");
                 int tempInt = int.Parse(item.ToString());
+                //Debug.Log("INT EVENT RAISED " + tempInt);
                 SoundEventClass.EventRaised(tempInt);
             }
         }

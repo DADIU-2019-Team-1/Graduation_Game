@@ -9,6 +9,7 @@ namespace Team1_GraduationGame.Enemies
     [CreateAssetMenu(fileName = "New Enemy", menuName = "Enemies/New Enemy")]
     public class BaseEnemy : ScriptableObject
     {
+        public int typeId;
         public bool canRun = true;
         public float walkSpeed;
         public float walkTurnSpeed;
@@ -51,6 +52,8 @@ namespace Team1_GraduationGame.Enemies
             // DrawDefaultInspector(); // for other non-HideInInspector fields
 
             var script = target as BaseEnemy;
+
+            script.typeId = EditorGUILayout.IntField("Type ID", script.typeId);
 
             script.canRun = EditorGUILayout.Toggle("Can Run?", script.canRun);
 

@@ -1,4 +1,5 @@
-﻿namespace Team1_GraduationGame.Sound
+﻿// Script by Jakob Elkjær Husted
+namespace Team1_GraduationGame.Sound
 {
     using System.Collections;
     using System.Collections.Generic;

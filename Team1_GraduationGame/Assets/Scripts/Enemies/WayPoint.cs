@@ -16,7 +16,7 @@ namespace Team1_GraduationGame.Enemies
         [HideInInspector] public bool isParent = false;
         [Range(0.0f, 20.0f)] public float specificWaitTime = 0.0f;
         [Range(0.0f, 359.0f)] public float enemyLookDirection = 0.0f;
-        public int wayPointId;
+        [HideInInspector] public int wayPointId;
 
 #if UNITY_EDITOR
         void OnDestroy()

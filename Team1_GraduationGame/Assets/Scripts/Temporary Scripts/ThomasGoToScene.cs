@@ -120,8 +120,11 @@ public class ThomasGoToScene : MonoBehaviour
     public void MemoryTimeLineEnded()
     {        
         destinationReached = false;
-        _movement.Frozen(false);
-        _movement.inSneakZone = false;
+        if(_movement != null) {
+            _movement.Frozen(false);
+            _movement.inSneakZone = false;
+        }
+
         if(FindObjectOfType<SavePointManager>() != null)
             FindObjectOfType<SavePointManager>().NextLevel();
         else

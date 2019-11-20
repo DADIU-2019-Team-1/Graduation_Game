@@ -11,6 +11,7 @@ public class HubMenu : MonoBehaviour
     public event Action cheatModeEvent;
     public event Action<float> musicSliderEvent;
     public event Action<float> sfxSliderEvent;
+    public event Action menuButtonPressEvent;
 
     public void ChangeLanguage(string s)
     {
@@ -39,6 +40,10 @@ public class HubMenu : MonoBehaviour
     public void ChangeSFXSlider(float value)
     {
         sfxSliderEvent?.Invoke(value);
+    }
+    public void MenuButtonPress()
+    {
+        menuButtonPressEvent?.Invoke();
     }
 
     public void ExitGame()

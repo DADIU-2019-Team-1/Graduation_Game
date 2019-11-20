@@ -18,6 +18,7 @@ namespace Team1_GraduationGame.SaveLoadSystem
         private GameObject _player;
         private GameObject[] _enemies;
         private GameObject[] _interactables;
+        private Big[] _bigs;
 
 
         public void NewGame()
@@ -209,6 +210,7 @@ namespace Team1_GraduationGame.SaveLoadSystem
                 string[] tempDataString2 = tempLoadString.Split(new[] { SAVE_SEPERATOR }, System.StringSplitOptions.None);
 
                 _enemies = GameObject.FindGameObjectsWithTag("Enemy");
+                _bigs = GameObject.FindObjectsOfType<Big>();
 
                 if (_enemies != null)
                 {
@@ -226,6 +228,11 @@ namespace Team1_GraduationGame.SaveLoadSystem
                         tempEnemyComponent.SetAggro(tempEnemyContainer.isAggro);
                         tempEnemyComponent.SetCurrentWaypoint(tempEnemyContainer.currentWayPoint);
                         tempEnemyComponent.SetLastSighting(tempEnemyContainer.lastSighting);
+                    }
+
+                    for (int i = 0; i < _bigs.Length; i++)
+                    {
+                        _bigs[i].ResetBig();
                     }
                 }
 

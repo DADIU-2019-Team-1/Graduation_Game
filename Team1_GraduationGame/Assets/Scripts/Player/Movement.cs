@@ -11,25 +11,26 @@ using UnityEditor;
 public class Movement : MonoBehaviour
 {
     private Rigidbody playerRB;
-    private bool touchStart = false, canMove = false, canJump = true, canPush, moveFrozen = false, inSneakZone = false;
-    private float rotationSpeedCurrent, rotationSpeedMax = 5.0f, rotationSpeedGoal, rotationAccelerationFactor = 0.1f, rotationAngleReactionFactor = 0.1f;
+    private bool touchStart = false, canMove = false, canJump = true, isPushing = false, moveFrozen = false;
+    private float rotationSpeedCurrent, rotationSpeedMax = 5.0f, rotationSpeedGoal, rotationAccelerationFactor = 0.1f, pushRotationAccelerationFactor = 0.7f, rotationAngleReactionFactor = 0.1f, pushRotationAngleReactionFactor = 0.7f;
     
     [HideInInspector]
     public float targetSpeed;
-    public bool isJumping = false;    
+    public bool isJumping = false, inSneakZone = false;    
     
 
 
     [SerializeField] private float accelerationFactor = 0.1f;
     private float swipeTimeTimer;
     private Vector3 initTouchPos, currTouchPos, joystickPos, stickLimitPos, velocity;
-    private Quaternion lookRotation;
-    public VoidEvent jumpEvent, attackEvent;
+    private Quaternion lookRotation, pushRotation;
+    public VoidEvent jumpEvent, attackEvent, miniJump;
     public IntEvent stateChangeEvent;
     [HideInInspector]
-    public Vector3 direction = Vector3.zero;
+    public Vector3 direction = Vector3.zero, pushDirection = Vector3.zero;
 
-    public IntVariable _atOrbTrigger;
+    [SerializeField]
+    private BoolVariable _atOrbTrigger;
 
     private Vector2 swipeStartPos, swipeEndPos, swipeDirection;
 
@@ -38,8 +39,8 @@ public class Movement : MonoBehaviour
     [Tooltip("Put the joystick border here")]
     public Transform stickLimit;
 
-    public FloatReference sneakSpeed, walkSpeed, runSpeed, rotationSpeed, jumpHeight, jumpSpeed, fallMultiplier, attackRange, swipeTimeThreshold;
-    public IntReference radius, attackDegree, swipePixelDistance;
+    public FloatReference sneakSpeed, walkSpeed, runSpeed, rotationSpeed, jumpHeight, jumpSpeed, fallMultiplier, attackRange, swipeTimeThreshold, defaultPushForce, pushForce;
+    public IntReference radius, attackDegree, swipePixelDistance, attackCoolDown;
 
     private PhysicMaterial _jumpMaterial;
     [Tooltip("Height in meters for checking jump")]
@@ -129,7 +130,8 @@ public class Movement : MonoBehaviour
         currentSpeed.value = Vector3.Distance(transform.position, _previousPosition) / Time.fixedDeltaTime;
 
         // I set a temp Speed animator if we arent using motion matching
-        if (animator.runtimeAnimatorController.name == "MotherAnimator")
+
+        if (animator.runtimeAnimatorController != null && animator.runtimeAnimatorController.name == "MotherAnimator")
         {
             animator.SetFloat("Speed", currentSpeed.value);
         }
@@ -151,7 +153,7 @@ public class Movement : MonoBehaviour
             {
                 isJumping = false;
 
-                if (animator.runtimeAnimatorController.name == "MotherAnimator")
+                if (animator.runtimeAnimatorController != null && animator.runtimeAnimatorController.name == "MotherAnimator")
                 {
                     animator.SetBool("Jump", false);
                 }
@@ -215,7 +217,7 @@ public class Movement : MonoBehaviour
                 Vector2 joyDiff = t.position - new Vector2(stickLimit.transform.position.x, stickLimit.transform.position.y);
                 // Need new clamping.
                 joyDiff = Vector2.ClampMagnitude(joyDiff, radius.value);
-
+                //Debug.Log("Android calling player move");
                 PlayerMoveRequest(dragDist);
 
                 stick.transform.position = joyDiff + new Vector2(stickLimit.transform.position.x, stickLimit.transform.position.y);
@@ -255,11 +257,24 @@ public class Movement : MonoBehaviour
                     swipeEndPos = t.position;
                     Vector2 swipeOffSet = new Vector2(swipeEndPos.x - swipeStartPos.x, swipeEndPos.y - swipeStartPos.y);
                     swipeDirection = swipeOffSet.normalized;
-                    Vector3 worldDirection = new Vector3(swipeDirection.x, 0, swipeDirection.y);
+                    
                     //Debug.Log("End phase: " + Time.time);
                     if (swipeOffSet.magnitude > swipePixelDistance.value)
                     {
-                        playerAttack(worldDirection);
+                        if (attackCooldown <= 0)
+                        {
+                            pushDirection = new Vector3(swipeDirection.x, 0, swipeDirection.y);
+                            pushRotation = pushDirection != Vector3.zero ? Quaternion.LookRotation(pushDirection) : Quaternion.identity;
+                            // I set a temp push animator if we arent using motion matching
+                            if (animator.runtimeAnimatorController != null && animator.runtimeAnimatorController.name == "MotherAnimator")
+                            {
+                                animator.SetTrigger("Attack");
+                                //Debug.Log("Using Test Animator not motion matching");
+                            }
+                            //Debug.Log("Attack start phone");
+                            playerAttack(pushDirection);
+                        }
+
                     }
                     else if (/*swipeTimeTimer + swipeTimeThreshold.value >= Time.time &&*/ !moveFrozen)
                     {
@@ -318,31 +333,38 @@ public class Movement : MonoBehaviour
             touchStart = false;
         }
 
-        if (attackCooldown > 0) attackCooldown--;
+        
 
-        if (Input.GetMouseButtonUp(0) && attackCooldown <= 0)
+        if (Input.GetMouseButtonUp(0))
         {
-            attackCooldown = 5;
             swipeEndPos = Input.mousePosition;
             Vector2 swipeOffSet = new Vector2(swipeEndPos.x - swipeStartPos.x, swipeEndPos.y - swipeStartPos.y);
             swipeDirection = swipeOffSet.normalized;
-            Vector3 worldDirection = new Vector3(swipeDirection.x, 0, swipeDirection.y);
+            
             //Debug.Log("End phase: " + Time.time);
             if (swipeOffSet.magnitude > swipePixelDistance.value && Input.mousePosition.x > Screen.width / 2 && !canMove)
             {
-                playerAttack(worldDirection);
-
-                // I set a temp push animator if we arent using motion matching
-                if (animator.runtimeAnimatorController.name == "MotherAnimator")
+                if (attackCooldown <= 0)
                 {
-                    animator.SetTrigger("Attack");
-                    Debug.Log("Using Test Animator not motion matching");
+                    pushDirection = new Vector3(swipeDirection.x, 0, swipeDirection.y);
+                    pushRotation = pushDirection != Vector3.zero ? Quaternion.LookRotation(pushDirection) : Quaternion.identity;
+                    Debug.Log("Push Direction is: " + pushDirection);
+                    playerAttack(pushDirection);
+
+                    // I set a temp push animator if we arent using motion matching
+                    if (animator.runtimeAnimatorController != null && animator.runtimeAnimatorController.name == "MotherAnimator")
+                    {
+                        animator.SetTrigger("Attack");
+                    }
                 }
+                
+
+
 
 
                 //Debug.Log("Swipe");
                 //Debug.DrawLine(swipeStartPos, swipeStartPos + swipeDirection * 300, Color.red, 5);
-                //Debug.DrawLine(playerRB.transform.position, playerRB.transform.position + worldDirection * 5, Color.green, 5);
+                //Debug.DrawLine(playerRB.transform.position, playerRB.transform.position + pushDirection * 5, Color.green, 5);
 
 
             }
@@ -363,7 +385,7 @@ public class Movement : MonoBehaviour
             float dragDist = Vector2.Distance(stick.transform.position, stickLimit.transform.position);
             Vector2 joyDiff = Input.mousePosition - stickLimit.transform.position;
             joyDiff = Vector2.ClampMagnitude(joyDiff, radius.value);
-
+            //Debug.Log("PC calling move player");
             PlayerMoveRequest(dragDist);
 
             stick.transform.position = joyDiff + new Vector2(stickLimit.transform.position.x, stickLimit.transform.position.y);
@@ -375,7 +397,7 @@ public class Movement : MonoBehaviour
             canMove = false;
             direction = Vector3.zero;
             rotationSpeedCurrent = 0.0f;
-            if (_atOrbTrigger != null && _atOrbTrigger.value == 1)
+            if (_atOrbTrigger != null && !_atOrbTrigger.value)
             {
                 targetSpeed = 0.0f;
             }
@@ -389,6 +411,31 @@ public class Movement : MonoBehaviour
         }
 #endif
         SetState();
+
+        if (isPushing)
+        {
+            if (attackCooldown > 0)
+            {
+                // Was pushdirection before
+                targetSpeed = runSpeed.value;
+                movePlayer(pushDirection);
+            }
+
+            else
+            {
+                isPushing = false;
+                
+            }
+
+        }
+
+
+
+        if (attackCooldown > 0)
+        {
+            attackCooldown--; 
+            
+        }
     }
 
     private void OnTriggerEnter(Collider sneakZone)
@@ -408,50 +455,57 @@ public class Movement : MonoBehaviour
     }
     private void PlayerMoveRequest(float dragDist)
     {
-
-        if (inSneakZone)
+        //Debug.Log(dragDist);
+        if (!isPushing)
         {
-            if (dragDist < radius.value * idleThreshold)
+            if (inSneakZone)
             {
-                //movePlayer(direction, 0);
-                //moveState.value = 0;
-            }
-            else if (dragDist < radius.value * zoneSneakThreshold)
-            {
-                targetSpeed = sneakSpeed.value;
-                movePlayer(direction);
-                //moveState.value = 1;
+                if (dragDist < radius.value * idleThreshold)
+                {
+                    //movePlayer(direction, 0);
+                    //moveState.value = 0;
+                }
+                else if (dragDist < radius.value * zoneSneakThreshold)
+                {
+                    targetSpeed = sneakSpeed.value;
+                    movePlayer(direction);
+                    //moveState.value = 1;
+                }
+                else
+                {
+                    targetSpeed = walkSpeed.value;
+                    movePlayer(direction);
+                    //moveState.value = 2;
+                }
+
             }
             else
             {
-                targetSpeed = walkSpeed.value;
-                movePlayer(direction);
-                //moveState.value = 2;
+                if (dragDist < radius.value * idleThreshold) // Idle
+                {
+                    // Empty
+                }
+                else if (dragDist < radius.value * sneakThreshold) // Sneak
+                {
+                    //Debug.Log("Should sneak");
+                    targetSpeed = sneakSpeed.value;
+                    movePlayer(direction);
+                }
+                else if (dragDist < radius.value * runThreshold) // Walk
+                {
+                    //Debug.Log("Should walk");
+                    targetSpeed = walkSpeed.value;
+                    movePlayer(direction);
+                }
+                else // Run
+                {
+                    //Debug.Log("Should run");
+                    targetSpeed = runSpeed.value;
+                    movePlayer(direction);
+                }
             }
+        }
 
-        }
-        else
-        {
-            if (dragDist < radius.value * idleThreshold) // Idle
-            {
-                // Empty
-            }
-            else if (dragDist < radius.value * sneakThreshold) // Sneak
-            {
-                targetSpeed = sneakSpeed.value;
-                movePlayer(direction);
-            }
-            else if (dragDist < radius.value * runThreshold) // Walk
-            {
-                targetSpeed = walkSpeed.value;
-                movePlayer(direction);
-            }
-            else // Run
-            {
-                targetSpeed = runSpeed.value;
-                movePlayer(direction);
-            }
-        }
     }
 
     private Boolean CrossProductPositive(Vector3 a, Vector3 b)
@@ -459,28 +513,28 @@ public class Movement : MonoBehaviour
         return a.x * b.z - a.z * b.x >= 0;
     }
 
-    public void movePlayer(Vector3 direction)
+    public void movePlayer(Vector3 _direction)
     {
-        if (_atOrbTrigger != null && _atOrbTrigger.value != 1)
+        //Debug.Log("Move player");
+        if (_atOrbTrigger != null && _atOrbTrigger.value)
         {
-                targetSpeed = walkSpeed.value;
+            targetSpeed = walkSpeed.value;
         }
+
+        int wayToRotate = CrossProductPositive(transform.forward, _direction) ? 1 : -1;
+        rotationSpeedGoal = Mathf.Min(rotationSpeed.value, Vector3.Angle(transform.forward, _direction) * (isPushing? pushRotationAngleReactionFactor: rotationAngleReactionFactor)) * wayToRotate;
+        rotationSpeedCurrent += (rotationSpeedGoal - rotationSpeedCurrent) * (isPushing? pushRotationAccelerationFactor: rotationAccelerationFactor);
         
-
-        int wayToRotate = CrossProductPositive(transform.forward, direction) ? 1 : -1;
-        rotationSpeedGoal = Mathf.Min(rotationSpeed.value, Vector3.Angle(transform.forward, direction) * rotationAngleReactionFactor) * wayToRotate;
-        rotationSpeedCurrent += (rotationSpeedGoal - rotationSpeedCurrent) * rotationAccelerationFactor;
-
-        transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * Mathf.Abs(rotationSpeedCurrent));
-
+        transform.rotation = Quaternion.Slerp(transform.rotation,isPushing? pushRotation: lookRotation, Time.deltaTime * Mathf.Abs(rotationSpeedCurrent));
+        
         if (!isJumping)
         {
-            playerRB.MovePosition(transform.position + (direction + transform.forward /* * rotation factor can be inserted  here*/).normalized * ((targetSpeed - currentSpeed.value) * accelerationFactor + currentSpeed.value) * Time.fixedDeltaTime);
+            playerRB.MovePosition(transform.position + (_direction + transform.forward /* * rotation factor can be inserted  here*/).normalized * ((targetSpeed - currentSpeed.value) * accelerationFactor + currentSpeed.value) * Time.fixedDeltaTime);
         }
         else
         {
 //#if UNITY_EDITOR
-            playerRB.MovePosition(transform.position + (direction * targetSpeed * Time.deltaTime));
+            playerRB.MovePosition(transform.position + (_direction * targetSpeed * Time.deltaTime));
 //#endif
 //#if UNITY_ANDROID
 //            playerRB.AddForce(direction * targetSpeed * Time.deltaTime, ForceMode.Impulse);
@@ -494,9 +548,10 @@ public class Movement : MonoBehaviour
                            Physics.Raycast(transform.position + Vector3.up, Vector3.down, ghostJumpHeight.value + 1.0f)))
         {
             isJumping = true;
+            miniJump?.Raise();
 
             // also setting jump on temp Animator
-            if (animator.runtimeAnimatorController.name == "MotherAnimator")
+            if (animator.runtimeAnimatorController != null && animator.runtimeAnimatorController.name == "MotherAnimator")
             {
                 animator.SetBool("Jump", true);
             }
@@ -521,7 +576,7 @@ public class Movement : MonoBehaviour
             isJumping = true;
 
             // also setting jump on temp Animator
-            if (animator.runtimeAnimatorController.name == "MotherAnimator")
+            if (animator.runtimeAnimatorController != null && animator.runtimeAnimatorController.name == "MotherAnimator")
             {
                 animator.SetBool("Jump", true);
             }
@@ -547,7 +602,10 @@ public class Movement : MonoBehaviour
             Vector3 newPoint = new Vector3(x, 0, z);
             Debug.DrawLine(playerRB.transform.position, playerRB.transform.position + newPoint * attackRange.value, Color.magenta, 0.5f);
         }
-
+        //Debug.Log("Attacking");
+        attackCooldown = attackCoolDown.value;
+        
+        isPushing = true;
         // check all objects
         for (int i = 0; i < interactableObjects.Count; i++)
         {
@@ -556,7 +614,11 @@ public class Movement : MonoBehaviour
             //Debug.Log("Closest point is: " + closestPoint);
             //Instantiate(GameObject.CreatePrimitive(PrimitiveType.Cube), closestPoint, Quaternion.identity);
             float refDistance = Vector3.Distance(closestPoint, transform.position);
+            //transform.rotation = Quaternion.LookRotation(direction);
+            //playerRB.AddForce(direction.normalized * pushForce.value, ForceMode.Impulse);
 
+
+            
             if (refDistance <= attackRange.value)
             {
 
@@ -568,7 +630,9 @@ public class Movement : MonoBehaviour
                 if (angleToObject <= attackDegree.value / 2)
                 {
                     // interact
+                    // Sometimes returns nullreference errors.
                     interactableObjects[i].GetComponent<Interactable>().Interact();
+                    
                     if (attackEvent != null)
                         attackEvent.Raise();
                     // Debug.Log("INTERACT!!!!!");
@@ -588,6 +652,21 @@ public class Movement : MonoBehaviour
     public void Frozen(bool move)
     {
         moveFrozen = move;
+        if (moveFrozen && !_atOrbTrigger.value)
+        {
+            playerRB.constraints = RigidbodyConstraints.FreezePositionX | RigidbodyConstraints.FreezePositionZ | RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
+
+        }
+            
+        else
+        {
+            playerRB.constraints = RigidbodyConstraints.None;
+            playerRB.constraints = RigidbodyConstraints.FreezeRotationZ | RigidbodyConstraints.FreezeRotationX;
+
+            
+            
+        }
+
     }
 
     public void SetState()
@@ -642,7 +721,7 @@ public class Movement : MonoBehaviour
             float newRotationSpeedGoal = Mathf.Min(rotationSpeed.value, Vector3.Angle(playerForward, direction) * rotationAngleReactionFactor) * wayToRotate;
             newRotationSpeedCurrent += (newRotationSpeedGoal - newRotationSpeedCurrent) * rotationAccelerationFactor;
 
-            playerRot = Quaternion.Slerp(playerRot, lookRotation, Time.deltaTime * Mathf.Abs(rotationSpeedCurrent));
+            playerRot = Quaternion.Slerp(playerRot, lookRotation, Time.deltaTime * Mathf.Abs(newRotationSpeedCurrent));
             playerForward = playerRot * Vector3.forward;
             playerPos += (direction + playerForward).normalized * ((targetSpeed - simulatedSpeed) * accelerationFactor + simulatedSpeed) * Time.fixedDeltaTime;
 

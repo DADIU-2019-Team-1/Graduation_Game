@@ -17,7 +17,7 @@ namespace Team1_GraduationGame.Sound
 
         // Wwise:
         [HideInInspector] public AK.Wwise.RTPC speedRTPC, stateRTPC;
-        public AK.Wwise.Event attackingPlayerEvent, pushedDownEvent, gettingUpEvent;
+        public AK.Wwise.Event attackingPlayerEvent, pushedDownEvent, gettingUpEvent, onsetEvent, holdEvent, spotEvent;
 
         private Enemy _thisEnemy;
 
@@ -51,19 +51,29 @@ namespace Team1_GraduationGame.Sound
             }
         }
 
-        public void killingPlayer()
+        public void attackPlayer()
         {
             attackingPlayerEvent?.Post(gameObject);
         }
-
         public void pushedDown()
         {
             pushedDownEvent?.Post(gameObject);
         }
-
         public void gettingUp()
         {
             gettingUpEvent?.Post(gameObject);
+        }
+        public void spotted()
+        {
+            spotEvent?.Post(gameObject);
+        }
+        public void onset()
+        {
+            onsetEvent?.Post(gameObject);
+        }
+        public void hold()
+        {
+            holdEvent?.Post(gameObject);
         }
     }
 

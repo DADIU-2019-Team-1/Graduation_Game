@@ -12,11 +12,11 @@ namespace Team1_GraduationGame.Enemies
     {
         //References:
         private GameObject _player;
+        private Animator _playerAnimator;
         private Animator _animator;
         public Light fieldOfViewLight;
         public VoidEvent playerDiedEvent;
         public GameObject visionGameObject;
-        [HideInInspector] public List<GameObject> lookPoints;
 
         // Private:
         private bool _active, _isAggro, _isSpawned, _isRotating, _turnLeft, _updateRotation, _playerSpotted, _lightOn, _timerRunning;
@@ -37,7 +37,10 @@ namespace Team1_GraduationGame.Enemies
         private void Awake()
         {
             if (GameObject.FindGameObjectWithTag("Player") != null)
+            {
                 _player = GameObject.FindGameObjectWithTag("Player");
+                _playerAnimator = _player.GetComponent<Animator>();
+            }
 
             if (GetComponent<Animator>() != null)
                 _animator = GetComponent<Animator>();
@@ -265,10 +268,11 @@ namespace Team1_GraduationGame.Enemies
             _active = false;
 
             _animator?.SetTrigger("Attack");
+            _playerAnimator?.SetTrigger("BigAttack");
 
             yield return new WaitForSeconds(animAttackTime);
-            Debug.Log("Player died from Big");
 
+            _playerAnimator?.ResetTrigger("BigAttack");
             _animator?.ResetTrigger("Attack");
             _active = true;
             playerDiedEvent?.Raise();
@@ -321,7 +325,7 @@ namespace Team1_GraduationGame.Enemies
             _timerRunning = false;
         }
 
-        #if UNITY_EDITOR
+#if UNITY_EDITOR
         private void OnDrawGizmos()
         {
             if (drawGizmos && Application.isEditor && visionGameObject != null)
@@ -331,38 +335,6 @@ namespace Team1_GraduationGame.Enemies
                 Gizmos.DrawLine(visionGameObject.transform.position + visionGameObject.transform.up, visionGameObject.transform.forward * viewDistance + (visionGameObject.transform.position + visionGameObject.transform.up));
             }
         }
-
-        public void AddLookPoint()
-        {
-            
-        }
-
-        public void RemoveLookPoint()
-        {
-
-        }
 #endif
     }
-
-#if UNITY_EDITOR
-    #region Custom Editor
-    [CustomEditor(typeof(Big))]
-    public class Big_Editor : UnityEditor.Editor
-    {
-        public override void OnInspectorGUI()
-        {
-            DrawDefaultInspector(); // for other non-HideInInspector fields
-
-            var script = target as Big;
-
-            serializedObject.ApplyModifiedProperties();
-
-            if (GUI.changed)
-            {
-                EditorUtility.SetDirty(script);
-            }
-        }
-    }
-    #endregion
-#endif
 }

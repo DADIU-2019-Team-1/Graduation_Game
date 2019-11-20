@@ -534,11 +534,12 @@ namespace Team1_GraduationGame.Enemies
                 thisEnemy.embraceDistance + 1.0f)
             {
                 viewConeLight?.gameObject.SetActive(false);
-                // _playerAnimator?.SetTrigger("FriendAttack"); // TODO make this
+                _playerAnimator?.SetTrigger("EnemyAttack" + thisEnemy.typeId);
                 _animator?.SetTrigger("Attack");
 
                 yield return new WaitForSeconds(animAttackTime);
 
+                _playerAnimator?.ResetTrigger("EnemyAttack" + thisEnemy.typeId);
                 viewConeLight?.gameObject.SetActive(true);
                 playerDiedEvent?.Raise();
             }

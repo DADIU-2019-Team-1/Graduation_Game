@@ -4721,6 +4721,12 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: f7c4785abc62d034081c751f22f75c28, type: 3}
+--- !u!1 &421260369 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6823897083921172249, guid: 4224ed8a0b9da664aaa320506e043f21,
+    type: 3}
+  m_PrefabInstance: {fileID: 8243931934421571216}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &429099684 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 5366023089692788514, guid: a76818aeb05b92242beb3d28c5719285,
@@ -23049,7 +23055,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f5aea9d870999cf44810cca716114a3f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _Collider: {fileID: 273878594}
+  Collider: {fileID: 0}
+  Target: {fileID: 421260369}
 --- !u!4 &2101981833 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 3798195354167900848, guid: fc254017b69199a40ba3c4a703833414,
@@ -33189,6 +33196,11 @@ PrefabInstance:
       propertyPath: soundEvents.Array.data[1].isActive
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 6823897083921172249, guid: 4224ed8a0b9da664aaa320506e043f21,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 1479857706864637562, guid: 4224ed8a0b9da664aaa320506e043f21,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -33223,6 +33235,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
       value: -11.049001
+      objectReference: {fileID: 0}
+    - target: {fileID: 4931342601874028707, guid: 4224ed8a0b9da664aaa320506e043f21,
+        type: 3}
+      propertyPath: m_InitialState
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 1082137837, guid: 4224ed8a0b9da664aaa320506e043f21, type: 3}

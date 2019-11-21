@@ -1,15 +1,15 @@
 ﻿// Script by Jakob Elkjær Husted
-using System.Collections;
-using System.Collections.Generic;
-using System.Globalization;
-using Team1_GraduationGame.Events;
-using UnityEngine;
-using UnityEngine.Events;
 
 //// NOTE: This script requires Wwise to work ////
-
 namespace Team1_GraduationGame.Managers
 {
+    using System.Collections;
+    using System.Collections.Generic;
+    using System.Globalization;
+    using Team1_GraduationGame.Events;
+    using UnityEngine;
+    using UnityEngine.Events;
+
     [RequireComponent(typeof(AkGameObj))]
     public class SoundManager : MonoBehaviour
     {
@@ -199,8 +199,7 @@ namespace Team1_GraduationGame.Managers
             OnTriggerEnter,
             OnTriggerExit,
             Start,
-            ExternalRaise,
-            IntEvent
+            ExternalRaise
         }
         [HideInInspector] public EventTypeEnum triggerTypeSelector;
         [HideInInspector] public SoundVoidEventListener soundEventListener;
@@ -221,8 +220,7 @@ namespace Team1_GraduationGame.Managers
             Event,
             State,
             Switch,
-            RTPC,
-            Ambient
+            RTPC
         }
 
         [HideInInspector] public BehaviorEnum behaviorSelector;
@@ -240,8 +238,8 @@ namespace Team1_GraduationGame.Managers
         [HideInInspector] public FloatVariable rtpcScriptableObject;
         [HideInInspector] public AkActionOnEventType actionOnEventType = AkActionOnEventType.AkActionOnEventType_Stop;
         [HideInInspector] public AkCurveInterpolation curveInterpolation = AkCurveInterpolation.AkCurveInterpolation_Linear;
-        [HideInInspector] public AkMultiPositionType multiPositionType = AkMultiPositionType.MultiPositionType_MultiSources;
-        [HideInInspector] public MultiPositionTypeLabel multiPosTypeLabel = MultiPositionTypeLabel.Simple_Mode;
+        //[HideInInspector] public AkMultiPositionType multiPositionType = AkMultiPositionType.MultiPositionType_MultiSources;
+        //[HideInInspector] public MultiPositionTypeLabel multiPosTypeLabel = MultiPositionTypeLabel.Simple_Mode;
 
         // Bools:
         [HideInInspector] public bool useCallbacks, useActionOnEvent, rtpcGlobal, runOnce, 
@@ -316,17 +314,9 @@ namespace Team1_GraduationGame.Managers
                 case 3:
                     RTPCHandler();
                     break;
-                case 4:
-                    AmbientHandler();
-                    break;
                 default:
                     break;
             }
-        }
-
-        private void AmbientHandler()   // TODO - YYY
-        {
-
         }
 
         private float GetDistanceBetweenObjects(GameObject from, GameObject to)
@@ -384,21 +374,30 @@ namespace Team1_GraduationGame.Managers
                             wwiseRTPC.SetGlobalValue(rtpcScriptableObject.value);
                         else
                             wwiseRTPC.SetGlobalValue(_parsedValue);
-                    }
+                    }   // AkSoundEngine.SetRTPCValue("SFX_Slider", GameMaster.instance.GetMusicLevel()); // TODO
                     else
                     {
                         if (targetGameObject == null || !useOtherGameObject)
                         {
                             if (!useValueFromEvent && !setCustomRtpcFloat)
-                                wwiseRTPC.SetValue(soundManagerGameObject, rtpcScriptableObject.value);
+                            {
+                                AkSoundEngine.SetRTPCValue(wwiseRTPC.Name, rtpcScriptableObject.value);
+                                // wwiseRTPC.SetValue(soundManagerGameObject, rtpcScriptableObject.value);
+                            }
                             else
-                                wwiseRTPC.SetValue(soundManagerGameObject, _parsedValue);
+                            {
+                                AkSoundEngine.SetRTPCValue(wwiseRTPC.Name, _parsedValue);
+                                // wwiseRTPC.SetValue(soundManagerGameObject, _parsedValue);
+                            }
 
                             if (targetGameObject == null && useOtherGameObject)
                                 Debug.LogWarning("SoundManager: Target GameObject is not set! - Using default object instead");
                         }
                         else
-                            wwiseRTPC.SetValue(targetGameObject, rtpcScriptableObject.value);
+                        {
+                            AkSoundEngine.SetRTPCValue(wwiseRTPC.Name, rtpcScriptableObject.value);
+                            // wwiseRTPC.SetValue(targetGameObject, rtpcScriptableObject.value);
+                        }
                     }
                 }
                 else if (!rtpcRoleBool && !objDistanceToRtpc)
@@ -432,13 +431,16 @@ namespace Team1_GraduationGame.Managers
                     {
                         if (targetGameObject == null || !useOtherGameObject)
                         {
-                            wwiseRTPC.SetValue(soundManagerGameObject,
-                                GetDistanceBetweenObjects(soundManagerGameObject, secondGameObject));
+                            AkSoundEngine.SetRTPCValue(wwiseRTPC.Name, GetDistanceBetweenObjects(soundManagerGameObject, secondGameObject));
+                            // wwiseRTPC.SetValue(soundManagerGameObject, GetDistanceBetweenObjects(soundManagerGameObject, secondGameObject));
                             if (targetGameObject == null && useOtherGameObject)
                                 Debug.LogWarning("SoundManager: Target GameObject is not set! - Using default object instead");
                         }
                         else
-                            wwiseRTPC.SetValue(targetGameObject, GetDistanceBetweenObjects(targetGameObject, secondGameObject));
+                        {
+                            AkSoundEngine.SetRTPCValue(wwiseRTPC.Name, GetDistanceBetweenObjects(targetGameObject, secondGameObject));
+                            // wwiseRTPC.SetValue(targetGameObject, GetDistanceBetweenObjects(targetGameObject, secondGameObject));
+                        }
                     }
                 }
             }
@@ -526,20 +528,17 @@ namespace Team1_GraduationGame.Managers
             if (item.GetType() == typeof(Void))
             {
                 SoundEventClass.EventRaised(0);
-                //Debug.Log("VOID EVENT RAISED");
             }
             else if (item.GetType() == typeof(float))
             {
                 float tempFloat = float.Parse(item.ToString());
-                //Debug.Log("FLOAT EVENT RAISED " + tempFloat);
                 SoundEventClass.EventRaised(tempFloat);
             }
-            else if (item.GetType() == typeof(int))
-            {
-                int tempInt = int.Parse(item.ToString());
-                //Debug.Log("INT EVENT RAISED " + tempInt);
-                SoundEventClass.EventRaised(tempInt);
-            }
+            //else if (item.GetType() == typeof(int))
+            //{
+            //    int tempInt = int.Parse(item.ToString());
+            //    SoundEventClass.EventRaised(tempInt);
+            //}
         }
     }
 

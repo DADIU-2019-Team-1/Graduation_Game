@@ -118,13 +118,9 @@ namespace Team1_GraduationGame.Managers
                         EditorGUI.indentLevel = EditorGUI.indentLevel + 2;
 
                         ////// BEHAVIORS: //////
-                        #region ///// 0 Event Behavior & 4 Ambient Behavior //////
-                        if ((int)script.soundEvents[i].behaviorSelector == 0 || (int)script.soundEvents[i].behaviorSelector == 4)
+                        #region ///// 0 Event Behavior //////
+                        if ((int)script.soundEvents[i].behaviorSelector == 0)
                         {
-                            if ((int)script.soundEvents[i].behaviorSelector == 4)
-                            {
-                                EditorGUILayout.HelpBox("Ambient feature is not yet implemented!", MessageType.Warning);
-                            }
 
                             script.soundEvents[i].useOtherGameObject = EditorGUILayout.Toggle("Use Other GameObj?",
                                 script.soundEvents[i].useOtherGameObject);
@@ -178,17 +174,6 @@ namespace Team1_GraduationGame.Managers
                                     if (script.soundEvents[i].callbacks.Count != 0)
                                         script.soundEvents[i].callbacks.RemoveAt(script.soundEvents[i].callbacks.Count - 1);
                                 }
-                            }
-
-                            if ((int)script.soundEvents[i].behaviorSelector == 4)
-                            {
-                                DrawUILine(false);
-
-                                SerializedProperty multiPositionTypeProp = serializedObject.FindProperty("soundEvents.Array.data[" + i + "].multiPositionType");
-                                EditorGUILayout.PropertyField(multiPositionTypeProp);
-
-                                SerializedProperty multiPosTypeLabelProp = serializedObject.FindProperty("soundEvents.Array.data[" + i + "].multiPosTypeLabel");
-                                EditorGUILayout.PropertyField(multiPosTypeLabelProp);
                             }
 
                             DrawUILine(false);

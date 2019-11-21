@@ -740,7 +740,7 @@ public class Movement : MonoBehaviour
 
             if (i % mm.framesBetweenTrajectoryPoints == 0)
             {
-                trajPoints[j] = new TrajectoryPoint(playerPos, playerPos + playerForward);
+                trajPoints[j] = new TrajectoryPoint(playerPos, playerForward);
                 j++;
             }
 

@@ -225,14 +225,18 @@ namespace Team1_GraduationGame.MotionMatching
                 {
                     // Position
                     //Gizmos.DrawWireSphere(movement.GetMovementTrajectory().GetTrajectoryPoints()[i].GetPoint(), 0.2f);
-                    Gizmos.DrawLine(
-                        i != 0
-                            ? movement.GetMovementTrajectory().GetTrajectoryPoints()[i - 1].GetPoint()
-                            : transform.position,
-                        movement.GetMovementTrajectory().GetTrajectoryPoints()[i].GetPoint());
+                    if (i != 0)
+                    {
+                        Gizmos.DrawLine(movement.GetMovementTrajectory().GetTrajectoryPoints()[i - 1].GetPoint(), movement.GetMovementTrajectory().GetTrajectoryPoints()[i].GetPoint());
+                    }
+                    else
+                    {
+                        Gizmos.DrawLine(transform.position, movement.GetMovementTrajectory().GetTrajectoryPoints()[i].GetPoint());
+                    }
 
                     // Forward
                     Gizmos.DrawLine(movement.GetMovementTrajectory().GetTrajectoryPoints()[i].GetPoint(),
+                        movement.GetMovementTrajectory().GetTrajectoryPoints()[i].GetPoint() +
                         movement.GetMovementTrajectory().GetTrajectoryPoints()[i].GetForward());
                 }
 
@@ -255,6 +259,8 @@ namespace Team1_GraduationGame.MotionMatching
                     Gizmos.DrawLine(
                         invCharSpace.MultiplyPoint3x4(animSpace.inverse.MultiplyPoint3x4(
                             featureVectors[_currentID].GetTrajectory().GetTrajectoryPoints()[i].GetPoint())),
+                        invCharSpace.MultiplyPoint3x4(animSpace.inverse.MultiplyPoint3x4(
+                            featureVectors[_currentID].GetTrajectory().GetTrajectoryPoints()[i].GetPoint())) +
                         invCharSpace.MultiplyPoint3x4(animSpace.inverse.MultiplyPoint3x4(
                             featureVectors[_currentID].GetTrajectory().GetTrajectoryPoints()[i].GetForward())));
                 }
@@ -504,7 +510,8 @@ namespace Team1_GraduationGame.MotionMatching
         public NativeArray<int> frameCountForIDs;
         public NativeArray<int> candidateIDs;
         public NativeArray<float> candidateValues;
-        public Matrix4x4 movementMatrix;
+        public Matrix4x4 movementMatrix;        // TODO: Convert matrices to float4x4
+        public Matrix4x4 animationMatrix;
         public int currentID;
         public int state;
         public int queryRate;
@@ -512,7 +519,7 @@ namespace Team1_GraduationGame.MotionMatching
 
         public float positionWeight,
             forwardWeight;
-        public void Execute() // TODO % trajPointLength
+        public void Execute()
         {
             for (int i = 0; i < featureIDs.Length; i++)
             {
@@ -523,17 +530,20 @@ namespace Team1_GraduationGame.MotionMatching
                         candidateValues[j] = float.MaxValue;
                     }
                 }
-
+                // TODO: Move animation matrix conversion to Script initialization
                 if (featureState[i] == state) // Animation has the desired state
                 {
                     if ((featureIDs[i] > currentID || featureIDs[i] < currentID - queryRate) && featureFrame[i] + queryRate <= frameCountForIDs[i] /*&& !banQueue.Contains(featureIDs[i])*/)
                     {
                         float comparison = 0;
+                        animationMatrix.SetTRS(animPositionArray[i], Quaternion.identity, Vector3.one);
                         for (int j = 0; j < movementPositionArray.Length; j++)
                         {
-                            comparison += math.distancesq(movementMatrix.MultiplyPoint3x4(animPositionArray[i * trajPoints + j]), movementPositionArray[j]) * 1.0f * positionWeight;
-                            comparison += Vector3.Angle(movementMatrix.MultiplyPoint3x4(animPositionArray[i * trajPoints + j]), movementPositionArray[j]) * 0.1f * forwardWeight;
+                            comparison += math.distancesq(movementMatrix.MultiplyPoint3x4(animationMatrix.MultiplyPoint3x4(animPositionArray[i * trajPoints + j])), movementPositionArray[j]) * positionWeight;
+                            comparison += math.distancesq(movementMatrix.MultiplyPoint3x4(animationMatrix.MultiplyPoint3x4(animPositionArray[i * trajPoints + j])), movementPositionArray[j]) * forwardWeight;
                         }
+
+                        // Array shifting if comparison is less than any value in the array
                         for (int j = candidateIDs.Length - 1; j >= 0; j--)
                         {
                             if (comparison >= candidateValues[j] || j == 0)

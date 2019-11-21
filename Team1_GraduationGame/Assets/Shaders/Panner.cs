@@ -6,7 +6,8 @@ public class Panner : MonoBehaviour
 {
     // Scroll main texture based on time
 
-    float scrollSpeed = 0.5f;
+    public float scrollSpeedX = 0.5f;
+    public float scrollSpeedY = 0.5f;
     Renderer rend;
 
     void Start()
@@ -16,7 +17,8 @@ public class Panner : MonoBehaviour
 
     void Update()
     {
-        float offset = Time.time * scrollSpeed;
-        rend.material.SetTextureOffset("_EmissionMap", new Vector2(offset, 0));
+        float offsetX = Time.time * scrollSpeedX;
+        float offsetY = Time.time * scrollSpeedY;
+        rend.material.SetTextureOffset("_EmissionMap", new Vector2(offsetX, offsetY));
     }
 }

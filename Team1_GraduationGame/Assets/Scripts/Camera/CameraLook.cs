@@ -1,4 +1,6 @@
 ﻿// Code owner: Jannik Neerdal
+
+using System;
 using UnityEngine;
 using Cinemachine;
 public class CameraLook : MonoBehaviour
@@ -33,6 +35,19 @@ public class CameraLook : MonoBehaviour
             cmPath = GetComponent<CinemachineSmoothPath>();
         else
             Debug.LogError("The DollyTrack is missing its track!", gameObject);
+        OnArrayChanged();
+        for (int i = 0; i < offsetTrack.Length; i++)
+        {
+            if (offsetTrack[i] == null)
+            {
+                Debug.Log("OffsetTrack at index " + i + " was null - reinitializing the rest of the array...");
+                for (int j = i; j < offsetTrack.Length; j++)
+                {
+                    offsetTrack[j] = new CameraOffset(Vector3.zero, Vector3.zero, 0.0f);
+                }
+                break;
+            }
+        }
     }
 
     void Start()
@@ -49,7 +64,6 @@ public class CameraLook : MonoBehaviour
             camMovement = FindObjectOfType<CameraMovement>();
         cam = camMovement.GetComponent<Camera>();
         startingFOV = cam.fieldOfView;
-
     }
 
     public void OnArrayChanged() // Called in a custom inspector

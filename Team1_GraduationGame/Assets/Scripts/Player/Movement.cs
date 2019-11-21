@@ -556,7 +556,7 @@ public class Movement : MonoBehaviour
                            Physics.Raycast(transform.position + Vector3.up, Vector3.down, ghostJumpHeight.value + 1.0f)))
         {
             isJumping = true;
-            miniJump?.Raise();
+            //miniJump?.Raise();
 
             // also setting jump on temp Animator
             if (animator.runtimeAnimatorController != null)

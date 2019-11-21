@@ -6,14 +6,14 @@ using UnityEngine.Playables;
 public class StartCutscenesFromTrigger : MonoBehaviour
 {
 
-    public Collider Collider;
+    private Collider collider;
     public GameObject Target;
     // Start is called before the first frame update
     void Start()
     {
-        
+        collider = GetComponent<BoxCollider>();
     }
-    private void OnTriggerEnter(Collider Collider)
+    private void OnTriggerEnter(Collider collider)
     {
         Debug.Log("Fired event");
         Target.SetActive(true);

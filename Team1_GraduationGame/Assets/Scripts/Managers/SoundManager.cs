@@ -374,7 +374,7 @@ namespace Team1_GraduationGame.Managers
                             wwiseRTPC.SetGlobalValue(rtpcScriptableObject.value);
                         else
                             wwiseRTPC.SetGlobalValue(_parsedValue);
-                    }   // AkSoundEngine.SetRTPCValue("SFX_Slider", GameMaster.instance.GetMusicLevel()); // TODO
+                    }
                     else
                     {
                         if (targetGameObject == null || !useOtherGameObject)

@@ -91,7 +91,7 @@ public class CameraLook : MonoBehaviour
 
         if (camMovement != null && cmPath.m_Waypoints.Length > 1 && offsetTrack.Length > 1)
         {
-            Debug.Log(camMovement.previousTrackIndex + " | " +  camMovement.nextTrackIndex + " | " + offsetTrack.Length);
+            //Debug.Log(camMovement.previousTrackIndex + " | " +  camMovement.nextTrackIndex + " | " + offsetTrack.Length);
             offsetTrackLerpValue = (camMovement.railCam.position.x - cmPath.m_Waypoints[camMovement.previousTrackIndex].position.x - camMovement.trackX) /
                              (cmPath.m_Waypoints[camMovement.nextTrackIndex].position.x - cmPath.m_Waypoints[camMovement.previousTrackIndex].position.x);
             camLookOffset = Vector3.Lerp(offsetTrack[camMovement.previousTrackIndex].GetLook(), offsetTrack[camMovement.nextTrackIndex].GetLook(), offsetTrackLerpValue);

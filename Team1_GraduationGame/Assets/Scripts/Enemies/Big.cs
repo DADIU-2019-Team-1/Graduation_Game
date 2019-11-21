@@ -44,7 +44,15 @@ namespace Team1_GraduationGame.Enemies
             }
 
             if (GetComponent<Animator>() != null)
+            {
                 _animator = GetComponent<Animator>();
+                //_animator.SetTrigger("Patrolling");
+            }
+            else
+            {
+                _active = false;
+                Debug.LogError("Big Sis Error: No animator on " + gameObject.name);
+            }
 
             if (GetComponent<EnemySoundManager>() != null)
                 _enemySoundManager = gameObject.GetComponent<EnemySoundManager>();
@@ -67,8 +75,6 @@ namespace Team1_GraduationGame.Enemies
                 _active = true;
             else
                 Debug.LogError("Big Enemy Error: Vision gameobject missing, please attach one!");
-
-            _animator?.SetBool("Patrolling", false);
         }
 
         private void FixedUpdate()
@@ -227,47 +233,50 @@ namespace Team1_GraduationGame.Enemies
 
         public void ResetBig()
         {
-            StopAllCoroutines();
-            _active = true;
-            _disappear = true;
-            _appear = false;
-            _isAggro = false;
-            _isSpawned = false;
-            _playerSpotted = false;
-            _timerRunning = false;
-            UpdateFOVLight(false, false);
+            if (_animator != null)
+            {
+                StopAllCoroutines();
+                _disappear = true;
+                _appear = false;
+                _isAggro = false;
+                _isSpawned = false;
+                _playerSpotted = false;
+                _timerRunning = false;
+                _animator.ResetTrigger("Appearing");
+                _playerAnimator?.ResetTrigger("BigAttack");
+                _animator.ResetTrigger("Attack");
+                _animator.SetBool("Patrolling", false);
+                _animator.SetTrigger("Disappearing");
+                UpdateFOVLight(false, false);
+            }
         }
 
         private IEnumerator ChangeState(bool isActive)
         {
             if (isActive)
             {
-                _animator?.SetTrigger("Appearing");
+                _animator.SetTrigger("Appearing");
                 _enemySoundManager?.gettingUp();
             }
             else
             {
-                _animator?.SetTrigger("Disappearing");
+                _animator.SetTrigger("Disappearing");
                 _enemySoundManager?.pushedDown();
             }
 
             yield return new WaitForSeconds(changeStateTime);
 
-            if (isActive)
+            if (isActive && !_isAggro)
             {
-                _animator?.ResetTrigger("Appearing");
-                _animator?.SetBool("Patrolling", true);
-                _isRotating = true;
+                _animator.ResetTrigger("Appearing");
+                _animator.SetBool("Patrolling", true);
                 _isSpawned = true;
-                _updateRotation = true;
             }
-            else
+            else if (!_isAggro)
             {
-                _animator?.ResetTrigger("Disappearing");
-                _animator?.SetBool("Patrolling", false);
-                _isRotating = false;
+                _animator.ResetTrigger("Disappearing");
+                _animator.SetBool("Patrolling", false);
                 _isSpawned = false;
-                _updateRotation = false;
             }
         }
 
@@ -276,8 +285,8 @@ namespace Team1_GraduationGame.Enemies
             _player.GetComponent<Movement>().Frozen(true);
             _active = false;
 
-            _animator?.SetTrigger("Attack");
-            _playerAnimator?.SetTrigger("BigAttack");
+            _animator.SetTrigger("Attack");
+            _playerAnimator.SetTrigger("BigAttack");
             _enemySoundManager?.attackPlayer();
 
             yield return new WaitForSeconds(animAttackTime);
@@ -291,8 +300,13 @@ namespace Team1_GraduationGame.Enemies
         private IEnumerator Aggro()
         {
             _isAggro = true;
-            _animator?.SetBool("Patrolling", false);
-            _animator?.SetTrigger("Spotted");
+
+            if (!_isSpawned)
+                _isSpawned = true;
+
+            _animator.SetBool("Patrolling", false);
+            _animator.ResetTrigger("Appearing");
+            _animator.SetTrigger("Spotted");
             _enemySoundManager?.spotted();
 
             yield return new WaitForSeconds(aggroTime);
@@ -303,26 +317,21 @@ namespace Team1_GraduationGame.Enemies
             if (Physics.Raycast(visionGameObject.transform.position, dir, out hit, viewDistance, _layerMask))
             {
                 if (hit.collider.tag == _player.tag)
-                {
                     StartCoroutine(PlayerDied());
-                }
                 else
-                {
-                    UpdateFOVLight(true, false);
-                    _isAggro = false;
-                    _active = true;
-                    _animator?.SetBool("Patrolling", true);
-                    _animator?.ResetTrigger("Spotted");
-                }
+                    CancelAggro();
             }
             else
-            {
-                UpdateFOVLight(true, false);
-                _isAggro = false;
-                _active = true;
-                _animator?.SetBool("Patrolling", true);
-                _animator?.ResetTrigger("Spotted");
-            }
+                CancelAggro();
+        }
+
+        private void CancelAggro()
+        {
+            UpdateFOVLight(true, false);
+            _isAggro = false;
+            _active = true;
+            _animator.SetBool("Patrolling", true);
+            _animator.ResetTrigger("Spotted");
         }
 
         private IEnumerator WaitTimer()

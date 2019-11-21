@@ -209,57 +209,57 @@ namespace Team1_GraduationGame.MotionMatching
         }
 #endif
 
-        //private void OnDrawGizmos()
-        //{
-        //    if (Application.isPlaying)
-        //    {
-        //        Matrix4x4 invCharSpace = transform.worldToLocalMatrix.inverse;
-        //        Matrix4x4 animSpace = new Matrix4x4();
-        //        animSpace.SetTRS(featureVectors[_currentID].GetTrajectory().GetTrajectoryPoints()[0].GetPoint(),
-        //            Quaternion.identity, Vector3.one);
+        private void OnDrawGizmos()
+        {
+            if (Application.isPlaying)
+            {
+                Matrix4x4 invCharSpace = transform.worldToLocalMatrix.inverse;
+                Matrix4x4 animSpace = new Matrix4x4();
+                animSpace.SetTRS(featureVectors[_currentID].GetTrajectory().GetTrajectoryPoints()[0].GetPoint(),
+                    Quaternion.identity, Vector3.one);
 
-        //        Gizmos.color = Color.red; // Movement Trajectory
-        //        for (int i = 0;
-        //            i < movement.GetMovementTrajectory().GetTrajectoryPoints().Length;
-        //            i++) // Gizmos for movement
-        //        {
-        //            // Position
-        //            //Gizmos.DrawWireSphere(movement.GetMovementTrajectory().GetTrajectoryPoints()[i].GetPoint(), 0.2f);
-        //            Gizmos.DrawLine(
-        //                i != 0
-        //                    ? movement.GetMovementTrajectory().GetTrajectoryPoints()[i - 1].GetPoint()
-        //                    : transform.position,
-        //                movement.GetMovementTrajectory().GetTrajectoryPoints()[i].GetPoint());
+                Gizmos.color = Color.red; // Movement Trajectory
+                for (int i = 0;
+                    i < movement.GetMovementTrajectory().GetTrajectoryPoints().Length;
+                    i++) // Gizmos for movement
+                {
+                    // Position
+                    //Gizmos.DrawWireSphere(movement.GetMovementTrajectory().GetTrajectoryPoints()[i].GetPoint(), 0.2f);
+                    Gizmos.DrawLine(
+                        i != 0
+                            ? movement.GetMovementTrajectory().GetTrajectoryPoints()[i - 1].GetPoint()
+                            : transform.position,
+                        movement.GetMovementTrajectory().GetTrajectoryPoints()[i].GetPoint());
 
-        //            // Forward
-        //            Gizmos.DrawLine(movement.GetMovementTrajectory().GetTrajectoryPoints()[i].GetPoint(),
-        //                movement.GetMovementTrajectory().GetTrajectoryPoints()[i].GetForward());
-        //        }
+                    // Forward
+                    Gizmos.DrawLine(movement.GetMovementTrajectory().GetTrajectoryPoints()[i].GetPoint(),
+                        movement.GetMovementTrajectory().GetTrajectoryPoints()[i].GetForward());
+                }
 
-        //        Gizmos.color = Color.green; // Animation Trajectory
-        //        for (int i = 0; i < featureVectors[_currentID].GetTrajectory().GetTrajectoryPoints().Length; i++)
-        //        {
-        //            // Position
-        //            //Gizmos.DrawWireSphere(invCharSpace.MultiplyPoint3x4(animSpace.inverse.MultiplyPoint3x4(featureVectors[_currentID].GetTrajectory().GetTrajectoryPoints()[i].GetPoint())), 0.2f);
+                Gizmos.color = Color.green; // Animation Trajectory
+                for (int i = 0; i < featureVectors[_currentID].GetTrajectory().GetTrajectoryPoints().Length; i++)
+                {
+                    // Position
+                    //Gizmos.DrawWireSphere(invCharSpace.MultiplyPoint3x4(animSpace.inverse.MultiplyPoint3x4(featureVectors[_currentID].GetTrajectory().GetTrajectoryPoints()[i].GetPoint())), 0.2f);
 
-        //            if (i != 0)
-        //            {
-        //                Gizmos.DrawLine(
-        //                    invCharSpace.MultiplyPoint3x4(animSpace.inverse.MultiplyPoint3x4(
-        //                        featureVectors[_currentID].GetTrajectory().GetTrajectoryPoints()[i - 1].GetPoint())),
-        //                    invCharSpace.MultiplyPoint3x4(animSpace.inverse.MultiplyPoint3x4(
-        //                        featureVectors[_currentID].GetTrajectory().GetTrajectoryPoints()[i].GetPoint())));
-        //            }
+                    if (i != 0)
+                    {
+                        Gizmos.DrawLine(
+                            invCharSpace.MultiplyPoint3x4(animSpace.inverse.MultiplyPoint3x4(
+                                featureVectors[_currentID].GetTrajectory().GetTrajectoryPoints()[i - 1].GetPoint())),
+                            invCharSpace.MultiplyPoint3x4(animSpace.inverse.MultiplyPoint3x4(
+                                featureVectors[_currentID].GetTrajectory().GetTrajectoryPoints()[i].GetPoint())));
+                    }
 
-        //            // Forward
-        //            Gizmos.DrawLine(
-        //                invCharSpace.MultiplyPoint3x4(animSpace.inverse.MultiplyPoint3x4(
-        //                    featureVectors[_currentID].GetTrajectory().GetTrajectoryPoints()[i].GetPoint())),
-        //                invCharSpace.MultiplyPoint3x4(animSpace.inverse.MultiplyPoint3x4(
-        //                    featureVectors[_currentID].GetTrajectory().GetTrajectoryPoints()[i].GetForward())));
-        //        }
-        //    }
-        //}
+                    // Forward
+                    Gizmos.DrawLine(
+                        invCharSpace.MultiplyPoint3x4(animSpace.inverse.MultiplyPoint3x4(
+                            featureVectors[_currentID].GetTrajectory().GetTrajectoryPoints()[i].GetPoint())),
+                        invCharSpace.MultiplyPoint3x4(animSpace.inverse.MultiplyPoint3x4(
+                            featureVectors[_currentID].GetTrajectory().GetTrajectoryPoints()[i].GetForward())));
+                }
+            }
+        }
 
         private void UpdateAnimation(int id, int frame)
         {

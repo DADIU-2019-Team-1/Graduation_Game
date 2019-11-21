@@ -1,4 +1,6 @@
 ﻿// Code owner: Jannik Neerdal
+
+using System;
 using UnityEngine;
 using Cinemachine;
 public class CameraLook : MonoBehaviour
@@ -33,6 +35,19 @@ public class CameraLook : MonoBehaviour
             cmPath = GetComponent<CinemachineSmoothPath>();
         else
             Debug.LogError("The DollyTrack is missing its track!", gameObject);
+        OnArrayChanged();
+        for (int i = 0; i < offsetTrack.Length; i++)
+        {
+            if (offsetTrack[i] == null)
+            {
+                Debug.Log("OffsetTrack at index " + i + " was null - reinitializing the rest of the array...");
+                for (int j = i; j < offsetTrack.Length; j++)
+                {
+                    offsetTrack[j] = new CameraOffset(Vector3.zero, Vector3.zero, 0.0f);
+                }
+                break;
+            }
+        }
     }
 
     void Start()
@@ -91,7 +106,6 @@ public class CameraLook : MonoBehaviour
 
         if (camMovement != null && cmPath.m_Waypoints.Length > 1 && offsetTrack.Length > 1)
         {
-            Debug.Log(camMovement.previousTrackIndex + " | " +  camMovement.nextTrackIndex + " | " + offsetTrack.Length);
             offsetTrackLerpValue = (camMovement.railCam.position.x - cmPath.m_Waypoints[camMovement.previousTrackIndex].position.x - camMovement.trackX) /
                              (cmPath.m_Waypoints[camMovement.nextTrackIndex].position.x - cmPath.m_Waypoints[camMovement.previousTrackIndex].position.x);
             camLookOffset = Vector3.Lerp(offsetTrack[camMovement.previousTrackIndex].GetLook(), offsetTrack[camMovement.nextTrackIndex].GetLook(), offsetTrackLerpValue);

@@ -81,29 +81,17 @@ namespace Team1_GraduationGame.Enemies
                 if (_player.GetComponent<Movement>() != null)
                     _movement = _player.GetComponent<Movement>();
 
-                if (_thisCollider != null)
-                {
-                    _thisCollider.isTrigger = true;
-                    _thisCollider.radius = thisEnemy.viewDistance;
-                }
-
-                if (GetComponent<NavMeshAgent>() != null)
-                {
-                    _navMeshAgent = GetComponent<NavMeshAgent>();
-                    _navMeshAgent.speed = thisEnemy.walkSpeed;
-                    _navMeshAgent.angularSpeed = thisEnemy.walkTurnSpeed;
-                    _path = new NavMeshPath();
-                }
-                else
-                {
-                    _active = false;
-                    Debug.LogError("Enemy Error: No Nav Mesh Agent script attached!");
-                }
-
+                _thisCollider.isTrigger = true;
+                _thisCollider.radius = thisEnemy.viewDistance;
+                
+                _navMeshAgent = GetComponent<NavMeshAgent>();
+                _navMeshAgent.speed = thisEnemy.walkSpeed;
+                _navMeshAgent.angularSpeed = thisEnemy.walkTurnSpeed;
+                _path = new NavMeshPath();
+                
                 if (wayPoints == null)
                     wayPoints = new List<GameObject>();
                 
-
                 if (rotateAtWaypoints)
                     _wayPointRotations = new Vector3[wayPoints.Count];
 
@@ -323,14 +311,11 @@ namespace Team1_GraduationGame.Enemies
 
         private void CustomUpdate()
         {
-            if (_navMeshAgent != null)
-            {
-                _speed = _navMeshAgent.velocity.magnitude;
+            _speed = _navMeshAgent.velocity.magnitude;
 
-                if (_animator != null)
-                {
-                    _animator?.SetFloat("Speed", _speed);
-                }
+            if (_animator != null)
+            {
+                _animator.SetFloat("Speed", _speed);
             }
         }
 
@@ -612,7 +597,6 @@ namespace Team1_GraduationGame.Enemies
         #endregion
 
         #region Setter and Getters
-
         public void ResetEnemy()
         {
             StopAllCoroutines();

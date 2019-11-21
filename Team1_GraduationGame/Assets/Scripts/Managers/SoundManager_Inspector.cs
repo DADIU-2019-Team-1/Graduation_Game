@@ -101,8 +101,7 @@ namespace Team1_GraduationGame.Managers
                         }
                         else if ((int) script.soundEvents[i].triggerTypeSelector == 6)
                         {
-                            SerializedProperty triggerIntEventProp = serializedObject.FindProperty("soundEvents.Array.data[" + i + "].triggerIntEvent");
-                            EditorGUILayout.PropertyField(triggerIntEventProp);
+                            // TODO - Implement this YYY
                         }
 
                         script.soundEvents[i].runOnce = EditorGUILayout.Toggle("Run Once", script.soundEvents[i].runOnce);

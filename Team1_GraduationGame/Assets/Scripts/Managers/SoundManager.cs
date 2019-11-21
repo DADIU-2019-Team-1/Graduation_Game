@@ -226,15 +226,13 @@ namespace Team1_GraduationGame.Managers
         [HideInInspector] public EventTypeEnum triggerTypeSelector;
         [HideInInspector] public SoundVoidEventListener soundEventListener;
         [HideInInspector] public SoundFloatEventListener soundFloatEventListener;
-        [HideInInspector] public SoundIntEventListener soundIntEventListener;
         [HideInInspector] public float triggerDelay = 0.0f;
         [HideInInspector] public VoidEvent triggerEvent;
         [HideInInspector] public FloatEvent triggerFloatEvent;
-        [HideInInspector] public IntEvent triggerIntEvent;
         [HideInInspector] public bool rtpcRoleBool;
         private bool _eventFired = false;
         private float _parsedValue = 0;
-        [HideInInspector] public float customValue, transitionDuration = 0.0f;
+        [HideInInspector] public float customValue = 0.0f, transitionDuration = 0.0f;
 
         // Behavior switching:
         public enum BehaviorEnum
@@ -260,8 +258,6 @@ namespace Team1_GraduationGame.Managers
         [HideInInspector] public FloatVariable rtpcScriptableObject;
         [HideInInspector] public AkActionOnEventType actionOnEventType = AkActionOnEventType.AkActionOnEventType_Stop;
         [HideInInspector] public AkCurveInterpolation curveInterpolation = AkCurveInterpolation.AkCurveInterpolation_Linear;
-        //[HideInInspector] public AkMultiPositionType multiPositionType = AkMultiPositionType.MultiPositionType_MultiSources;
-        //[HideInInspector] public MultiPositionTypeLabel multiPosTypeLabel = MultiPositionTypeLabel.Simple_Mode;
 
         // Bools:
         [HideInInspector] public bool useCallbacks, useActionOnEvent, rtpcGlobal, runOnce, 
@@ -386,39 +382,40 @@ namespace Team1_GraduationGame.Managers
         #region RTPC Handler
         private void RTPCHandler()
         {
-            if (rtpcScriptableObject != null || wwiseRTPC != null)
+            if (wwiseRTPC != null)
             {
                 if (rtpcRoleBool && !objDistanceToRtpc)
                 {
                     if (rtpcGlobal)
                     {
                         if (!useValueFromEvent && !setCustomRtpcFloat)
-                            wwiseRTPC.SetGlobalValue(rtpcScriptableObject.value);
-                        else
+                        {
+                            if (rtpcScriptableObject != null)
+                                wwiseRTPC.SetGlobalValue(rtpcScriptableObject.value);
+                        }
+                        else if (setCustomRtpcFloat)
+                        {
+                            wwiseRTPC.SetGlobalValue(customValue);
+                        }
+                        else // Then we use value from event
                             wwiseRTPC.SetGlobalValue(_parsedValue);
                     }
                     else
                     {
-                        if (targetGameObject == null || !useOtherGameObject)
+                        if (!useValueFromEvent && !setCustomRtpcFloat)
                         {
-                            if (!useValueFromEvent && !setCustomRtpcFloat)
-                            {
+                            if (rtpcScriptableObject != null)
                                 AkSoundEngine.SetRTPCValue(wwiseRTPC.Name, rtpcScriptableObject.value);
-                                // wwiseRTPC.SetValue(soundManagerGameObject, rtpcScriptableObject.value);
-                            }
-                            else
-                            {
-                                AkSoundEngine.SetRTPCValue(wwiseRTPC.Name, _parsedValue);
-                                // wwiseRTPC.SetValue(soundManagerGameObject, _parsedValue);
-                            }
-
-                            if (targetGameObject == null && useOtherGameObject)
-                                Debug.LogWarning("SoundManager: Target GameObject is not set! - Using default object instead");
+                            // wwiseRTPC.SetValue(soundManagerGameObject, rtpcScriptableObject.value);
                         }
-                        else
+                        else if (setCustomRtpcFloat)
                         {
-                            AkSoundEngine.SetRTPCValue(wwiseRTPC.Name, rtpcScriptableObject.value);
-                            // wwiseRTPC.SetValue(targetGameObject, rtpcScriptableObject.value);
+                            AkSoundEngine.SetRTPCValue(wwiseRTPC.Name, customValue);
+                        }
+                        else // Then we use value from event
+                        {
+                            AkSoundEngine.SetRTPCValue(wwiseRTPC.Name, _parsedValue);
+                            // wwiseRTPC.SetValue(soundManagerGameObject, _parsedValue);
                         }
                     }
                 }
@@ -465,10 +462,6 @@ namespace Team1_GraduationGame.Managers
                         }
                     }
                 }
-            }
-            else
-            {
-                Debug.LogError("SoundManager Error: Scriptable object or RTPC is null!");
             }
         }
         #endregion
@@ -556,11 +549,6 @@ namespace Team1_GraduationGame.Managers
                 float tempFloat = float.Parse(item.ToString());
                 SoundEventClass.EventRaised(tempFloat);
             }
-            //else if (item.GetType() == typeof(int))
-            //{
-            //    int tempInt = int.Parse(item.ToString());
-            //    SoundEventClass.EventRaised(tempInt);
-            //}
         }
     }
 
@@ -572,8 +560,5 @@ namespace Team1_GraduationGame.Managers
     {
     }
 
-    public class SoundIntEventListener : SoundEventListener<int, IntEvent, SoundEvent>
-    {
-    }
     #endregion
 }

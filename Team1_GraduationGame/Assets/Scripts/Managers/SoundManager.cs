@@ -220,7 +220,8 @@ namespace Team1_GraduationGame.Managers
             OnTriggerEnter,
             OnTriggerExit,
             Start,
-            ExternalRaise
+            ExternalRaise,
+            OnTriggerStay
         }
         [HideInInspector] public EventTypeEnum triggerTypeSelector;
         [HideInInspector] public SoundVoidEventListener soundEventListener;
@@ -549,12 +550,10 @@ namespace Team1_GraduationGame.Managers
             if (item.GetType() == typeof(Void))
             {
                 SoundEventClass.EventRaised(0);
-                Debug.Log("Void EVENT");
             }
             else if (item.GetType() == typeof(float))
             {
                 float tempFloat = float.Parse(item.ToString());
-                Debug.Log("Float EVENT " + tempFloat);
                 SoundEventClass.EventRaised(tempFloat);
             }
             //else if (item.GetType() == typeof(int))

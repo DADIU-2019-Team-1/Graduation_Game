@@ -13,7 +13,7 @@ namespace Team1_GraduationGame.Enemies
         //References:
         private GameObject _player;
         private Animator _playerAnimator;
-        private EnemySoundManager _enemySoundManager;
+        public EnemySoundManager enemySoundManager;
         private Animator _animator;
         public Light fieldOfViewLight;
         public VoidEvent playerDiedEvent;
@@ -53,9 +53,6 @@ namespace Team1_GraduationGame.Enemies
                 _active = false;
                 Debug.LogError("Big Sis Error: No animator on " + gameObject.name);
             }
-
-            if (GetComponent<EnemySoundManager>() != null)
-                _enemySoundManager = gameObject.GetComponent<EnemySoundManager>();
 
             _layerMask = ~LayerMask.GetMask("Enemies");
 
@@ -256,12 +253,12 @@ namespace Team1_GraduationGame.Enemies
             if (isActive)
             {
                 _animator.SetTrigger("Appearing");
-                _enemySoundManager?.gettingUp();
+                enemySoundManager?.gettingUp();
             }
             else
             {
                 _animator.SetTrigger("Disappearing");
-                _enemySoundManager?.pushedDown();
+                enemySoundManager?.pushedDown();
             }
 
             yield return new WaitForSeconds(changeStateTime);
@@ -287,7 +284,7 @@ namespace Team1_GraduationGame.Enemies
 
             _animator.SetTrigger("Attack");
             _playerAnimator.SetTrigger("BigAttack");
-            _enemySoundManager?.attackPlayer();
+            enemySoundManager?.attackPlayer();
 
             yield return new WaitForSeconds(animAttackTime);
 
@@ -307,7 +304,7 @@ namespace Team1_GraduationGame.Enemies
             _animator.SetBool("Patrolling", false);
             _animator.ResetTrigger("Appearing");
             _animator.SetTrigger("Spotted");
-            _enemySoundManager?.spotted();
+            enemySoundManager?.spotted();
 
             yield return new WaitForSeconds(aggroTime);
 

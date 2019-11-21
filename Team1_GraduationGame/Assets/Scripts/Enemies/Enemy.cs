@@ -27,7 +27,7 @@ namespace Team1_GraduationGame.Enemies
         private Animator _playerAnimator;
         private Movement _movement;
         private NavMeshAgent _navMeshAgent;
-        private EnemySoundManager _enemySoundManager;
+        public EnemySoundManager _enemySoundManager;
         [Tooltip("Animator will automatically be found - So ONLY add one if it is not on this object")] public Animator _animator;
         [HideInInspector] public List<GameObject> wayPoints;
         [HideInInspector] public GameObject parentWayPoint;
@@ -58,7 +58,7 @@ namespace Team1_GraduationGame.Enemies
         {
             _player = GameObject.FindGameObjectWithTag("Player");
             _layerMask = ~LayerMask.GetMask("Enemies"); // Use later for raycast to ignore other enemies
-            _enemySoundManager = gameObject.GetComponent<EnemySoundManager>();
+            //_enemySoundManager = gameObject.GetComponent<EnemySoundManager>();
 
             if (_player != null && thisEnemy != null)
             {

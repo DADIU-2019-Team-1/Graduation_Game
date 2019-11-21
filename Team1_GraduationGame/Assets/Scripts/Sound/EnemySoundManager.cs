@@ -17,7 +17,7 @@ namespace Team1_GraduationGame.Sound
 
         // Wwise:
         [HideInInspector] public AK.Wwise.RTPC speedRTPC, stateRTPC;
-        public AK.Wwise.Event attackingPlayerEvent, pushedDownEvent, gettingUpEvent, onsetEvent, holdEvent, spotEvent;
+        public AK.Wwise.Event attackingPlayerEvent, pushedDownEvent, gettingUpEvent, onsetEvent, holdEvent, spotEvent;  // TODO make sure all these vents gets raised
 
         private Enemy _thisEnemy;
 
@@ -39,14 +39,14 @@ namespace Team1_GraduationGame.Sound
                     if (useGlobalRtpcs)
                         speedRTPC.SetGlobalValue(_thisEnemy.GetSpeed());
                     else
-                        speedRTPC.SetValue(gameObject, _thisEnemy.GetSpeed());
+                        AkSoundEngine.SetRTPCValue(speedRTPC.Id, _thisEnemy.GetSpeed());
                 }
                 if (stateRTPC != null)
                 {
                     if (useGlobalRtpcs)
                         stateRTPC.SetGlobalValue(_thisEnemy.GetState());
                     else
-                        stateRTPC.SetValue(gameObject, _thisEnemy.GetState());
+                        AkSoundEngine.SetRTPCValue(stateRTPC.Id, _thisEnemy.GetState());
                 }
             }
         }

@@ -22,10 +22,7 @@ namespace Team1_GraduationGame.Enemies
         // Private:
         private bool _active, _isAggro, _isSpawned, _isRotating, _turnLeft, _updateRotation, _playerSpotted, _lightOn, _timerRunning;
         private int _layerMask, _currentSpawnPoint = 0;
-        private Vector3 _lookRangeToVector, _lookRangeFromVector, _spawnedPos, _unSpawnedPos;
         private Quaternion _lookRotation;
-
-        private bool _appear, _disappear; // TODO: Remove this later (they are used as placeholders for animation atm.)
 
         // Public:
         public bool drawGizmos = true;
@@ -46,7 +43,6 @@ namespace Team1_GraduationGame.Enemies
             if (GetComponent<Animator>() != null)
             {
                 _animator = GetComponent<Animator>();
-                //_animator.SetTrigger("Patrolling");
             }
             else
             {
@@ -56,17 +52,11 @@ namespace Team1_GraduationGame.Enemies
 
             _layerMask = ~LayerMask.GetMask("Enemies");
 
-            _lookRangeToVector = new Vector3(0, lookRangeTo, 0);
-            _lookRangeFromVector = new Vector3(0, lookRangeFrom, 0);
-
             if (fieldOfViewLight != null)
             {
                 fieldOfViewLight.range = viewDistance;
                 fieldOfViewLight.spotAngle = fieldOfView;
             }
-
-            _unSpawnedPos = visionGameObject.transform.position;
-            _spawnedPos = visionGameObject.transform.position + (visionGameObject.transform.up * 8);
 
             if (visionGameObject != null)
                 _active = true;
@@ -82,50 +72,6 @@ namespace Team1_GraduationGame.Enemies
                 {
                     if (!_lightOn)
                         UpdateFOVLight(true, false);
-
-                    // Rotation code:   TODO: uncomment if neeeded again
-                    //if (_isRotating)
-                    //{
-                    //    if (_updateRotation)
-                    //    {
-                    //        _updateRotation = false;
-
-                    //        if (_turnLeft)
-                    //            _lookRotation = Quaternion.Euler(_lookRangeToVector) != Quaternion.identity ? Quaternion.Euler(_lookRangeToVector) : transform.rotation;
-                    //        else
-                    //            _lookRotation = Quaternion.Euler(_lookRangeFromVector) != Quaternion.identity ? Quaternion.Euler(_lookRangeFromVector) : transform.rotation;
-                    //    }
-
-                    //    transform.rotation = Quaternion.RotateTowards(transform.rotation, _lookRotation, rotateDegreesPerSecond * Time.fixedDeltaTime);
-
-                    //    if (transform.rotation.eulerAngles.y >= lookRangeTo - 3.0f && _turnLeft)
-                    //    {
-                    //        if (rotateWaitTime > 0 && !_timerRunning)
-                    //        {
-                    //            _turnLeft = false;
-                    //            StartCoroutine(WaitTimer());
-                    //        }
-                    //        else if (!_timerRunning)
-                    //        {
-                    //            _turnLeft = false;
-                    //            _updateRotation = true;
-                    //        }
-                    //    }
-                    //    else if (transform.rotation.eulerAngles.y <= lookRangeFrom + 3.0f && !_turnLeft)
-                    //    {
-                    //        if (rotateWaitTime > 0 && !_timerRunning)
-                    //        {
-                    //            _turnLeft = true;
-                    //            _updateRotation = true;
-                    //            StartCoroutine(WaitTimer());
-                    //        }
-                    //        else if (!_timerRunning)
-                    //        {
-                    //            _turnLeft = true;
-                    //            _updateRotation = true;
-                    //        }
-                    //    }
-                    //}
 
                     if (!_playerSpotted)
                     {
@@ -163,8 +109,6 @@ namespace Team1_GraduationGame.Enemies
                 {
                     if (Vector3.Distance(transform.position, _player.transform.position) < spawnActivationDistance && !_isSpawned)
                     {
-                        _appear = true;
-                        _disappear = false;
                         UpdateFOVLight(true, false);
                         StopCoroutine(ChangeState(false));
                         StartCoroutine(ChangeState(true));
@@ -172,31 +116,11 @@ namespace Team1_GraduationGame.Enemies
                     else if (Vector3.Distance(transform.position, _player.transform.position) > spawnActivationDistance &&
                              _isSpawned)
                     {
-                        _disappear = true;
-                        _appear = false;
                         UpdateFOVLight(false, false);
                         StopCoroutine(ChangeState(true));
                         StartCoroutine(ChangeState(false));
                     }
                 }
-
-                //if (visionGameObject != null) // TODO: Enable again if needed
-                //{
-                //    if (_appear && !_disappear)
-                //    {
-                //        visionGameObject.transform.position = Vector3.Lerp(visionGameObject.transform.position, _spawnedPos, Time.fixedDeltaTime);
-
-                //        if (transform.position == _spawnedPos)
-                //            _appear = false;
-                //    }
-                //    else if (_disappear && !_appear)
-                //    {
-                //        visionGameObject.transform.position = Vector3.Lerp(visionGameObject.transform.position, _unSpawnedPos, Time.fixedDeltaTime);
-
-                //        if (visionGameObject.transform.position == _unSpawnedPos)
-                //            _disappear = false;
-                //    }
-                //}
             }
 
             if (_isAggro && !_active)
@@ -233,8 +157,6 @@ namespace Team1_GraduationGame.Enemies
             if (_animator != null)
             {
                 StopAllCoroutines();
-                _disappear = true;
-                _appear = false;
                 _isAggro = false;
                 _isSpawned = false;
                 _playerSpotted = false;
@@ -342,16 +264,16 @@ namespace Team1_GraduationGame.Enemies
             _timerRunning = false;
         }
 
-#if UNITY_EDITOR
-        private void OnDrawGizmos()
-        {
-            if (drawGizmos && Application.isEditor && visionGameObject != null)
-            {
-                Gizmos.color = Color.red;
+//#if UNITY_EDITOR
+//        private void OnDrawGizmos()
+//        {
+//            if (drawGizmos && Application.isEditor && visionGameObject != null)
+//            {
+//                Gizmos.color = Color.red;
 
-                Gizmos.DrawLine(visionGameObject.transform.position + visionGameObject.transform.up, visionGameObject.transform.forward * viewDistance + (visionGameObject.transform.position + visionGameObject.transform.up));
-            }
-        }
-#endif
+//                Gizmos.DrawLine(visionGameObject.transform.position + visionGameObject.transform.up, visionGameObject.transform.forward * viewDistance + (visionGameObject.transform.position + visionGameObject.transform.up));
+//            }
+//        }
+//#endif
     }
 }

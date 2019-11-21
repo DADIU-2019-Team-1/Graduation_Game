@@ -1,15 +1,15 @@
 ﻿// Script by Jakob Elkjær Husted
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using Team1_GraduationGame.Enemies;
-using Team1_GraduationGame.Events;
-using Team1_GraduationGame.Interaction;
-using UnityEditor;
-using UnityEngine;
-
 namespace Team1_GraduationGame.SaveLoadSystem
 {
+    using System.Collections;
+    using System.Collections.Generic;
+    using System.Linq;
+    using Team1_GraduationGame.Enemies;
+    using Team1_GraduationGame.Events;
+    using Team1_GraduationGame.Interaction;
+    using UnityEditor;
+    using UnityEngine;
+
     public class SavePointManager : MonoBehaviour
     {
         // References:

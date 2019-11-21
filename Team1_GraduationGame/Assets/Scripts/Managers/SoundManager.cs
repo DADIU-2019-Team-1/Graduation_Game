@@ -96,6 +96,27 @@ namespace Team1_GraduationGame.Managers
             AkSoundEngine.StopAll();
         }
 
+        //private void OnTriggerStay(Collider col)  // TODO later YYY
+        //{
+        //    if (_collisionActive)
+        //    {
+        //        for (int i = 0; i < soundEvents.Length; i++)
+        //        {
+        //            if ((int)soundEvents[i].triggerTypeSelector == 2)
+        //            {
+        //                if (!soundEvents[i].checkForTag)
+        //                {
+        //                    soundEvents[i].EventRaised(0);
+        //                }
+        //                else if (col.tag == tagStrings[i])
+        //                {
+        //                    soundEvents[i].EventRaised(0);
+        //                }
+        //            }
+        //        }
+        //    }
+        //}
+
         private void OnTriggerEnter(Collider col)
         {
             if (_collisionActive)
@@ -199,7 +220,8 @@ namespace Team1_GraduationGame.Managers
             OnTriggerEnter,
             OnTriggerExit,
             Start,
-            ExternalRaise
+            ExternalRaise,
+            OnTriggerStay
         }
         [HideInInspector] public EventTypeEnum triggerTypeSelector;
         [HideInInspector] public SoundVoidEventListener soundEventListener;

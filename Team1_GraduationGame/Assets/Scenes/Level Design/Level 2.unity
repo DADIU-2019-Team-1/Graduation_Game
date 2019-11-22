@@ -1645,6 +1645,55 @@ Transform:
   m_Father: {fileID: 1209393614}
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &109040287
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 109040288}
+  - component: {fileID: 109040289}
+  m_Layer: 0
+  m_Name: WayPoint1
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &109040288
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 109040287}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 257, y: -9.801624, z: 4.743744}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 375292651}
+  m_RootOrder: 10
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &109040289
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 109040287}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1005936c2baa23d4aa7530292327822d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  parentEnemy: {fileID: 1290384422}
+  parentWayPoint: {fileID: 375292650}
+  isParent: 0
+  specificWaitTime: 0
+  enemyLookDirection: 0
+  wayPointId: 1
 --- !u!1001 &114267482
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -6578,7 +6627,7 @@ Transform:
   - {fileID: 999672002}
   - {fileID: 915921082}
   - {fileID: 2126411355}
-  - {fileID: 1536678898}
+  - {fileID: 109040288}
   m_Father: {fileID: 1575048750}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -21792,7 +21841,7 @@ PrefabInstance:
     - target: {fileID: 2847909929602746689, guid: 103b78de7d967044eb4c5c6cb8c1530d,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: -18.18
+      value: -18.9
       objectReference: {fileID: 0}
     - target: {fileID: 2847909929602746689, guid: 103b78de7d967044eb4c5c6cb8c1530d,
         type: 3}
@@ -21802,7 +21851,7 @@ PrefabInstance:
     - target: {fileID: 2847909929602746689, guid: 103b78de7d967044eb4c5c6cb8c1530d,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: -0.14923859
+      value: -0.26
       objectReference: {fileID: 0}
     - target: {fileID: 2847909929602746689, guid: 103b78de7d967044eb4c5c6cb8c1530d,
         type: 3}
@@ -21853,7 +21902,7 @@ PrefabInstance:
         type: 3}
       propertyPath: wayPoints.Array.data[0]
       value: 
-      objectReference: {fileID: 1536678897}
+      objectReference: {fileID: 109040287}
     - target: {fileID: 2847909929602746715, guid: 103b78de7d967044eb4c5c6cb8c1530d,
         type: 3}
       propertyPath: parentWayPoint
@@ -25260,55 +25309,6 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 1524097337}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &1536678897
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1536678898}
-  - component: {fileID: 1536678899}
-  m_Layer: 0
-  m_Name: WayPoint1
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &1536678898
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1536678897}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 257.72, y: -9.801624, z: 4.8545074}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 375292651}
-  m_RootOrder: 10
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1536678899
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1536678897}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1005936c2baa23d4aa7530292327822d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  parentEnemy: {fileID: 1290384422}
-  parentWayPoint: {fileID: 375292650}
-  isParent: 0
-  specificWaitTime: 0
-  enemyLookDirection: 0
-  wayPointId: 1
 --- !u!4 &1537111367 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 2613838332235470776, guid: f91a47ba192cd0145b47d443f9437bcb,

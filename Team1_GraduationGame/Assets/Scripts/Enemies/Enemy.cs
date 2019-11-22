@@ -406,7 +406,7 @@ namespace Team1_GraduationGame.Enemies
 
                 CollisionWithPlayerSetter(false);
                 _animator?.SetTrigger("PushedDown");
-                _enemySoundManager?.pushedDown();
+                _enemySoundManager?.PushedDown();
 
                 viewConeLight.gameObject.SetActive(true);
                 viewConeLight.color = Color.green;
@@ -530,6 +530,7 @@ namespace Team1_GraduationGame.Enemies
 
         private IEnumerator EnemyAggro()
         {
+            _enemySoundManager?.Spotted();
             _isAggro = true;
             yield return new WaitForSeconds(thisEnemy.aggroTime);
 
@@ -564,7 +565,7 @@ namespace Team1_GraduationGame.Enemies
                 CollisionWithPlayerSetter(false);
                 _playerAnimator?.SetTrigger("EnemyAttack" + thisEnemy.typeId);
                 _animator?.SetTrigger("Attack");
-                _enemySoundManager?.attackPlayer();
+                _enemySoundManager?.AttackPlayer();
 
                 yield return new WaitForSeconds(animAttackTime);
 
@@ -602,7 +603,7 @@ namespace Team1_GraduationGame.Enemies
             viewConeLight.color = normalConeColor;
             _animator?.ResetTrigger("PushedDown");
             _animator?.SetTrigger("GettingUp");
-            _enemySoundManager?.gettingUp();
+            _enemySoundManager?.GettingUp();
 
             yield return new WaitForSeconds(animGettingUpTime);
             _animator?.ResetTrigger("GettingUp");

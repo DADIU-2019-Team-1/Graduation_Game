@@ -5,6 +5,7 @@ using UnityEngine;
 using Team1_GraduationGame.Interaction;
 using Team1_GraduationGame.Events;
 using Team1_GraduationGame.MotionMatching;
+using Team1_GraduationGame.Sound;
 using UnityEditor;
 
 [RequireComponent(typeof(Rigidbody), typeof(SphereCollider))]
@@ -21,15 +22,14 @@ public class Movement : MonoBehaviour
 
     // Tried a particle system for the ground
     public ParticleSystem Groundparticles;
-    
 
+    public PlayerSoundManager playerSoundManager;
 
     [SerializeField] private float accelerationFactor = 0.1f;
     private float swipeTimeTimer;
     private Vector3 initTouchPos, currTouchPos, joystickPos, stickLimitPos, velocity;
     private Quaternion lookRotation, pushRotation;
-    //public VoidEvent jumpEvent, attackEvent, miniJump;
-    //public IntEvent stateChangeEvent;
+    
     [HideInInspector]
     public Vector3 direction = Vector3.zero, pushDirection = Vector3.zero;
 
@@ -556,7 +556,7 @@ public class Movement : MonoBehaviour
                            Physics.Raycast(transform.position + Vector3.up, Vector3.down, ghostJumpHeight.value + 1.0f)))
         {
             isJumping = true;
-            //miniJump?.Raise();
+            playerSoundManager?.MiniJumpEvent();
 
             // also setting jump on temp Animator
             if (animator.runtimeAnimatorController != null)
@@ -589,8 +589,7 @@ public class Movement : MonoBehaviour
                 animator.SetTrigger("Jump");
             }
 
-            //if (jumpEvent != null)
-            //    jumpEvent.Raise();
+            playerSoundManager?.JumpEvent();
             //_collider.material = _jumpMaterial;
 
 
@@ -641,8 +640,7 @@ public class Movement : MonoBehaviour
                     // Sometimes returns nullreference errors.
                     interactableObjects[i].GetComponent<Interactable>().Interact();
                     
-                    //if (attackEvent != null)
-                    //    attackEvent.Raise();
+                    playerSoundManager?.AttackEvent();
                     // Debug.Log("INTERACT!!!!!");
                     // interactableObjects[i].interact();
                 }
@@ -700,8 +698,8 @@ public class Movement : MonoBehaviour
         {
             moveState.value = 3;
         }
-        //if (stateChangeEvent != null)
-        //   stateChangeEvent.Raise(moveState.value);
+
+        playerSoundManager?.MotionStateUpdate(moveState.value);
     }
 
     public Trajectory GetMovementTrajectory()
@@ -740,7 +738,7 @@ public class Movement : MonoBehaviour
 
             if (i % mm.framesBetweenTrajectoryPoints == 0)
             {
-                trajPoints[j] = new TrajectoryPoint(playerPos, playerPos + playerForward);
+                trajPoints[j] = new TrajectoryPoint(playerPos, playerForward);
                 j++;
             }
 

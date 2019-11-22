@@ -265,7 +265,6 @@ GameObject:
   - component: {fileID: 5763609037245267758}
   - component: {fileID: 5763609037245267760}
   - component: {fileID: 5763609037245267759}
-  - component: {fileID: 8222563566817980349}
   m_Layer: 9
   m_Name: Grief
   m_TagString: Enemy
@@ -400,6 +399,7 @@ MonoBehaviour:
   playerDiedEvent: {fileID: 11400000, guid: a91b977e02bad9345b91ce4665a3b978, type: 2}
   viewConeLight: {fileID: 5763609035621239976}
   playerMoveState: {fileID: 11400000, guid: 064acbb0600eace4e969fd76909dcac8, type: 2}
+  _enemySoundManager: {fileID: 8846807580932115506}
   _animator: {fileID: 3129185098952159906}
   wayPoints: []
   parentWayPoint: {fileID: 0}
@@ -453,28 +453,6 @@ MonoBehaviour:
   animationDefault: 
   animationAction: 
   toggleState: 0
---- !u!114 &8222563566817980349
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5763609037245267761}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f56c9a8239fcd2e468d4759dd7119fb1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_listeners:
-    initialListenerList: []
-    useDefaultListeners: 1
-  isEnvironmentAware: 1
-  isStaticObject: 0
-  m_positionOffsetData:
-    KeepMe: 0
-    positionOffset: {x: 0, y: 0, z: 0}
-  m_posOffsetData: {fileID: 0}
-  listenerMask: 1
 --- !u!1001 &4438565739619901356
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -544,6 +522,18 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d9fe6b4eb90c280498af6a61491720a3, type: 3}
+--- !u!114 &8846807580932115506 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 5142785977620779934, guid: d9fe6b4eb90c280498af6a61491720a3,
+    type: 3}
+  m_PrefabInstance: {fileID: 4438565739619901356}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7391925d3bbbc1649beda3fb77b8a181, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &5585376617592382475
 PrefabInstance:
   m_ObjectHideFlags: 0

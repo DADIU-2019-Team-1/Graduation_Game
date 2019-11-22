@@ -276,12 +276,16 @@ public class Movement : MonoBehaviour
                             pushDirection = new Vector3(swipeDirection.x, 0, swipeDirection.y);
                             pushRotation = pushDirection != Vector3.zero ? Quaternion.LookRotation(pushDirection) : Quaternion.identity;
                             // I set a temp push animator if we arent using motion matching
+
+                            //Debug.Log("Attack start phone");
+                            attackCooldown = attackCoolDown.value;
+
+                            isPushing = true;
+                            //playerAttack(pushDirection); 
                             if (animator.runtimeAnimatorController != null)
                             {
                                 animator.SetTrigger("Attack");
                             }
-                            //Debug.Log("Attack start phone");
-                            playerAttack(pushDirection);
                         }
 
                     }
@@ -357,7 +361,10 @@ public class Movement : MonoBehaviour
                 {
                     pushDirection = new Vector3(swipeDirection.x, 0, swipeDirection.y);
                     pushRotation = pushDirection != Vector3.zero ? Quaternion.LookRotation(pushDirection) : Quaternion.identity;
-                    playerAttack(pushDirection);
+                    attackCooldown = attackCoolDown.value;
+
+                    isPushing = true;
+                    //playerAttack(pushDirection);
 
                     // I set a temp push animator if we arent using motion matching
                     if (animator.runtimeAnimatorController != null)
@@ -609,15 +616,17 @@ public class Movement : MonoBehaviour
             Vector3 newPoint = new Vector3(x, 0, z);
             Debug.DrawLine(playerRB.transform.position, playerRB.transform.position + newPoint * attackRange.value, Color.magenta, 0.5f);
         }
-        //Debug.Log("Attacking");
-        attackCooldown = attackCoolDown.value;
+
+        //attackCooldown = attackCoolDown.value;
         
-        isPushing = true;
+        //isPushing = true;
+        
         // check all objects
         for (int i = 0; i < interactableObjects.Count; i++)
         {
+            Collider pushCollider = interactableObjects[i].GetComponent<Collider>();
             // if in range
-            Vector3 closestPoint = interactableObjects[i].GetComponent<Collider>().ClosestPointOnBounds(transform.position);
+            Vector3 closestPoint = pushCollider.ClosestPointOnBounds(transform.position);
             //Debug.Log("Closest point is: " + closestPoint);
             //Instantiate(GameObject.CreatePrimitive(PrimitiveType.Cube), closestPoint, Quaternion.identity);
             float refDistance = Vector3.Distance(closestPoint, transform.position);
@@ -629,21 +638,37 @@ public class Movement : MonoBehaviour
             if (refDistance <= attackRange.value)
             {
 
-                // and in attack degree
-                Vector3 temp = closestPoint - transform.position;
-                temp.y = 0;
+                // Do math stuff. Need to find relative angle downwards to pivot. 
+                Vector3 hipClosestPoint = pushCollider.ClosestPointOnBounds(transform.position + Vector3.up);
 
-                float angleToObject = Vector3.Angle(temp, direction);
-                if (angleToObject <= attackDegree.value / 2)
+                Vector3 hipVectorToObject = hipClosestPoint - (transform.position + Vector3.up);
+                //Debug.Log("Hip vector to object: " + hipVectorToObject);
+
+                //Debug.DrawLine(transform.position, hipVectorToObject, Color.black, 5);
+
+                //Instantiate(GameObject.CreatePrimitive(PrimitiveType.Sphere), transform.position, Quaternion.identity);
+                if (Math.Abs(hipVectorToObject.y) < 0.3f)
+                    //Debug.Log(Mathf.Abs(hipVectorToObject.y));
                 {
-                    // interact
-                    // Sometimes returns nullreference errors.
-                    interactableObjects[i].GetComponent<Interactable>().Interact();
-                    
-                    playerSoundManager?.AttackEvent();
-                    // Debug.Log("INTERACT!!!!!");
-                    // interactableObjects[i].interact();
+                    Vector3 temp = closestPoint - transform.position;
+                    temp.y = 0;
+
+                    float angleToObject = Vector3.Angle(temp, direction);
+                    if (angleToObject <= attackDegree.value / 2)
+                    {
+                        // interact
+                        // Sometimes returns nullreference errors.
+                        interactableObjects[i].GetComponent<Interactable>().Interact();
+                        
+                        playerSoundManager?.AttackEvent();
+                        //if (attackEvent != null)
+                        //    attackEvent.Raise();
+                        // Debug.Log("INTERACT!!!!!");
+                        // interactableObjects[i].interact();
+                    }
                 }
+                // and in attack degree
+
             }
         }
         attack?.Invoke();
@@ -763,5 +788,10 @@ public class Movement : MonoBehaviour
             name = "Jump_Material"
         };
         return newPhysMaterial;
+    }
+
+    public void AttackTriggerAnimation()
+    {
+        playerAttack(pushDirection);
     }
 }

@@ -175,12 +175,12 @@ namespace Team1_GraduationGame.Enemies
             if (isActive)
             {
                 _animator.SetTrigger("Appearing");
-                enemySoundManager?.gettingUp();
+                enemySoundManager?.GettingUp();
             }
             else
             {
                 _animator.SetTrigger("Disappearing");
-                enemySoundManager?.pushedDown();
+                enemySoundManager?.PushedDown();
             }
 
             yield return new WaitForSeconds(changeStateTime);
@@ -206,7 +206,7 @@ namespace Team1_GraduationGame.Enemies
 
             _animator.SetTrigger("Attack");
             _playerAnimator.SetTrigger("BigAttack");
-            enemySoundManager?.attackPlayer();
+            enemySoundManager?.AttackPlayer();
 
             yield return new WaitForSeconds(animAttackTime);
 
@@ -226,7 +226,7 @@ namespace Team1_GraduationGame.Enemies
             _animator.SetBool("Patrolling", false);
             _animator.ResetTrigger("Appearing");
             _animator.SetTrigger("Spotted");
-            enemySoundManager?.spotted();
+            enemySoundManager?.Spotted();
 
             yield return new WaitForSeconds(aggroTime);
 

@@ -95,6 +95,7 @@ namespace Team1_GraduationGame.SaveLoadSystem
                     tempEnemyContainer.pos = _enemies[i].transform.position;
                     tempEnemyContainer.rot = _enemies[i].transform.rotation;
                     tempEnemyContainer.isAggro = tempEnemyComponent.GetAggro();
+                    tempEnemyContainer.alwaysAggro = tempEnemyComponent.alwaysAggro;
                     tempEnemyContainer.currentWayPoint = tempEnemyComponent.GetCurrentWaypoint();
                     tempEnemyContainer.lastSighting = tempEnemyComponent.GetLastSighting();
 
@@ -230,6 +231,7 @@ namespace Team1_GraduationGame.SaveLoadSystem
 
                         tempEnemyComponent.ResetEnemy();
                         tempEnemyComponent.SetAggro(tempEnemyContainer.isAggro);
+                        tempEnemyComponent.SetAlwaysAggro(tempEnemyContainer.alwaysAggro);
                         tempEnemyComponent.SetCurrentWaypoint(tempEnemyContainer.currentWayPoint);
                         tempEnemyComponent.SetLastSighting(tempEnemyContainer.lastSighting);
 
@@ -293,6 +295,7 @@ namespace Team1_GraduationGame.SaveLoadSystem
             public Vector3 pos;
             public Quaternion rot;
             public bool isAggro;
+            public bool alwaysAggro;
             public int currentWayPoint;
             public Vector3 lastSighting;
         }

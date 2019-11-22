@@ -24,11 +24,14 @@ namespace Team1_GraduationGame.Interaction
 
         // Public:
         public float minDistance = 2.0f, angle = 90.0f, soundEmitDistance, interactCooldown = 1.5f;
-        public bool interactableOnce, pushable, useEvents, useAnimation, switchBetweenAnimations, animationState, 
+        public bool interactableOnce, pushable, useEvents, useAnimation, switchBetweenAnimations, animationState, playSound, 
             interactConditions, checkForObstructions, emitSound, useCooldown;
         public UnityEvent eventOnInteraction;
         public string animationDefault, animationAction;
         [HideInInspector] public bool toggleState = false;
+
+        // Wwise:
+        public AK.Wwise.Event soundEvent;
 
         // Private:
         private bool _isEnemy, _interacted;
@@ -127,6 +130,11 @@ namespace Team1_GraduationGame.Interaction
             else if (useAnimation && _animator == null)
             {
                 Debug.LogError("Interaction Error: Animator missing on " + gameObject.name);
+            }
+
+            if (playSound)
+            {
+                soundEvent?.Post(gameObject);
             }
 
             if (emitSound)

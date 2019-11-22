@@ -418,7 +418,6 @@ GameObject:
   - component: {fileID: 7439132148707561208}
   - component: {fileID: 962641346844991771}
   - component: {fileID: 700055238516908930}
-  - component: {fileID: 6374042520474391193}
   - component: {fileID: 5865448813341310183}
   - component: {fileID: 5865448813341310184}
   - component: {fileID: 5865448813341310185}
@@ -482,123 +481,6 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
---- !u!114 &6374042520474391193
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5865448813341310187}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 66cf44fb066f7904cb2846ab1f856813, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  attachCollider: 0
-  soundEvents:
-  - thisSoundManager: {fileID: 0}
-    soundEventId: 0
-    triggerTypeSelector: 1
-    triggerDelay: 0
-    triggerEvent: {fileID: 0}
-    triggerFloatEvent: {fileID: 11400000, guid: 3b9c25ee86dd3c24c9ff8f5b3ba8203b,
-      type: 2}
-    triggerIntEvent: {fileID: 0}
-    rtpcRoleBool: 1
-    customValue: 0
-    transitionDuration: 0
-    behaviorSelector: 3
-    soundManagerGameObject: {fileID: 5865448813341310187}
-    targetGameObject: {fileID: 0}
-    secondGameObject: {fileID: 0}
-    callbacks: []
-    wwiseEvent:
-      idInternal: 0
-      valueGuidInternal: 
-      WwiseObjectReference: {fileID: 0}
-    wwiseState:
-      idInternal: 0
-      valueGuidInternal: 
-      groupIdInternal: 0
-      groupGuidInternal: 
-      WwiseObjectReference: {fileID: 0}
-    wwiseSwitch:
-      idInternal: 0
-      valueGuidInternal: 
-      groupIdInternal: 0
-      groupGuidInternal: 
-      WwiseObjectReference: {fileID: 0}
-    wwiseRTPC:
-      idInternal: 0
-      valueGuidInternal: 
-      WwiseObjectReference: {fileID: 11400000, guid: 9ec1192a19d3a6749b5e66a236f49624,
-        type: 2}
-    rtpcScriptableObject: {fileID: 0}
-    actionOnEventType: 0
-    curveInterpolation: 0
-    useCallbacks: 0
-    useActionOnEvent: 0
-    rtpcGlobal: 0
-    runOnce: 0
-    useOtherGameObject: 0
-    setCustomRtpcFloat: 0
-    isActive: 1
-    objDistanceToRtpc: 0
-    checkForTag: 0
-    useValueFromEvent: 1
-    tag: 
-  - thisSoundManager: {fileID: 0}
-    soundEventId: 0
-    triggerTypeSelector: 1
-    triggerDelay: 0.1
-    triggerEvent: {fileID: 0}
-    triggerFloatEvent: {fileID: 11400000, guid: 3b9c25ee86dd3c24c9ff8f5b3ba8203b,
-      type: 2}
-    triggerIntEvent: {fileID: 0}
-    rtpcRoleBool: 1
-    customValue: 0
-    transitionDuration: 0
-    behaviorSelector: 0
-    soundManagerGameObject: {fileID: 5865448813341310187}
-    targetGameObject: {fileID: 0}
-    secondGameObject: {fileID: 0}
-    callbacks: []
-    wwiseEvent:
-      idInternal: 0
-      valueGuidInternal: 
-      WwiseObjectReference: {fileID: 11400000, guid: 5e75cd1f0bf68374ca430b73968036b3,
-        type: 2}
-    wwiseState:
-      idInternal: 0
-      valueGuidInternal: 
-      groupIdInternal: 0
-      groupGuidInternal: 
-      WwiseObjectReference: {fileID: 0}
-    wwiseSwitch:
-      idInternal: 0
-      valueGuidInternal: 
-      groupIdInternal: 0
-      groupGuidInternal: 
-      WwiseObjectReference: {fileID: 0}
-    wwiseRTPC:
-      idInternal: 0
-      valueGuidInternal: 
-      WwiseObjectReference: {fileID: 11400000, guid: 9ec1192a19d3a6749b5e66a236f49624,
-        type: 2}
-    rtpcScriptableObject: {fileID: 0}
-    actionOnEventType: 0
-    curveInterpolation: 0
-    useCallbacks: 0
-    useActionOnEvent: 0
-    rtpcGlobal: 0
-    runOnce: 0
-    useOtherGameObject: 0
-    setCustomRtpcFloat: 0
-    isActive: 1
-    objDistanceToRtpc: 0
-    checkForTag: 0
-    useValueFromEvent: 1
-    tag: 
 --- !u!54 &5865448813341310183
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -632,10 +514,6 @@ MonoBehaviour:
   inSneakZone: 0
   Groundparticles: {fileID: 0}
   accelerationFactor: 0.1
-  jumpEvent: {fileID: 11400000, guid: 53612299c0a461b47b14f3ef651011d9, type: 2}
-  attackEvent: {fileID: 11400000, guid: 73763e5143480e04e9f18b13c6d76f2c, type: 2}
-  miniJump: {fileID: 11400000, guid: 721c1366f62d85649b54e8c1ecc33735, type: 2}
-  stateChangeEvent: {fileID: 11400000, guid: f54ab983b71f4ca489948989e5ce38fa, type: 2}
   direction: {x: 0, y: 0, z: 0}
   pushDirection: {x: 0, y: 0, z: 0}
   atOrbTrigger: {fileID: 11400000, guid: 4762486ae963b3b4fb6a6ea99b71d200, type: 2}
@@ -1390,12 +1268,6 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 8941963519087995742}
   m_PrefabAsset: {fileID: 0}
---- !u!4 &8457823547865992294 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 682301687796426552, guid: d909b0c776247a946a1375f365a012e5,
-    type: 3}
-  m_PrefabInstance: {fileID: 8941963519087995742}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &3460969738263519059 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: -3738012075424795635, guid: d909b0c776247a946a1375f365a012e5,
@@ -1414,9 +1286,9 @@ GameObject:
     type: 3}
   m_PrefabInstance: {fileID: 8941963519087995742}
   m_PrefabAsset: {fileID: 0}
---- !u!4 &4502589555573964130 stripped
+--- !u!4 &8457823547865992294 stripped
 Transform:
-  m_CorrespondingSourceObject: {fileID: -4439329693922798020, guid: d909b0c776247a946a1375f365a012e5,
+  m_CorrespondingSourceObject: {fileID: 682301687796426552, guid: d909b0c776247a946a1375f365a012e5,
     type: 3}
   m_PrefabInstance: {fileID: 8941963519087995742}
   m_PrefabAsset: {fileID: 0}
@@ -1435,6 +1307,12 @@ Transform:
 --- !u!4 &6708500689296210588 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 2378285040897053122, guid: d909b0c776247a946a1375f365a012e5,
+    type: 3}
+  m_PrefabInstance: {fileID: 8941963519087995742}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &4502589555573964130 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: -4439329693922798020, guid: d909b0c776247a946a1375f365a012e5,
     type: 3}
   m_PrefabInstance: {fileID: 8941963519087995742}
   m_PrefabAsset: {fileID: 0}

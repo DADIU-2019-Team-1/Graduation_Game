@@ -155,17 +155,21 @@ namespace Team1_GraduationGame.MotionMatching
             }
 
             // Convert data to FeatureVector
+            Matrix4x4 animSpace = new Matrix4x4();
+            TrajectoryPoint[] trajPoints = new TrajectoryPoint[trajPointsLength];
             for (int i = 0; i < allClipNames.Count; i++)
             {
-                TrajectoryPoint[] trajPoints = new TrajectoryPoint[trajPointsLength];
+                trajPoints = new TrajectoryPoint[trajPointsLength];
+                animSpace.SetTRS(allPoints[i].GetPoint(), Quaternion.identity, Vector3.one);
                 for (int j = 0; j < trajPointsLength; j++)
                 {
-                    if (i + j * trajStepSize * 2.0f < allClipNames.Count) // Out of bounds handler
+                    if (i + j * trajStepSize < allClipNames.Count) // Out of bounds handler
                     {
-                        if (allFrames[i] <= allFrames[i + j * trajStepSize]
-                        ) // clip 3 at frame 45 out of 70 with a trajStepSize of 10 goes 45, 55, 65, X, X
-                            trajPoints[j] = new TrajectoryPoint(allPoints[i + j * trajStepSize].GetPoint(),
-                                allPoints[i + j * trajStepSize].GetForward());
+                        if (allClipNames[i] == allClipNames[i + j * trajStepSize]) // When creating the trajectory, check if all the points pertain to the same animation - if not, set the remaining points to 0
+                        {
+                            trajPoints[j] = new TrajectoryPoint(animSpace.inverse.MultiplyPoint3x4(allPoints[i + j * trajStepSize].GetPoint()),
+                                animSpace.MultiplyVector(allPoints[i + j * trajStepSize].GetForward()));
+                        }
                         else
                             trajPoints[j] = new TrajectoryPoint(); // TODO: Extrapolate instead of resetting
                     }

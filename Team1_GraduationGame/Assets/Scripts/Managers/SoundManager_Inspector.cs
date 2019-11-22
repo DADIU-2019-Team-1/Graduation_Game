@@ -90,7 +90,8 @@ namespace Team1_GraduationGame.Managers
                             EditorGUILayout.PropertyField(triggerFloatEventProp);
                         }
                         else if ((int)script.soundEvents[i].triggerTypeSelector == 2 ||
-                                 (int)script.soundEvents[i].triggerTypeSelector == 3)
+                                 (int)script.soundEvents[i].triggerTypeSelector == 3 ||
+                                 (int)script.soundEvents[i].triggerTypeSelector == 6)
                         {
                             script.soundEvents[i].checkForTag = EditorGUILayout.Toggle("Check for tag?",
                                 script.soundEvents[i].checkForTag);
@@ -98,10 +99,6 @@ namespace Team1_GraduationGame.Managers
                             {
                                 script.soundEvents[i].tag = EditorGUILayout.TextField("Tag", script.soundEvents[i].tag);
                             }
-                        }
-                        else if ((int) script.soundEvents[i].triggerTypeSelector == 6)
-                        {
-                            // TODO - Implement this YYY
                         }
 
                         script.soundEvents[i].runOnce = EditorGUILayout.Toggle("Run Once", script.soundEvents[i].runOnce);
@@ -120,86 +117,104 @@ namespace Team1_GraduationGame.Managers
                         #region ///// 0 Event Behavior //////
                         if ((int)script.soundEvents[i].behaviorSelector == 0)
                         {
-
-                            script.soundEvents[i].useOtherGameObject = EditorGUILayout.Toggle("Use Other GameObj?",
-                                script.soundEvents[i].useOtherGameObject);
-
-                            if (script.soundEvents[i].useOtherGameObject)
+                            if ((int) script.soundEvents[i].triggerTypeSelector == 6)
                             {
-                                SerializedProperty targetGameObjectProp = serializedObject.FindProperty("soundEvents.Array.data[" + i + "].targetGameObject");
-                                EditorGUILayout.PropertyField(targetGameObjectProp);
+                                EditorGUILayout.HelpBox("This behavior cannot be used with OnTriggerStay", MessageType.Warning);
                             }
-
-                            SerializedProperty eventDataProp = serializedObject.FindProperty("soundEvents.Array.data[" + i + "].wwiseEvent");
-                            EditorGUILayout.PropertyField(eventDataProp);
-
-                            script.soundEvents[i].useActionOnEvent = EditorGUILayout.Toggle("Do Action On Event?", script.soundEvents[i].useActionOnEvent);
-                            script.soundEvents[i].useCallbacks = EditorGUILayout.Toggle("Use Callbacks?", script.soundEvents[i].useCallbacks);
-
-                            if (script.soundEvents[i].useActionOnEvent)
+                            else
                             {
+                                script.soundEvents[i].useOtherGameObject = EditorGUILayout.Toggle("Use Other GameObj?", script.soundEvents[i].useOtherGameObject);
+
+                                if (script.soundEvents[i].useOtherGameObject)
+                                {
+                                    SerializedProperty targetGameObjectProp = serializedObject.FindProperty("soundEvents.Array.data[" + i + "].targetGameObject");
+                                    EditorGUILayout.PropertyField(targetGameObjectProp);
+                                }
+
+                                SerializedProperty eventDataProp = serializedObject.FindProperty("soundEvents.Array.data[" + i + "].wwiseEvent");
+                                EditorGUILayout.PropertyField(eventDataProp);
+
+                                script.soundEvents[i].useActionOnEvent = EditorGUILayout.Toggle("Do Action On Event?", script.soundEvents[i].useActionOnEvent);
+                                script.soundEvents[i].useCallbacks = EditorGUILayout.Toggle("Use Callbacks?", script.soundEvents[i].useCallbacks);
+
+                                if (script.soundEvents[i].useActionOnEvent)
+                                {
+                                    DrawUILine(false);
+
+                                    SerializedProperty actionOnEventTypeProp = serializedObject.FindProperty("soundEvents.Array.data[" + i + "].actionOnEventType");
+                                    EditorGUILayout.PropertyField(actionOnEventTypeProp);
+
+                                    SerializedProperty curveInterpolationProp = serializedObject.FindProperty("soundEvents.Array.data[" + i + "].curveInterpolation");
+                                    EditorGUILayout.PropertyField(curveInterpolationProp);
+
+                                    script.soundEvents[i].transitionDuration = EditorGUILayout.Slider("Fade Time (secs):", script.soundEvents[i].transitionDuration, 0.0f, 20.0f); // Note: standard was up to 60 sec. 120 might not work?
+                                }
+
+                                if (script.soundEvents[i].useCallbacks)
+                                {
+                                    DrawUILine(false);
+
+                                    for (int j = 0; j < script.soundEvents[i].callbacks.Count; j++)
+                                    {
+                                        SerializedProperty callbackFlagProp = serializedObject.FindProperty("soundEvents.Array.data[" + i + "].callbacks.Array.data[" + j + "].Flags");
+                                        SerializedProperty callbackObjProp = serializedObject.FindProperty("soundEvents.Array.data[" + i + "].callbacks.Array.data[" + j + "].GameObject");
+                                        EditorGUILayout.PropertyField(callbackFlagProp);
+                                        EditorGUILayout.PropertyField(callbackObjProp);
+                                        script.soundEvents[i].callbacks[j].FunctionName =
+                                            EditorGUILayout.TextField("Function Name:",
+                                                script.soundEvents[i].callbacks[j].FunctionName);
+                                    }
+
+                                    if (GUILayout.Button("Add"))
+                                    {
+                                        script.soundEvents[i].callbacks.Add(new SoundEvent.CallbackData());
+                                    }
+                                    if (GUILayout.Button("Delete"))
+                                    {
+                                        if (script.soundEvents[i].callbacks.Count != 0)
+                                            script.soundEvents[i].callbacks.RemoveAt(script.soundEvents[i].callbacks.Count - 1);
+                                    }
+                                }
+
                                 DrawUILine(false);
 
-                                SerializedProperty actionOnEventTypeProp = serializedObject.FindProperty("soundEvents.Array.data[" + i + "].actionOnEventType");
-                                EditorGUILayout.PropertyField(actionOnEventTypeProp);
-
-                                SerializedProperty curveInterpolationProp = serializedObject.FindProperty("soundEvents.Array.data[" + i + "].curveInterpolation");
-                                EditorGUILayout.PropertyField(curveInterpolationProp);
-
-                                script.soundEvents[i].transitionDuration = EditorGUILayout.Slider("Fade Time (secs):", script.soundEvents[i].transitionDuration, 0.0f, 20.0f); // Note: standard was up to 60 sec. 120 might not work?
-                            }
-
-                            if (script.soundEvents[i].useCallbacks)
-                            {
-                                DrawUILine(false);
-
-                                for (int j = 0; j < script.soundEvents[i].callbacks.Count; j++)
+                                if (GUILayout.Button("Play"))
                                 {
-                                    SerializedProperty callbackFlagProp = serializedObject.FindProperty("soundEvents.Array.data[" + i + "].callbacks.Array.data[" + j + "].Flags");
-                                    SerializedProperty callbackObjProp = serializedObject.FindProperty("soundEvents.Array.data[" + i + "].callbacks.Array.data[" + j + "].GameObject");
-                                    EditorGUILayout.PropertyField(callbackFlagProp);
-                                    EditorGUILayout.PropertyField(callbackObjProp);
-                                    script.soundEvents[i].callbacks[j].FunctionName =
-                                        EditorGUILayout.TextField("Function Name:",
-                                            script.soundEvents[i].callbacks[j].FunctionName);
+                                    script.soundEvents[i].PlayWwiseEvent();
                                 }
-
-                                if (GUILayout.Button("Add"))
+                                if (GUILayout.Button("Stop"))
                                 {
-                                    script.soundEvents[i].callbacks.Add(new SoundEvent.CallbackData());
-                                }
-                                if (GUILayout.Button("Delete"))
-                                {
-                                    if (script.soundEvents[i].callbacks.Count != 0)
-                                        script.soundEvents[i].callbacks.RemoveAt(script.soundEvents[i].callbacks.Count - 1);
+                                    script.soundEvents[i].StopWwiseEvent();
                                 }
                             }
-
-                            DrawUILine(false);
-
-                            if (GUILayout.Button("Play"))
-                            {
-                                script.soundEvents[i].PlayWwiseEvent();
-                            }
-                            if (GUILayout.Button("Stop"))
-                            {
-                                script.soundEvents[i].StopWwiseEvent();
-                            }
-
                         }
                         #endregion
                         #region ///// 1 State Behavior //////
                         else if ((int)script.soundEvents[i].behaviorSelector == 1)
                         {
-                            SerializedProperty stateProp = serializedObject.FindProperty("soundEvents.Array.data[" + i + "].wwiseState");
-                            EditorGUILayout.PropertyField(stateProp);
+                            if ((int)script.soundEvents[i].triggerTypeSelector == 6)
+                            {
+                                EditorGUILayout.HelpBox("This behavior cannot be used with OnTriggerStay", MessageType.Warning);
+                            }
+                            else
+                            {
+                                SerializedProperty stateProp = serializedObject.FindProperty("soundEvents.Array.data[" + i + "].wwiseState");
+                                EditorGUILayout.PropertyField(stateProp);
+                            }
                         }
                         #endregion
                         #region ///// 2 Switch Behavior /////
                         else if ((int)script.soundEvents[i].behaviorSelector == 2)
                         {
-                            SerializedProperty switchProp = serializedObject.FindProperty("soundEvents.Array.data[" + i + "].wwiseSwitch");
-                            EditorGUILayout.PropertyField(switchProp);
+                            if ((int) script.soundEvents[i].triggerTypeSelector == 6)
+                            {
+                                EditorGUILayout.HelpBox("This behavior cannot be used with OnTriggerStay", MessageType.Warning);
+                            }
+                            else
+                            {
+                                SerializedProperty switchProp = serializedObject.FindProperty("soundEvents.Array.data[" + i + "].wwiseSwitch");
+                                EditorGUILayout.PropertyField(switchProp);
+                            }
                         }
                         #endregion
                         #region ///// 3 RTPC Behavior /////
@@ -241,7 +256,7 @@ namespace Team1_GraduationGame.Managers
                                     EditorGUILayout.Toggle("Set RTPC role",
                                         script.soundEvents[i].rtpcRoleBool);
 
-                                if ((int)script.soundEvents[i].triggerTypeSelector == 1 || (int)script.soundEvents[i].triggerTypeSelector == 6 && !script.soundEvents[i].setCustomRtpcFloat && script.soundEvents[i].rtpcRoleBool)
+                                if ((int)script.soundEvents[i].triggerTypeSelector == 1 && !script.soundEvents[i].setCustomRtpcFloat && script.soundEvents[i].rtpcRoleBool)
                                 {
                                     script.soundEvents[i].useValueFromEvent = EditorGUILayout.Toggle("Use value from event?",
                                         script.soundEvents[i].useValueFromEvent);

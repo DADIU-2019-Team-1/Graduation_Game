@@ -51,27 +51,27 @@ namespace Team1_GraduationGame.Sound
             }
         }
 
-        public void attackPlayer()
+        public void AttackPlayer()
         {
             attackingPlayerEvent?.Post(gameObject);
         }
-        public void pushedDown()
+        public void PushedDown()
         {
             pushedDownEvent?.Post(gameObject);
         }
-        public void gettingUp()
+        public void GettingUp()
         {
             gettingUpEvent?.Post(gameObject);
         }
-        public void spotted()
+        public void Spotted()
         {
             spotEvent?.Post(gameObject);
         }
-        public void onset()
+        public void Onset()
         {
             onsetEvent?.Post(gameObject);
         }
-        public void hold()
+        public void Hold()
         {
             holdEvent?.Post(gameObject);
         }

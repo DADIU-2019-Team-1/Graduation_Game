@@ -280,6 +280,34 @@ GameObject:
     type: 3}
   m_PrefabInstance: {fileID: 3575154791618567632}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1855441506
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1855441505}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6a1a2179e380b384bbc8fb9d20df637b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  events:
+  - attachedManager: {fileID: 0}
+    activeInInspector: 1
+    eventName: 
+    eventToFire:
+      m_PersistentCalls:
+        m_Calls: []
+    function: 2
+    thisGameObject: {fileID: 0}
+    gameObjectAmount: 0
+    theseGameObjects: []
+    collisionTag: 
+    isTrigger: 0
+    fireCooldown: 0
+    delayForFire: 0
+    specificRotations: 
 --- !u!1001 &3575154791618567632
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -287,6 +315,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 3283219882430302351, guid: ae00c6b171ae43e47a93f38eeabcdbde,
+        type: 3}
+      propertyPath: m_Name
+      value: MotherMemory
+      objectReference: {fileID: 0}
     - target: {fileID: 7942200908220041873, guid: ae00c6b171ae43e47a93f38eeabcdbde,
         type: 3}
       propertyPath: m_SceneBindings.Array.data[1].value
@@ -297,11 +330,6 @@ PrefabInstance:
       propertyPath: m_SceneBindings.Array.data[2].value
       value: 
       objectReference: {fileID: 8634320524445006022}
-    - target: {fileID: 3283219882430302351, guid: ae00c6b171ae43e47a93f38eeabcdbde,
-        type: 3}
-      propertyPath: m_Name
-      value: MotherMemory
-      objectReference: {fileID: 0}
     - target: {fileID: 2002710739710966428, guid: ae00c6b171ae43e47a93f38eeabcdbde,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -1944,14 +1972,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 253430827714882515, guid: c87164aaf9b5a134b834ea62b55dbefe,
         type: 3}
+      propertyPath: events.Array.data[0].thisGameObject
+      value: 
+      objectReference: {fileID: 1855441505}
+    - target: {fileID: 253430827714882515, guid: c87164aaf9b5a134b834ea62b55dbefe,
+        type: 3}
       propertyPath: events.Array.data[0].eventToFire.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 873177329}
     - target: {fileID: 253430827714882515, guid: c87164aaf9b5a134b834ea62b55dbefe,
         type: 3}
-      propertyPath: events.Array.data[0].thisGameObject
-      value: 
-      objectReference: {fileID: 1855441505}
+      propertyPath: events.Array.data[0].eventToFire.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: SetActive
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c87164aaf9b5a134b834ea62b55dbefe, type: 3}
 --- !u!1 &8634320524445006022 stripped

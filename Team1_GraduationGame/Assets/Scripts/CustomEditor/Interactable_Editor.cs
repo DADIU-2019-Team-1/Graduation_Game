@@ -119,9 +119,17 @@ namespace Team1_GraduationGame.Editor
                     script.animationDefault = EditorGUILayout.TextField("Animation Default", script.animationDefault);
 
                 script.animationAction = EditorGUILayout.TextField("Animation Action", script.animationAction);
-                DrawUILine(false);
             }
 
+            // Sound (Wwise)
+            DrawUILine(false);
+            script.playSound = EditorGUILayout.Toggle("Play Sound Event?", script.playSound);
+
+            if (script.playSound)
+            {
+                SerializedProperty soundEventProp = serializedObject.FindProperty("soundEvent");
+                EditorGUILayout.PropertyField(soundEventProp);
+            }
 
             serializedObject.ApplyModifiedProperties();
 

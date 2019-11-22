@@ -51,7 +51,8 @@ namespace Team1_GraduationGame.Managers
                         soundEvents[i].soundFloatEventListener.Enable();
                     }
                     else if ((int) soundEvents[i].triggerTypeSelector == 2 ||
-                             (int) soundEvents[i].triggerTypeSelector == 3)
+                             (int) soundEvents[i].triggerTypeSelector == 3 || 
+                             (int)soundEvents[i].triggerTypeSelector == 6)
                     {
                         _collisionActive = true;
                         if (soundEvents[i].tag != null && soundEvents[i].checkForTag)
@@ -96,26 +97,26 @@ namespace Team1_GraduationGame.Managers
             AkSoundEngine.StopAll();
         }
 
-        //private void OnTriggerStay(Collider col)  // TODO later YYY
-        //{
-        //    if (_collisionActive)
-        //    {
-        //        for (int i = 0; i < soundEvents.Length; i++)
-        //        {
-        //            if ((int)soundEvents[i].triggerTypeSelector == 2)
-        //            {
-        //                if (!soundEvents[i].checkForTag)
-        //                {
-        //                    soundEvents[i].EventRaised(0);
-        //                }
-        //                else if (col.tag == tagStrings[i])
-        //                {
-        //                    soundEvents[i].EventRaised(0);
-        //                }
-        //            }
-        //        }
-        //    }
-        //}
+        private void OnTriggerStay(Collider col)
+        {
+            if (_collisionActive)
+            {
+                for (int i = 0; i < soundEvents.Length; i++)
+                {
+                    if ((int)soundEvents[i].triggerTypeSelector == 6)
+                    {
+                        if (!soundEvents[i].checkForTag)
+                        {
+                            soundEvents[i].EventRaised(0);
+                        }
+                        else if (col.tag == tagStrings[i])
+                        {
+                            soundEvents[i].EventRaised(0);
+                        }
+                    }
+                }
+            }
+        }
 
         private void OnTriggerEnter(Collider col)
         {

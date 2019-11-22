@@ -30,7 +30,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 796676160318887342}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 77.8, y: 0, z: 18.4}
+  m_LocalPosition: {x: 107.9, y: 0, z: 18.4}
   m_LocalScale: {x: 9.80726, y: 75.74215, z: 82.367355}
   m_Children: []
   m_Father: {fileID: 2567083767465228796}
@@ -137,7 +137,6 @@ MonoBehaviour:
     triggerDelay: 0
     triggerEvent: {fileID: 0}
     triggerFloatEvent: {fileID: 0}
-    triggerIntEvent: {fileID: 0}
     rtpcRoleBool: 1
     customValue: 90
     transitionDuration: 0
@@ -171,8 +170,6 @@ MonoBehaviour:
     rtpcScriptableObject: {fileID: 0}
     actionOnEventType: 0
     curveInterpolation: 0
-    multiPositionType: 0
-    multiPosTypeLabel: 0
     useCallbacks: 0
     useActionOnEvent: 0
     rtpcGlobal: 0
@@ -216,7 +213,7 @@ GameObject:
   - component: {fileID: 2567083766638003381}
   - component: {fileID: 2567083766638003380}
   m_Layer: 2
-  m_Name: MusicSwitch_Outside_to_Hub
+  m_Name: MusicSwitch_Hub
   m_TagString: Wwise
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -234,7 +231,7 @@ Transform:
   m_LocalScale: {x: 9.0208, y: 75.74215, z: 98.923195}
   m_Children: []
   m_Father: {fileID: 2567083767465228796}
-  m_RootOrder: 1
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &2567083766638003369
 MeshFilter:
@@ -337,7 +334,6 @@ MonoBehaviour:
     triggerDelay: 0
     triggerEvent: {fileID: 0}
     triggerFloatEvent: {fileID: 0}
-    triggerIntEvent: {fileID: 0}
     rtpcRoleBool: 0
     customValue: 0
     transitionDuration: 0
@@ -370,8 +366,6 @@ MonoBehaviour:
     rtpcScriptableObject: {fileID: 0}
     actionOnEventType: 0
     curveInterpolation: 0
-    multiPositionType: 0
-    multiPosTypeLabel: 0
     useCallbacks: 0
     useActionOnEvent: 0
     rtpcGlobal: 0
@@ -389,7 +383,6 @@ MonoBehaviour:
     triggerDelay: 0
     triggerEvent: {fileID: 0}
     triggerFloatEvent: {fileID: 0}
-    triggerIntEvent: {fileID: 0}
     rtpcRoleBool: 1
     customValue: 50
     transitionDuration: 0
@@ -423,8 +416,6 @@ MonoBehaviour:
     rtpcScriptableObject: {fileID: 0}
     actionOnEventType: 0
     curveInterpolation: 0
-    multiPositionType: 0
-    multiPosTypeLabel: 0
     useCallbacks: 0
     useActionOnEvent: 0
     rtpcGlobal: 0
@@ -468,7 +459,7 @@ GameObject:
   - component: {fileID: 2567083766963894062}
   - component: {fileID: 2567083766963894049}
   m_Layer: 2
-  m_Name: MusicSwitch_Hub_to_Outside
+  m_Name: MusicSwitch_Outside
   m_TagString: Wwise
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -486,7 +477,7 @@ Transform:
   m_LocalScale: {x: 9.807255, y: 75.74214, z: 82.367355}
   m_Children: []
   m_Father: {fileID: 2567083767465228796}
-  m_RootOrder: 0
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &2567083766963894048
 MeshFilter:
@@ -589,7 +580,6 @@ MonoBehaviour:
     triggerDelay: 0
     triggerEvent: {fileID: 0}
     triggerFloatEvent: {fileID: 0}
-    triggerIntEvent: {fileID: 0}
     rtpcRoleBool: 0
     customValue: 0
     transitionDuration: 0
@@ -622,8 +612,6 @@ MonoBehaviour:
     rtpcScriptableObject: {fileID: 0}
     actionOnEventType: 0
     curveInterpolation: 0
-    multiPositionType: 0
-    multiPosTypeLabel: 0
     useCallbacks: 0
     useActionOnEvent: 0
     rtpcGlobal: 0
@@ -641,7 +629,6 @@ MonoBehaviour:
     triggerDelay: 0
     triggerEvent: {fileID: 0}
     triggerFloatEvent: {fileID: 0}
-    triggerIntEvent: {fileID: 0}
     rtpcRoleBool: 1
     customValue: 80
     transitionDuration: 0
@@ -675,8 +662,6 @@ MonoBehaviour:
     rtpcScriptableObject: {fileID: 0}
     actionOnEventType: 0
     curveInterpolation: 0
-    multiPositionType: 0
-    multiPosTypeLabel: 0
     useCallbacks: 0
     useActionOnEvent: 0
     rtpcGlobal: 0
@@ -731,8 +716,8 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
-  - {fileID: 2567083766963894059}
   - {fileID: 2567083766638003379}
+  - {fileID: 2567083766963894059}
   - {fileID: 2146030521343867782}
   m_Father: {fileID: 0}
   m_RootOrder: 0

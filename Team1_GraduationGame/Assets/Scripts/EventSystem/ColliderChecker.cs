@@ -45,25 +45,30 @@ namespace Team1_GraduationGame.Events
                     {
                         isColliding = true;
                         eventManagerObj.GetComponent<EventManager>().Fire(eventToFire);
+                        DelayHandler();
 
                     }
                     else if (col.tag == tagName)
                     {
                         isColliding = true;
                         eventManagerObj.GetComponent<EventManager>().Fire(eventToFire);
+                        DelayHandler();
                     }
-                }
-
-                if (delayTime == 0f)
-                {
-                    isActive = false;
-                }
-                else
-                {
-                    StartCoroutine(ColCooldown());
                 }
             }
 
+        }
+
+        private void DelayHandler()
+        {
+            if (delayTime == 0f)
+            {
+                isActive = false;
+            }
+            else
+            {
+                StartCoroutine(ColCooldown());
+            }
         }
 
         private void OnCollisionEnter(Collision col)
@@ -76,21 +81,14 @@ namespace Team1_GraduationGame.Events
                     {
                         isColliding = true;
                         eventManagerObj.GetComponent<EventManager>().Fire(eventToFire);
+                        DelayHandler();
 
                     }
                     else if (col.gameObject.tag == tagName)
                     {
                         isColliding = true;
                         eventManagerObj.GetComponent<EventManager>().Fire(eventToFire);
-                    }
-
-                    if (delayTime == 0f)
-                    {
-                        isActive = false;
-                    }
-                    else
-                    {
-                        StartCoroutine(ColCooldown());
+                        DelayHandler();
                     }
                 }
             }

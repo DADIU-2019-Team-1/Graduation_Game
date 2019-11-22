@@ -20,8 +20,9 @@ namespace Team1_GraduationGame.Enemies
         public GameObject visionGameObject;
 
         // Private:
+        private LayerMask _layerMask;
         private bool _active, _isAggro, _isSpawned, _isRotating, _turnLeft, _updateRotation, _playerSpotted, _lightOn, _timerRunning;
-        private int _layerMask, _currentSpawnPoint = 0;
+        private int _currentSpawnPoint = 0;
         private Quaternion _lookRotation;
 
         // Public:
@@ -50,7 +51,9 @@ namespace Team1_GraduationGame.Enemies
                 Debug.LogError("Big Sis Error: No animator on " + gameObject.name);
             }
 
-            _layerMask = ~LayerMask.GetMask("Enemies");
+            _layerMask = LayerMask.GetMask("Enemies");
+            _layerMask |= LayerMask.GetMask("Ignore Raycast");
+            _layerMask = ~_layerMask;
 
             if (fieldOfViewLight != null)
             {

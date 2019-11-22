@@ -404,6 +404,7 @@ namespace Team1_GraduationGame.Enemies
                 _active = false;
                 _navMeshAgent.isStopped = true;
 
+                CollisionWithPlayerSetter(false);
                 _animator?.SetTrigger("PushedDown");
                 _enemySoundManager?.pushedDown();
 
@@ -468,6 +469,18 @@ namespace Team1_GraduationGame.Enemies
             return tempPathLength;
         }
 
+        public void CollisionWithPlayerSetter(bool isColliding)
+        {
+            if (isColliding)
+            {
+                Physics.IgnoreCollision(_player.GetComponent<Collider>(), GetComponent<Collider>(), false);
+            }
+            else
+            {
+                Physics.IgnoreCollision(_player.GetComponent<Collider>(), GetComponent<Collider>(), true);
+            }
+        }
+
         #region Co-Routines
 
         private IEnumerator LightConeFade()
@@ -529,6 +542,8 @@ namespace Team1_GraduationGame.Enemies
 
         private IEnumerator EnemyHug()
         {
+            _active = false;
+            _navMeshAgent.isStopped = true;
             _isHugging = true;
             SwitchState(2); // Switch to attacking
 
@@ -546,17 +561,20 @@ namespace Team1_GraduationGame.Enemies
                 thisEnemy.embraceDistance + 1.0f)
             {
                 viewConeLight?.gameObject.SetActive(false);
+                CollisionWithPlayerSetter(false);
                 _playerAnimator?.SetTrigger("EnemyAttack" + thisEnemy.typeId);
                 _animator?.SetTrigger("Attack");
                 _enemySoundManager?.attackPlayer();
 
                 yield return new WaitForSeconds(animAttackTime);
 
+                CollisionWithPlayerSetter(true);
                 _playerAnimator?.ResetTrigger("EnemyAttack" + thisEnemy.typeId);
                 viewConeLight?.gameObject.SetActive(true);
                 playerDiedEvent?.Raise();
             }
 
+            _navMeshAgent.isStopped = false;
             _active = true;
             _isHugging = false;
             if (!alwaysAggro)
@@ -578,6 +596,7 @@ namespace Team1_GraduationGame.Enemies
         private IEnumerator PushDownDelay()
         {
             yield return new WaitForSeconds(thisEnemy.pushedDownDuration);
+            CollisionWithPlayerSetter(true);
             _active = true;
             _navMeshAgent.isStopped = false;
             viewConeLight.color = normalConeColor;
@@ -610,6 +629,7 @@ namespace Team1_GraduationGame.Enemies
             _animator?.ResetTrigger("PushedDown");
             _animator?.ResetTrigger("GettingUp");
             _animator?.ResetTrigger("Attack");
+            CollisionWithPlayerSetter(false);
         }
 
         public void SetIsActive(bool isActive) { _active = isActive; }

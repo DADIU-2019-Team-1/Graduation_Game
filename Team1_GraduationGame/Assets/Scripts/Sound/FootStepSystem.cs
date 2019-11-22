@@ -6,33 +6,41 @@ namespace Team1_GraduationGame.Sound
     using UnityEngine;
     using Team1_GraduationGame.Events;
 
+    [RequireComponent(typeof(AkGameObj))]
     public class FootStepSystem : MonoBehaviour
     {
         public string[] materialTypes;
-        public FloatEvent footStepEvent;
+        public AK.Wwise.Event footStepEvent;
+        public AK.Wwise.RTPC materialRTPC;
+        private bool _active = false;
+        //public FloatEvent footStepEvent;
 
         private void Awake()
         {
-            if (materialTypes != null)
+            if (materialTypes != null && footStepEvent != null && materialRTPC != null)
                 for (int i = 0; i < materialTypes.Length; i++)
                 {
                     materialTypes[i] = materialTypes[i].ToLower();
+                    _active = true;
                 }
         }
 
         private void OnTriggerEnter(Collider col)
         {
-            if (col.gameObject.GetComponent<Terrain>() != null)
+            if (_active)
             {
-                Terrain thisTerrain = col.gameObject.GetComponent<Terrain>();
-                if (thisTerrain.terrainData.terrainLayers.Length > 0)
+                if (col.gameObject.GetComponent<Terrain>() != null)
                 {
-                    FootStepRaise(thisTerrain.terrainData.terrainLayers[0].diffuseTexture.ToString());
+                    Terrain thisTerrain = col.gameObject.GetComponent<Terrain>();
+                    if (thisTerrain.terrainData.terrainLayers.Length > 0)
+                    {
+                        FootStepRaise(thisTerrain.terrainData.terrainLayers[0].diffuseTexture.ToString());
+                    }
                 }
-            }
-            else if (col.gameObject.GetComponent<Collider>() != null)
-            {
-                FootStepRaise(col.gameObject.name);
+                else if (col.gameObject.GetComponent<Collider>() != null)
+                {
+                    FootStepRaise(col.gameObject.name);
+                }
             }
         }
 
@@ -47,7 +55,8 @@ namespace Team1_GraduationGame.Sound
             {
                 if (matLayerName.Contains(materialTypes[i]))
                 {
-                    footStepEvent?.Raise(i);
+                    footStepEvent.Post(gameObject);
+                    AkSoundEngine.SetRTPCValue(materialRTPC.Id, i);
                     return;
                 }
             }

@@ -1,14 +1,14 @@
 ﻿// Script by Jakob Elkjær Husted
-using System.Collections;
-using System.Collections.Generic;
-using Team1_GraduationGame.Enemies;
-using Team1_GraduationGame.Interaction;
-using UnityEngine;
-using UnityEngine.AI;
-using UnityEngine.SceneManagement;
-
 namespace Team1_GraduationGame.SaveLoadSystem
 {
+    using System.Collections;
+    using System.Collections.Generic;
+    using Team1_GraduationGame.Enemies;
+    using Team1_GraduationGame.Interaction;
+    using UnityEngine;
+    using UnityEngine.AI;
+    using UnityEngine.SceneManagement;
+
     public class SaveLoadManager
     {
         private const string SAVE_SEPERATOR = "#SAVE-VALUE#";
@@ -226,8 +226,6 @@ namespace Team1_GraduationGame.SaveLoadSystem
                         tempNavMeshAgent.updatePosition = false;
                         tempNavMeshAgent.updateRotation = false;
                         tempNavMeshAgent.Warp(tempEnemyContainer.pos);
-
-                        // _enemies[i].transform.position = tempEnemyContainer.pos;
                         _enemies[i].transform.rotation = tempEnemyContainer.rot;
 
                         tempEnemyComponent.ResetEnemy();
@@ -302,7 +300,6 @@ namespace Team1_GraduationGame.SaveLoadSystem
         public class InteractableContainer
         {
             public Vector3 pos;
-            //public Quaternion rot;    // Ideally rotation should not be saved as interaction is on "rails"
             public bool toggleState;
         }
     }

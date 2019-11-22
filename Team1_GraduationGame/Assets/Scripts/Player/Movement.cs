@@ -28,8 +28,8 @@ public class Movement : MonoBehaviour
     private float swipeTimeTimer;
     private Vector3 initTouchPos, currTouchPos, joystickPos, stickLimitPos, velocity;
     private Quaternion lookRotation, pushRotation;
-    public VoidEvent jumpEvent, attackEvent, miniJump;
-    public IntEvent stateChangeEvent;
+    //public VoidEvent jumpEvent, attackEvent, miniJump;
+    //public IntEvent stateChangeEvent;
     [HideInInspector]
     public Vector3 direction = Vector3.zero, pushDirection = Vector3.zero;
 
@@ -563,7 +563,7 @@ public class Movement : MonoBehaviour
                            Physics.Raycast(transform.position + Vector3.up, Vector3.down, ghostJumpHeight.value + 1.0f)))
         {
             isJumping = true;
-            miniJump?.Raise();
+            //miniJump?.Raise();
 
             // also setting jump on temp Animator
             if (animator.runtimeAnimatorController != null)
@@ -596,8 +596,8 @@ public class Movement : MonoBehaviour
                 animator.SetTrigger("Jump");
             }
 
-            if (jumpEvent != null)
-                jumpEvent.Raise();
+            //if (jumpEvent != null)
+            //    jumpEvent.Raise();
             //_collider.material = _jumpMaterial;
 
 
@@ -649,8 +649,8 @@ public class Movement : MonoBehaviour
                     // Sometimes returns nullreference errors.
                     interactableObjects[i].GetComponent<Interactable>().Interact();
                     
-                    if (attackEvent != null)
-                        attackEvent.Raise();
+                    //if (attackEvent != null)
+                    //    attackEvent.Raise();
                     // Debug.Log("INTERACT!!!!!");
                     // interactableObjects[i].interact();
                 }
@@ -708,8 +708,8 @@ public class Movement : MonoBehaviour
         {
             moveState.value = 3;
         }
-        if (stateChangeEvent != null)
-            stateChangeEvent.Raise(moveState.value);
+        //if (stateChangeEvent != null)
+        //   stateChangeEvent.Raise(moveState.value);
     }
 
     public Trajectory GetMovementTrajectory()

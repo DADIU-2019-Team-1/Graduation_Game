@@ -7,15 +7,16 @@ public class HubMenu : MonoBehaviour
     public event Action startGameEvent;
     public event Action continueGameEvent; // TODO: Continue is not yet implemented 
     public event Action<int> menuChangeEvent;
-    public event Action<string> languageChangeEvent; // TODO: Localization is not yet implemented
+    public event Action<int> languageChangeEvent; // TODO: Localization is not yet implemented
     public event Action cheatModeEvent;
     public event Action<float> musicSliderEvent;
     public event Action<float> sfxSliderEvent;
     public event Action menuButtonPressEvent;
 
-    public void ChangeLanguage(string s)
+    public void ChangeLanguage(int languageIndex)
     {
-        languageChangeEvent?.Invoke(s);
+        languageChangeEvent?.Invoke(languageIndex);
+        PlayerPrefs.SetInt("Language", languageIndex);
     }
     public void ChangeMenu(int i)
     {

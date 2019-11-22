@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿// Code Owner: Jannik Neerdal
+using System.Collections;
 using System.Collections.Generic;
 using Unity.Burst;
 using Unity.Collections;
@@ -8,7 +9,6 @@ using Unity.Mathematics;
 using UnityEditor;
 #endif
 using UnityEngine;
-using UnityEngine.XR;
 
 namespace Team1_GraduationGame.MotionMatching
 {
@@ -221,7 +221,7 @@ namespace Team1_GraduationGame.MotionMatching
                     i++) // Gizmos for movement
                 {
                     // Position
-                    //Gizmos.DrawWireSphere(movement.GetMovementTrajectory().GetTrajectoryPoints()[i].GetPoint(), 0.2f);
+                    Gizmos.DrawWireSphere(movement.GetMovementTrajectory().GetTrajectoryPoints()[i].GetPoint(), 0.2f);
                     if (i != 0)
                     {
                         Gizmos.DrawLine(movement.GetMovementTrajectory().GetTrajectoryPoints()[i - 1].GetPoint(), movement.GetMovementTrajectory().GetTrajectoryPoints()[i].GetPoint());

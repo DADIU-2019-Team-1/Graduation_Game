@@ -322,7 +322,7 @@ namespace Team1_GraduationGame.Events
 
             if (loop == false)
             {
-                Debug.LogError("EventManager Error: array null or interactable script missing from some objects!");
+                Debug.LogError("EventManager Error: array null or interactable script missing from some objects! " + attachedManager.gameObject.name);
             }
 
             while (loop)

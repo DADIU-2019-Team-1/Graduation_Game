@@ -613,6 +613,16 @@ namespace Team1_GraduationGame.Enemies
         }
 
         public void SetIsActive(bool isActive) { _active = isActive; }
+
+        public void SetAlwaysAggro(bool isAggro)
+        {
+            alwaysAggro = isAggro;
+            if (alwaysAggro)
+                _isAggro = true;
+            else
+                _isAggro = false;
+        }
+
         public bool GetIsActive() { return _active; }
         public bool GetHearing() { return _hearingDisabled; }
         public NavMeshAgent getNavMeshAgent() { return _navMeshAgent; }

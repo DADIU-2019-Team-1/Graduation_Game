@@ -76,7 +76,7 @@ namespace Team1_GraduationGame.MotionMatching
         // --- Debugstuff
         [Header("Debug")] [SerializeField] private bool useJobs = true;
         private int animIterator = -1;
-        private IEnumerator currentEnumerator;
+        private Coroutine currentCoroutine = null;
         private List<string> debugStringList;
         
         private NativeArray<float3> _trajectoryPositions, _trajectoryForwards;
@@ -175,8 +175,9 @@ namespace Team1_GraduationGame.MotionMatching
 
         public void ChangeLayerWeight(int layerIndex, int desiredWeight)
         {
-            StopCoroutine(nameof(ChangeLayerWeightOverTime));
-            StartCoroutine(ChangeLayerWeightOverTime(layerIndex, desiredWeight));
+            if (currentCoroutine != null)
+                StopCoroutine(currentCoroutine);
+            currentCoroutine = StartCoroutine(ChangeLayerWeightOverTime(layerIndex, desiredWeight));
         }
 
         private IEnumerator ChangeLayerWeightOverTime(int layerIndex, int desiredWeight)
@@ -198,12 +199,12 @@ namespace Team1_GraduationGame.MotionMatching
             if (_playAnimationMode)
             {
                 StopCoroutine(MotionMatch());
-                if (Input.GetKeyDown(KeyCode.Space))
+                if (Input.GetKeyDown(KeyCode.B))
                 {
-                    if (currentEnumerator != null)
-                        StopCoroutine(currentEnumerator);
+                    if (currentCoroutine != null)
+                        StopCoroutine(currentCoroutine);
                     transform.position = Vector3.zero;
-                    StartCoroutine(PlayAnimation());
+                    currentCoroutine = StartCoroutine(PlayAnimation());
                 }
             }
         }
@@ -214,10 +215,6 @@ namespace Team1_GraduationGame.MotionMatching
             if (Application.isPlaying)
             {
                 Matrix4x4 invCharSpace = transform.worldToLocalMatrix.inverse;
-                Matrix4x4 animSpace = new Matrix4x4();
-                animSpace.SetTRS(featureVectors[_currentID].GetTrajectory().GetTrajectoryPoints()[0].GetPoint(),
-                    Quaternion.identity, Vector3.one);
-
                 Gizmos.color = Color.red; // Movement Trajectory
                 for (int i = 0;
                     i < movement.GetMovementTrajectory().GetTrajectoryPoints().Length;
@@ -244,25 +241,20 @@ namespace Team1_GraduationGame.MotionMatching
                 for (int i = 0; i < featureVectors[_currentID].GetTrajectory().GetTrajectoryPoints().Length; i++)
                 {
                     // Position
-                    //Gizmos.DrawWireSphere(invCharSpace.MultiplyPoint3x4(animSpace.inverse.MultiplyPoint3x4(featureVectors[_currentID].GetTrajectory().GetTrajectoryPoints()[i].GetPoint())), 0.2f);
+                    Gizmos.DrawWireSphere(invCharSpace.MultiplyPoint3x4(featureVectors[_currentID].GetTrajectory().GetTrajectoryPoints()[i].GetPoint()), 0.2f);
 
                     if (i != 0)
                     {
                         Gizmos.DrawLine(
-                            invCharSpace.MultiplyPoint3x4(animSpace.inverse.MultiplyPoint3x4(
-                                featureVectors[_currentID].GetTrajectory().GetTrajectoryPoints()[i - 1].GetPoint())),
-                            invCharSpace.MultiplyPoint3x4(animSpace.inverse.MultiplyPoint3x4(
-                                featureVectors[_currentID].GetTrajectory().GetTrajectoryPoints()[i].GetPoint())));
+                            invCharSpace.MultiplyPoint3x4(featureVectors[_currentID].GetTrajectory().GetTrajectoryPoints()[i - 1].GetPoint()),
+                            invCharSpace.MultiplyPoint3x4(featureVectors[_currentID].GetTrajectory().GetTrajectoryPoints()[i].GetPoint()));
                     }
 
                     // Forward
                     Gizmos.DrawLine(
-                        invCharSpace.MultiplyPoint3x4(animSpace.inverse.MultiplyPoint3x4(
-                            featureVectors[_currentID].GetTrajectory().GetTrajectoryPoints()[i].GetPoint())),
-                        invCharSpace.MultiplyPoint3x4(animSpace.inverse.MultiplyPoint3x4(
-                            featureVectors[_currentID].GetTrajectory().GetTrajectoryPoints()[i].GetPoint())) +
-                        invCharSpace.MultiplyPoint3x4(animSpace.inverse.MultiplyPoint3x4(
-                            featureVectors[_currentID].GetTrajectory().GetTrajectoryPoints()[i].GetForward())));
+                        invCharSpace.MultiplyPoint3x4(featureVectors[_currentID].GetTrajectory().GetTrajectoryPoints()[i].GetPoint()),
+                        invCharSpace.MultiplyPoint3x4(featureVectors[_currentID].GetTrajectory().GetTrajectoryPoints()[i].GetPoint()) +
+                        invCharSpace.MultiplyVector(featureVectors[_currentID].GetTrajectory().GetTrajectoryPoints()[i].GetForward()));
                 }
             }
         }
@@ -308,8 +300,9 @@ namespace Team1_GraduationGame.MotionMatching
             if (animIterator == allClips.Length)
             {
                 animIterator = 0;
-                Debug.Log("Finished playing last animation!");
+                Debug.Log("Finished playing last animation! Going back to first animation...");
             }
+            Debug.Log("Playing animation " + allClips[animIterator]);
 
             for (int i = 0; i < featureVectors.Count; i++)
             {
@@ -321,17 +314,15 @@ namespace Team1_GraduationGame.MotionMatching
             }
 
             int startofIdForClip = _currentID;
+            int animIteratorTwo = animIterator;
             Debug.Log("Current playing " + allClips[animIterator].name + ", which is " + allClips[animIterator].length +
-                      " seconds long!");
-            Debug.Log("While loop condition: Frame " + featureVectors[_currentID].GetFrame() + " < " +
-                      featureVectors[_currentID].GetFrameCountForID() + " && Clip " +
-                      featureVectors[_currentID].GetClipName() + " == " + allClips[animIterator].name);
-            while (featureVectors[_currentID].GetFrame() < featureVectors[_currentID].GetFrameCountForID() &&
-                   featureVectors[_currentID].GetClipName() == allClips[animIterator].name)
+                      " seconds long! Starting at ID " + startofIdForClip);
+            Debug.Log("While loop condition: Clip " + featureVectors[_currentID].GetClipName() + " == " + allClips[animIterator].name);
+            while (featureVectors[_currentID].GetClipName() == allClips[animIterator].name)
             {
                 Debug.Log("Current ID is now " + _currentID + ", which started at ID " + startofIdForClip + "!");
                 UpdateAnimation(_currentID, featureVectors[_currentID].GetFrame());
-                yield return new WaitForSeconds(queryRateInFrames / currentClip.frameRate);
+                yield return new WaitForSeconds(queryRateInFrames / animationFrameRate);
                 _currentID += queryRateInFrames;
             }
         }
@@ -539,8 +530,8 @@ namespace Team1_GraduationGame.MotionMatching
                         animationMatrix.SetTRS(animPositionArray[i], Quaternion.identity, Vector3.one);
                         for (int j = 0; j < movementPositionArray.Length; j++)
                         {
-                            comparison += math.distancesq(movementMatrix.MultiplyPoint3x4(animationMatrix.MultiplyPoint3x4(animPositionArray[i * trajPoints + j])), movementPositionArray[j]) * positionWeight;
-                            comparison += math.distancesq(movementMatrix.MultiplyPoint3x4(animationMatrix.MultiplyPoint3x4(animPositionArray[i * trajPoints + j])), movementPositionArray[j]) * forwardWeight;
+                            comparison += math.distancesq(movementMatrix.MultiplyPoint3x4(animPositionArray[i * trajPoints + j]), movementPositionArray[j]) * positionWeight;
+                            comparison += math.distancesq(movementMatrix.MultiplyPoint3x4(animPositionArray[i * trajPoints + j]), movementPositionArray[j]) * forwardWeight;
                         }
 
                         // Array shifting if comparison is less than any value in the array

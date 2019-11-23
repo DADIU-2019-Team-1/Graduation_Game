@@ -42,7 +42,7 @@ namespace AK
         static const AkUniqueID GRIEF_ONSET = 4109451574U;
         static const AkUniqueID PLAY_AMB_OUTSIDE = 121174090U;
         static const AkUniqueID PLAY_ECHOCALL_MEMORY_PLAYLIST = 3108390310U;
-        static const AkUniqueID PLAY_FS_JUMPANDLAND = 1125157986U;
+        static const AkUniqueID PLAY_FS_JUMPLAND = 3576124929U;
         static const AkUniqueID PLAY_FS_MINIJUMP = 4119942951U;
         static const AkUniqueID PLAY_FS_SYSTEM = 2874393337U;
         static const AkUniqueID PLAY_HMC_MUSIC_SYSTEM_LEVEL1 = 2367316274U;

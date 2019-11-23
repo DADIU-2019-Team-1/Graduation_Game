@@ -181,6 +181,8 @@ namespace Team1_GraduationGame.SaveLoadSystem
 
             EditorGUILayout.HelpBox("Please only create new savepoints by using the 'Add SavePoint' button. IMPORTANT: The first savepoint must be at the player start position of the level!", MessageType.Info);
 
+            EditorGUILayout.HelpBox("IF PREFAB: Deleting SavePoints will only work if prefab is unpacked!", MessageType.Warning);
+
             if (GUILayout.Button("Add SavePoint"))
             {
                 script.AddSavePoint();

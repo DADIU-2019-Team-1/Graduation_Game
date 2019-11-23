@@ -47,7 +47,8 @@ namespace Team1_GraduationGame.Enemies
         private Vector3 _lastSighting;
         private Vector3[] _wayPointRotations;
         private SphereCollider _thisCollider;
-        private int _currentWayPoint = 0, _state = 0, _layerMask;
+        private LayerMask _layerMask;
+        private int _currentWayPoint = 0, _state = 0;
         private float[] _waitTimes;
         private float _targetSpeed, _hearingDistance, _lightConeIntensity, _speed;
 
@@ -57,8 +58,9 @@ namespace Team1_GraduationGame.Enemies
         void Awake()
         {
             _player = GameObject.FindGameObjectWithTag("Player");
-            _layerMask = ~LayerMask.GetMask("Enemies"); // Use later for raycast to ignore other enemies
-            //_enemySoundManager = gameObject.GetComponent<EnemySoundManager>();
+            _layerMask = LayerMask.GetMask("Enemies");
+            _layerMask |= LayerMask.GetMask("Ignore Raycast");
+            _layerMask = ~_layerMask;
 
             if (_player != null && thisEnemy != null)
             {
@@ -571,7 +573,6 @@ namespace Team1_GraduationGame.Enemies
 
                 CollisionWithPlayerSetter(true);
                 _playerAnimator?.ResetTrigger("EnemyAttack" + thisEnemy.typeId);
-                viewConeLight?.gameObject.SetActive(true);
                 playerDiedEvent?.Raise();
             }
 
@@ -627,6 +628,7 @@ namespace Team1_GraduationGame.Enemies
             _navMeshAgent.isStopped = false;
             _giveUpPursuitRunning = false;
             _destinationSet = false;
+            viewConeLight?.gameObject.SetActive(true);
             _animator?.ResetTrigger("PushedDown");
             _animator?.ResetTrigger("GettingUp");
             _animator?.ResetTrigger("Attack");

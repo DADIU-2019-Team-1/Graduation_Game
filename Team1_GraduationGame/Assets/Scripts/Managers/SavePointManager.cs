@@ -7,6 +7,7 @@ namespace Team1_GraduationGame.SaveLoadSystem
     using Team1_GraduationGame.Enemies;
     using Team1_GraduationGame.Events;
     using Team1_GraduationGame.Interaction;
+    using UnityEngine.SceneManagement;
     using UnityEditor;
     using UnityEngine;
 
@@ -105,6 +106,11 @@ namespace Team1_GraduationGame.SaveLoadSystem
         public void NextLevel()
         {
             saveLoadManager?.NextLevel();
+        }
+
+        public void ResetLevel()
+        {
+            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
         }
 
 #if UNITY_EDITOR

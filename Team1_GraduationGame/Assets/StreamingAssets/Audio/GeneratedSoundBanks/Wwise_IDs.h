@@ -20,6 +20,7 @@ namespace AK
         static const AkUniqueID BISSIS_ONSET = 2202781944U;
         static const AkUniqueID BISSIS_SPOT = 146861159U;
         static const AkUniqueID BISSIS_UP = 1148761992U;
+        static const AkUniqueID DEAD_LPF = 1647120744U;
         static const AkUniqueID EMPTY_BIGSIS = 1826050074U;
         static const AkUniqueID EMPTY_FAM = 351150729U;
         static const AkUniqueID EMPTY_FRI = 669925540U;
@@ -167,6 +168,7 @@ namespace AK
         static const AkUniqueID _3D_MEMORYCALL = 1655597246U;
         static const AkUniqueID AMB = 1117531639U;
         static const AkUniqueID AMB_OUTSIDE = 1013211851U;
+        static const AkUniqueID DEAD_RIING = 2951509167U;
         static const AkUniqueID MASTER_AUDIO_BUS = 3803692087U;
         static const AkUniqueID MOTION_FACTORY_BUS = 985987111U;
         static const AkUniqueID MUSIC = 3991942870U;

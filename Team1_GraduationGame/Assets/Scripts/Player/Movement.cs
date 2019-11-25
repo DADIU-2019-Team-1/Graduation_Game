@@ -13,7 +13,7 @@ using UnityEditor;
 public class Movement : MonoBehaviour
 {
     private Rigidbody playerRB;
-    private bool touchStart = false, canMove = false, canJump = true, isPushing = false, moveFrozen = false;
+    private bool touchStart = false, canMove = false, canJump = true, isPushing = false, moveFrozen = false, isAttacked = false;
     private float rotationSpeedCurrent, rotationSpeedMax = 5.0f, rotationSpeedGoal, rotationAccelerationFactor = 0.1f, pushRotationAccelerationFactor = 0.7f, rotationAngleReactionFactor = 0.1f, pushRotationAngleReactionFactor = 0.7f;
     
     [HideInInspector]
@@ -689,7 +689,7 @@ public class Movement : MonoBehaviour
 
         if (moveFrozen && !atOrbTrigger.value)
         {
-            Debug.Log("Player frozen");
+            //Debug.Log("Player frozen");
             playerRB.constraints = RigidbodyConstraints.FreezePositionX | RigidbodyConstraints.FreezePositionZ | RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
 
         }
@@ -703,6 +703,16 @@ public class Movement : MonoBehaviour
             
         }
 
+    }
+
+    public bool GetIsAttacked()
+    {
+        return isAttacked;
+    }
+
+    public void SetIsAttacked(bool attacked)
+    {
+        isAttacked = attacked;
     }
 
     public void SetState()

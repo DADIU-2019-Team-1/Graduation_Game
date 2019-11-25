@@ -274,7 +274,6 @@ namespace Team1_GraduationGame.Managers
 
             if (wwiseEvent != null && (int) behaviorSelector == 0)
             {
-                Debug.Log("Playing Wwise Event");
                 if (targetGameObject == null || !useOtherGameObject)
                 {
                     wwiseEvent.Post(soundManagerGameObject);
@@ -290,7 +289,6 @@ namespace Team1_GraduationGame.Managers
         {
             if (wwiseEvent != null && (int) behaviorSelector == 0)
             {
-                Debug.Log("Stopping Wwise Event");
                 if (targetGameObject == null || !useOtherGameObject)
                     wwiseEvent.Stop(soundManagerGameObject);
                 else

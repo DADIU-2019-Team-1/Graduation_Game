@@ -152,7 +152,9 @@ namespace Team1_GraduationGame.SaveLoadSystem
 
             PlayerPrefs.SetInt("previousGame", 1);
 
+#if UNITY_EDITOR
             Debug.Log("Save/Load Manager: Succesfully saved the game");
+#endif
         }
 
         /// <summary>
@@ -280,7 +282,9 @@ namespace Team1_GraduationGame.SaveLoadSystem
                 return;
             }
 
+#if UNITY_EDITOR
             Debug.Log("Save/Load Manager: Succesfully loaded the game");
+#endif
 
         }
 

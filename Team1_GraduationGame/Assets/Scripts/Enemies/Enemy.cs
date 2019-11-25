@@ -47,7 +47,8 @@ namespace Team1_GraduationGame.Enemies
         private Vector3 _lastSighting;
         private Vector3[] _wayPointRotations;
         private SphereCollider _thisCollider;
-        private int _currentWayPoint = 0, _state = 0, _layerMask;
+        private LayerMask _layerMask;
+        private int _currentWayPoint = 0, _state = 0;
         private float[] _waitTimes;
         private float _targetSpeed, _hearingDistance, _lightConeIntensity, _speed;
 
@@ -57,8 +58,9 @@ namespace Team1_GraduationGame.Enemies
         void Awake()
         {
             _player = GameObject.FindGameObjectWithTag("Player");
-            _layerMask = ~LayerMask.GetMask("Enemies"); // Use later for raycast to ignore other enemies
-            //_enemySoundManager = gameObject.GetComponent<EnemySoundManager>();
+            _layerMask = LayerMask.GetMask("Enemies");
+            _layerMask |= LayerMask.GetMask("Ignore Raycast");
+            _layerMask = ~_layerMask;
 
             if (_player != null && thisEnemy != null)
             {
@@ -404,8 +406,9 @@ namespace Team1_GraduationGame.Enemies
                 _active = false;
                 _navMeshAgent.isStopped = true;
 
+                CollisionWithPlayerSetter(false);
                 _animator?.SetTrigger("PushedDown");
-                _enemySoundManager?.pushedDown();
+                _enemySoundManager?.PushedDown();
 
                 viewConeLight.gameObject.SetActive(true);
                 viewConeLight.color = Color.green;
@@ -468,6 +471,18 @@ namespace Team1_GraduationGame.Enemies
             return tempPathLength;
         }
 
+        public void CollisionWithPlayerSetter(bool isColliding)
+        {
+            if (isColliding)
+            {
+                Physics.IgnoreCollision(_player.GetComponent<Collider>(), GetComponent<Collider>(), false);
+            }
+            else
+            {
+                Physics.IgnoreCollision(_player.GetComponent<Collider>(), GetComponent<Collider>(), true);
+            }
+        }
+
         #region Co-Routines
 
         private IEnumerator LightConeFade()
@@ -517,6 +532,7 @@ namespace Team1_GraduationGame.Enemies
 
         private IEnumerator EnemyAggro()
         {
+            _enemySoundManager?.Spotted();
             _isAggro = true;
             yield return new WaitForSeconds(thisEnemy.aggroTime);
 
@@ -529,6 +545,8 @@ namespace Team1_GraduationGame.Enemies
 
         private IEnumerator EnemyHug()
         {
+            _active = false;
+            _navMeshAgent.isStopped = true;
             _isHugging = true;
             SwitchState(2); // Switch to attacking
 
@@ -546,17 +564,19 @@ namespace Team1_GraduationGame.Enemies
                 thisEnemy.embraceDistance + 1.0f)
             {
                 viewConeLight?.gameObject.SetActive(false);
+                CollisionWithPlayerSetter(false);
                 _playerAnimator?.SetTrigger("EnemyAttack" + thisEnemy.typeId);
                 _animator?.SetTrigger("Attack");
-                _enemySoundManager?.attackPlayer();
+                _enemySoundManager?.AttackPlayer();
 
                 yield return new WaitForSeconds(animAttackTime);
 
+                CollisionWithPlayerSetter(true);
                 _playerAnimator?.ResetTrigger("EnemyAttack" + thisEnemy.typeId);
-                viewConeLight?.gameObject.SetActive(true);
                 playerDiedEvent?.Raise();
             }
 
+            _navMeshAgent.isStopped = false;
             _active = true;
             _isHugging = false;
             if (!alwaysAggro)
@@ -578,12 +598,13 @@ namespace Team1_GraduationGame.Enemies
         private IEnumerator PushDownDelay()
         {
             yield return new WaitForSeconds(thisEnemy.pushedDownDuration);
+            CollisionWithPlayerSetter(true);
             _active = true;
             _navMeshAgent.isStopped = false;
             viewConeLight.color = normalConeColor;
             _animator?.ResetTrigger("PushedDown");
             _animator?.SetTrigger("GettingUp");
-            _enemySoundManager?.gettingUp();
+            _enemySoundManager?.GettingUp();
 
             yield return new WaitForSeconds(animGettingUpTime);
             _animator?.ResetTrigger("GettingUp");
@@ -607,9 +628,11 @@ namespace Team1_GraduationGame.Enemies
             _navMeshAgent.isStopped = false;
             _giveUpPursuitRunning = false;
             _destinationSet = false;
+            viewConeLight?.gameObject.SetActive(true);
             _animator?.ResetTrigger("PushedDown");
             _animator?.ResetTrigger("GettingUp");
             _animator?.ResetTrigger("Attack");
+            CollisionWithPlayerSetter(false);
         }
 
         public void SetIsActive(bool isActive) { _active = isActive; }

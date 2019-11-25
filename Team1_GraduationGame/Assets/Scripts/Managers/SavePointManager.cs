@@ -7,6 +7,7 @@ namespace Team1_GraduationGame.SaveLoadSystem
     using Team1_GraduationGame.Enemies;
     using Team1_GraduationGame.Events;
     using Team1_GraduationGame.Interaction;
+    using UnityEngine.SceneManagement;
     using UnityEditor;
     using UnityEngine;
 
@@ -107,6 +108,11 @@ namespace Team1_GraduationGame.SaveLoadSystem
             saveLoadManager?.NextLevel();
         }
 
+        public void ResetLevel()
+        {
+            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        }
+
 #if UNITY_EDITOR
         public void AddSavePoint()
         {
@@ -180,6 +186,8 @@ namespace Team1_GraduationGame.SaveLoadSystem
             EditorGUILayout.Space();
 
             EditorGUILayout.HelpBox("Please only create new savepoints by using the 'Add SavePoint' button. IMPORTANT: The first savepoint must be at the player start position of the level!", MessageType.Info);
+
+            EditorGUILayout.HelpBox("IF PREFAB: Deleting SavePoints will only work if prefab is unpacked!", MessageType.Warning);
 
             if (GUILayout.Button("Add SavePoint"))
             {

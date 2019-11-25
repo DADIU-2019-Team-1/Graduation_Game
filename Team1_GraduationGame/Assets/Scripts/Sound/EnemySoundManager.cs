@@ -16,7 +16,7 @@ namespace Team1_GraduationGame.Sound
         [HideInInspector] public bool useGlobalRtpcs = false;
 
         // Wwise:
-        [HideInInspector] public AK.Wwise.RTPC speedRTPC, stateRTPC;
+        [HideInInspector] public AK.Wwise.RTPC speedRTPC;
         public AK.Wwise.Event attackingPlayerEvent, pushedDownEvent, gettingUpEvent, onsetEvent, holdEvent, spotEvent;  // TODO make sure all these vents gets raised
 
         private Enemy _thisEnemy;
@@ -41,13 +41,13 @@ namespace Team1_GraduationGame.Sound
                     else
                         AkSoundEngine.SetRTPCValue(speedRTPC.Id, _thisEnemy.GetSpeed());
                 }
-                if (stateRTPC != null)
-                {
-                    if (useGlobalRtpcs)
-                        stateRTPC.SetGlobalValue(_thisEnemy.GetState());
-                    else
-                        AkSoundEngine.SetRTPCValue(stateRTPC.Id, _thisEnemy.GetState());
-                }
+                //if (stateRTPC != null)
+                //{
+                //    if (useGlobalRtpcs)
+                //        stateRTPC.SetGlobalValue(_thisEnemy.GetState());
+                //    else
+                //        AkSoundEngine.SetRTPCValue(stateRTPC.Id, _thisEnemy.GetState());
+                //}
             }
         }
 
@@ -95,8 +95,8 @@ namespace Team1_GraduationGame.Sound
                 SerializedProperty speedRTPCProp = serializedObject.FindProperty("speedRTPC");
                 EditorGUILayout.PropertyField(speedRTPCProp);
 
-                SerializedProperty stateRTPCProp = serializedObject.FindProperty("stateRTPC");
-                EditorGUILayout.PropertyField(stateRTPCProp);
+                //SerializedProperty stateRTPCProp = serializedObject.FindProperty("stateRTPC");
+                //EditorGUILayout.PropertyField(stateRTPCProp);
 
                 serializedObject.ApplyModifiedProperties();
             }

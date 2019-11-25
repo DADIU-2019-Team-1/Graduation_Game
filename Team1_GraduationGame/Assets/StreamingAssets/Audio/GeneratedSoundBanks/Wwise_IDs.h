@@ -48,7 +48,8 @@ namespace AK
         static const AkUniqueID PLAY_FS_SYSTEM = 2874393337U;
         static const AkUniqueID PLAY_HMC_MUSIC_SYSTEM_LEVEL1 = 2367316274U;
         static const AkUniqueID PLAY_PUSH = 1749591466U;
-        static const AkUniqueID PLAY_PUSH_BIGOBJ = 2132209392U;
+        static const AkUniqueID PLAY_PUSH_BIGOBJECTS = 2101881411U;
+        static const AkUniqueID PLAY_PUSH_TOYOBJECTS = 3994783433U;
         static const AkUniqueID PLAY_RUMBLE_BLEND = 728827549U;
         static const AkUniqueID PLAY_UI_TONECALL = 3222526703U;
         static const AkUniqueID STOP_ECHOCALL_MEMORY_PLAYLIST = 3307487220U;

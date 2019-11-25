@@ -55,8 +55,8 @@ namespace Team1_GraduationGame.Sound
             {
                 if (matLayerName.Contains(materialTypes[i]))
                 {
-                    footStepEvent.Post(gameObject);
                     AkSoundEngine.SetRTPCValue(materialRTPC.Id, i);
+                    footStepEvent.Post(gameObject);
                     return;
                 }
             }

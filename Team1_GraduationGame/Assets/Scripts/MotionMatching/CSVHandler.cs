@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿// Code Owner: Jannik Neerdal
+using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 #if UNITY_EDITOR

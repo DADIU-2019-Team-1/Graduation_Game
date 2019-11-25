@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿// Code Owner: Jannik Neerdal
 using Unity.Mathematics;
 using UnityEngine;
 

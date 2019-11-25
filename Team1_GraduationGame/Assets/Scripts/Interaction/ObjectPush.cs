@@ -20,6 +20,7 @@ namespace Team1_GraduationGame.Interaction
         [Range(0.1f, 75.0f)] public float thrustAmount = 5.0f;
         [HideInInspector] public List<GameObject> wayPoints;
         [HideInInspector] public GameObject parentWayPoint;
+        [HideInInspector] public AK.Wwise.Event pushSoundEvent;
 
         // Private:
 
@@ -49,9 +50,15 @@ namespace Team1_GraduationGame.Interaction
                 else if (wayPoints != null && wayPoints.Count >= 2)
                 {
                     if (dir == 2 && Vector3.Distance(transform.position, wayPoints[1].transform.position) > 1.0f) // Checks which side the player is standing to the object
+                    {
                         _thisRigidBody.AddForce((wayPoints[1].transform.position - transform.position).normalized * thrustAmount * 400, ForceMode.Impulse);
+                        pushSoundEvent?.Post(gameObject);
+                    }
                     else if (dir == 1 && Vector3.Distance(transform.position, wayPoints[0].transform.position) > 1.0f)
+                    {
                         _thisRigidBody.AddForce((wayPoints[0].transform.position - transform.position).normalized * thrustAmount * 400, ForceMode.Impulse);
+                        pushSoundEvent?.Post(gameObject);
+                    }
                 }
             }
         }

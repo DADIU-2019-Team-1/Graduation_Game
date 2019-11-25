@@ -37,8 +37,8 @@ namespace Team1_GraduationGame.Enemies
         public bool drawGizmos = true, useWaitTime, rotateAtWaypoints, loopWaypointRoutine = true, alwaysAggro;
         public Color normalConeColor = Color.yellow, aggroConeColor = Color.red;
         public float animNoiseHeardTime = 2.0f, animAttackTime = 3.0f, animGettingUpTime = 2.0f;
-        [HideInInspector] public bool useGlobalWaitTime = true;
-        [HideInInspector] public float waitTime = 0.0f;
+        [HideInInspector] public bool useGlobalWaitTime = true, behaviourInactive;
+        [HideInInspector] public float waitTime = 0.0f, spawnActivationDistance = 40.0f;
 
         // Private variables:
         private bool _active, _timerRunning, _destinationSet, _isRotating, _isAggro, _playerHeard,
@@ -129,7 +129,7 @@ namespace Team1_GraduationGame.Enemies
 
         private void Start()
         {
-            InvokeRepeating("CustomUpdate", 1.0f, 0.5f);
+            InvokeRepeating("CustomUpdate", 0.4f, 0.7f);
         }
 
         /// <summary>
@@ -169,143 +169,146 @@ namespace Team1_GraduationGame.Enemies
 
         private void FixedUpdate()
         {
-            if (_active)
+            if (!behaviourInactive)
             {
-                if (!_isAggro && wayPoints != null && wayPoints.Count != 0)
+                if (_active)
                 {
-                    if (_state != 0)
-                        SwitchState(0); // Switch to walking
-
-                    if (Vector3.Distance(transform.position, wayPoints[_currentWayPoint].transform.position) < wayPointReachRange)  // Checks whether enemy reached its waypoint
-                    {   
-                        if (!rotateAtWaypoints) // Checks if enemy should rotate in specific direction at waypoint.
-                            _isRotating = false;
-                        else
-                            _rotatingAtWp = true;
-
-                        UpdatePathRoutine();
-                    }
-
-                    if (!_destinationSet)   // If no destination set for the nav mesh agent
+                    if (!_isAggro && wayPoints != null && wayPoints.Count != 0)
                     {
-                        _navMeshAgent.SetDestination(wayPoints[_currentWayPoint].transform.position);
-                        _rotatingAtWp = false;
-                        _destinationSet = true;
-                        _isRotating = true;
-                    }
-                }
+                        if (_state != 0)
+                            SwitchState(0); // Switch to walking
 
-                if (alwaysAggro)    // If always aggro, this enemy should always know the position of the player
-                {
-                    _lastSighting = _player.transform.position;
-                }
-
-                if (_isAggro)
-                {
-                    if (!_isHugging && _state != 1)
-                        SwitchState(1); // Switch to running
-
-                    _navMeshAgent.SetDestination(_lastSighting);    // Go to last sighting, will be updated constantly if player still in range
-                    _isRotating = true;
-
-                    if (Vector3.Distance(transform.position, _player.transform.position) <
-                        thisEnemy.embraceDistance && _isAggro)  // Is player in hug/attack range?
-                    {
-                        if (!_isHugging)    // If not already hugging/attacking then start hug/attack co-routine.
-                            StartCoroutine(EnemyHug());
-                    }
-
-                    if (Vector3.Distance(transform.position, _lastSighting) < thisEnemy.embraceDistance)
-                    {
-                        _destinationSet = false;
-                        _isAggro = false;
-                        //StopCoroutine(PursuitTimeout()); // Stop pursuit timeout, as enemy reached last sighting
-                    }
-                }
-
-                if (_isRotating)    // Is true if enemy should be rotating
-                {
-                    Quaternion lookRotation;
-
-                    if (!_rotatingAtWp || _isAggro) // Checks whether enemy should currently rotate using a waypoint rotate value or walking direction
-                        lookRotation = _navMeshAgent.velocity.normalized != Vector3.zero ? Quaternion.LookRotation(_navMeshAgent.velocity.normalized) : transform.rotation;
-                    else
-                        lookRotation = Quaternion.Euler(_wayPointRotations[_currentWayPoint]) != Quaternion.identity ? Quaternion.Euler(_wayPointRotations[_currentWayPoint]) : transform.rotation;
-
-                    transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, _navMeshAgent.angularSpeed);
-
-                }
-
-                if (_accelerating && _state != 2)   // Used for accelerating the enemy speed, instead of instant speed change:
-                {
-                    if (_navMeshAgent.speed < _targetSpeed)
-                    {
-                        _navMeshAgent.speed += thisEnemy.AccelerationTime * Time.fixedDeltaTime;
-                        if (_navMeshAgent.speed >= _targetSpeed)
-                            _accelerating = false;
-                    }
-                    else if (_navMeshAgent.speed > _targetSpeed)
-                    {
-                        _navMeshAgent.speed -= thisEnemy.DeAccelerationTime * Time.fixedDeltaTime;
-                        if (_navMeshAgent.speed <= _targetSpeed)
-                            _accelerating = false;
-                    }
-                }
-
-                ViewLightConeControl();
-
-                //if (!alwaysAggro) // BUG: This does not work currently
-                //{
-                //    if (_inTriggerZone && _giveUpPursuitRunning)    // this part is used to time out the pursuit, if enemy cannot reach player last sighting
-                //    {
-                //        _giveUpPursuitRunning = false;
-                //        StopCoroutine(PursuitTimeout());
-                //    }
-                //    else if (!_inTriggerZone && !_giveUpPursuitRunning && _isAggro)
-                //    {
-                //        StartCoroutine(PursuitTimeout());
-                //    }
-                //}
-            }
-
-            if (_active || _playerHeard)
-            {
-                if (!_hearingDisabled /*&& !_isAggro*/)
-                {
-                    _hearingDistance = thisEnemy.hearingDistance;
-                    if (playerMoveState.value == 2)
-                        _hearingDistance = thisEnemy.hearingDistance * hearingSensitivity;
-
-                    float tempHearingPathLength = HearingPathLength();
-
-                    if (tempHearingPathLength < thisEnemy.hearingDistance && playerMoveState.value != 0 &&
-                        playerMoveState.value != 1)
-                    {
-                        if (_playerHeard)
+                        if (Vector3.Distance(transform.position, wayPoints[_currentWayPoint].transform.position) < wayPointReachRange)  // Checks whether enemy reached its waypoint
                         {
-                            if (tempHearingPathLength < thisEnemy.hearingDistance / 2 && playerMoveState.value == 3)
-                            {
-                                StopCoroutine(PlayerHeard());
-                                _playerHeard = false;
-                                _active = true;
-                                _animator?.ResetTrigger("NoiseHeard");
-                                StartCoroutine(EnemyAggro());
-                            }
+                            if (!rotateAtWaypoints) // Checks if enemy should rotate in specific direction at waypoint.
+                                _isRotating = false;
+                            else
+                                _rotatingAtWp = true;
+
+                            UpdatePathRoutine();
                         }
 
-                        _lastSighting = _player.transform.position;
-
-                        if (!_isAggro && !_playerHeard)
-                            StartCoroutine(PlayerHeard());
-
+                        if (!_destinationSet)   // If no destination set for the nav mesh agent
+                        {
+                            _navMeshAgent.SetDestination(wayPoints[_currentWayPoint].transform.position);
+                            _rotatingAtWp = false;
+                            _destinationSet = true;
+                            _isRotating = true;
+                        }
                     }
-                    else if (Vector3.Distance(transform.position, _player.transform.position) < minimumAlwaysDetectRange
-                    ) // If very very close the enemy will "hear" the player no matter what
+
+                    if (alwaysAggro)    // If always aggro, this enemy should always know the position of the player
                     {
                         _lastSighting = _player.transform.position;
+                    }
 
-                        if (!_isAggro)
-                            StartCoroutine(EnemyAggro());
+                    if (_isAggro)
+                    {
+                        if (!_isHugging && _state != 1)
+                            SwitchState(1); // Switch to running
+
+                        _navMeshAgent.SetDestination(_lastSighting);    // Go to last sighting, will be updated constantly if player still in range
+                        _isRotating = true;
+
+                        if (Vector3.Distance(transform.position, _player.transform.position) <
+                            thisEnemy.embraceDistance && _isAggro)  // Is player in hug/attack range?
+                        {
+                            if (!_isHugging)    // If not already hugging/attacking then start hug/attack co-routine.
+                                StartCoroutine(EnemyHug());
+                        }
+
+                        if (Vector3.Distance(transform.position, _lastSighting) < thisEnemy.embraceDistance)
+                        {
+                            _destinationSet = false;
+                            _isAggro = false;
+                            //StopCoroutine(PursuitTimeout()); // Stop pursuit timeout, as enemy reached last sighting
+                        }
+                    }
+
+                    if (_isRotating)    // Is true if enemy should be rotating
+                    {
+                        Quaternion lookRotation;
+
+                        if (!_rotatingAtWp || _isAggro) // Checks whether enemy should currently rotate using a waypoint rotate value or walking direction
+                            lookRotation = _navMeshAgent.velocity.normalized != Vector3.zero ? Quaternion.LookRotation(_navMeshAgent.velocity.normalized) : transform.rotation;
+                        else
+                            lookRotation = Quaternion.Euler(_wayPointRotations[_currentWayPoint]) != Quaternion.identity ? Quaternion.Euler(_wayPointRotations[_currentWayPoint]) : transform.rotation;
+
+                        transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, _navMeshAgent.angularSpeed);
+
+                    }
+
+                    if (_accelerating && _state != 2)   // Used for accelerating the enemy speed, instead of instant speed change:
+                    {
+                        if (_navMeshAgent.speed < _targetSpeed)
+                        {
+                            _navMeshAgent.speed += thisEnemy.AccelerationTime * Time.fixedDeltaTime;
+                            if (_navMeshAgent.speed >= _targetSpeed)
+                                _accelerating = false;
+                        }
+                        else if (_navMeshAgent.speed > _targetSpeed)
+                        {
+                            _navMeshAgent.speed -= thisEnemy.DeAccelerationTime * Time.fixedDeltaTime;
+                            if (_navMeshAgent.speed <= _targetSpeed)
+                                _accelerating = false;
+                        }
+                    }
+
+                    ViewLightConeControl();
+
+                    //if (!alwaysAggro) // BUG: This does not work currently
+                    //{
+                    //    if (_inTriggerZone && _giveUpPursuitRunning)    // this part is used to time out the pursuit, if enemy cannot reach player last sighting
+                    //    {
+                    //        _giveUpPursuitRunning = false;
+                    //        StopCoroutine(PursuitTimeout());
+                    //    }
+                    //    else if (!_inTriggerZone && !_giveUpPursuitRunning && _isAggro)
+                    //    {
+                    //        StartCoroutine(PursuitTimeout());
+                    //    }
+                    //}
+                }
+
+                if (_active || _playerHeard)
+                {
+                    if (!_hearingDisabled /*&& !_isAggro*/)
+                    {
+                        _hearingDistance = thisEnemy.hearingDistance;
+                        if (playerMoveState.value == 2)
+                            _hearingDistance = thisEnemy.hearingDistance * hearingSensitivity;
+
+                        float tempHearingPathLength = HearingPathLength();
+
+                        if (tempHearingPathLength < thisEnemy.hearingDistance && playerMoveState.value != 0 &&
+                            playerMoveState.value != 1)
+                        {
+                            if (_playerHeard)
+                            {
+                                if (tempHearingPathLength < thisEnemy.hearingDistance / 2 && playerMoveState.value == 3)
+                                {
+                                    StopCoroutine(PlayerHeard());
+                                    _playerHeard = false;
+                                    _active = true;
+                                    _animator?.ResetTrigger("NoiseHeard");
+                                    StartCoroutine(EnemyAggro());
+                                }
+                            }
+
+                            _lastSighting = _player.transform.position;
+
+                            if (!_isAggro && !_playerHeard)
+                                StartCoroutine(PlayerHeard());
+
+                        }
+                        else if (Vector3.Distance(transform.position, _player.transform.position) < minimumAlwaysDetectRange
+                        ) // If very very close the enemy will "hear" the player no matter what
+                        {
+                            _lastSighting = _player.transform.position;
+
+                            if (!_isAggro)
+                                StartCoroutine(EnemyAggro());
+                        }
                     }
                 }
             }
@@ -319,6 +322,15 @@ namespace Team1_GraduationGame.Enemies
             {
                 _animator.SetFloat("Speed", _speed);
             }
+
+            //if (Vector3.Distance(transform.position, _player.transform.position) < spawnActivationDistance && behaviourInactive)
+            //{
+            //    behaviourInactive = true;
+            //}
+            //else if (Vector3.Distance(transform.position, _player.transform.position) > spawnActivationDistance && !behaviourInactive)
+            //{
+            //    behaviourInactive = false;
+            //}
         }
 
         private void UpdatePathRoutine()    // Updates destination to next waypoint
@@ -356,39 +368,40 @@ namespace Team1_GraduationGame.Enemies
 
         private void OnTriggerStay(Collider col)
         {
-            if (_active && !alwaysAggro || _playerHeard)
-                if (col.tag == _player.tag)
-                {
-                    Vector3 dir = _player.transform.position - transform.position;
-                    float enemyToPlayerAngle = Vector3.Angle(transform.forward, dir);
-
-                    if (enemyToPlayerAngle < thisEnemy.fieldOfView / 2)
+            if (!behaviourInactive)
+                if (_active && !alwaysAggro || _playerHeard)
+                    if (col.tag == _player.tag)
                     {
-                        RaycastHit hit;
+                        Vector3 dir = _player.transform.position - transform.position;
+                        float enemyToPlayerAngle = Vector3.Angle(transform.forward, dir);
 
-                        if (Physics.Raycast(transform.position + transform.up, dir, out hit, thisEnemy.viewDistance, _layerMask))
-                            if (hit.collider.tag == _player.tag)
-                            {
-                                if (_playerHeard)
+                        if (enemyToPlayerAngle < thisEnemy.fieldOfView / 2)
+                        {
+                            RaycastHit hit;
+
+                            if (Physics.Raycast(transform.position + transform.up, dir, out hit, thisEnemy.viewDistance, _layerMask))
+                                if (hit.collider.tag == _player.tag)
                                 {
-                                    StopCoroutine(PlayerHeard());
-                                    _playerHeard = false;
-                                    _active = true;
-                                    _animator?.ResetTrigger("NoiseHeard");
+                                    if (_playerHeard)
+                                    {
+                                        StopCoroutine(PlayerHeard());
+                                        _playerHeard = false;
+                                        _active = true;
+                                        _animator?.ResetTrigger("NoiseHeard");
+                                    }
+
+                                    _lastSighting = _player.transform.position;
+                                    if (!_isAggro)
+                                        StartCoroutine(EnemyAggro());
                                 }
+                        }
+                        else if (_isAggro && !_playerHeard)
+                        {
+                            _lastSighting = _player.transform.position;
+                        }
 
-                                _lastSighting = _player.transform.position;
-                                if (!_isAggro)
-                                    StartCoroutine(EnemyAggro());
-                            }
+                        _inTriggerZone = true;
                     }
-                    else if (_isAggro && !_playerHeard)
-                    {
-                        _lastSighting = _player.transform.position;
-                    }
-
-                    _inTriggerZone = true;
-                }
         }
 
         private void OnTriggerExit(Collider col)

@@ -52,8 +52,8 @@ namespace Team1_GraduationGame.DevelopmentTools
 
             Application.logMessageReceived += Log;
 
-            if (FindObjectOfType<HubMenu>() != null)
-                FindObjectOfType<HubMenu>().cheatModeEvent += ToggleDevelopmentToolPanel;
+            if (FindObjectOfType<UIMenu>() != null)
+                FindObjectOfType<UIMenu>().cheatModeEvent += ToggleDevelopmentToolPanel;
 
             if (mainPanel.activeSelf == true)
                 _devToolActive = true;

@@ -49,7 +49,6 @@ namespace Team1_GraduationGame.Editor
             DrawUILine(false);
             if (script.thisEnemy == null)
             {
-                EditorGUILayout.HelpBox("Use the 'sound manager' script if you want to play actual sounds", MessageType.None);
                 script.emitSound = EditorGUILayout.Toggle("Emit Sound on Use?", script.emitSound);
 
                 if (script.emitSound)
@@ -127,6 +126,12 @@ namespace Team1_GraduationGame.Editor
 
             if (script.playSound)
             {
+                script.checkIsMoving = EditorGUILayout.Toggle("Check if moving?", script.checkIsMoving);
+
+                if (script.checkIsMoving)
+                    script.minVelocityMagnitude =
+                        EditorGUILayout.FloatField("Min. Velocity Magnitude", script.minVelocityMagnitude);
+
                 SerializedProperty soundEventProp = serializedObject.FindProperty("soundEvent");
                 EditorGUILayout.PropertyField(soundEventProp);
             }

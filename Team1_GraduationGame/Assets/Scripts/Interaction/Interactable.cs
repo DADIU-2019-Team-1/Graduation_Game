@@ -23,9 +23,9 @@ namespace Team1_GraduationGame.Interaction
         public FloatVariable interactionAngle;
 
         // Public:
-        public float minDistance = 2.0f, angle = 90.0f, soundEmitDistance, interactCooldown = 1.5f;
+        public float minDistance = 2.0f, angle = 90.0f, soundEmitDistance, interactCooldown = 1.5f, minVelocityMagnitude = 0.005f;
         public bool interactableOnce, pushable, useEvents, useAnimation, switchBetweenAnimations, animationState, playSound, 
-            interactConditions, checkForObstructions, emitSound, useCooldown;
+            interactConditions, checkForObstructions, emitSound, useCooldown, checkIsMoving;
         public UnityEvent eventOnInteraction;
         public string animationDefault, animationAction;
         [HideInInspector] public bool toggleState = false;
@@ -49,8 +49,9 @@ namespace Team1_GraduationGame.Interaction
                 thisEnemy = GetComponent<Enemy>();
             }
             else
+            {
                 _allEnemies = FindObjectsOfType<Enemy>();
-            
+            }
 
             if (GetComponent<Animator>() != null)
             {
@@ -70,6 +71,12 @@ namespace Team1_GraduationGame.Interaction
             if (interactionAngle != null)
             {
                 angle = interactionAngle.value;
+            }
+
+            if (checkIsMoving && _objectPush != null)
+            {
+                if (soundEvent != null)
+                    _objectPush.pushSoundEvent = soundEvent;
             }
         }
 
@@ -134,7 +141,14 @@ namespace Team1_GraduationGame.Interaction
 
             if (playSound)
             {
-                soundEvent?.Post(gameObject);
+                if (checkIsMoving)
+                {
+                    // Do nothing, as the sound event is then on ObjectPush script
+                }
+                else
+                {
+                    soundEvent?.Post(gameObject);
+                }
             }
 
             if (emitSound)

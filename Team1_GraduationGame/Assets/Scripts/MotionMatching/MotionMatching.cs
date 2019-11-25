@@ -20,10 +20,8 @@ namespace Team1_GraduationGame.MotionMatching
         // TODO: Revise pose matching
         // TODO: Cut down idle animations (lots of repetition)
         // TODO: Store animations in seperate "state" lists for performance
-        // TODO: Convert system to Unity DOTS - can only take NativeArrays<float3> *****
 
         // Should have
-        // TODO: Simpler comparison and weight system
         // TODO: Extrapolate empty trajectorypoints (points that go over the frame size for that clip)
         // TODO: Collision detection with raycasting between the trajectory points
 
@@ -42,6 +40,7 @@ namespace Team1_GraduationGame.MotionMatching
         private Animator animator;
 
         // --- Collections
+        private List<FeatureVector>[] featureVectorStates;
         private List<FeatureVector> featureVectors, _trajCandidatesRef, _trajPossibleCandidatesRef;
         private List<float> _trajCandidateValuesRef;
         private AnimationClip[] allClips;
@@ -123,14 +122,24 @@ namespace Team1_GraduationGame.MotionMatching
 
             for (int i = 0; i < allClips.Length; i++)
             {
-                int frames = (int) (allClips[i].length * allClips[i].frameRate);
+                int frames = (int) (allClips[i].length * animationFrameRate);
+                string name = "null";
                 for (int j = 0; j < featureVectors.Count; j++)
                 {
-                    if (featureVectors[j].GetClipName() == allClips[i].name)
+                    if (featureVectors[j].GetClipName() == allClips[i].name &&
+                        (name == "null" || name == featureVectors[j].GetClipName()))
+                    {
                         featureVectors[j].SetFrameCount(frames);
+                        if (name == "null")
+                            name = featureVectors[j].GetClipName();
+                    }
                 }
             }
 
+            for (int i = 0; i < featureVectors.Count; i++)
+            {
+
+            }
 
             _trajCandidatesRef = new List<FeatureVector>();
             _trajPossibleCandidatesRef = new List<FeatureVector>();
@@ -345,7 +354,7 @@ namespace Team1_GraduationGame.MotionMatching
                     movementTrajectoryForwards[i] = movementTraj.GetTrajectoryPoints()[i].GetForward();
                 }
 
-                TrajectoryMatchingParallelJob parallelJob = new TrajectoryMatchingParallelJob
+                TrajectoryMatchingJob parallelJob = new TrajectoryMatchingJob
                 {
                     animPositionArray = _trajectoryPositions,
                     animForwardArray = _trajectoryForwards,
@@ -489,24 +498,24 @@ namespace Team1_GraduationGame.MotionMatching
     }
 
     [BurstCompile]
-    public struct TrajectoryMatchingParallelJob : IJob
+    public struct TrajectoryMatchingJob : IJob
     {
-        public NativeArray<float3> animPositionArray;
-        public NativeArray<float3> animForwardArray;
-        public NativeArray<float3> movementPositionArray;
-        public NativeArray<float3> movementForwardArray;
-        public NativeArray<int> featureIDs;
-        public NativeArray<int> featureState;
-        public NativeArray<int> featureFrame;
-        public NativeArray<int> frameCountForIDs;
-        public NativeArray<int> candidateIDs;
+        public NativeArray<float3> animPositionArray,
+            animForwardArray,
+            movementPositionArray,
+            movementForwardArray;
+        public NativeArray<int> featureIDs,
+            featureState,
+            featureFrame,
+            frameCountForIDs,
+            candidateIDs;
         public NativeArray<float> candidateValues;
-        public Matrix4x4 movementMatrix;        // TODO: Convert matrices to float4x4
-        public Matrix4x4 animationMatrix;
-        public int currentID;
-        public int state;
-        public int queryRate;
-        public int trajPoints;
+        public Matrix4x4 movementMatrix,
+            animationMatrix;
+        public int currentID,
+            state,
+            queryRate,
+            trajPoints;
 
         public float positionWeight,
             forwardWeight;
@@ -521,7 +530,6 @@ namespace Team1_GraduationGame.MotionMatching
                         candidateValues[j] = float.MaxValue;
                     }
                 }
-                // TODO: Move animation matrix conversion to Script initialization
                 if (featureState[i] == state) // Animation has the desired state
                 {
                     if ((featureIDs[i] > currentID || featureIDs[i] < currentID - queryRate) && featureFrame[i] + queryRate <= frameCountForIDs[i] /*&& !banQueue.Contains(featureIDs[i])*/)

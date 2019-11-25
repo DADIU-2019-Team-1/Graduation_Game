@@ -98,17 +98,6 @@ namespace Team1_GraduationGame.Events
             }
         }
 
-        public void FireScriptableObjectEvent(VoidEvent myEvent)
-        {
-            myEvent.Raise();
-        }
-
-        public void FireFloatScriptableObjectEvent(FloatEvent myEvent)
-        {
-            float tempFloat = 0;
-            myEvent.Raise(tempFloat);
-        }
-
         public void ResetScene()
         {
             Debug.Log("EventManager: Reset Scene");

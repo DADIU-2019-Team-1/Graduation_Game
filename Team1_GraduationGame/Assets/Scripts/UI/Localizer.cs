@@ -65,7 +65,7 @@ public class Localizer : MonoBehaviour
                 _thisBtn.interactable = false;
                 if (_textElement != null)
                 {
-                    _textElement.color = Color.grey;
+                    _textElement.color = Color.white;
                 }
             }
             else
@@ -73,7 +73,7 @@ public class Localizer : MonoBehaviour
                 _thisBtn.interactable = true;
                 if (_textElement != null)
                 {
-                    _textElement.color = Color.white;
+                    _textElement.color = Color.grey;
                 }
             }
         }

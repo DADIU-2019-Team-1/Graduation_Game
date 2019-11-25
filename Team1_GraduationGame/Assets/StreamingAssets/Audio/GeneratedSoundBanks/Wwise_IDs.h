@@ -13,15 +13,44 @@ namespace AK
 {
     namespace EVENTS
     {
+        static const AkUniqueID BIGSIS_ATTACK = 3665314627U;
+        static const AkUniqueID BIGSIS_BASE_START = 1022407497U;
+        static const AkUniqueID BIGSIS_BASE_STOP = 2709824483U;
+        static const AkUniqueID BIGSIS_DOWN = 2445385739U;
+        static const AkUniqueID BISSIS_ONSET = 2202781944U;
+        static const AkUniqueID BISSIS_SPOT = 146861159U;
+        static const AkUniqueID BISSIS_UP = 1148761992U;
+        static const AkUniqueID DEAD_LPF = 1647120744U;
+        static const AkUniqueID EMPTY_BIGSIS = 1826050074U;
+        static const AkUniqueID EMPTY_FAM = 351150729U;
+        static const AkUniqueID EMPTY_FRI = 669925540U;
+        static const AkUniqueID EMPTY_GRIEF = 71578932U;
+        static const AkUniqueID FAM_ATTACK = 4185887082U;
+        static const AkUniqueID FAM_BASE_START = 4168887876U;
+        static const AkUniqueID FAM_BASE_STOP = 2259991288U;
+        static const AkUniqueID FAM_DOWN = 840362894U;
+        static const AkUniqueID FAM_ONSET = 3016005891U;
+        static const AkUniqueID FAM_UP = 2928015061U;
+        static const AkUniqueID FRI_ATTACK = 2749812849U;
+        static const AkUniqueID FRI_BASE_START = 1914315619U;
+        static const AkUniqueID FRI_BASE_STOP = 841573473U;
+        static const AkUniqueID FRI_DOWN = 1193266125U;
+        static const AkUniqueID FRI_ONSET = 559410714U;
+        static const AkUniqueID FRI_UP = 2916966842U;
         static const AkUniqueID GRIEF_APPEAR_CUTSCENE = 3923211281U;
+        static const AkUniqueID GRIEF_ATTACK = 2473929957U;
+        static const AkUniqueID GRIEF_HOLD = 3369700890U;
+        static const AkUniqueID GRIEF_ONSET = 4109451574U;
         static const AkUniqueID PLAY_AMB_OUTSIDE = 121174090U;
         static const AkUniqueID PLAY_ECHOCALL_MEMORY_PLAYLIST = 3108390310U;
-        static const AkUniqueID PLAY_FS_JUMPANDLAND = 1125157986U;
+        static const AkUniqueID PLAY_FS_JUMPLAND = 3576124929U;
         static const AkUniqueID PLAY_FS_MINIJUMP = 4119942951U;
         static const AkUniqueID PLAY_FS_SYSTEM = 2874393337U;
         static const AkUniqueID PLAY_HMC_MUSIC_SYSTEM_LEVEL1 = 2367316274U;
+        static const AkUniqueID PLAY_PUSH = 1749591466U;
+        static const AkUniqueID PLAY_PUSH_BIGOBJ = 2132209392U;
         static const AkUniqueID PLAY_RUMBLE_BLEND = 728827549U;
-        static const AkUniqueID PLAY_UI_TONECALL_01 = 1794915827U;
+        static const AkUniqueID PLAY_UI_TONECALL = 3222526703U;
         static const AkUniqueID STOP_ECHOCALL_MEMORY_PLAYLIST = 3307487220U;
     } // namespace EVENTS
 
@@ -99,9 +128,12 @@ namespace AK
         static const AkUniqueID AMB_INTENSITY = 752028789U;
         static const AkUniqueID DENSITY_FA_SSGRAIN = 2715217995U;
         static const AkUniqueID DIST_TO_MEMORY = 2843219839U;
+        static const AkUniqueID FAMILY_SPEED = 3969604801U;
         static const AkUniqueID FOOTSTEP_MATERIAL_CALCULATOR = 441085524U;
         static const AkUniqueID FOOTSTEP_STATE_CALCULATOR = 3250563732U;
+        static const AkUniqueID FRIEND_SPEED = 3859748677U;
         static const AkUniqueID FS_WETTISH = 1688601825U;
+        static const AkUniqueID GRIEF_SPEED = 4088545558U;
         static const AkUniqueID IMMERSION_FA_SSGRAIN = 2481728872U;
         static const AkUniqueID INSTRUMENT_FA_SSGRAIN = 2317409760U;
         static const AkUniqueID MASTER_MUSIC_INMENUSLIDER = 708145369U;
@@ -133,12 +165,11 @@ namespace AK
 
     namespace BUSSES
     {
+        static const AkUniqueID _3D_MEMORYCALL = 1655597246U;
         static const AkUniqueID AMB = 1117531639U;
-        static const AkUniqueID AMB_INSIDE = 1564366702U;
         static const AkUniqueID AMB_OUTSIDE = 1013211851U;
-        static const AkUniqueID COLLECTABLES_MEMORIES = 3437558086U;
+        static const AkUniqueID DEAD_RIING = 2951509167U;
         static const AkUniqueID MASTER_AUDIO_BUS = 3803692087U;
-        static const AkUniqueID MEMORYCALL = 2008754984U;
         static const AkUniqueID MOTION_FACTORY_BUS = 985987111U;
         static const AkUniqueID MUSIC = 3991942870U;
         static const AkUniqueID PLAYER = 1069431850U;

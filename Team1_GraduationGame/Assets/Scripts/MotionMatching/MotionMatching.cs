@@ -19,7 +19,6 @@ namespace Team1_GraduationGame.MotionMatching
         // Must have
         // TODO: Revise pose matching
         // TODO: Cut down idle animations (lots of repetition)
-        // TODO: Store animations in seperate "state" lists for performance
 
         // Should have
         // TODO: Extrapolate empty trajectorypoints (points that go over the frame size for that clip)
@@ -122,23 +121,25 @@ namespace Team1_GraduationGame.MotionMatching
 
             for (int i = 0; i < allClips.Length; i++)
             {
-                int frames = (int) (allClips[i].length * animationFrameRate);
-                string name = "null";
+                int frames = (int)(allClips[i].length * animationFrameRate);
                 for (int j = 0; j < featureVectors.Count; j++)
                 {
-                    if (featureVectors[j].GetClipName() == allClips[i].name &&
-                        (name == "null" || name == featureVectors[j].GetClipName()))
+                    if (featureVectors[j].GetClipName() == allClips[i].name)
                     {
                         featureVectors[j].SetFrameCount(frames);
-                        if (name == "null")
-                            name = featureVectors[j].GetClipName();
                     }
                 }
             }
 
+            featureVectorStates = new List<FeatureVector>[states.Length];
+            for (int j = 0; j < states.Length; j++)
+            {
+                featureVectorStates[j] = new List<FeatureVector>();
+            }
             for (int i = 0; i < featureVectors.Count; i++)
             {
-
+                int featureState = featureVectors[i].GetState();
+                featureVectorStates[featureState].Add(featureVectors[i]);
             }
 
             _trajCandidatesRef = new List<FeatureVector>();

@@ -158,7 +158,7 @@ namespace Team1_GraduationGame.MotionMatching
             // Convert data to FeatureVector
             Matrix4x4 animSpace = new Matrix4x4();
             TrajectoryPoint[] trajPoints = new TrajectoryPoint[trajPointsLength];
-            for (int i = 0; i < allClipNames.Count; i++)
+            string nameDiff = allClipNames[0];            for (int i = 0; i < allClipNames.Count; i++)
             {
                 trajPoints = new TrajectoryPoint[trajPointsLength];
                 animSpace.SetTRS(allPoints[i].GetPoint(), Quaternion.identity, Vector3.one);
@@ -180,6 +180,14 @@ namespace Team1_GraduationGame.MotionMatching
 
                 featuresFromCSV.Add(new FeatureVector(allPoses[i], new Trajectory(trajPoints), i, allClipNames[i],
                     allFrames[i], allStates[i]));
+
+                // TODO: Add this as a column in the CSV
+                //if (nameDiff != allClipNames[i]) // Setting Frame count based on clip names
+                //{
+                //    featuresFromCSV[i - 1].SetFrameCount(featuresFromCSV[i - 1].GetFrame() + 1);
+                //    Debug.Log("Assigned feature vectors from clip " + nameDiff + " to have a frame count of " + featuresFromCSV);
+                //    nameDiff = allClipNames[i];
+                //}
             }
 
             return featuresFromCSV;

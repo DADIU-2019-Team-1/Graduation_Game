@@ -55,6 +55,11 @@ public class UIMenu : MonoBehaviour
         sfxSliderEvent?.Invoke(value);
     }
 
+    public void MenuButtonPress()
+    {
+        menuButtonPressEvent?.Invoke();
+    }
+
     public void ExitGame()
     {
 #if UNITY_EDITOR

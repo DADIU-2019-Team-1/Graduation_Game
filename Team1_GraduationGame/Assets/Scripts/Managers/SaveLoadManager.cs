@@ -98,6 +98,7 @@ namespace Team1_GraduationGame.SaveLoadSystem
                     tempEnemyContainer.alwaysAggro = tempEnemyComponent.alwaysAggro;
                     tempEnemyContainer.currentWayPoint = tempEnemyComponent.GetCurrentWaypoint();
                     tempEnemyContainer.lastSighting = tempEnemyComponent.GetLastSighting();
+                    tempEnemyContainer.behaviorInactive = tempEnemyComponent.behaviourInactive;
 
                     tempSaveString += JsonUtility.ToJson(tempEnemyContainer) + SAVE_SEPERATOR;
                 }
@@ -226,19 +227,16 @@ namespace Team1_GraduationGame.SaveLoadSystem
                         Enemy tempEnemyComponent = _enemies[i].GetComponent<Enemy>();
 
                         NavMeshAgent tempNavMeshAgent = _enemies[i].GetComponent<NavMeshAgent>();
-                        tempNavMeshAgent.updatePosition = false;
-                        tempNavMeshAgent.updateRotation = false;
                         tempNavMeshAgent.Warp(tempEnemyContainer.pos);
                         _enemies[i].transform.rotation = tempEnemyContainer.rot;
 
                         tempEnemyComponent.ResetEnemy();
+
                         tempEnemyComponent.SetAggro(tempEnemyContainer.isAggro);
                         tempEnemyComponent.SetAlwaysAggro(tempEnemyContainer.alwaysAggro);
                         tempEnemyComponent.SetCurrentWaypoint(tempEnemyContainer.currentWayPoint);
                         tempEnemyComponent.SetLastSighting(tempEnemyContainer.lastSighting);
-
-                        tempNavMeshAgent.updatePosition = true;
-                        tempNavMeshAgent.updateRotation = true;
+                        tempEnemyComponent.behaviourInactive = tempEnemyContainer.behaviorInactive;
                     }
 
                     for (int i = 0; i < _bigs.Length; i++)
@@ -300,6 +298,7 @@ namespace Team1_GraduationGame.SaveLoadSystem
             public Quaternion rot;
             public bool isAggro;
             public bool alwaysAggro;
+            public bool behaviorInactive;
             public int currentWayPoint;
             public Vector3 lastSighting;
         }

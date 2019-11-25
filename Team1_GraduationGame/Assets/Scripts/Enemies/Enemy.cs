@@ -37,12 +37,12 @@ namespace Team1_GraduationGame.Enemies
         public bool drawGizmos = true, useWaitTime, rotateAtWaypoints, loopWaypointRoutine = true, alwaysAggro;
         public Color normalConeColor = Color.yellow, aggroConeColor = Color.red;
         public float animNoiseHeardTime = 2.0f, animAttackTime = 3.0f, animGettingUpTime = 2.0f;
-        [HideInInspector] public bool useGlobalWaitTime = true, behaviourInactive;
-        [HideInInspector] public float waitTime = 0.0f, spawnActivationDistance = 40.0f;
+        [HideInInspector] public bool useGlobalWaitTime = true, behaviourInactive, activateOnDistance = true;
+        [HideInInspector] public float waitTime = 0.0f, activationDistance = 70.0f;
 
         // Private variables:
         private bool _active, _timerRunning, _destinationSet, _isRotating, _isAggro, _playerHeard,
-            _isHugging, _rotatingAtWp, _inTriggerZone, _accelerating, _hearingDisabled, _goingReversePath, _giveUpPursuitRunning;
+            _isHugging, _rotatingAtWp, _inTriggerZone, _accelerating, _hearingDisabled, _goingReversePath;
         private NavMeshPath _path;
         private Vector3 _lastSighting;
         private Vector3[] _wayPointRotations;
@@ -130,6 +130,9 @@ namespace Team1_GraduationGame.Enemies
         private void Start()
         {
             InvokeRepeating("CustomUpdate", 0.4f, 0.7f);
+
+            if (activateOnDistance)
+                InvokeRepeating("DistanceActivationChecker", 0.5f, 10.0f);
         }
 
         /// <summary>
@@ -256,23 +259,11 @@ namespace Team1_GraduationGame.Enemies
 
                     ViewLightConeControl();
 
-                    //if (!alwaysAggro) // BUG: This does not work currently
-                    //{
-                    //    if (_inTriggerZone && _giveUpPursuitRunning)    // this part is used to time out the pursuit, if enemy cannot reach player last sighting
-                    //    {
-                    //        _giveUpPursuitRunning = false;
-                    //        StopCoroutine(PursuitTimeout());
-                    //    }
-                    //    else if (!_inTriggerZone && !_giveUpPursuitRunning && _isAggro)
-                    //    {
-                    //        StartCoroutine(PursuitTimeout());
-                    //    }
-                    //}
                 }
 
                 if (_active || _playerHeard)
                 {
-                    if (!_hearingDisabled /*&& !_isAggro*/)
+                    if (!_hearingDisabled)
                     {
                         _hearingDistance = thisEnemy.hearingDistance;
                         if (playerMoveState.value == 2)
@@ -322,15 +313,31 @@ namespace Team1_GraduationGame.Enemies
             {
                 _animator.SetFloat("Speed", _speed);
             }
+        }
 
-            //if (Vector3.Distance(transform.position, _player.transform.position) < spawnActivationDistance && behaviourInactive)
-            //{
-            //    behaviourInactive = true;
-            //}
-            //else if (Vector3.Distance(transform.position, _player.transform.position) > spawnActivationDistance && !behaviourInactive)
-            //{
-            //    behaviourInactive = false;
-            //}
+        private void DistanceActivationChecker()
+        {
+            if (Vector3.Distance(transform.position, _player.transform.position) < activationDistance && behaviourInactive)
+            {
+                BehaviourInactive(false);
+            }
+            else if (Vector3.Distance(transform.position, _player.transform.position) > activationDistance && !behaviourInactive)
+            {
+                BehaviourInactive(true);
+            }
+        }
+
+        private void BehaviourInactive(bool isInactive)
+        {
+            if (isInactive)
+            {
+                behaviourInactive = true;
+                StopAllCoroutines();
+            }
+            else
+            {
+                behaviourInactive = false;
+            }
         }
 
         private void UpdatePathRoutine()    // Updates destination to next waypoint
@@ -558,18 +565,25 @@ namespace Team1_GraduationGame.Enemies
 
         private IEnumerator EnemyHug()
         {
+            if (_movement != null)  // Below freezes Mother movement and rotates her towards this enemy
+            {
+                if (_movement.GetIsAttacked())
+                {
+                    CollisionWithPlayerSetter(false);
+                    yield break;
+                }
+
+                _movement.SetIsAttacked(true);
+                _movement.Frozen(true);
+                _player.transform.LookAt(new Vector3(transform.position.x, _player.transform.position.y, transform.position.z));
+            }
+
             _active = false;
             _navMeshAgent.isStopped = true;
             _isHugging = true;
             SwitchState(2); // Switch to attacking
 
             transform.LookAt(_player.transform.position);
-
-            if (_movement != null)  // Below freezes Mother movement and rotates her towards this enemy
-            {
-                _movement.Frozen(true);
-                _player.transform.LookAt(new Vector3(transform.position.x, _player.transform.position.y, transform.position.z));
-            }
 
             yield return new WaitForSeconds(thisEnemy.embraceDelay);
 
@@ -586,6 +600,7 @@ namespace Team1_GraduationGame.Enemies
 
                 CollisionWithPlayerSetter(true);
                 _playerAnimator?.ResetTrigger("EnemyAttack" + thisEnemy.typeId);
+                _movement.SetIsAttacked(false);
                 playerDiedEvent?.Raise();
             }
 
@@ -597,16 +612,6 @@ namespace Team1_GraduationGame.Enemies
             else
                 _isAggro = true;
         }
-
-        //private IEnumerator PursuitTimeout()
-        //{
-        //    _giveUpPursuitRunning = true;
-        //    yield return new WaitForSeconds(15.0f);
-        //    _destinationSet = false;
-        //    _isAggro = false;
-
-        //    _giveUpPursuitRunning = false;
-        //}
 
         private IEnumerator PushDownDelay()
         {
@@ -630,7 +635,7 @@ namespace Team1_GraduationGame.Enemies
 
         #endregion
 
-        #region Setter and Getters
+        #region Setter, Getters and Reset
         public void ResetEnemy()
         {
             StopAllCoroutines();
@@ -639,8 +644,9 @@ namespace Team1_GraduationGame.Enemies
             _playerHeard = false;
             _isHugging = false;
             _navMeshAgent.isStopped = false;
-            _giveUpPursuitRunning = false;
             _destinationSet = false;
+            _movement.SetIsAttacked(false);
+            behaviourInactive = false;
             viewConeLight?.gameObject.SetActive(true);
             _animator?.ResetTrigger("PushedDown");
             _animator?.ResetTrigger("GettingUp");
@@ -671,6 +677,7 @@ namespace Team1_GraduationGame.Enemies
         public float GetSpeed() { return _speed; }
         public int GetState() { return _state; }
         #endregion
+
 
 #if UNITY_EDITOR
         #region WayPoint System

@@ -29,8 +29,13 @@ public class MenuCamera : MonoBehaviour
         if (startingTimeline == null)
             startingTimeline = FindObjectOfType<PlayableDirector>();
 
-        FindObjectOfType<UIMenu>().menuChangeEvent += ChangeLookAt;
-        FindObjectOfType<UIMenu>().startGameEvent += StartGame;
+        UIMenu[] menus = FindObjectsOfType<UIMenu>();
+        for (int i = 0; i < menus.Length; i++)
+        {
+            menus[i].menuChangeEvent += ChangeLookAt;
+            menus[i].startGameEvent += StartGame;
+        }
+
     }
 
     void LateUpdate()
@@ -112,8 +117,6 @@ public class MenuCamera : MonoBehaviour
     {
         if (_startingGame)
         {
-            //SaveLoadManager man = new SaveLoadManager();
-            //man.NewGame();
             startingTimeline.Play();
         }
         _startingGame = true;

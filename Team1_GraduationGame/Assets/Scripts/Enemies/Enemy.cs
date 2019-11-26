@@ -622,7 +622,6 @@ namespace Team1_GraduationGame.Enemies
         private IEnumerator PushDownDelay()
         {
             yield return new WaitForSeconds(thisEnemy.pushedDownDuration);
-            CollisionWithPlayerSetter(true);
             viewConeLight.color = normalConeColor;
             _animator?.ResetTrigger("PushedDown");
             _animator?.SetTrigger("GettingUp");
@@ -632,6 +631,7 @@ namespace Team1_GraduationGame.Enemies
             _animator?.ResetTrigger("GettingUp");
             _navMeshAgent.isStopped = false;
             _active = true;
+            CollisionWithPlayerSetter(true);
 
             if (!alwaysAggro)
                 _destinationSet = false;

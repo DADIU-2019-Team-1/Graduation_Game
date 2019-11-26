@@ -141,7 +141,7 @@ public class Movement : MonoBehaviour
         // }
         // I set a temp Speed animator if we arent using motion matching
 
-        if (animator.runtimeAnimatorController != null && animator.runtimeAnimatorController.name == "MotherAnimator")
+        if (animator.runtimeAnimatorController != null)
         {
             animator.SetFloat("Speed", currentSpeed.value);
         }

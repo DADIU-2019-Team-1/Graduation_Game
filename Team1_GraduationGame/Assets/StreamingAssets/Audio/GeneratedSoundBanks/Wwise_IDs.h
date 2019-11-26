@@ -68,6 +68,7 @@ namespace AK
                 static const AkUniqueID GRIEF_APPEARS = 3170210169U;
                 static const AkUniqueID GRIEF_CHASE = 535181753U;
                 static const AkUniqueID HUB = 646625282U;
+                static const AkUniqueID LEVEL_3_SILENCE_MEMORY = 3845742627U;
                 static const AkUniqueID MEMORY_LULLABY = 3074462064U;
                 static const AkUniqueID MENU_LOAD = 3222607803U;
                 static const AkUniqueID OUTSIDE = 438105790U;

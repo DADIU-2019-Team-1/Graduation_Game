@@ -1,24 +1,18 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.UI;
+﻿using UnityEngine;
 
 public class CreditsScroll : MonoBehaviour
 {
     public bool startScroll;
-    Vector2 startPos, scrollPos;
+    Vector2 startPos;
     public float scrollSpeed = 0.1f;
+    private RectTransform rectTransform;
 
-    // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
-        //startPos = transform.position;
-        startPos = GetComponent<RectTransform>().anchoredPosition;
-        //scrollPos = startPos;
-
+        rectTransform = GetComponent<RectTransform>();
+        startPos = rectTransform.anchoredPosition + new Vector2(0.0f, rectTransform.position.y);
     }
 
-    // Update is called once per frame
     void Update()
     {
         if(gameObject.activeInHierarchy)
@@ -29,12 +23,11 @@ public class CreditsScroll : MonoBehaviour
     {
         if (startScroll)
         {
-            //Debug.Log("Should scroll: " + scrollPos.y);
             transform.Translate(0f, scrollSpeed, 0f);
 
         }
 
-        if (GetComponent<RectTransform>().anchoredPosition.y == 3590)
+        if (rectTransform.anchoredPosition.y >= 4170)
         {
             startScroll = false;
         }
@@ -43,7 +36,7 @@ public class CreditsScroll : MonoBehaviour
 
     public void OnEnable()
     {
-        GetComponent<RectTransform>().anchoredPosition = startPos;
+        rectTransform.anchoredPosition = startPos;
     }
 
     public void SetActiveScroll(bool scrollStart)

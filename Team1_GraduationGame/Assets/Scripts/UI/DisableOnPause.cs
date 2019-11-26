@@ -3,13 +3,12 @@ using UnityEngine;
 
 public class DisableOnPause : MonoBehaviour
 {
-    private UIMenu pauseScript;
     private void Start()
     {
-        if (FindObjectOfType<UIMenu>() != null)
+        UIMenu[] menus = Resources.FindObjectsOfTypeAll<UIMenu>();
+        for (int i = 0; i < menus.Length; i++)
         {
-            pauseScript = FindObjectOfType<UIMenu>();
-            pauseScript.gamePauseState += SetActive;
+            menus[i].gamePauseState += SetActive;
         }
     }
 

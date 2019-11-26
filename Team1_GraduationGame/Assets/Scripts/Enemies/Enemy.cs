@@ -34,7 +34,7 @@ namespace Team1_GraduationGame.Enemies
 
         // Public variables:
         public float wayPointReachRange = 1.0f, hearingSensitivity = 2.0f, minimumAlwaysDetectRange = 1.3f;
-        public bool drawGizmos = true, useWaitTime, rotateAtWaypoints, loopWaypointRoutine = true, alwaysAggro;
+        public bool pushDownLightIndication = true, drawGizmos = true, useWaitTime, rotateAtWaypoints, loopWaypointRoutine = true, alwaysAggro;
         public Color normalConeColor = Color.yellow, aggroConeColor = Color.red;
         public float animNoiseHeardTime = 2.0f, animAttackTime = 3.0f, animGettingUpTime = 2.0f;
         [HideInInspector] public bool useGlobalWaitTime = true, behaviourInactive, activateOnDistance = true;
@@ -156,6 +156,7 @@ namespace Team1_GraduationGame.Enemies
                         return;
                     _targetSpeed = thisEnemy.runSpeed;
                     _navMeshAgent.angularSpeed = thisEnemy.runTurnSpeed;
+                    /*_enemySoundManager?.Onset();*/ // TODO enable later YYY
                     break;
                 case 2:
                     _targetSpeed = 0;
@@ -224,7 +225,6 @@ namespace Team1_GraduationGame.Enemies
                         {
                             _destinationSet = false;
                             _isAggro = false;
-                            //StopCoroutine(PursuitTimeout()); // Stop pursuit timeout, as enemy reached last sighting
                         }
                     }
 
@@ -430,7 +430,7 @@ namespace Team1_GraduationGame.Enemies
                 _animator?.SetTrigger("PushedDown");
                 _enemySoundManager?.PushedDown();
 
-                if (viewConeLight != null)
+                if (viewConeLight != null && pushDownLightIndication)
                 {
                     viewConeLight.gameObject.SetActive(true);
                     viewConeLight.color = Color.green;
@@ -560,7 +560,10 @@ namespace Team1_GraduationGame.Enemies
             yield return new WaitForSeconds(thisEnemy.aggroTime);
 
             if (!_inTriggerZone)
+            {
+                // _enemySoundManager?.Hold(); // TODO enable this later - YYY
                 _isAggro = false;
+            }
 
             if (!_isAggro)
                 _destinationSet = false;

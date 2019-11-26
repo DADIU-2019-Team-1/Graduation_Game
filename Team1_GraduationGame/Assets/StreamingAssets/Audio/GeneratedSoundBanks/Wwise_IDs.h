@@ -63,12 +63,13 @@ namespace AK
 
             namespace STATE
             {
-                static const AkUniqueID ENDSCENE_MEMORY = 2916316574U;
-                static const AkUniqueID EXIT_MEMORIES = 247658193U;
+                static const AkUniqueID END_FULLLULLABY_CREDITS = 2902281238U;
+                static const AkUniqueID EXIT_MEMORIES_HANGUPMEM = 2558751454U;
                 static const AkUniqueID GRIEF_APPEARS = 3170210169U;
+                static const AkUniqueID GRIEF_CHASE = 535181753U;
                 static const AkUniqueID HUB = 646625282U;
                 static const AkUniqueID MEMORY_LULLABY = 3074462064U;
-                static const AkUniqueID MENU = 2607556080U;
+                static const AkUniqueID MENU_LOAD = 3222607803U;
                 static const AkUniqueID OUTSIDE = 438105790U;
                 static const AkUniqueID PLAYER_DIED = 2295196519U;
             } // namespace STATE

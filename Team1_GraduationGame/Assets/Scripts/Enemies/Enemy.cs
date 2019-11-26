@@ -74,7 +74,7 @@ namespace Team1_GraduationGame.Enemies
                 _active = true;
             }
             else
-                Debug.LogError("Enemy disabled: Player not found or scriptable object not attached!");
+                Debug.LogError("Enemy " + gameObject.name + " disabled: Player not found or scriptable object not attached!");
 
             if (_active)
             {
@@ -129,7 +129,7 @@ namespace Team1_GraduationGame.Enemies
 
         private void Start()
         {
-            InvokeRepeating("CustomUpdate", 0.4f, 0.7f);
+            InvokeRepeating("CustomUpdate", 0.2f, 0.7f);
 
             if (activateOnDistance)
                 InvokeRepeating("DistanceActivationChecker", 0.5f, 10.0f);
@@ -430,8 +430,11 @@ namespace Team1_GraduationGame.Enemies
                 _animator?.SetTrigger("PushedDown");
                 _enemySoundManager?.PushedDown();
 
-                viewConeLight.gameObject.SetActive(true);
-                viewConeLight.color = Color.green;
+                if (viewConeLight != null)
+                {
+                    viewConeLight.gameObject.SetActive(true);
+                    viewConeLight.color = Color.green;
+                }
 
                 StopCoroutine(EnemyHug());  // Stop hug if hugging
                 StopCoroutine(EnemyAggro());    // Stop aggro
@@ -600,7 +603,7 @@ namespace Team1_GraduationGame.Enemies
 
                 CollisionWithPlayerSetter(true);
                 _playerAnimator?.ResetTrigger("EnemyAttack" + thisEnemy.typeId);
-                _movement.SetIsAttacked(false);
+                _movement?.SetIsAttacked(false);
                 playerDiedEvent?.Raise();
             }
 
@@ -617,8 +620,6 @@ namespace Team1_GraduationGame.Enemies
         {
             yield return new WaitForSeconds(thisEnemy.pushedDownDuration);
             CollisionWithPlayerSetter(true);
-            _active = true;
-            _navMeshAgent.isStopped = false;
             viewConeLight.color = normalConeColor;
             _animator?.ResetTrigger("PushedDown");
             _animator?.SetTrigger("GettingUp");
@@ -626,6 +627,8 @@ namespace Team1_GraduationGame.Enemies
 
             yield return new WaitForSeconds(animGettingUpTime);
             _animator?.ResetTrigger("GettingUp");
+            _navMeshAgent.isStopped = false;
+            _active = true;
 
             if (!alwaysAggro)
                 _destinationSet = false;

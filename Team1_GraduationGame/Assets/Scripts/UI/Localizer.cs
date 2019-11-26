@@ -50,10 +50,12 @@ public class Localizer : MonoBehaviour
 
     private void Start()
     {
-        if (_menu == null)
-            _menu = FindObjectOfType<UIMenu>();
         LanguageChanged(PlayerPrefs.GetInt("Language", 0));
-        _menu.languageChangeEvent += LanguageChanged;
+        UIMenu[] menus = Resources.FindObjectsOfTypeAll<UIMenu>();
+        for (int i = 0; i < menus.Length; i++)
+        {
+            menus[i].languageChangeEvent += LanguageChanged;
+        }
     }
 
     private void LanguageChanged(int languageIndex)
@@ -80,7 +82,8 @@ public class Localizer : MonoBehaviour
 
         if (_textElement != null)
         {
-            if (_localizedTexts[languageIndex].Length > 0)
+
+            if (_localizedTexts[languageIndex].Trim().Length > 0)
             {
                 _textElement.text = _localizedTexts[languageIndex];
             }

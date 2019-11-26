@@ -155,8 +155,6 @@ public class Movement : MonoBehaviour
         _previousPosition = transform.position;
         if (playerRB.velocity.y <= 0.05f && isJumping)
         {
-            //playerRB.mass * fallMultiplier.value;
-            //Debug.Log("Applying extra gravity");
             playerRB.velocity += Vector3.up * Physics.gravity.y * (fallMultiplier.value - 1) * Time.deltaTime;
 
             if (Physics.Raycast(leftToePos.transform.position, Vector3.down, ghostJumpHeight.value) || Physics.Raycast(rightToePos.transform.position, Vector3.down, ghostJumpHeight.value) || Physics.Raycast(leftHeelPos.transform.position, Vector3.down, ghostJumpHeight.value) || Physics.Raycast(rightHeelPos.transform.position, Vector3.down, ghostJumpHeight.value) || Physics.Raycast(transform.position + Vector3.up, Vector3.down, ghostJumpHeight.value + 1.0f))
@@ -207,8 +205,6 @@ public class Movement : MonoBehaviour
                         swipeTimeTimer = Time.time;
                     }
 
-                    //Debug.Log("Began phase: " + swipeTimeTimer);
-
                     /*                     if(canJump && rightTouch == t.fingerId) {
                                             playerJump(Vector3.up, jumpHeight.value);
                                         } */
@@ -227,7 +223,6 @@ public class Movement : MonoBehaviour
                 Vector2 joyDiff = t.position - new Vector2(stickLimit.transform.position.x, stickLimit.transform.position.y);
                 // Need new clamping.
                 joyDiff = Vector2.ClampMagnitude(joyDiff, radius.value);
-                //Debug.Log("Android calling player move");
                 PlayerMoveRequest(dragDist);
 
                 stick.transform.position = joyDiff + new Vector2(stickLimit.transform.position.x, stickLimit.transform.position.y);
@@ -261,14 +256,13 @@ public class Movement : MonoBehaviour
                     direction = new Vector3(0, 0, 0);
 
                 }
-                if (t.phase == TouchPhase.Ended && rightTouch == t.fingerId)
+                if (t.phase == TouchPhase.Ended && rightTouch == t.fingerId && !atOrbTrigger.value)
                 {
                     rightTouch = 98;
                     swipeEndPos = t.position;
                     Vector2 swipeOffSet = new Vector2(swipeEndPos.x - swipeStartPos.x, swipeEndPos.y - swipeStartPos.y);
                     swipeDirection = swipeOffSet.normalized;
-                    
-                    //Debug.Log("End phase: " + Time.time);
+
                     if (swipeOffSet.magnitude > swipePixelDistance.value)
                     {
                         if (attackCooldown <= 0)
@@ -277,7 +271,6 @@ public class Movement : MonoBehaviour
                             pushRotation = pushDirection != Vector3.zero ? Quaternion.LookRotation(pushDirection) : Quaternion.identity;
                             // I set a temp push animator if we arent using motion matching
 
-                            //Debug.Log("Attack start phone");
                             attackCooldown = attackCoolDown.value;
 
                             isPushing = true;
@@ -293,7 +286,6 @@ public class Movement : MonoBehaviour
                     {
                         // Jump feels sluggish inside else if, but when only if, triggers every time and you never swipe/do both always.
                         playerJump(direction, jumpHeight.value);
-                        //Debug.Log("Jump");
                     }
 
                 }
@@ -354,9 +346,9 @@ public class Movement : MonoBehaviour
             Vector2 swipeOffSet = new Vector2(swipeEndPos.x - swipeStartPos.x, swipeEndPos.y - swipeStartPos.y);
             swipeDirection = swipeOffSet.normalized;
             
-            //Debug.Log("End phase: " + Time.time);
-            if (swipeOffSet.magnitude > swipePixelDistance.value && Input.mousePosition.x > Screen.width / 2 && !canMove)
+            if (swipeOffSet.magnitude > swipePixelDistance.value && Input.mousePosition.x > Screen.width / 2 && !canMove && !atOrbTrigger.value)
             {
+
                 if (attackCooldown <= 0)
                 {
                     pushDirection = new Vector3(swipeDirection.x, 0, swipeDirection.y);
@@ -373,22 +365,11 @@ public class Movement : MonoBehaviour
                     }
                 }
                 
-
-
-
-
-                //Debug.Log("Swipe");
-                //Debug.DrawLine(swipeStartPos, swipeStartPos + swipeDirection * 300, Color.red, 5);
-                //Debug.DrawLine(playerRB.transform.position, playerRB.transform.position + pushDirection * 5, Color.green, 5);
-
-
             }
 
             else if (swipeTimeTimer + swipeTimeThreshold.value >= Time.time && !moveFrozen)
             {
                 playerJump(Vector3.up + direction, jumpHeight.value);
-
-                //Debug.Log("Jump");
             }
         }
 
@@ -400,7 +381,6 @@ public class Movement : MonoBehaviour
             float dragDist = Vector2.Distance(stick.transform.position, stickLimit.transform.position);
             Vector2 joyDiff = Input.mousePosition - stickLimit.transform.position;
             joyDiff = Vector2.ClampMagnitude(joyDiff, radius.value);
-            //Debug.Log("PC calling move player");
             PlayerMoveRequest(dragDist);
 
             stick.transform.position = joyDiff + new Vector2(stickLimit.transform.position.x, stickLimit.transform.position.y);
@@ -470,7 +450,6 @@ public class Movement : MonoBehaviour
     }
     private void PlayerMoveRequest(float dragDist)
     {
-        //Debug.Log(dragDist);
         if (!isPushing)
         {
             if (inSneakZone)
@@ -502,19 +481,16 @@ public class Movement : MonoBehaviour
                 }
                 else if (dragDist < radius.value * sneakThreshold) // Sneak
                 {
-                    //Debug.Log("Should sneak");
                     targetSpeed = sneakSpeed.value;
                     movePlayer(direction);
                 }
                 else if (dragDist < radius.value * runThreshold) // Walk
                 {
-                    //Debug.Log("Should walk");
                     targetSpeed = walkSpeed.value;
                     movePlayer(direction);
                 }
                 else // Run
                 {
-                    //Debug.Log("Should run");
                     targetSpeed = runSpeed.value;
                     movePlayer(direction);
                 }
@@ -530,7 +506,6 @@ public class Movement : MonoBehaviour
 
     public void movePlayer(Vector3 _direction)
     {
-        //Debug.Log("Move player");
         if (atOrbTrigger != null && atOrbTrigger.value)
         {
             targetSpeed = walkSpeed.value;
@@ -627,7 +602,6 @@ public class Movement : MonoBehaviour
             Collider pushCollider = interactableObjects[i].GetComponent<Collider>();
             // if in range
             Vector3 closestPoint = pushCollider.ClosestPointOnBounds(transform.position);
-            //Debug.Log("Closest point is: " + closestPoint);
             //Instantiate(GameObject.CreatePrimitive(PrimitiveType.Cube), closestPoint, Quaternion.identity);
             float refDistance = Vector3.Distance(closestPoint, transform.position);
             //transform.rotation = Quaternion.LookRotation(direction);
@@ -642,13 +616,11 @@ public class Movement : MonoBehaviour
                 Vector3 hipClosestPoint = pushCollider.ClosestPointOnBounds(transform.position + Vector3.up);
 
                 Vector3 hipVectorToObject = hipClosestPoint - (transform.position + Vector3.up);
-                //Debug.Log("Hip vector to object: " + hipVectorToObject);
 
                 //Debug.DrawLine(transform.position, hipVectorToObject, Color.black, 5);
 
                 //Instantiate(GameObject.CreatePrimitive(PrimitiveType.Sphere), transform.position, Quaternion.identity);
                 if (Math.Abs(hipVectorToObject.y) < 0.3f)
-                    //Debug.Log(Mathf.Abs(hipVectorToObject.y));
                 {
                     Vector3 temp = closestPoint - transform.position;
                     temp.y = 0;
@@ -663,7 +635,6 @@ public class Movement : MonoBehaviour
                         playerSoundManager?.AttackEvent();
                         //if (attackEvent != null)
                         //    attackEvent.Raise();
-                        // Debug.Log("INTERACT!!!!!");
                         // interactableObjects[i].interact();
                     }
                 }
@@ -689,7 +660,6 @@ public class Movement : MonoBehaviour
 
         if (moveFrozen && !atOrbTrigger.value)
         {
-            //Debug.Log("Player frozen");
             playerRB.constraints = RigidbodyConstraints.FreezePositionX | RigidbodyConstraints.FreezePositionZ | RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
 
         }
@@ -802,6 +772,10 @@ public class Movement : MonoBehaviour
 
     public void AttackTriggerAnimation()
     {
-        playerAttack(pushDirection);
+        if (!atOrbTrigger.value)
+        {
+            playerAttack(pushDirection);
+        }
+
     }
 }

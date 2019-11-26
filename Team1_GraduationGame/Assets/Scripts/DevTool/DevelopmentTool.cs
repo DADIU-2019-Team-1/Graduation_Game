@@ -52,13 +52,22 @@ namespace Team1_GraduationGame.DevelopmentTools
 
             Application.logMessageReceived += Log;
 
-            if (FindObjectOfType<HubMenu>() != null)
-                FindObjectOfType<HubMenu>().cheatModeEvent += ToggleDevelopmentToolPanel;
-
             if (mainPanel.activeSelf == true)
                 _devToolActive = true;
 
             InvokeRepeating("CustomUpdate", 1.0f, 1.5f);
+        }
+
+        private void Start()
+        {
+            UIMenu[] menuObjects = Resources.FindObjectsOfTypeAll<UIMenu>();
+            if (menuObjects != null)
+            {
+                for (int i = 0; i < menuObjects.Length; i++)
+                {
+                    menuObjects[i].cheatModeEvent += ToggleDevelopmentToolPanel;
+                }
+            }
         }
 
         void OnEnable()

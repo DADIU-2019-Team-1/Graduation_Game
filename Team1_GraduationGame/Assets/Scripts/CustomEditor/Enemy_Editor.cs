@@ -38,6 +38,11 @@ namespace Team1_GraduationGame.Editor
             if (script.useGlobalWaitTime && script.useWaitTime)
                 script.waitTime = EditorGUILayout.FloatField("Global Wait Time", script.waitTime);
 
+            script.activateOnDistance = EditorGUILayout.Toggle("Activate On Distance?", script.activateOnDistance);
+
+            if (script.activateOnDistance)
+                script.activationDistance = EditorGUILayout.FloatField("Activation Distance", script.activationDistance);
+
             DrawUILine(false);
 
             if (script.wayPoints != null)

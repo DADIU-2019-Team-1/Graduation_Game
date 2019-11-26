@@ -27,7 +27,7 @@ namespace Team1_GraduationGame.Managers
 
         public SoundEvent[] soundEvents;
         private string[] tagStrings;
-        private bool _collisionActive, _useStart;
+        private bool _collisionActive, _useStart, _customUpdateActive;
 
         private void Awake()
         {
@@ -65,6 +65,9 @@ namespace Team1_GraduationGame.Managers
                         _useStart = true;
                     }
 
+                    if ((int)soundEvents[i].triggerTypeSelector == 6)
+                        InvokeRepeating("CustomUpdate", 0.3f, 0.6f);
+
                     soundEvents[i].thisSoundManager = this;
                     soundEvents[i].soundEventId = i;
                     soundEvents[i].soundManagerGameObject = gameObject;
@@ -97,22 +100,15 @@ namespace Team1_GraduationGame.Managers
             AkSoundEngine.StopAll();
         }
 
-        private void OnTriggerStay(Collider col)
+        private void CustomUpdate()
         {
-            if (_collisionActive)
+            if (_customUpdateActive)
             {
                 for (int i = 0; i < soundEvents.Length; i++)
                 {
                     if ((int)soundEvents[i].triggerTypeSelector == 6)
                     {
-                        if (!soundEvents[i].checkForTag)
-                        {
-                            soundEvents[i].EventRaised(0);
-                        }
-                        else if (col.tag == tagStrings[i])
-                        {
-                            soundEvents[i].EventRaised(0);
-                        }
+                        soundEvents[i].EventRaised(0);
                     }
                 }
             }
@@ -135,6 +131,18 @@ namespace Team1_GraduationGame.Managers
                             soundEvents[i].EventRaised(0);
                         }
                     }
+
+                    if ((int) soundEvents[i].triggerTypeSelector == 6)
+                    {
+                        if (!soundEvents[i].checkForTag)
+                        {
+                            _customUpdateActive = true;
+                        }
+                        else if (col.tag == tagStrings[i])
+                        {
+                            _customUpdateActive = true;
+                        }
+                    }
                 }
             }
         }
@@ -154,6 +162,18 @@ namespace Team1_GraduationGame.Managers
                         else if (col.tag == tagStrings[i])
                         {
                             soundEvents[i].EventRaised(0);
+                        }
+                    }
+
+                    if ((int) soundEvents[i].triggerTypeSelector == 6)
+                    {
+                        if (!soundEvents[i].checkForTag)
+                        {
+                            _customUpdateActive = false;
+                        }
+                        else if (col.tag == tagStrings[i])
+                        {
+                            _customUpdateActive = false;
                         }
                     }
                 }
@@ -202,7 +222,6 @@ namespace Team1_GraduationGame.Managers
                 }
             }
         }
-
     }
 
     #region Sound Event Container
@@ -274,7 +293,6 @@ namespace Team1_GraduationGame.Managers
 
             if (wwiseEvent != null && (int) behaviorSelector == 0)
             {
-                Debug.Log("Playing Wwise Event");
                 if (targetGameObject == null || !useOtherGameObject)
                 {
                     wwiseEvent.Post(soundManagerGameObject);
@@ -290,7 +308,6 @@ namespace Team1_GraduationGame.Managers
         {
             if (wwiseEvent != null && (int) behaviorSelector == 0)
             {
-                Debug.Log("Stopping Wwise Event");
                 if (targetGameObject == null || !useOtherGameObject)
                     wwiseEvent.Stop(soundManagerGameObject);
                 else

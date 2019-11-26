@@ -11,10 +11,11 @@ GameObject:
   - component: {fileID: 7749158958227583257}
   - component: {fileID: 1119471500490168482}
   - component: {fileID: 3532918711050258066}
-  - component: {fileID: 3028812344546916335}
-  m_Layer: 0
+  - component: {fileID: 7613133557500637400}
+  - component: {fileID: 998082568958897289}
+  m_Layer: 9
   m_Name: Wwise_Family
-  m_TagString: Untagged
+  m_TagString: Wwise
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -28,7 +29,7 @@ Transform:
   m_GameObject: {fileID: 6833649953212480390}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 7.2923, y: 4.145008, z: 6.9448075}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -72,36 +73,39 @@ MonoBehaviour:
   speedRTPC:
     idInternal: 0
     valueGuidInternal: 
-    WwiseObjectReference: {fileID: 0}
-  stateRTPC:
-    idInternal: 0
-    valueGuidInternal: 
-    WwiseObjectReference: {fileID: 0}
+    WwiseObjectReference: {fileID: 11400000, guid: ac45adc51d8ccaa47ae921999bebc5d6,
+      type: 2}
   attackingPlayerEvent:
     idInternal: 0
     valueGuidInternal: 
-    WwiseObjectReference: {fileID: 0}
+    WwiseObjectReference: {fileID: 11400000, guid: 0ea85e6a9df0e3e4f9c0479f74ce0dda,
+      type: 2}
   pushedDownEvent:
     idInternal: 0
     valueGuidInternal: 
-    WwiseObjectReference: {fileID: 0}
+    WwiseObjectReference: {fileID: 11400000, guid: 6805c6223197b584990860ecb6a10645,
+      type: 2}
   gettingUpEvent:
     idInternal: 0
     valueGuidInternal: 
-    WwiseObjectReference: {fileID: 0}
+    WwiseObjectReference: {fileID: 11400000, guid: 8e16e918d855cdf4290a44ae30d98d05,
+      type: 2}
   onsetEvent:
     idInternal: 0
     valueGuidInternal: 
-    WwiseObjectReference: {fileID: 0}
+    WwiseObjectReference: {fileID: 11400000, guid: 1536d5b57fa0c664a8df2b407977a1ca,
+      type: 2}
   holdEvent:
     idInternal: 0
     valueGuidInternal: 
-    WwiseObjectReference: {fileID: 0}
+    WwiseObjectReference: {fileID: 11400000, guid: d94848b03a718474d8a3013911666310,
+      type: 2}
   spotEvent:
     idInternal: 0
     valueGuidInternal: 
-    WwiseObjectReference: {fileID: 0}
---- !u!114 &3028812344546916335
+    WwiseObjectReference: {fileID: 11400000, guid: d94848b03a718474d8a3013911666310,
+      type: 2}
+--- !u!114 &7613133557500637400
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -114,4 +118,115 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   attachCollider: 0
-  soundEvents: []
+  soundEvents:
+  - thisSoundManager: {fileID: 0}
+    soundEventId: 0
+    triggerTypeSelector: 2
+    triggerDelay: 0
+    triggerEvent: {fileID: 0}
+    triggerFloatEvent: {fileID: 0}
+    rtpcRoleBool: 0
+    customValue: 0
+    transitionDuration: 0
+    behaviorSelector: 0
+    soundManagerGameObject: {fileID: 6833649953212480390}
+    targetGameObject: {fileID: 0}
+    secondGameObject: {fileID: 0}
+    callbacks: []
+    wwiseEvent:
+      idInternal: 0
+      valueGuidInternal: 
+      WwiseObjectReference: {fileID: 11400000, guid: c08e36185590cf4448a294610727a91b,
+        type: 2}
+    wwiseState:
+      idInternal: 0
+      valueGuidInternal: 
+      groupIdInternal: 0
+      groupGuidInternal: 
+      WwiseObjectReference: {fileID: 0}
+    wwiseSwitch:
+      idInternal: 0
+      valueGuidInternal: 
+      groupIdInternal: 0
+      groupGuidInternal: 
+      WwiseObjectReference: {fileID: 0}
+    wwiseRTPC:
+      idInternal: 0
+      valueGuidInternal: 
+      WwiseObjectReference: {fileID: 0}
+    rtpcScriptableObject: {fileID: 0}
+    actionOnEventType: 0
+    curveInterpolation: 0
+    useCallbacks: 0
+    useActionOnEvent: 0
+    rtpcGlobal: 0
+    runOnce: 0
+    useOtherGameObject: 0
+    setCustomRtpcFloat: 0
+    isActive: 1
+    objDistanceToRtpc: 0
+    checkForTag: 1
+    useValueFromEvent: 0
+    tag: Player
+  - thisSoundManager: {fileID: 0}
+    soundEventId: 0
+    triggerTypeSelector: 3
+    triggerDelay: 0
+    triggerEvent: {fileID: 0}
+    triggerFloatEvent: {fileID: 0}
+    rtpcRoleBool: 0
+    customValue: 0
+    transitionDuration: 0
+    behaviorSelector: 0
+    soundManagerGameObject: {fileID: 6833649953212480390}
+    targetGameObject: {fileID: 0}
+    secondGameObject: {fileID: 0}
+    callbacks: []
+    wwiseEvent:
+      idInternal: 0
+      valueGuidInternal: 
+      WwiseObjectReference: {fileID: 11400000, guid: 45c360da097dba247885146f50d5dc70,
+        type: 2}
+    wwiseState:
+      idInternal: 0
+      valueGuidInternal: 
+      groupIdInternal: 0
+      groupGuidInternal: 
+      WwiseObjectReference: {fileID: 0}
+    wwiseSwitch:
+      idInternal: 0
+      valueGuidInternal: 
+      groupIdInternal: 0
+      groupGuidInternal: 
+      WwiseObjectReference: {fileID: 0}
+    wwiseRTPC:
+      idInternal: 0
+      valueGuidInternal: 
+      WwiseObjectReference: {fileID: 0}
+    rtpcScriptableObject: {fileID: 0}
+    actionOnEventType: 0
+    curveInterpolation: 0
+    useCallbacks: 0
+    useActionOnEvent: 0
+    rtpcGlobal: 0
+    runOnce: 0
+    useOtherGameObject: 0
+    setCustomRtpcFloat: 0
+    isActive: 1
+    objDistanceToRtpc: 0
+    checkForTag: 1
+    useValueFromEvent: 0
+    tag: Player
+--- !u!65 &998082568958897289
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6833649953212480390}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 1, y: 1, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}

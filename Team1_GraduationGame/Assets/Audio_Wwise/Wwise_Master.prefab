@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 2186950586717431779}
   - component: {fileID: 3990653143492363861}
   - component: {fileID: 2663006930055093862}
+  - component: {fileID: 6748030517496643575}
   m_Layer: 0
   m_Name: Wwise_Master
   m_TagString: Untagged
@@ -138,7 +139,7 @@ MonoBehaviour:
     useCallbacks: 0
     useActionOnEvent: 0
     rtpcGlobal: 0
-    runOnce: 0
+    runOnce: 1
     useOtherGameObject: 0
     setCustomRtpcFloat: 0
     isActive: 1
@@ -187,7 +188,7 @@ MonoBehaviour:
     useCallbacks: 0
     useActionOnEvent: 0
     rtpcGlobal: 0
-    runOnce: 0
+    runOnce: 1
     useOtherGameObject: 0
     setCustomRtpcFloat: 0
     isActive: 1
@@ -236,7 +237,7 @@ MonoBehaviour:
     useCallbacks: 0
     useActionOnEvent: 0
     rtpcGlobal: 0
-    runOnce: 0
+    runOnce: 1
     useOtherGameObject: 0
     setCustomRtpcFloat: 0
     isActive: 1
@@ -400,7 +401,7 @@ MonoBehaviour:
     tag: 
   - thisSoundManager: {fileID: 0}
     soundEventId: 0
-    triggerTypeSelector: 6
+    triggerTypeSelector: 0
     triggerDelay: 0
     triggerEvent: {fileID: 11400000, guid: a91b977e02bad9345b91ce4665a3b978, type: 2}
     triggerFloatEvent: {fileID: 11400000, guid: b0ff7149e720d3e42a8ee8e1b99b3494,
@@ -408,7 +409,7 @@ MonoBehaviour:
     rtpcRoleBool: 1
     customValue: 0
     transitionDuration: 0
-    behaviorSelector: 3
+    behaviorSelector: 0
     soundManagerGameObject: {fileID: 6086938879507949215}
     targetGameObject: {fileID: 0}
     secondGameObject: {fileID: 0}
@@ -416,7 +417,8 @@ MonoBehaviour:
     wwiseEvent:
       idInternal: 0
       valueGuidInternal: 
-      WwiseObjectReference: {fileID: 0}
+      WwiseObjectReference: {fileID: 11400000, guid: c57e377365637c345ba0a69cc4190ead,
+        type: 2}
     wwiseState:
       idInternal: 0
       valueGuidInternal: 
@@ -477,6 +479,33 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!114 &6748030517496643575
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6086938879507949215}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 98cc0f18d4280c246a666866306da54b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  InitializationSettings: {fileID: 11400000, guid: 27013790b36cbc740897032f9fa85f73,
+    type: 2}
+  basePath: 
+  language: 
+  defaultPoolSize: 0
+  lowerPoolSize: 0
+  streamingPoolSize: 0
+  memoryCutoffThreshold: 0
+  monitorPoolSize: 0
+  monitorQueuePoolSize: 0
+  callbackManagerBufferSize: 0
+  spatialAudioPoolSize: 0
+  maxSoundPropagationDepth: 0
+  diffractionFlags: 11
+  engineLogging: 0
 --- !u!1001 &1803216897452509635
 PrefabInstance:
   m_ObjectHideFlags: 0

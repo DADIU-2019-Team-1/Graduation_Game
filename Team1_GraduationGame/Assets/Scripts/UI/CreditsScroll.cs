@@ -34,7 +34,7 @@ public class CreditsScroll : MonoBehaviour
 
         }
 
-        if (GetComponent<RectTransform>().anchoredPosition.y == 3590)
+        if (GetComponent<RectTransform>().anchoredPosition.y == 4170)
         {
             startScroll = false;
         }

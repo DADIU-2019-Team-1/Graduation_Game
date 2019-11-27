@@ -11,6 +11,9 @@ GameObject:
   - component: {fileID: 6549661346451067334}
   - component: {fileID: 6549661346451067337}
   - component: {fileID: 6549661346451067336}
+  - component: {fileID: 3832615858779689013}
+  - component: {fileID: 5443152412138829400}
+  - component: {fileID: 9134661307616296227}
   m_Layer: 0
   m_Name: Fireflies
   m_TagString: Untagged
@@ -25,9 +28,9 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6549661346451067339}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 6.91, y: 2.09, z: -6.87}
-  m_LocalScale: {x: 0.10804843, y: 0.10804843, z: 0.10804843}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 6549661346483449289}
   m_Father: {fileID: 0}
@@ -249,8 +252,8 @@ ParticleSystem:
     startSize:
       serializedVersion: 2
       minMaxState: 3
-      scalar: 0.04
-      minScalar: 0.2
+      scalar: 0.05
+      minScalar: 0.3
       maxCurve:
         serializedVersion: 2
         m_Curve:
@@ -592,7 +595,7 @@ ParticleSystem:
     angle: 7
     length: 5
     boxThickness: {x: 0, y: 0, z: 0}
-    radiusThickness: 0
+    radiusThickness: 0.88
     donutRadius: 0.2
     m_Position: {x: 0, y: 0, z: 0}
     m_Rotation: {x: 0, y: 0, z: 0}
@@ -675,7 +678,7 @@ ParticleSystem:
     sphericalDirectionAmount: 0
     randomPositionAmount: 0
     radius:
-      value: 13.89
+      value: 0.5
       mode: 0
       spread: 0
       speed:
@@ -4610,6 +4613,70 @@ ParticleSystemRenderer:
   m_Mesh2: {fileID: 0}
   m_Mesh3: {fileID: 0}
   m_MaskInteraction: 0
+--- !u!65 &3832615858779689013
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6549661346451067339}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 1, y: 1, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &5443152412138829400
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6549661346451067339}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6a1a2179e380b384bbc8fb9d20df637b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  events:
+  - attachedManager: {fileID: 0}
+    activeInInspector: 1
+    eventName: Disable firefly
+    eventToFire:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 6549661346451067339}
+          m_MethodName: SetActive
+          m_Mode: 6
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+    function: 2
+    thisGameObject: {fileID: 6549661346451067339}
+    gameObjectAmount: 0
+    theseGameObjects: []
+    collisionTag: Player
+    isTrigger: 1
+    fireCooldown: 0
+    delayForFire: 0.1
+    specificRotations: 
+--- !u!114 &9134661307616296227
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6549661346451067339}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7be599b59c0108945a79a8ecb89eb432, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &6549661346483449288
 GameObject:
   m_ObjectHideFlags: 0
@@ -4691,7 +4758,7 @@ Light:
     serializedVersion: 2
     m_Bits: 4294967295
   m_RenderingLayerMask: 1
-  m_Lightmapping: 1
+  m_Lightmapping: 4
   m_LightShadowCasterMode: 0
   m_AreaSize: {x: 1, y: 1}
   m_BounceIntensity: 0.6

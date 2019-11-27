@@ -43,7 +43,7 @@ namespace AK
         static const AkUniqueID GRIEF_ONSET = 4109451574U;
         static const AkUniqueID PLAY_AMB_OUTSIDE = 121174090U;
         static const AkUniqueID PLAY_ECHOCALL_MEMORY_PLAYLIST = 3108390310U;
-        static const AkUniqueID PLAY_FS_JUMPLAND = 3576124929U;
+        static const AkUniqueID PLAY_FS_JUMPTOLAND = 1737921590U;
         static const AkUniqueID PLAY_FS_MINIJUMP = 4119942951U;
         static const AkUniqueID PLAY_FS_SYSTEM = 2874393337U;
         static const AkUniqueID PLAY_HMC_MUSIC_SYSTEM_LEVEL1 = 2367316274U;
@@ -68,6 +68,7 @@ namespace AK
                 static const AkUniqueID GRIEF_APPEARS = 3170210169U;
                 static const AkUniqueID GRIEF_CHASE = 535181753U;
                 static const AkUniqueID HUB = 646625282U;
+                static const AkUniqueID LEVEL_3_SILENCE_MEMORY = 3845742627U;
                 static const AkUniqueID MEMORY_LULLABY = 3074462064U;
                 static const AkUniqueID MENU_LOAD = 3222607803U;
                 static const AkUniqueID OUTSIDE = 438105790U;

@@ -15,7 +15,7 @@ public class MenuCamera : MonoBehaviour
     [SerializeField] private FloatReference camLookSpeed, camMoveTime;
     [SerializeField] private FloatReference activateMenuThreshold, waitBeforeMoving;
     [SerializeField] [Range(0.01f, 1.0f)] private float fadeAmount = 0.05f;
-    private int currentTargetIndex, railIndex = 0;
+    private int currentTargetIndex, railIndex = 0, currentLookAt = 0;
     private Quaternion targetRotation;
     private Vector3 camMovement;
     private bool _move, _startingGame;
@@ -52,7 +52,7 @@ public class MenuCamera : MonoBehaviour
                 StopCoroutine(WaitForTextFade());
                 for (int i = 0; i < menuObjectsToSetActivate.Length; i++)
                 {
-                    if (i == currentTargetIndex)
+                    if (i == currentLookAt)
                     {
                         menuObjectsToSetActivate[i].gameObject.SetActive(true);
                         menuObjectsToSetActivate[i].alpha += fadeAmount;
@@ -84,6 +84,7 @@ public class MenuCamera : MonoBehaviour
                     ref camMovement, camMoveTime.value * Time.deltaTime);
 
                 // Rotation update
+
                 targetRotation = lookAtTargets[currentTargetIndex].position - transform.position != Vector3.zero
                     ? Quaternion.LookRotation(lookAtTargets[currentTargetIndex].position - transform.position) : Quaternion.identity;
                 transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, camLookSpeed.value * Time.deltaTime);
@@ -129,6 +130,14 @@ public class MenuCamera : MonoBehaviour
     IEnumerator WaitForTextFade()
     {
         yield return new WaitForSeconds(waitBeforeMoving.value);
+        if (!_move)
+        {
+            currentLookAt = currentTargetIndex;
+            if (currentTargetIndex > lookAtTargets.Length - 1)
+            {
+                currentTargetIndex = lookAtTargets.Length - 1;
+            }
+        }
         _move = true;
     }
 }

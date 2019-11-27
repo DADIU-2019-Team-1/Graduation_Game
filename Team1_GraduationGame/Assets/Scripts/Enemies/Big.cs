@@ -21,7 +21,7 @@ namespace Team1_GraduationGame.Enemies
 
         // Private:
         private LayerMask _layerMask;
-        private bool _active, _isAggro, _isSpawned, _isRotating, _turnLeft, _updateRotation, _playerSpotted, _lightOn, _timerRunning;
+        private bool _active, _isAggro, _isSpawned, _isRotating, _playerSpotted, _lightOn, _timerRunning, _isChangingState;
         private int _currentSpawnPoint = 0;
         private Quaternion _lookRotation;
 
@@ -67,6 +67,11 @@ namespace Team1_GraduationGame.Enemies
                 Debug.LogError("Big Enemy Error: Vision gameobject missing, please attach one!");
         }
 
+        private void Start()
+        {
+            InvokeRepeating("DistanceCheckerLoop", 0.3f, 1.0f);
+        }
+
         private void FixedUpdate()
         {
             if (_active)
@@ -108,22 +113,6 @@ namespace Team1_GraduationGame.Enemies
                         UpdateFOVLight(false, false);
                 }
 
-                if (_player != null)
-                {
-                    if (Vector3.Distance(transform.position, _player.transform.position) < spawnActivationDistance && !_isSpawned)
-                    {
-                        UpdateFOVLight(true, false);
-                        StopCoroutine(ChangeState(false));
-                        StartCoroutine(ChangeState(true));
-                    }
-                    else if (Vector3.Distance(transform.position, _player.transform.position) > spawnActivationDistance &&
-                             _isSpawned)
-                    {
-                        UpdateFOVLight(false, false);
-                        StopCoroutine(ChangeState(true));
-                        StartCoroutine(ChangeState(false));
-                    }
-                }
             }
 
             if (_isAggro && !_active)
@@ -133,6 +122,29 @@ namespace Team1_GraduationGame.Enemies
                 Quaternion rot = Quaternion.LookRotation(_player.transform.position - transform.position) != Quaternion.identity ? Quaternion.LookRotation(_player.transform.position - transform.position) : transform.rotation;
 
                 transform.rotation = Quaternion.RotateTowards(transform.rotation, rot, 85.0f * Time.fixedDeltaTime);
+            }
+        }
+
+        private void DistanceCheckerLoop()
+        {
+            if (_active)
+            {
+                if (_player != null && !_isChangingState)
+                {
+                    if (Vector3.Distance(transform.position, _player.transform.position) < spawnActivationDistance && !_isSpawned)
+                    {
+                        UpdateFOVLight(true, false);
+                        StopAllCoroutines();
+                        StartCoroutine(ChangeState(true));
+                    }
+                    else if (Vector3.Distance(transform.position, _player.transform.position) > spawnActivationDistance + 4.0f &&
+                             _isSpawned)
+                    {
+                        UpdateFOVLight(false, false);
+                        StopAllCoroutines();
+                        StartCoroutine(ChangeState(false));
+                    }
+                }
             }
         }
 
@@ -164,6 +176,7 @@ namespace Team1_GraduationGame.Enemies
                 _isSpawned = false;
                 _playerSpotted = false;
                 _timerRunning = false;
+                _isChangingState = false;
                 _animator.ResetTrigger("Appearing");
                 _playerAnimator?.ResetTrigger("BigAttack");
                 _animator.ResetTrigger("Attack");
@@ -175,6 +188,8 @@ namespace Team1_GraduationGame.Enemies
 
         private IEnumerator ChangeState(bool isActive)
         {
+            _isChangingState = true;
+
             if (isActive)
             {
                 _animator.SetTrigger("Appearing");
@@ -200,6 +215,8 @@ namespace Team1_GraduationGame.Enemies
                 _animator.SetBool("Patrolling", false);
                 _isSpawned = false;
             }
+
+            _isChangingState = false;
         }
 
         private IEnumerator PlayerDied()
@@ -263,7 +280,6 @@ namespace Team1_GraduationGame.Enemies
             yield return new WaitForSeconds(rotateWaitTime);
 
             _isRotating = true;
-            _updateRotation = true;
             _timerRunning = false;
         }
 

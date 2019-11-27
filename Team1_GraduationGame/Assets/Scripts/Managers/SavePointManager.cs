@@ -37,9 +37,13 @@ namespace Team1_GraduationGame.SaveLoadSystem
 
         private void Start()
         {
-            if (FindObjectOfType<UIMenu>() != null)
+            UIMenu[] menuObjects = Resources.FindObjectsOfTypeAll<UIMenu>();
+            if (menuObjects != null)
             {
-                FindObjectOfType<UIMenu>().continueGameEvent += Continue;
+                for (int i = 0; i < menuObjects.Length; i++)
+                {
+                    menuObjects[i].continueGameEvent += Continue;
+                }
             }
         }
 

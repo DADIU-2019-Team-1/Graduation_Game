@@ -27,8 +27,7 @@ namespace Team1_GraduationGame.Enemies
 
         // Public:
         public bool drawGizmos = true;
-        public float spawnActivationDistance = 25.0f, fieldOfView = 65.0f, viewDistance = 20.0f, changeStateTime = 3.0f,
-            rotateDegreesPerSecond = 5.0f, rotateWaitTime = 0.0f, lookRangeTo = 230f, lookRangeFrom = 130f, aggroTime = 2.0f;
+        public float spawnActivationDistance = 25.0f, fieldOfView = 65.0f, viewDistance = 20.0f, changeStateTime = 3.0f, aggroTime = 2.0f;
         public Color normalConeColor = Color.yellow, aggroConeColor = Color.red;
         public float animAttackTime = 3.0f;
 
@@ -273,15 +272,6 @@ namespace Team1_GraduationGame.Enemies
             _animator.ResetTrigger("Spotted");
         }
 
-        private IEnumerator WaitTimer()
-        {
-            _timerRunning = true;
-            _isRotating = false;
-            yield return new WaitForSeconds(rotateWaitTime);
-
-            _isRotating = true;
-            _timerRunning = false;
-        }
 
 //#if UNITY_EDITOR
 //        private void OnDrawGizmos()

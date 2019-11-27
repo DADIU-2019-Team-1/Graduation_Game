@@ -10,6 +10,7 @@ namespace Team1_GraduationGame.SaveLoadSystem
     using UnityEngine.SceneManagement;
     using UnityEngine.Playables;
     using UnityEngine;
+    using TMPro;
 
 #if UNITY_EDITOR
     using UnityEditor;
@@ -36,6 +37,16 @@ namespace Team1_GraduationGame.SaveLoadSystem
 
         private void Start()
         {
+            if (PlayerPrefs.GetInt("previousGame") == 1)
+            {
+                GameObject continueTextObj = GameObject.FindGameObjectWithTag("ContinueBtn");
+                if (continueTextObj != null)
+                {
+                    TextMeshProUGUI continueText = continueTextObj.GetComponent<TextMeshProUGUI>();
+                    continueText.color = Color.white;
+                }
+            }
+
             if (PlayerPrefs.GetInt("loadGameOnAwake") == 1)
             {
                 if (_playableDirector != null)

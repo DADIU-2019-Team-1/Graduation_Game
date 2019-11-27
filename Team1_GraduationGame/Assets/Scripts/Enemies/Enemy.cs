@@ -36,7 +36,7 @@ namespace Team1_GraduationGame.Enemies
         public float wayPointReachRange = 1.0f, hearingSensitivity = 2.0f, minimumAlwaysDetectRange = 1.3f;
         public bool pushDownLightIndication = true, drawGizmos = true, useWaitTime, rotateAtWaypoints, loopWaypointRoutine = true, alwaysAggro;
         public Color normalConeColor = Color.yellow, aggroConeColor = Color.red;
-        public float animNoiseHeardTime = 2.0f, animAttackTime = 3.0f, animGettingUpTime = 2.0f;
+        public float animNoiseHeardTime = 2.0f, animAttackTime = 3.0f/*, animGettingUpTime = 2.0f*/;
         [HideInInspector] public bool useGlobalWaitTime = true, behaviourInactive, activateOnDistance = true;
         [HideInInspector] public float waitTime = 0.0f, activationDistance = 70.0f;
 
@@ -436,8 +436,7 @@ namespace Team1_GraduationGame.Enemies
                     viewConeLight.color = Color.green;
                 }
 
-                StopCoroutine(EnemyHug());  // Stop hug if hugging
-                StopCoroutine(EnemyAggro());    // Stop aggro
+                StopAllCoroutines();
 
                 _movement?.Frozen(false);
                 
@@ -624,11 +623,12 @@ namespace Team1_GraduationGame.Enemies
             yield return new WaitForSeconds(thisEnemy.pushedDownDuration);
             viewConeLight.color = normalConeColor;
             _animator?.ResetTrigger("PushedDown");
-            _animator?.SetTrigger("GettingUp");
+            //_animator?.SetTrigger("GettingUp");
             _enemySoundManager?.GettingUp();
 
-            yield return new WaitForSeconds(animGettingUpTime);
-            _animator?.ResetTrigger("GettingUp");
+            //yield return new WaitForSeconds(animGettingUpTime);
+            //_animator?.ResetTrigger("GettingUp");
+
             _navMeshAgent.isStopped = false;
             _active = true;
             CollisionWithPlayerSetter(true);

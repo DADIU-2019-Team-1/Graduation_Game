@@ -371,7 +371,7 @@ namespace Team1_GraduationGame.MotionMatching
                     queryRate = queryRateInFrames,
                     state = movement.moveState.value,
                     trajPoints = pointsPerTrajectory,
-                    movementMatrix = transform.localToWorldMatrix.inverse,
+                    movementMatrix = transform.worldToLocalMatrix.inverse,
                     positionWeight = weightTrajPositions,
                     forwardWeight = weightTrajForwards
                 };
@@ -443,17 +443,35 @@ namespace Team1_GraduationGame.MotionMatching
             return candidates;
         }
 
-        private int PoseMatching(List<FeatureVector> candidates)
+        private int PoseMatching(List<FeatureVector> candidates) // TODO: Jobify
         {
             int bestId = -1;
             float currentDif = float.MaxValue;
+            Matrix4x4 moveSpace = transform.worldToLocalMatrix.inverse;
+            MMPose currentPose = featureVectors[_currentID].GetPose();
             foreach (var candidate in candidates)
             {
-                float velDif = featureVectors[_currentID].GetPose().ComparePoses(candidate.GetPose(),
-                    transform.worldToLocalMatrix.inverse, weightRootVel, weightLFootVel, weightRFootVel, weightNeckVel);
+                MMPose candidatePose = candidate.GetPose();
+                float velocityDiff = 0;
+                float velDif = currentPose.ComparePoses(candidatePose, moveSpace, weightRootVel, weightLFootVel, weightRFootVel, weightNeckVel);
+                velocityDiff += Vector3.Distance(moveSpace.MultiplyPoint3x4(currentPose.GetRootVelocity()),moveSpace.MultiplyPoint3x4(candidatePose.GetRootVelocity())) * weightRootVel;
+                //difference += Vector3.Distance(newSpace.MultiplyPoint3x4(GetLeftFootVelocity()) * lFootVelWeight,
+                //    newSpace.MultiplyPoint3x4(candidatePose.GetLeftFootVelocity()) * lFootVelWeight);
+                //difference += Vector3.Distance(newSpace.MultiplyPoint3x4(GetRightFootVelocity()) * rFootVelWeight,
+                //    newSpace.MultiplyPoint3x4(candidatePose.GetRightFootVelocity()) * rFootVelWeight);
+                //difference += Vector3.Distance(newSpace.MultiplyPoint3x4(GetNeckVelocity()) * neckVelWeight,
+                //    newSpace.MultiplyPoint3x4(candidatePose.GetNeckVelocity()) * neckVelWeight);
+                //comparison += math.distancesq(transform.worldToLocalMatrix.inverse.MultiplyPoint3x4(featureVectors[_currentID].GetPose().GetLeftFootPos()), movementPositionArray[j]) * positionWeight;
+                //comparison += math.distancesq(transform.worldToLocalMatrix.inverse.MultiplyPoint3x4(animPositionArray[i * trajPoints + j]), movementPositionArray[j]) * forwardWeight;
+
                 float feetPosDif = featureVectors[_currentID].GetPose().GetJointDistance(candidate.GetPose(),
                     transform.worldToLocalMatrix.inverse, weightFeetPos, weightNeckPos);
-                float candidateDif = velDif + feetPosDif; // TODO: Look at joint distance for idle
+                
+                //distance += Vector3.Distance(newSpace.MultiplyPoint3x4(GetLeftFootPos()), newSpace.MultiplyPoint3x4(otherPose.GetLeftFootPos())) * feetWeight;
+                //distance += Vector3.Distance(newSpace.MultiplyPoint3x4(GetRightFootPos()), newSpace.MultiplyPoint3x4(otherPose.GetRightFootPos())) * feetWeight;
+                //distance += Vector3.Distance(newSpace.MultiplyPoint3x4(GetNeckPos()), newSpace.MultiplyPoint3x4(otherPose.GetNeckPos())) * neckWeight;
+
+                float candidateDif = velDif + feetPosDif;
                 if (candidateDif < currentDif)
                 {
                     //Debug.Log("Candidate ID " + candidate.GetID() + " diff: " + candidateDif + " < " + " Current ID " + bestId + " diff:" + currentDif + "\nVelocity dif was " + velDif + " and feetPos dif was " + feetPosDif);
@@ -540,7 +558,7 @@ namespace Team1_GraduationGame.MotionMatching
                         for (int j = 0; j < movementPositionArray.Length; j++)
                         {
                             comparison += math.distancesq(movementMatrix.MultiplyPoint3x4(animPositionArray[i * trajPoints + j]), movementPositionArray[j]) * positionWeight;
-                            comparison += math.distancesq(movementMatrix.MultiplyPoint3x4(animPositionArray[i * trajPoints + j]), movementPositionArray[j]) * forwardWeight;
+                            //comparison += math.distancesq(movementMatrix.MultiplyVector(animForwardArray[i * trajPoints + j]), movementForwardArray[j]) * forwardWeight;
                         }
 
                         // Array shifting if comparison is less than any value in the array

@@ -36,13 +36,13 @@ namespace Team1_GraduationGame.Enemies
         public float wayPointReachRange = 1.0f, hearingSensitivity = 2.0f, minimumAlwaysDetectRange = 1.3f;
         public bool pushDownLightIndication = true, drawGizmos = true, useWaitTime, rotateAtWaypoints, loopWaypointRoutine = true, alwaysAggro;
         public Color normalConeColor = Color.yellow, aggroConeColor = Color.red;
-        public float animNoiseHeardTime = 2.0f, animAttackTime = 3.0f, animGettingUpTime = 2.0f;
+        public float animNoiseHeardTime = 2.0f, animAttackTime = 3.0f/*, animGettingUpTime = 2.0f*/;
         [HideInInspector] public bool useGlobalWaitTime = true, behaviourInactive, activateOnDistance = true;
-        [HideInInspector] public float waitTime = 0.0f, activationDistance = 70.0f;
+        [HideInInspector] public float waitTime = 0.0f, activationDistance = 65.0f;
 
         // Private variables:
-        private bool _active, _timerRunning, _destinationSet, _isRotating, _isAggro, _playerHeard,
-            _isHugging, _rotatingAtWp, _inTriggerZone, _accelerating, _hearingDisabled, _goingReversePath;
+        private bool _active, _timerRunning, _destinationSet, _isRotating, _isAggro = false, _playerHeard = false, _noWayPoints = false,
+            _isHugging, _rotatingAtWp, _inTriggerZone = false, _accelerating, _hearingDisabled, _goingReversePath, _onTriggerStayActive = false;
         private NavMeshPath _path;
         private Vector3 _lastSighting;
         private Vector3[] _wayPointRotations;
@@ -118,6 +118,9 @@ namespace Team1_GraduationGame.Enemies
                         viewConeLight.gameObject.SetActive(false);
                 }
 
+                if (wayPoints.Count == 0)
+                    _noWayPoints = true;
+
                 if (GetComponent<Animator>() != null)
                     _animator = GetComponent<Animator>();
 
@@ -129,10 +132,12 @@ namespace Team1_GraduationGame.Enemies
 
         private void Start()
         {
-            InvokeRepeating("CustomUpdate", 0.2f, 0.7f);
+            InvokeRepeating("CustomUpdate", 0.5f, 0.7f);
 
             if (activateOnDistance)
-                InvokeRepeating("DistanceActivationChecker", 0.5f, 10.0f);
+                InvokeRepeating("DistanceActivationChecker", 1.0f, 10.0f);
+
+            InvokeRepeating("OnTriggerStayLoop", 0.1f, 0.1f);
         }
 
         /// <summary>
@@ -177,7 +182,7 @@ namespace Team1_GraduationGame.Enemies
             {
                 if (_active)
                 {
-                    if (!_isAggro && wayPoints != null && wayPoints.Count != 0)
+                    if (!_isAggro && !_noWayPoints)
                     {
                         if (_state != 0)
                             SwitchState(0); // Switch to walking
@@ -238,7 +243,6 @@ namespace Team1_GraduationGame.Enemies
                             lookRotation = Quaternion.Euler(_wayPointRotations[_currentWayPoint]) != Quaternion.identity ? Quaternion.Euler(_wayPointRotations[_currentWayPoint]) : transform.rotation;
 
                         transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, _navMeshAgent.angularSpeed);
-
                     }
 
                     if (_accelerating && _state != 2)   // Used for accelerating the enemy speed, instead of instant speed change:
@@ -258,7 +262,6 @@ namespace Team1_GraduationGame.Enemies
                     }
 
                     ViewLightConeControl();
-
                 }
 
                 if (_active || _playerHeard)
@@ -373,40 +376,47 @@ namespace Team1_GraduationGame.Enemies
             }
         }
 
+        private void OnTriggerStayLoop()
+        {
+            if (_onTriggerStayActive)
+            {
+                Vector3 dir = _player.transform.position - transform.position;
+                float enemyToPlayerAngle = Vector3.Angle(transform.forward, dir);
+
+                if (enemyToPlayerAngle < thisEnemy.fieldOfView / 2)
+                {
+                    RaycastHit hit;
+
+                    if (Physics.Raycast(transform.position + transform.up, dir, out hit, thisEnemy.viewDistance, _layerMask))
+                        if (hit.collider.tag == _player.tag)
+                        {
+                            if (_playerHeard)
+                            {
+                                StopCoroutine(PlayerHeard());
+                                _playerHeard = false;
+                                _active = true;
+                                _animator?.ResetTrigger("NoiseHeard");
+                            }
+
+                            _lastSighting = _player.transform.position;
+                            if (!_isAggro)
+                                StartCoroutine(EnemyAggro());
+                        }
+                }
+                else if (_isAggro && !_playerHeard)
+                {
+                    _lastSighting = _player.transform.position;
+                }
+            }
+        }
+
         private void OnTriggerStay(Collider col)
         {
             if (!behaviourInactive)
                 if (_active && !alwaysAggro || _playerHeard)
                     if (col.tag == _player.tag)
                     {
-                        Vector3 dir = _player.transform.position - transform.position;
-                        float enemyToPlayerAngle = Vector3.Angle(transform.forward, dir);
-
-                        if (enemyToPlayerAngle < thisEnemy.fieldOfView / 2)
-                        {
-                            RaycastHit hit;
-
-                            if (Physics.Raycast(transform.position + transform.up, dir, out hit, thisEnemy.viewDistance, _layerMask))
-                                if (hit.collider.tag == _player.tag)
-                                {
-                                    if (_playerHeard)
-                                    {
-                                        StopCoroutine(PlayerHeard());
-                                        _playerHeard = false;
-                                        _active = true;
-                                        _animator?.ResetTrigger("NoiseHeard");
-                                    }
-
-                                    _lastSighting = _player.transform.position;
-                                    if (!_isAggro)
-                                        StartCoroutine(EnemyAggro());
-                                }
-                        }
-                        else if (_isAggro && !_playerHeard)
-                        {
-                            _lastSighting = _player.transform.position;
-                        }
-
+                        _onTriggerStayActive = true;
                         _inTriggerZone = true;
                     }
         }
@@ -416,6 +426,7 @@ namespace Team1_GraduationGame.Enemies
             if (col.tag == _player.tag)
             {
                 _inTriggerZone = false;
+                _onTriggerStayActive = false;
             }
         }
 
@@ -436,8 +447,7 @@ namespace Team1_GraduationGame.Enemies
                     viewConeLight.color = Color.green;
                 }
 
-                StopCoroutine(EnemyHug());  // Stop hug if hugging
-                StopCoroutine(EnemyAggro());    // Stop aggro
+                StopAllCoroutines();
 
                 _movement?.Frozen(false);
                 
@@ -531,6 +541,7 @@ namespace Team1_GraduationGame.Enemies
             yield return new WaitForSeconds(animNoiseHeardTime);
 
             _animator?.ResetTrigger("NoiseHeard");
+            _animator?.SetTrigger("Reset");
 
             if (!_isAggro)
                 StartCoroutine(EnemyAggro());
@@ -538,6 +549,7 @@ namespace Team1_GraduationGame.Enemies
             _active = true;
 
             yield return new WaitForSeconds(thisEnemy.aggroTime);
+            _animator?.ResetTrigger("Reset");
             _playerHeard = false;
         }
 
@@ -624,17 +636,21 @@ namespace Team1_GraduationGame.Enemies
             yield return new WaitForSeconds(thisEnemy.pushedDownDuration);
             viewConeLight.color = normalConeColor;
             _animator?.ResetTrigger("PushedDown");
-            _animator?.SetTrigger("GettingUp");
+            //_animator?.SetTrigger("GettingUp");
             _enemySoundManager?.GettingUp();
 
-            yield return new WaitForSeconds(animGettingUpTime);
-            _animator?.ResetTrigger("GettingUp");
+            //yield return new WaitForSeconds(animGettingUpTime);
+            //_animator?.ResetTrigger("GettingUp");
+
             _navMeshAgent.isStopped = false;
             _active = true;
             CollisionWithPlayerSetter(true);
 
             if (!alwaysAggro)
+            {
+                _isAggro = false;
                 _destinationSet = false;
+            }
             else
                 _isAggro = true;
         }
@@ -644,7 +660,9 @@ namespace Team1_GraduationGame.Enemies
         #region Setter, Getters and Reset
         public void ResetEnemy()
         {
+            _animator?.SetTrigger("Reset");
             StopAllCoroutines();
+            _onTriggerStayActive = false;
             _timerRunning = false;
             _active = true;
             _playerHeard = false;
@@ -657,7 +675,6 @@ namespace Team1_GraduationGame.Enemies
             _animator?.ResetTrigger("PushedDown");
             _animator?.ResetTrigger("GettingUp");
             _animator?.ResetTrigger("Attack");
-            _animator?.SetTrigger("Reset");
             CollisionWithPlayerSetter(false);
             _animator?.ResetTrigger("Reset");
         }

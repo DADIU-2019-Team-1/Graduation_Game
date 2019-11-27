@@ -14,12 +14,9 @@ namespace AK
     namespace EVENTS
     {
         static const AkUniqueID BIGSIS_ATTACK = 3665314627U;
-        static const AkUniqueID BIGSIS_BASE_START = 1022407497U;
-        static const AkUniqueID BIGSIS_BASE_STOP = 2709824483U;
         static const AkUniqueID BIGSIS_DOWN = 2445385739U;
-        static const AkUniqueID BISSIS_ONSET = 2202781944U;
+        static const AkUniqueID BISSIS_APPEAR = 255820916U;
         static const AkUniqueID BISSIS_SPOT = 146861159U;
-        static const AkUniqueID BISSIS_UP = 1148761992U;
         static const AkUniqueID DEAD_LPF = 1647120744U;
         static const AkUniqueID EMPTY_BIGSIS = 1826050074U;
         static const AkUniqueID EMPTY_FAM = 351150729U;
@@ -28,19 +25,18 @@ namespace AK
         static const AkUniqueID FAM_ATTACK = 4185887082U;
         static const AkUniqueID FAM_BASE_START = 4168887876U;
         static const AkUniqueID FAM_BASE_STOP = 2259991288U;
-        static const AkUniqueID FAM_DOWN = 840362894U;
         static const AkUniqueID FAM_ONSET = 3016005891U;
-        static const AkUniqueID FAM_UP = 2928015061U;
         static const AkUniqueID FRI_ATTACK = 2749812849U;
         static const AkUniqueID FRI_BASE_START = 1914315619U;
         static const AkUniqueID FRI_BASE_STOP = 841573473U;
         static const AkUniqueID FRI_DOWN = 1193266125U;
         static const AkUniqueID FRI_ONSET = 559410714U;
         static const AkUniqueID FRI_UP = 2916966842U;
-        static const AkUniqueID GRIEF_APPEAR_CUTSCENE = 3923211281U;
         static const AkUniqueID GRIEF_ATTACK = 2473929957U;
+        static const AkUniqueID GRIEF_BASEMOVE = 1673323629U;
         static const AkUniqueID GRIEF_HOLD = 3369700890U;
         static const AkUniqueID GRIEF_ONSET = 4109451574U;
+        static const AkUniqueID GRIEF_REACHTHETOP = 1595833916U;
         static const AkUniqueID PLAY_AMB_OUTSIDE = 121174090U;
         static const AkUniqueID PLAY_ECHOCALL_MEMORY_PLAYLIST = 3108390310U;
         static const AkUniqueID PLAY_FS_JUMPTOLAND = 1737921590U;

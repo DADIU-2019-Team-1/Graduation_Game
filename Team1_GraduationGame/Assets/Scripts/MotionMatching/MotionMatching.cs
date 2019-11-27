@@ -1,4 +1,6 @@
 ﻿// Code Owner: Jannik Neerdal
+
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.Burst;
@@ -62,9 +64,8 @@ namespace Team1_GraduationGame.MotionMatching
         [SerializeField] private float animationFrameRate = 50.0f;
 
         // --- Weights
-        [Range(0, 1)] public float weightRootVel = 1.0f,
-            weightLFootVel = 1.0f,
-            weightRFootVel = 1.0f,
+        [Range(1, 5)] public float weightRootVel = 1.0f,
+            weightFeetVel = 1.0f,
             weightNeckVel = 1.0f,
             weightNeckPos = 1.0f,
             weightFeetPos = 1.0f,
@@ -76,7 +77,9 @@ namespace Team1_GraduationGame.MotionMatching
         private int animIterator = -1;
         private Coroutine currentCoroutine = null;
         private List<string> debugStringList;
-        
+
+        public string[] trajCandidates;
+        public Vector3[] debuggoArrayo;
         private NativeArray<float3> _trajectoryPositions, _trajectoryForwards;
         private NativeArray<int> _featureIDs, _featureFrame, _frameCountForIDs, _featureState;
 
@@ -85,6 +88,7 @@ namespace Team1_GraduationGame.MotionMatching
             movement = GetComponent<Movement>();
             animator = GetComponent<Animator>();
             preProcessing = new PreProcessing();
+            trajCandidates = new string[candidatesPerMisc];
 
             for (int i = 0; i < states.Length; i++)
             {
@@ -158,6 +162,7 @@ namespace Team1_GraduationGame.MotionMatching
             _featureFrame = new NativeArray<int>(featureVectors.Count, Allocator.Persistent);
             _frameCountForIDs = new NativeArray<int>(featureVectors.Count, Allocator.Persistent);
             _featureState = new NativeArray<int>(featureVectors.Count, Allocator.Persistent);
+            debuggoArrayo = new Vector3[featureVectors.Count * pointsPerTrajectory];
 
             for (int i = 0; i < featureVectors.Count; i++)
             {
@@ -166,8 +171,9 @@ namespace Team1_GraduationGame.MotionMatching
                 _frameCountForIDs[i] = featureVectors[i].GetFrameCountForID();
                 for (int j = 0; j < pointsPerTrajectory; j++)
                 {
-                    _trajectoryPositions[i + j] = featureVectors[i].GetTrajectory().GetTrajectoryPoints()[j].GetPoint();
-                    _trajectoryForwards[i + j] = featureVectors[i].GetTrajectory().GetTrajectoryPoints()[j].GetForward();
+                    _trajectoryPositions[i * pointsPerTrajectory + j] = featureVectors[i].GetTrajectory().GetTrajectoryPoints()[j].GetPoint();
+                    _trajectoryForwards[i * pointsPerTrajectory + j] = featureVectors[i].GetTrajectory().GetTrajectoryPoints()[j].GetForward();
+                    debuggoArrayo[i * pointsPerTrajectory + j] = featureVectors[i].GetTrajectory().GetTrajectoryPoints()[j].GetPoint();
                 }
 
                 _featureState[i] = featureVectors[i].GetState();
@@ -175,8 +181,6 @@ namespace Team1_GraduationGame.MotionMatching
 
             if (!_playAnimationMode)
             {
-
-
                 UpdateAnimation(0, 0);
                 StartCoroutine(MotionMatch());
             }
@@ -281,8 +285,7 @@ namespace Team1_GraduationGame.MotionMatching
             }
 
             //Debug.Log("Updating to animation " + currentClip.name + " to frame " + frame + " with ID " + id + " from id " + _currentID + " of frame " + currentFrame);
-            animator.CrossFadeInFixedTime(currentClip.name, 0.3f, 0,
-                frame / animationFrameRate); // 0.3f was recommended by Magnus
+            animator.CrossFadeInFixedTime(currentClip.name, 0.3f, 0, frame / animationFrameRate); // 0.3f was recommended by Magnus
             _currentID = id;
             currentFrame = frame;
             banQueue.Enqueue(_currentID);
@@ -296,8 +299,7 @@ namespace Team1_GraduationGame.MotionMatching
             while (_isMotionMatching)
             {
                 _currentID += queryRateInFrames;
-                List<FeatureVector> candidates = TrajectoryMatching(movement.GetMovementTrajectory(),
-                    ref _trajCandidatesRef, ref _trajPossibleCandidatesRef, ref _trajCandidateValuesRef);
+                List<FeatureVector> candidates = TrajectoryMatching(movement.GetMovementTrajectory(),ref _trajCandidatesRef, ref _trajPossibleCandidatesRef, ref _trajCandidateValuesRef);
                 int candidateID = PoseMatching(candidates);
                 UpdateAnimation(candidateID, featureVectors[candidateID].GetFrame());
                 yield return new WaitForSeconds(queryRateInFrames / animationFrameRate);
@@ -348,6 +350,7 @@ namespace Team1_GraduationGame.MotionMatching
                 int movementTrajectoryLength = movementTraj.GetTrajectoryPoints().Length;
                 NativeArray<float3> movementTrajectoryPositions = new NativeArray<float3>(movementTrajectoryLength, Allocator.TempJob);
                 NativeArray<float3> movementTrajectoryForwards = new NativeArray<float3>(movementTrajectoryLength, Allocator.TempJob);
+                NativeArray<float3> debugination = new NativeArray<float3>(candidatesPerMisc * 2, Allocator.TempJob);
 
                 for (int i = 0; i < movementTrajectoryLength; i++)
                 {
@@ -355,7 +358,7 @@ namespace Team1_GraduationGame.MotionMatching
                     movementTrajectoryForwards[i] = movementTraj.GetTrajectoryPoints()[i].GetForward();
                 }
 
-                TrajectoryMatchingJob parallelJob = new TrajectoryMatchingJob
+                TrajectoryMatchingJob trajectoryJob = new TrajectoryMatchingJob
                 {
                     animPositionArray = _trajectoryPositions,
                     animForwardArray = _trajectoryForwards,
@@ -373,19 +376,25 @@ namespace Team1_GraduationGame.MotionMatching
                     trajPoints = pointsPerTrajectory,
                     movementMatrix = transform.worldToLocalMatrix.inverse,
                     positionWeight = weightTrajPositions,
-                    forwardWeight = weightTrajForwards
+                    forwardWeight = weightTrajForwards,
+                    posDebugger = debugination
                 };
-                JobHandle handle = parallelJob.Schedule();
+                JobHandle handle = trajectoryJob.Schedule();
                 handle.Complete();
-
+                int enumer = 0;
+                //Debug.Log("Trajectory matching job created " + trajectoryCandidateIDs.Length + " candidates");
                 for (int i = 0; i < trajectoryCandidateIDs.Length; i++)
                 {
                     candidates.Add(featureVectors[trajectoryCandidateIDs[i]]);
+                    //candidates.Add(featureVectors[i]);
+                    trajCandidates[i] = "id " + trajectoryCandidateIDs[i] + " has anim value " + debugination[enumer] + " and move value " + debugination[enumer + 1]  /* + ": frame " + candidates[i].GetFrame() + " of " + candidates[i].GetClipName()*/;
+                    enumer += 2;
                 }
                 trajectoryCandidateIDs.Dispose();
                 trajectoryCandidateValues.Dispose();
                 movementTrajectoryPositions.Dispose();
                 movementTrajectoryForwards.Dispose();
+                debugination.Dispose();
             }
             else
             {
@@ -452,26 +461,20 @@ namespace Team1_GraduationGame.MotionMatching
             foreach (var candidate in candidates)
             {
                 MMPose candidatePose = candidate.GetPose();
-                float velocityDiff = 0;
-                float velDif = currentPose.ComparePoses(candidatePose, moveSpace, weightRootVel, weightLFootVel, weightRFootVel, weightNeckVel);
-                velocityDiff += Vector3.Distance(moveSpace.MultiplyPoint3x4(currentPose.GetRootVelocity()),moveSpace.MultiplyPoint3x4(candidatePose.GetRootVelocity())) * weightRootVel;
-                //difference += Vector3.Distance(newSpace.MultiplyPoint3x4(GetLeftFootVelocity()) * lFootVelWeight,
-                //    newSpace.MultiplyPoint3x4(candidatePose.GetLeftFootVelocity()) * lFootVelWeight);
-                //difference += Vector3.Distance(newSpace.MultiplyPoint3x4(GetRightFootVelocity()) * rFootVelWeight,
-                //    newSpace.MultiplyPoint3x4(candidatePose.GetRightFootVelocity()) * rFootVelWeight);
-                //difference += Vector3.Distance(newSpace.MultiplyPoint3x4(GetNeckVelocity()) * neckVelWeight,
-                //    newSpace.MultiplyPoint3x4(candidatePose.GetNeckVelocity()) * neckVelWeight);
-                //comparison += math.distancesq(transform.worldToLocalMatrix.inverse.MultiplyPoint3x4(featureVectors[_currentID].GetPose().GetLeftFootPos()), movementPositionArray[j]) * positionWeight;
-                //comparison += math.distancesq(transform.worldToLocalMatrix.inverse.MultiplyPoint3x4(animPositionArray[i * trajPoints + j]), movementPositionArray[j]) * forwardWeight;
+                float velocityDiff = Vector3.Distance(moveSpace.MultiplyPoint3x4(currentPose.GetRootVelocity()), 
+                                    moveSpace.MultiplyPoint3x4(candidatePose.GetRootVelocity())) / weightRootVel;
+                velocityDiff += Vector3.Distance(moveSpace.MultiplyPoint3x4(currentPose.GetLeftFootVelocity()), 
+                                    moveSpace.MultiplyPoint3x4(candidatePose.GetLeftFootVelocity())) / weightFeetVel;
+                velocityDiff += Vector3.Distance(moveSpace.MultiplyPoint3x4(currentPose.GetRightFootVelocity()),
+                                    moveSpace.MultiplyPoint3x4(candidatePose.GetRightFootVelocity())) / weightFeetVel;
+                velocityDiff += Vector3.Distance(moveSpace.MultiplyPoint3x4(currentPose.GetNeckVelocity()),
+                                    moveSpace.MultiplyPoint3x4(candidatePose.GetNeckVelocity())) / weightNeckVel;
 
-                float feetPosDif = featureVectors[_currentID].GetPose().GetJointDistance(candidate.GetPose(),
-                    transform.worldToLocalMatrix.inverse, weightFeetPos, weightNeckPos);
-                
-                //distance += Vector3.Distance(newSpace.MultiplyPoint3x4(GetLeftFootPos()), newSpace.MultiplyPoint3x4(otherPose.GetLeftFootPos())) * feetWeight;
-                //distance += Vector3.Distance(newSpace.MultiplyPoint3x4(GetRightFootPos()), newSpace.MultiplyPoint3x4(otherPose.GetRightFootPos())) * feetWeight;
-                //distance += Vector3.Distance(newSpace.MultiplyPoint3x4(GetNeckPos()), newSpace.MultiplyPoint3x4(otherPose.GetNeckPos())) * neckWeight;
+                float feetPosDif = Vector3.Distance(moveSpace.MultiplyPoint3x4(currentPose.GetLeftFootPos()), moveSpace.MultiplyPoint3x4(candidatePose.GetLeftFootPos())) / weightFeetPos;
+                feetPosDif += Vector3.Distance(moveSpace.MultiplyPoint3x4(currentPose.GetRightFootPos()), moveSpace.MultiplyPoint3x4(candidatePose.GetRightFootPos())) / weightFeetPos;
+                feetPosDif += Vector3.Distance(moveSpace.MultiplyPoint3x4(currentPose.GetNeckPos()), moveSpace.MultiplyPoint3x4(candidatePose.GetNeckPos())) / weightNeckPos;
 
-                float candidateDif = velDif + feetPosDif;
+                float candidateDif = velocityDiff + feetPosDif;
                 if (candidateDif < currentDif)
                 {
                     //Debug.Log("Candidate ID " + candidate.GetID() + " diff: " + candidateDif + " < " + " Current ID " + bestId + " diff:" + currentDif + "\nVelocity dif was " + velDif + " and feetPos dif was " + feetPosDif);
@@ -482,7 +485,7 @@ namespace Team1_GraduationGame.MotionMatching
 
             // TODO: Maybe remove?
             if (featureVectors[bestId].GetClipName() == featureVectors[_currentID].GetClipName() &&
-                featureVectors[_currentID].GetFrame() + queryRateInFrames <=
+                featureVectors[_currentID].GetFrame() + queryRateInFrames * 2.0f <=
                 featureVectors[_currentID].GetFrameCountForID())
                 bestId = _currentID;
             return bestId;
@@ -538,17 +541,20 @@ namespace Team1_GraduationGame.MotionMatching
 
         public float positionWeight,
             forwardWeight;
+
+        public NativeArray<float3> posDebugger;
         public void Execute()
         {
+            for (int j = 0; j < candidateIDs.Length; j++)
+            {
+                candidateValues[j] = float.MaxValue;
+            }
+
+            int enam = 0;
+            int enamsingle = 0;
+
             for (int i = 0; i < featureIDs.Length; i++)
             {
-                if (i == 0)
-                {
-                    for (int j = 0; j < candidateIDs.Length; j++)
-                    {
-                        candidateValues[j] = float.MaxValue;
-                    }
-                }
                 if (featureState[i] == state) // Animation has the desired state
                 {
                     if ((featureIDs[i] > currentID || featureIDs[i] < currentID - queryRate) && featureFrame[i] + queryRate <= frameCountForIDs[i] /*&& !banQueue.Contains(featureIDs[i])*/)
@@ -557,11 +563,20 @@ namespace Team1_GraduationGame.MotionMatching
                         animationMatrix.SetTRS(animPositionArray[i], Quaternion.identity, Vector3.one);
                         for (int j = 0; j < movementPositionArray.Length; j++)
                         {
-                            comparison += math.distancesq(movementMatrix.MultiplyPoint3x4(animPositionArray[i * trajPoints + j]), movementPositionArray[j]) * positionWeight;
-                            //comparison += math.distancesq(movementMatrix.MultiplyVector(animForwardArray[i * trajPoints + j]), movementForwardArray[j]) * forwardWeight;
+                            comparison += math.distance(movementMatrix.MultiplyPoint3x4(animPositionArray[i * trajPoints + j]), movementPositionArray[j]) / positionWeight;
+                            //comparison += math.distancesq(movementMatrix.MultiplyVector(animForwardArray[i * trajPoints + j]), movementForwardArray[j]) / forwardWeight;
+
+                            if (enamsingle < candidateIDs.Length)
+                            {
+                                posDebugger[enam] = movementMatrix.MultiplyPoint3x4(animPositionArray[i * trajPoints + j]);
+                                posDebugger[enam + 1] = movementPositionArray[j];
+                                //candidateIDs[enamsingle] = i;
+                                enam += 2;
+                                enamsingle++;
+                            }
                         }
 
-                        // Array shifting if comparison is less than any value in the array
+                        //Array shifting if comparison is less than any value in the array
                         for (int j = candidateIDs.Length - 1; j >= 0; j--)
                         {
                             if (comparison >= candidateValues[j] || j == 0)

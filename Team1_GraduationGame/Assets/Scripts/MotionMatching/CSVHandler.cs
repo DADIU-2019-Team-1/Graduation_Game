@@ -158,7 +158,8 @@ namespace Team1_GraduationGame.MotionMatching
             // Convert data to FeatureVector
             Matrix4x4 animSpace = new Matrix4x4();
             TrajectoryPoint[] trajPoints = new TrajectoryPoint[trajPointsLength];
-            string nameDiff = allClipNames[0];            for (int i = 0; i < allClipNames.Count; i++)
+            string nameDiff = allClipNames[0];            
+            for (int i = 0; i < allClipNames.Count; i++)
             {
                 trajPoints = new TrajectoryPoint[trajPointsLength];
                 animSpace.SetTRS(allPoints[i].GetPoint(), Quaternion.identity, Vector3.one);

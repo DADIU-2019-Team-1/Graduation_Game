@@ -13,7 +13,7 @@ using UnityEditor;
 public class Movement : MonoBehaviour
 {
     private Rigidbody playerRB;
-    private bool touchStart = false, canMove = false, canJump = true, isPushing = false, moveFrozen = false, isAttacked = false;
+    private bool touchStart = false, canMove = false, canJump = true, canPush = true, isPushing = false, moveFrozen = false, isAttacked = false;
     private float rotationSpeedCurrent, rotationSpeedMax = 5.0f, rotationSpeedGoal, rotationAccelerationFactor = 0.1f, pushRotationAccelerationFactor = 0.7f, rotationAngleReactionFactor = 0.1f, pushRotationAngleReactionFactor = 0.7f;
     
     [HideInInspector]
@@ -98,7 +98,10 @@ public class Movement : MonoBehaviour
     [TagSelector] [SerializeField] private string[] jumpPlatformTag;
     [SerializeField] private List<GameObject> jumpPlatforms;
 
-    public event Action attack; 
+    public event Action attack;
+
+    [SerializeField]
+    private LayerMask _layerMask;
 
     private void Awake()
     {
@@ -116,6 +119,8 @@ public class Movement : MonoBehaviour
         //playerTrigger.isTrigger = true;
         _jumpMaterial = setJumpMaterial();
         _collider = GetComponent<CapsuleCollider>();
+
+        //_layerMask = ~LayerMask.GetMask("Character");
     }
     void Start()
     {
@@ -256,7 +261,7 @@ public class Movement : MonoBehaviour
                     direction = new Vector3(0, 0, 0);
 
                 }
-                if (t.phase == TouchPhase.Ended && rightTouch == t.fingerId && !atOrbTrigger.value)
+                if (t.phase == TouchPhase.Ended && rightTouch == t.fingerId && !atOrbTrigger.value && canPush)
                 {
                     rightTouch = 98;
                     swipeEndPos = t.position;
@@ -349,7 +354,7 @@ public class Movement : MonoBehaviour
             if (swipeOffSet.magnitude > swipePixelDistance.value && Input.mousePosition.x > Screen.width / 2 && !canMove && !atOrbTrigger.value)
             {
 
-                if (attackCooldown <= 0)
+                if (attackCooldown <= 0 && canPush)
                 {
                     pushDirection = new Vector3(swipeDirection.x, 0, swipeDirection.y);
                     pushRotation = pushDirection != Vector3.zero ? Quaternion.LookRotation(pushDirection) : Quaternion.identity;
@@ -531,11 +536,11 @@ public class Movement : MonoBehaviour
 //#endif
         }
 
-        if (!isJumping && !(Physics.Raycast(leftToePos.transform.position, Vector3.down, ghostJumpHeight.value) ||
-                           Physics.Raycast(rightToePos.transform.position, Vector3.down, ghostJumpHeight.value) ||
-                           Physics.Raycast(leftHeelPos.transform.position, Vector3.down, ghostJumpHeight.value) ||
-                           Physics.Raycast(rightHeelPos.transform.position, Vector3.down, ghostJumpHeight.value) ||
-                           Physics.Raycast(transform.position + Vector3.up, Vector3.down, ghostJumpHeight.value + 1.0f)))
+        if (!isJumping && !(Physics.Raycast(leftToePos.transform.position, Vector3.down, ghostJumpHeight.value, _layerMask) ||
+                           Physics.Raycast(rightToePos.transform.position, Vector3.down, ghostJumpHeight.value, _layerMask) ||
+                           Physics.Raycast(leftHeelPos.transform.position, Vector3.down, ghostJumpHeight.value, _layerMask) ||
+                           Physics.Raycast(rightHeelPos.transform.position, Vector3.down, ghostJumpHeight.value, _layerMask) ||
+                           Physics.Raycast(transform.position + Vector3.up, Vector3.down, ghostJumpHeight.value + 1.0f, _layerMask)))
         {
             isJumping = true;
             playerSoundManager?.MiniJumpEvent();
@@ -550,7 +555,7 @@ public class Movement : MonoBehaviour
 
     private void playerJump(Vector3 direction, float jumpHeight)
     {
-        if (!isJumping && (Physics.Raycast(leftToePos.transform.position, Vector3.down, ghostJumpHeight.value) || Physics.Raycast(rightToePos.transform.position, Vector3.down, ghostJumpHeight.value) || Physics.Raycast(leftHeelPos.transform.position, Vector3.down, ghostJumpHeight.value) || Physics.Raycast(rightHeelPos.transform.position, Vector3.down, ghostJumpHeight.value)))
+        if (!isJumping && (Physics.Raycast(leftToePos.transform.position, Vector3.down, ghostJumpHeight.value, _layerMask) || Physics.Raycast(rightToePos.transform.position, Vector3.down, ghostJumpHeight.value, _layerMask) || Physics.Raycast(leftHeelPos.transform.position, Vector3.down, ghostJumpHeight.value, _layerMask) || Physics.Raycast(rightHeelPos.transform.position, Vector3.down, ghostJumpHeight.value, _layerMask)))
         {
             _collider.material = _jumpMaterial;
             for (int j = 0; j < jumpPlatforms.Count; j++)
@@ -683,7 +688,17 @@ public class Movement : MonoBehaviour
     public void SetIsAttacked(bool attacked)
     {
         isAttacked = attacked;
+        if (isAttacked)
+        {
+            canPush = false;
+        }
+        else
+        {
+            canPush = true;
+        }
     }
+
+
 
     public void SetState()
     {

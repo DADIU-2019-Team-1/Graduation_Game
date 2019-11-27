@@ -25,7 +25,6 @@ namespace AK
         static const AkUniqueID FAM_ATTACK = 4185887082U;
         static const AkUniqueID FAM_BASE_START = 4168887876U;
         static const AkUniqueID FAM_BASE_STOP = 2259991288U;
-        static const AkUniqueID FAM_ONSET = 3016005891U;
         static const AkUniqueID FRI_ATTACK = 2749812849U;
         static const AkUniqueID FRI_BASE_START = 1914315619U;
         static const AkUniqueID FRI_BASE_STOP = 841573473U;
@@ -33,9 +32,8 @@ namespace AK
         static const AkUniqueID FRI_ONSET = 559410714U;
         static const AkUniqueID FRI_UP = 2916966842U;
         static const AkUniqueID GRIEF_ATTACK = 2473929957U;
-        static const AkUniqueID GRIEF_BASEMOVE = 1673323629U;
-        static const AkUniqueID GRIEF_HOLD = 3369700890U;
-        static const AkUniqueID GRIEF_ONSET = 4109451574U;
+        static const AkUniqueID GRIEF_BASEMOVE_START = 2826903308U;
+        static const AkUniqueID GRIEF_BASEMOVE_STOP = 3228817312U;
         static const AkUniqueID GRIEF_REACHTHETOP = 1595833916U;
         static const AkUniqueID PLAY_AMB_OUTSIDE = 121174090U;
         static const AkUniqueID PLAY_ECHOCALL_MEMORY_PLAYLIST = 3108390310U;
@@ -61,6 +59,7 @@ namespace AK
             {
                 static const AkUniqueID END_FULLLULLABY_CREDITS = 2902281238U;
                 static const AkUniqueID EXIT_MEMORIES_HANGUPMEM = 2558751454U;
+                static const AkUniqueID GRAVE_SILENCE = 3525878376U;
                 static const AkUniqueID GRIEF_APPEARS = 3170210169U;
                 static const AkUniqueID GRIEF_CHASE = 535181753U;
                 static const AkUniqueID HUB = 646625282U;

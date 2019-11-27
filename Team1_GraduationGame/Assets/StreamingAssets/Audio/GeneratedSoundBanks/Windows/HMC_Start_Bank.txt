@@ -11,7 +11,6 @@ Event	ID	Name			Wwise Object Path	Notes
 	1193266125	Fri_Down			\Default Work Unit\ENEMIES\Friends\Fri_Down	
 	1595833916	Grief_ReachTheTop			\Default Work Unit\ENEMIES\GRIEF MONSTER\Grief_ReachTheTop	
 	1647120744	Dead_LPF			\Default Work Unit\Dead_LPF	
-	1673323629	Grief_BaseMove			\Default Work Unit\ENEMIES\GRIEF MONSTER\Grief_BaseMove	
 	1737921590	Play_FS_JumpToLand			\Default Work Unit\PLAYER\Play_FS_JumpToLand	
 	1749591466	Play_Push			\Default Work Unit\PLAYER\Play_Push	
 	1826050074	Empty_BigSis			\Default Work Unit\ENEMIES\BigSis\Empty_BigSis	
@@ -22,16 +21,15 @@ Event	ID	Name			Wwise Object Path	Notes
 	2445385739	BigSis_Down			\Default Work Unit\ENEMIES\BigSis\BigSis_Down	
 	2473929957	Grief_Attack			\Default Work Unit\ENEMIES\GRIEF MONSTER\Grief_Attack	
 	2749812849	Fri_Attack			\Default Work Unit\ENEMIES\Friends\Fri_Attack	
+	2826903308	Grief_BaseMove_START			\Default Work Unit\ENEMIES\GRIEF MONSTER\Grief_BaseMove_START	
 	2874393337	Play_FS_System			\Default Work Unit\PLAYER\Play_FS_System	
 	2916966842	Fri_UP			\Default Work Unit\ENEMIES\Friends\Fri_UP	
-	3016005891	Fam_Onset			\Default Work Unit\ENEMIES\Family\Fam_Onset	
 	3108390310	Play_EchoCall_Memory_playlist			\Default Work Unit\MEMORIES\Play_EchoCall_Memory_playlist	
 	3222526703	Play_UI_ToneCall			\Default Work Unit\UI\Play_UI_ToneCall	
+	3228817312	Grief_BaseMove_STOP			\Default Work Unit\ENEMIES\GRIEF MONSTER\Grief_BaseMove_STOP	
 	3307487220	Stop_EchoCall_Memory_playlist			\Default Work Unit\MEMORIES\Stop_EchoCall_Memory_playlist	
-	3369700890	Grief_Hold			\Default Work Unit\ENEMIES\GRIEF MONSTER\Grief_Hold	
 	3665314627	BigSis_Attack			\Default Work Unit\ENEMIES\BigSis\BigSis_Attack	
 	3994783433	Play_Push_ToyObjects			\Default Work Unit\Pushable Objects\Play_Push_ToyObjects	
-	4109451574	Grief_Onset			\Default Work Unit\ENEMIES\GRIEF MONSTER\Grief_Onset	
 	4119942951	Play_FS_Minijump			\Default Work Unit\PLAYER\Play_FS_Minijump	
 	4168887876	Fam_BASE_Start			\Default Work Unit\ENEMIES\Family\Fam_BASE_Start	
 	4185887082	Fam_Attack			\Default Work Unit\ENEMIES\Family\Fam_Attack	
@@ -75,6 +73,7 @@ State	ID	Name	State Group			Notes
 	3074462064	Memory_Lullaby	GameState			
 	3170210169	Grief_Appears	GameState			
 	3222607803	Menu_Load	GameState			
+	3525878376	Grave_Silence	GameState			
 	3845742627	Level_3_silence_Memory	GameState			
 
 Custom State	ID	Name	State Group	Owner		Notes
@@ -96,15 +95,12 @@ Modulator LFO	ID	Name			Wwise Object Path	Notes
 
 Modulator Envelope	ID	Name			Wwise Object Path	Notes
 	371314756	Modulator Envelope (Custom)				
-	384295152	deadringdistpitch			\Default Work Unit\deadringdistpitch	
-	1071940721	Modulator Envelope (Custom)				
 
 Modulator Time	ID	Name			Wwise Object Path	Notes
 	135177180	Frenemies Particle Time			\Default Work Unit\Frenemies Particle Time	
 
 Effect plug-ins	ID	Name	Type				Notes
 	970191973	DeadRingDist	Wwise Guitar Distortion			
-	3746052870	Ambience_Slower	Wwise Time Stretch			
 
 Source plug-ins	ID	Name	Type		Wwise Object Path	Notes
 	272856196	SoundSeed Air Woosh	SoundSeed Air Woosh		\Actor-Mixer Hierarchy\Default Work Unit\FRENEMIES\Friends\Fri_Presence\Fri_BaseBurn\Air_Particle Flow_Red\SoundSeed Air Woosh	Frenemies Particle Flow Air 
@@ -113,7 +109,6 @@ Source plug-ins	ID	Name	Type		Wwise Object Path	Notes
 	322870195	SoundSeed Air Woosh	SoundSeed Air Woosh		\Actor-Mixer Hierarchy\Default Work Unit\FRENEMIES\Grief_Monster\Gr_Presence\Gr_BaseBurn\Air_Particle Flow_Red\SoundSeed Air Woosh	Frenemies Particle Flow Air 
 	334319207	SoundSeed Grain	SoundSeed Grain		\Actor-Mixer Hierarchy\Default Work Unit\AMBIENCE\Rumble\Rumble_Blend\Rumble Random\Rumble_Blizzard_Grain\SoundSeed Grain	
 	365244339	SoundSeed Air Woosh	SoundSeed Air Woosh		\Actor-Mixer Hierarchy\Default Work Unit\FRENEMIES\Big Sis\BigSis_Presence\BigSis_Presence\Air_Particle Flow_Red\SoundSeed Air Woosh	Frenemies Particle Flow Air 
-	525736750	SoundSeed Grain	SoundSeed Grain		\Actor-Mixer Hierarchy\Default Work Unit\AMBIENCE\Rain\Rain_Blend\Rain drops\SoundSeed Grain	
 	540302667	Wwise Silence	Wwise Silence		\Actor-Mixer Hierarchy\Default Work Unit\AMBIENCE\Rumble\Rumble_Blend\Rumble Random\Silence_2s\Wwise Silence	
 	730367661	SoundSeed Air Woosh	SoundSeed Air Woosh		\Actor-Mixer Hierarchy\Default Work Unit\FRENEMIES\Family\Fam_Presence\Family_Base\Air_Particle Flow_Red\SoundSeed Air Woosh	Frenemies Particle Flow Air 
 	965704092	SoundSeed Air Wind	SoundSeed Air Wind		\Actor-Mixer Hierarchy\Default Work Unit\AMBIENCE\Wind\Seed_Wind\SoundSeed Air Wind	
@@ -201,7 +196,6 @@ In Memory Audio	ID	Name	Audio source file		Wwise Object Path	Notes	Data Size
 	317869895	Hub_end_1_1bpre_0ex--Low Intensity STEM_MoreNotes	C:\Users\jonas\OneDrive\Dokumenter\Historie-DD\AudioDesign\9. semseter - AD DADIU\HMC_GraduationGame\Ww_Project Grief_GraduationGame\Originals\Windows\SFX\Hub_end_1_1bpre_0ex--Low Intensity STEM_5F79D6EF.wem		\Interactive Music Hierarchy\Default Work Unit\Transitions\Hub_to_silence\Hub_end_01_Rythm\Hub_end_1_1bpre_0ex--Low Intensity STEM_MoreNotes		150186
 	322350777	SoftCarpet_Barefeet_Running_04_Left	C:\Users\jonas\OneDrive\Dokumenter\Historie-DD\AudioDesign\9. semseter - AD DADIU\HMC_GraduationGame\Ww_Project Grief_GraduationGame\Originals\Windows\SFX\SoftCarpet_Barefeet_Running_13EFC66B.wem		\Actor-Mixer Hierarchy\Default Work Unit\PLAYER\Pl_Locomotion\Pl_Footsteps\FS_System\FS_Base\Run\Run_Left\SoftCarpet_Barefeet_Running_04_Left		2643
 	324967984	5th Ave - E_1b--5th Ave - HighInt	C:\Users\jonas\OneDrive\Dokumenter\Historie-DD\AudioDesign\9. semseter - AD DADIU\HMC_GraduationGame\Ww_Project Grief_GraduationGame\Originals\Windows\SFX\5th Ave - E_1b--5th Ave - HighInt_5F79D6EF.wem		\Interactive Music Hierarchy\Default Work Unit\HMC_MUSIC_SYSTEM\Outside\Outside_03\E\5th Ave - E_1b--5th Ave - HighInt		120599
-	328870386	Ambience Rain From Inside Car 01	C:\Users\jonas\OneDrive\Dokumenter\Historie-DD\AudioDesign\9. semseter - AD DADIU\HMC_GraduationGame\Ww_Project Grief_GraduationGame\Originals\Windows\SFX\Ambience Rain From Inside Car 01_53D746DC.wem		\Actor-Mixer Hierarchy\Default Work Unit\AMBIENCE\Rain\Rain_Blend\Ambience Rain From Inside Car 01		342649
 	329703451	Whisper 6	C:\Users\jonas\OneDrive\Dokumenter\Historie-DD\AudioDesign\9. semseter - AD DADIU\HMC_GraduationGame\Ww_Project Grief_GraduationGame\Originals\Windows\SFX\Whisper 6_FD69801D.wem		\Actor-Mixer Hierarchy\Default Work Unit\FRENEMIES\Family\Fam_Presence\Fam_Whispers\Fam_Whisper\Whisper 6		22098
 	337717318	Grief Attack - 0004	C:\Users\jonas\OneDrive\Dokumenter\Historie-DD\AudioDesign\9. semseter - AD DADIU\HMC_GraduationGame\Ww_Project Grief_GraduationGame\Originals\Windows\SFX\Grief Attack - 0004_FD69801D.wem		\Actor-Mixer Hierarchy\Default Work Unit\FRENEMIES\Grief_Monster\Gr_Locomotion\Gr_Attack\Grief Attack - 0004		34574
 	346440519	Impact Stick Drag Through Dirt And Rocks 01_03	C:\Users\jonas\OneDrive\Dokumenter\Historie-DD\AudioDesign\9. semseter - AD DADIU\HMC_GraduationGame\Ww_Project Grief_GraduationGame\Originals\Windows\SFX\Impact Stick Drag Through Dirt And Rocks 01_87AB3787.wem		\Actor-Mixer Hierarchy\Default Work Unit\PLAYER\Pl_Locomotion\Pl_Footsteps\FS_System\FS_Material\Dirt\Dirt_Run\Impact Stick Drag Through Dirt And Rocks 01_03		2335
@@ -253,7 +247,7 @@ In Memory Audio	ID	Name	Audio source file		Wwise Object Path	Notes	Data Size
 	537179277	NormalWood_Barefeet_Walking_04	C:\Users\jonas\OneDrive\Dokumenter\Historie-DD\AudioDesign\9. semseter - AD DADIU\HMC_GraduationGame\Ww_Project Grief_GraduationGame\Originals\Windows\SFX\NormalWood_Barefeet_Walking_E4AA523C.wem		\Actor-Mixer Hierarchy\Default Work Unit\PLAYER\Pl_Locomotion\Pl_Footsteps\FS_System\FS_Material\Wood_Big\Wood_Sneak\NormalWood_Barefeet_Walking_04		4318
 	539060036	M_Breath_Jump_04	C:\Users\jonas\OneDrive\Dokumenter\Historie-DD\AudioDesign\9. semseter - AD DADIU\HMC_GraduationGame\Ww_Project Grief_GraduationGame\Originals\Windows\SFX\M_Breath_Jump_FBE8F15C.wem		\Actor-Mixer Hierarchy\Default Work Unit\PLAYER\Pl_Locomotion\PL_Breath\M_Breath_JumpDOWN\M_Breath_Jump_04		5249
 	544915248	Walking Barefoot over grass_02	C:\Users\jonas\OneDrive\Dokumenter\Historie-DD\AudioDesign\9. semseter - AD DADIU\HMC_GraduationGame\Ww_Project Grief_GraduationGame\Originals\Windows\SFX\Walking Barefoot over grass_FB181D7E.wem		\Actor-Mixer Hierarchy\Default Work Unit\PLAYER\Pl_Locomotion\Pl_Footsteps\FS_System\FS_Material\Grass\Grass_Run\Walking Barefoot over grass_02		2246
-	545188591	Friend Movement_Still - 0000	C:\Users\jonas\OneDrive\Dokumenter\Historie-DD\AudioDesign\9. semseter - AD DADIU\HMC_GraduationGame\Ww_Project Grief_GraduationGame\Originals\Windows\SFX\Friend Movement_Still - 0000_FD69801D.wem		\Actor-Mixer Hierarchy\Default Work Unit\FRENEMIES\Friends\Fri_Presence\Fri_BaseBurn\Friend Movement_Still - 0000		99266
+	545188591	Friend Movement_Still - 0000	C:\Users\jonas\OneDrive\Dokumenter\Historie-DD\AudioDesign\9. semseter - AD DADIU\HMC_GraduationGame\Ww_Project Grief_GraduationGame\Originals\Windows\SFX\Friend Movement_Still - 0000_F5CBC455.wem		\Actor-Mixer Hierarchy\Default Work Unit\FRENEMIES\Friends\Fri_Presence\Fri_BaseBurn\Friend Movement_Still - 0000		69752
 	553463552	BigS Appear - 0002	C:\Users\jonas\OneDrive\Dokumenter\Historie-DD\AudioDesign\9. semseter - AD DADIU\HMC_GraduationGame\Ww_Project Grief_GraduationGame\Originals\Windows\SFX\BigS Appear - 0002_FD69801D.wem		\Actor-Mixer Hierarchy\Default Work Unit\FRENEMIES\Big Sis\BigSis_Locomotion\BigSis_Appear\BigS Appear - 0002		35344
 	553919741	5th Ave - Eb--5th Ave - LowInt	C:\Users\jonas\OneDrive\Dokumenter\Historie-DD\AudioDesign\9. semseter - AD DADIU\HMC_GraduationGame\Ww_Project Grief_GraduationGame\Originals\Windows\SFX\5th Ave - Eb--5th Ave - LowInt_5F79D6EF.wem		\Interactive Music Hierarchy\Default Work Unit\HMC_MUSIC_SYSTEM\Outside\Outside_00_01\Eb\5th Ave - Eb--5th Ave - LowInt		123690
 	555376330	Outside_Short_E_1p_3x--Melody STEM	C:\Users\jonas\OneDrive\Dokumenter\Historie-DD\AudioDesign\9. semseter - AD DADIU\HMC_GraduationGame\Ww_Project Grief_GraduationGame\Originals\Windows\SFX\5th Ave - E_1b--5th Ave - MidInt_5F79D6EF.wem		\Interactive Music Hierarchy\Default Work Unit\HMC_MUSIC_SYSTEM\Outside\Outside_02\E\Outside_Short_E_1p_3x--Melody STEM		123147
@@ -279,7 +273,6 @@ In Memory Audio	ID	Name	Audio source file		Wwise Object Path	Notes	Data Size
 	630225089	Outside_Short_Loop_1p_3x--Melody STEM	C:\Users\jonas\OneDrive\Dokumenter\Historie-DD\AudioDesign\9. semseter - AD DADIU\HMC_GraduationGame\Ww_Project Grief_GraduationGame\Originals\Windows\SFX\5th Ave - ShortLoop_1b--5th Ave - MidInt_5F79D6EF.wem		\Interactive Music Hierarchy\Default Work Unit\HMC_MUSIC_SYSTEM\Outside\Outside_02\E-Gb\Outside_Short_Loop_1p_3x--Melody STEM		106349
 	637577314	Foley Cloth Flap Jacket 03_02	C:\Users\jonas\OneDrive\Dokumenter\Historie-DD\AudioDesign\9. semseter - AD DADIU\HMC_GraduationGame\Ww_Project Grief_GraduationGame\Originals\Windows\SFX\Foley Cloth Flap Jacket 03_AA830445.wem		\Actor-Mixer Hierarchy\Default Work Unit\PLAYER\Pl_Locomotion\Pl_Cloth_Movement\Cloth_Move_Switcher\Cloth_Move\Foley Cloth Flap Jacket 03_02		6745
 	638155992	FootstepsCarRoof_BW_05	C:\Users\jonas\OneDrive\Dokumenter\Historie-DD\AudioDesign\9. semseter - AD DADIU\HMC_GraduationGame\Ww_Project Grief_GraduationGame\Originals\Windows\SFX\FootstepsCarRoof_BW.7360_6FBB4DDC.wem		\Actor-Mixer Hierarchy\Default Work Unit\PLAYER\Pl_Locomotion\Pl_Footsteps\FS_System\FS_Material\Car_Metal\Car_Sneak\FootstepsCarRoof_BW_05		4689
-	652610312	SoundSeed Grain	C:\Users\jonas\OneDrive\Dokumenter\Historie-DD\AudioDesign\9. semseter - AD DADIU\HMC_GraduationGame\Ww_Project Grief_GraduationGame\Originals\Windows\Plugins\SoundSeed Grain\Liquid Water Dripping In Water 05_2D820544.wem	SoundSeed Grain (Custom)	\Actor-Mixer Hierarchy\Default Work Unit\AMBIENCE\Rain\Rain_Blend\Rain drops\SoundSeed Grain		9349
 	657753468	SoftCarpet_Barefeet_Sneak	C:\Users\jonas\OneDrive\Dokumenter\Historie-DD\AudioDesign\9. semseter - AD DADIU\HMC_GraduationGame\Ww_Project Grief_GraduationGame\Originals\Windows\SFX\SoftCarpet_Barefeet_Walking_61E9508F.wem		\Actor-Mixer Hierarchy\Default Work Unit\PLAYER\Pl_Locomotion\Pl_Footsteps\FS_System\FS_Base\Sneak\SoftCarpet_Barefeet_Sneak		4457
 	666449888	Grief Appears Cutscene	C:\Users\jonas\OneDrive\Dokumenter\Historie-DD\AudioDesign\9. semseter - AD DADIU\HMC_GraduationGame\Ww_Project Grief_GraduationGame\Originals\Windows\SFX\Grief Appears Cutscene_5F79D6EF.wem		\Interactive Music Hierarchy\Default Work Unit\HMC_MUSIC_SYSTEM\Grief Appears Cutscene\Grief Appears Playlist\Grief Appears Track\Grief Appears Cutscene		466767
 	667929860	trans_to_Outside_1p_1x--Low Intensity STEM	C:\Users\jonas\OneDrive\Dokumenter\Historie-DD\AudioDesign\9. semseter - AD DADIU\HMC_GraduationGame\Ww_Project Grief_GraduationGame\Originals\Windows\SFX\trans_to_Outside_1p_1x--Low Intensity STEM_5F79D6EF.wem		\Interactive Music Hierarchy\Default Work Unit\HMC_MUSIC_SYSTEM\Outside\Outside_00_01\trans_to_Outside\trans_to_Outside_1p_1x--Low Intensity STEM		206087

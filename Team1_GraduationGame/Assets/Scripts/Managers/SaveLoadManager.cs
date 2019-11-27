@@ -40,8 +40,8 @@ namespace Team1_GraduationGame.SaveLoadSystem
                 PlayerPrefs.SetInt("loadGameOnAwake", 1);
                 SceneManager.LoadScene(PlayerPrefs.GetInt("currentScene"));
             }
-            else
-                Debug.Log("Save/Load Manager: No previous games to load");
+            //else
+            //    Debug.Log("Save/Load Manager: No previous games to load");
         }
 
         public void OpenLevel(int atBuildIndex)

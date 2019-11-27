@@ -657,7 +657,9 @@ namespace Team1_GraduationGame.Enemies
             _animator?.ResetTrigger("PushedDown");
             _animator?.ResetTrigger("GettingUp");
             _animator?.ResetTrigger("Attack");
+            _animator?.SetTrigger("Reset");
             CollisionWithPlayerSetter(false);
+            _animator?.ResetTrigger("Reset");
         }
 
         public void SetIsActive(bool isActive) { _active = isActive; }

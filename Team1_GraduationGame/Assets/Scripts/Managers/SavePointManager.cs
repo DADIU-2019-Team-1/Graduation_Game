@@ -28,15 +28,16 @@ namespace Team1_GraduationGame.SaveLoadSystem
             saveLoadManager = new SaveLoadManager();
             saveLoadManager.firstSceneIndex = firstSceneBuildIndex;
 
+        }
+
+        private void Start()
+        {
             if (PlayerPrefs.GetInt("loadGameOnAwake") == 1)
             {
                 PlayerPrefs.SetInt("loadGameOnAwake", 0);
                 saveLoadManager.LoadGame(true);
             }
-        }
 
-        private void Start()
-        {
             UIMenu[] menuObjects = Resources.FindObjectsOfTypeAll<UIMenu>();
             if (menuObjects != null)
             {

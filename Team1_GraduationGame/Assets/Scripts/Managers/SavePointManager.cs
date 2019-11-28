@@ -87,6 +87,12 @@ namespace Team1_GraduationGame.SaveLoadSystem
                 if (GameObject.FindGameObjectWithTag("Player") != null)
                 {
                     GameObject tempPlayer = GameObject.FindGameObjectWithTag("Player");
+
+                    if (tempPlayer != null)
+                    {
+                        tempPlayer.GetComponent<Movement>().Frozen(false);
+                    }
+
                     tempPlayer.transform.position =
                         savePoints[savePointNumber - 1].transform.position + transform.up;
                 }

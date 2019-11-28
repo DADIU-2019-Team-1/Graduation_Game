@@ -46,6 +46,7 @@ namespace AK
         static const AkUniqueID PLAY_FS_MINIJUMP = 4119942951U;
         static const AkUniqueID PLAY_FS_SYSTEM = 2874393337U;
         static const AkUniqueID PLAY_HMC_MUSIC_SYSTEM_LEVEL1 = 2367316274U;
+        static const AkUniqueID PLAY_HOUSEBREAKING = 212992177U;
         static const AkUniqueID PLAY_PUSH = 1749591466U;
         static const AkUniqueID PLAY_PUSH_BIGOBJECTS = 2101881411U;
         static const AkUniqueID PLAY_PUSH_TOYOBJECTS = 3994783433U;
@@ -74,6 +75,7 @@ namespace AK
                 static const AkUniqueID MENU_LOAD = 3222607803U;
                 static const AkUniqueID OUTSIDE = 438105790U;
                 static const AkUniqueID PLAYER_DIED = 2295196519U;
+                static const AkUniqueID THE4COLDMEMORY_LOWAMB = 111690814U;
             } // namespace STATE
         } // namespace GAMESTATE
 
@@ -132,19 +134,15 @@ namespace AK
         static const AkUniqueID AMB_INTENSITY = 752028789U;
         static const AkUniqueID DENSITY_FA_SSGRAIN = 2715217995U;
         static const AkUniqueID DIST_TO_MEMORY = 2843219839U;
-        static const AkUniqueID FAM_SLOWFAST = 2639143423U;
         static const AkUniqueID FAMILY_SPEED = 3969604801U;
         static const AkUniqueID FOOTSTEP_MATERIAL_CALCULATOR = 441085524U;
         static const AkUniqueID FOOTSTEP_STATE_CALCULATOR = 3250563732U;
-        static const AkUniqueID FRI_SLOWFAST = 1956253312U;
         static const AkUniqueID FRIEND_SPEED = 3859748677U;
-        static const AkUniqueID FS_WETTISH = 1688601825U;
         static const AkUniqueID GRIEF_SPEED = 4088545558U;
         static const AkUniqueID IMMERSION_FA_SSGRAIN = 2481728872U;
         static const AkUniqueID INSTRUMENT_FA_SSGRAIN = 2317409760U;
         static const AkUniqueID MASTER_MUSIC_INMENUSLIDER = 708145369U;
         static const AkUniqueID MASTER_SFX_INMENUSLIDER = 2198029213U;
-        static const AkUniqueID MEMORYCALL_VOLUME_FOR_ANIMATION = 1254966522U;
         static const AkUniqueID METER_WIND = 3084119761U;
         static const AkUniqueID PLAYBACK_RATE = 1524500807U;
         static const AkUniqueID PROXIMITY_FA_SSGRAIN = 1791284502U;

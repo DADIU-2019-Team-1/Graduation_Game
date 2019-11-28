@@ -175,6 +175,7 @@ namespace AK
         static const AkUniqueID AMB = 1117531639U;
         static const AkUniqueID AMB_OUTSIDE = 1013211851U;
         static const AkUniqueID DEAD_RIING = 2951509167U;
+        static const AkUniqueID ENEMIES = 2242381963U;
         static const AkUniqueID MASTER_AUDIO_BUS = 3803692087U;
         static const AkUniqueID MOTION_FACTORY_BUS = 985987111U;
         static const AkUniqueID MUSIC = 3991942870U;

@@ -14,6 +14,8 @@ namespace AK
     namespace EVENTS
     {
         static const AkUniqueID BIGSIS_ATTACK = 3665314627U;
+        static const AkUniqueID BIGSIS_BASE_START = 1022407497U;
+        static const AkUniqueID BIGSIS_BASE_STOP = 2709824483U;
         static const AkUniqueID BIGSIS_DOWN = 2445385739U;
         static const AkUniqueID BISSIS_APPEAR = 255820916U;
         static const AkUniqueID BISSIS_SPOT = 146861159U;

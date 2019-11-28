@@ -46,6 +46,7 @@ namespace AK
         static const AkUniqueID PLAY_FS_MINIJUMP = 4119942951U;
         static const AkUniqueID PLAY_FS_SYSTEM = 2874393337U;
         static const AkUniqueID PLAY_HMC_MUSIC_SYSTEM_LEVEL1 = 2367316274U;
+        static const AkUniqueID PLAY_HOUSEBREAKING = 212992177U;
         static const AkUniqueID PLAY_PUSH = 1749591466U;
         static const AkUniqueID PLAY_PUSH_BIGOBJECTS = 2101881411U;
         static const AkUniqueID PLAY_PUSH_TOYOBJECTS = 3994783433U;
@@ -74,6 +75,7 @@ namespace AK
                 static const AkUniqueID MENU_LOAD = 3222607803U;
                 static const AkUniqueID OUTSIDE = 438105790U;
                 static const AkUniqueID PLAYER_DIED = 2295196519U;
+                static const AkUniqueID THE4COLDMEMORY_LOWAMB = 111690814U;
             } // namespace STATE
         } // namespace GAMESTATE
 

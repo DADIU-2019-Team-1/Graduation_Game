@@ -23,7 +23,7 @@ namespace Team1_GraduationGame.Enemies
         private LayerMask _layerMask;
         private bool _active, _isAggro, _isSpawned, _isRotating, _playerSpotted, _lightOn, _timerRunning, _isChangingState;
         private int _currentSpawnPoint = 0;
-        private Quaternion _lookRotation;
+        private Quaternion _lookRotation, _defaultRotation;
 
         // Public:
         public bool drawGizmos = true;
@@ -59,6 +59,8 @@ namespace Team1_GraduationGame.Enemies
                 fieldOfViewLight.range = viewDistance;
                 fieldOfViewLight.spotAngle = fieldOfView;
             }
+
+            _defaultRotation = transform.rotation;
 
             if (visionGameObject != null)
                 _active = true;
@@ -172,7 +174,6 @@ namespace Team1_GraduationGame.Enemies
             {
                 StopAllCoroutines();
                 _isAggro = false;
-                _isSpawned = false;
                 _playerSpotted = false;
                 _timerRunning = false;
                 _isChangingState = false;
@@ -180,7 +181,8 @@ namespace Team1_GraduationGame.Enemies
                 _playerAnimator?.ResetTrigger("BigAttack");
                 _animator.ResetTrigger("Attack");
                 _animator.SetBool("Patrolling", false);
-                _animator.SetTrigger("Disappearing");
+                transform.rotation = _defaultRotation;
+                StartCoroutine(ChangeState(false));
                 UpdateFOVLight(false, false);
             }
         }

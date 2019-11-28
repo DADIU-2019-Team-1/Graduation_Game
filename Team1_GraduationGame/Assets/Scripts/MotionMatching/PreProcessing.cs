@@ -48,17 +48,14 @@ namespace Team1_GraduationGame.MotionMatching
                 int clipState = -1;
                 for (int j = 0; j < states.Length; j++)
                 {
-                    Debug.Log("Checking state for " + lowercaseName + " | Is it " + states[j] + "?");
                     if (lowercaseName.Contains(states[j]) && !lowercaseName.Contains("from" + states[j]))
                     {
-                        Debug.Log("Yes! Set clip state to " + j + " which is " + states[j]);
                         clipState = j;
                         break;
                     }
                 }
                 if (clipState == -1)
                 {
-                    Debug.Log(i + " skipped");
                     continue;
                 }
 

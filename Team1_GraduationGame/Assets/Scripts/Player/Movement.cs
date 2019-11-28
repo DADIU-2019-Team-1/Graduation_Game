@@ -503,19 +503,16 @@ public class Movement : MonoBehaviour
                 }
                 else if (dragDist < radius.value * sneakThreshold) // Sneak
                 {
-                    //Debug.Log("Should sneak");
                     targetSpeed = sneakSpeed.value;
                     movePlayer(direction);
                 }
                 else if (dragDist < radius.value * runThreshold) // Walk
                 {
-                    //Debug.Log("Should walk");
                     targetSpeed = walkSpeed.value;
                     movePlayer(direction);
                 }
                 else // Run
                 {
-                    //Debug.Log("Should run");
                     targetSpeed = runSpeed.value;
                     movePlayer(direction);
                 }

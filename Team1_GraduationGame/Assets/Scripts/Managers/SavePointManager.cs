@@ -8,13 +8,19 @@ namespace Team1_GraduationGame.SaveLoadSystem
     using Team1_GraduationGame.Events;
     using Team1_GraduationGame.Interaction;
     using UnityEngine.SceneManagement;
-    using UnityEditor;
+    using UnityEngine.Playables;
     using UnityEngine;
+    using TMPro;
+
+#if UNITY_EDITOR
+    using UnityEditor;
+#endif
 
     public class SavePointManager : MonoBehaviour
     {
         // References:
         public SaveLoadManager saveLoadManager;
+        public PlayableDirector _playableDirector;
 
         // Public
         public int firstSceneBuildIndex = 0;
@@ -27,16 +33,31 @@ namespace Team1_GraduationGame.SaveLoadSystem
         {
             saveLoadManager = new SaveLoadManager();
             saveLoadManager.firstSceneIndex = firstSceneBuildIndex;
-
-            if (PlayerPrefs.GetInt("loadGameOnAwake") == 1)
-            {
-                PlayerPrefs.SetInt("loadGameOnAwake", 0);
-                saveLoadManager.LoadGame(true);
-            }
         }
 
         private void Start()
         {
+            if (PlayerPrefs.GetInt("previousGame") == 1)
+            {
+                GameObject continueTextObj = GameObject.FindGameObjectWithTag("ContinueBtn");
+                if (continueTextObj != null)
+                {
+                    TextMeshProUGUI continueText = continueTextObj.GetComponent<TextMeshProUGUI>();
+                    continueText.color = Color.white;
+                }
+            }
+
+            if (PlayerPrefs.GetInt("loadGameOnAwake") == 1)
+            {
+                if (_playableDirector != null)
+                {
+                    _playableDirector.time = _playableDirector.duration;
+                }
+
+                PlayerPrefs.SetInt("loadGameOnAwake", 0);
+                saveLoadManager.LoadGame(true);
+            }
+
             UIMenu[] menuObjects = Resources.FindObjectsOfTypeAll<UIMenu>();
             if (menuObjects != null)
             {

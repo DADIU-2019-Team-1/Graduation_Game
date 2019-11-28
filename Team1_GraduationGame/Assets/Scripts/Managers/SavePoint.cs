@@ -16,6 +16,7 @@ namespace Team1_GraduationGame.SaveLoadSystem
         [HideInInspector] public SavePointManager thisSavePointManager;
 
         // Public:
+        public bool useSavePointPosition = true;
         public bool savingDisabled;
         [HideInInspector] public int thisID;
         public bool savePointUsed;
@@ -43,7 +44,11 @@ namespace Team1_GraduationGame.SaveLoadSystem
             {
                 if (col.tag == "Player" && !savePointUsed)
                 {
-                    thisSavePointManager.saveLoadManager.SaveGame();
+                    if (useSavePointPosition)
+                        thisSavePointManager.saveLoadManager.SaveGame(gameObject.transform.position);
+                    else
+                        thisSavePointManager.saveLoadManager.SaveGame();
+
                     thisSavePointManager.previousCheckPoint = thisID;
                     savePointUsed = true;
                 }

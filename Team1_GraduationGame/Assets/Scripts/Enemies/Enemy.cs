@@ -161,7 +161,7 @@ namespace Team1_GraduationGame.Enemies
                         return;
                     _targetSpeed = thisEnemy.runSpeed;
                     _navMeshAgent.angularSpeed = thisEnemy.runTurnSpeed;
-                    /*_enemySoundManager?.Onset();*/ // TODO enable later YYY
+                    _enemySoundManager?.Onset();
                     break;
                 case 2:
                     _targetSpeed = 0;
@@ -573,7 +573,7 @@ namespace Team1_GraduationGame.Enemies
 
             if (!_inTriggerZone)
             {
-                // _enemySoundManager?.Hold(); // TODO enable this later - YYY
+                _enemySoundManager?.Hold();
                 _isAggro = false;
             }
 

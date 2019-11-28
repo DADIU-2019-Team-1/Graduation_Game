@@ -21,7 +21,7 @@ namespace Team1_GraduationGame.Enemies
 
         // Private:
         private LayerMask _layerMask;
-        private bool _active, _isAggro, _isSpawned, _isRotating, _playerSpotted, _lightOn, _timerRunning, _isChangingState;
+        private bool _active, _isAggro, _isSpawned, _isRotating, _playerSpotted, _lightOn, _timerRunning, _isChangingState, _returnAnim;
         private int _currentSpawnPoint = 0;
         private Quaternion _lookRotation, _defaultRotation;
 
@@ -89,7 +89,7 @@ namespace Team1_GraduationGame.Enemies
                             Vector3 dir = _player.transform.position - visionGameObject.transform.position;
                             float enemyToPlayerAngle = Vector3.Angle(visionGameObject.transform.forward, dir);
 
-                            if (enemyToPlayerAngle < fieldOfView / 2)
+                            if (enemyToPlayerAngle < (fieldOfView + 4.0f) / 2.0f)
                             {
                                 RaycastHit hit;
 
@@ -123,6 +123,10 @@ namespace Team1_GraduationGame.Enemies
                 Quaternion rot = Quaternion.LookRotation(_player.transform.position - transform.position) != Quaternion.identity ? Quaternion.LookRotation(_player.transform.position - transform.position) : transform.rotation;
 
                 transform.rotation = Quaternion.RotateTowards(transform.rotation, rot, 85.0f * Time.fixedDeltaTime);
+            }
+            else if (!_isAggro && _returnAnim)
+            {
+                transform.rotation = Quaternion.RotateTowards(transform.rotation, _defaultRotation, 35.0f * Time.fixedDeltaTime);
             }
         }
 
@@ -174,6 +178,7 @@ namespace Team1_GraduationGame.Enemies
             {
                 StopAllCoroutines();
                 _isAggro = false;
+                _returnAnim = false;
                 _playerSpotted = false;
                 _timerRunning = false;
                 _isChangingState = false;
@@ -234,6 +239,7 @@ namespace Team1_GraduationGame.Enemies
             _playerAnimator?.ResetTrigger("BigAttack");
             _animator?.ResetTrigger("Attack");
             _active = true;
+            _returnAnim = false;
             playerDiedEvent?.Raise();
         }
 
@@ -270,8 +276,18 @@ namespace Team1_GraduationGame.Enemies
             UpdateFOVLight(true, false);
             _isAggro = false;
             _active = true;
+            _returnAnim = true;
             _animator.SetBool("Patrolling", true);
             _animator.ResetTrigger("Spotted");
+            StopAllCoroutines();
+            StartCoroutine(ReturnTimer());
+        }
+
+        private IEnumerator ReturnTimer()
+        {
+            yield return new WaitForSeconds(1.5f);
+
+            _returnAnim = false;
         }
 
 

@@ -138,7 +138,7 @@ namespace Team1_GraduationGame.Enemies
                         StopAllCoroutines();
                         StartCoroutine(ChangeState(true));
                     }
-                    else if (Vector3.Distance(transform.position, _player.transform.position) > spawnActivationDistance + 4.0f &&
+                    else if (Vector3.Distance(transform.position, _player.transform.position) > spawnActivationDistance + 5.0f &&
                              _isSpawned)
                     {
                         UpdateFOVLight(false, false);

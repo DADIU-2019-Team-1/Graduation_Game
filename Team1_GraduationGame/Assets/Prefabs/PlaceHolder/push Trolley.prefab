@@ -117,6 +117,7 @@ MonoBehaviour:
   angle: 90
   soundEmitDistance: 0
   interactCooldown: 1.5
+  minVelocityMagnitude: 0.005
   interactableOnce: 0
   pushable: 1
   useEvents: 0
@@ -128,6 +129,7 @@ MonoBehaviour:
   checkForObstructions: 0
   emitSound: 0
   useCooldown: 0
+  checkIsMoving: 0
   eventOnInteraction:
     m_PersistentCalls:
       m_Calls: []
@@ -187,6 +189,10 @@ MonoBehaviour:
   thrustAmount: 0.9
   wayPoints: []
   parentWayPoint: {fileID: 0}
+  pushSoundEvent:
+    idInternal: 0
+    valueGuidInternal: 
+    WwiseObjectReference: {fileID: 0}
 --- !u!1001 &3854553087045334846
 PrefabInstance:
   m_ObjectHideFlags: 0

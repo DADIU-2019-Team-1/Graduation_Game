@@ -273,7 +273,7 @@ MonoBehaviour:
   _localizedTexts:
   - English
   - Engelsk
-  - 
+  - Angol
 --- !u!1 &2135788177184589022
 GameObject:
   m_ObjectHideFlags: 0
@@ -447,7 +447,7 @@ MonoBehaviour:
   _localizedTexts:
   - Settings
   - Indstillinger
-  - 
+  - "Be\xE1ll\xEDt\xE1sok"
 --- !u!1 &2135788177217876707
 GameObject:
   m_ObjectHideFlags: 0
@@ -685,7 +685,7 @@ MonoBehaviour:
   _localizedTexts:
   - Return
   - Tilbage
-  - 
+  - Vissza
 --- !u!1 &2135788177469650438
 GameObject:
   m_ObjectHideFlags: 0
@@ -859,7 +859,7 @@ MonoBehaviour:
   _localizedTexts:
   - Sound Effects Volume
   - Lydeffekter
-  - 
+  - "Hangeffekt hanger\u0151"
 --- !u!1 &2135788177489344264
 GameObject:
   m_ObjectHideFlags: 0
@@ -1033,7 +1033,7 @@ MonoBehaviour:
   _localizedTexts:
   - Language
   - Sprog
-  - 
+  - Nyelv
 --- !u!1 &2135788177517685950
 GameObject:
   m_ObjectHideFlags: 0
@@ -1243,7 +1243,7 @@ MonoBehaviour:
   _localizedTexts:
   - Music Volume
   - Musik Lydstyrke
-  - 
+  - "Zene hanger\u0151"
 --- !u!1 &2135788177590713450
 GameObject:
   m_ObjectHideFlags: 0
@@ -1822,7 +1822,7 @@ MonoBehaviour:
   _localizedTexts:
   - Development Tool
   - "Udviklerv\xE6rkt\xF8j"
-  - 
+  - "Fejleszt\u0151i eszk\xF6z"
 --- !u!1 &2135788178710908942
 GameObject:
   m_ObjectHideFlags: 0
@@ -2506,6 +2506,7 @@ GameObject:
   - component: {fileID: 3658402638204086241}
   - component: {fileID: 5920141688902598160}
   - component: {fileID: 7839258177251843059}
+  - component: {fileID: 2363643645623721910}
   m_Layer: 5
   m_Name: Medium
   m_TagString: Untagged
@@ -2693,7 +2694,18 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 3658402638204086241}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 8236185587667117893}
+        m_MethodName: MenuButtonPress
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &7839258177251843059
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2708,6 +2720,23 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Qualitybutton: {fileID: 5920141688902598160}
   settingLevel: 2
+--- !u!114 &2363643645623721910
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4053791146942105417}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4634f15681ce2c447baf0508c532e1ed, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  languageButtonIndex: 0
+  _localizedTexts:
+  - Medium
+  - Mellem
+  - "K\xF6zepes"
 --- !u!1 &5752546354764503139
 GameObject:
   m_ObjectHideFlags: 0
@@ -2825,7 +2854,7 @@ MonoBehaviour:
   _localizedTexts:
   - Danish
   - Dansk
-  - 
+  - "D\xE1n"
 --- !u!1 &8427056354441860474
 GameObject:
   m_ObjectHideFlags: 0
@@ -2943,7 +2972,7 @@ MonoBehaviour:
   _localizedTexts:
   - Hungarian
   - Ungarsk
-  - 
+  - Magyar
 --- !u!1 &8584753328393744149
 GameObject:
   m_ObjectHideFlags: 0
@@ -2957,6 +2986,7 @@ GameObject:
   - component: {fileID: 2745095659730664239}
   - component: {fileID: 3233358704262481257}
   - component: {fileID: 7116888837803951454}
+  - component: {fileID: 2566065688722202638}
   m_Layer: 5
   m_Name: High
   m_TagString: Untagged
@@ -3158,7 +3188,35 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 2745095659730664239}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 8236185587667117893}
+        m_MethodName: MenuButtonPress
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+--- !u!114 &2566065688722202638
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8584753328393744149}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4634f15681ce2c447baf0508c532e1ed, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  languageButtonIndex: 0
+  _localizedTexts:
+  - High
+  - "H\xF8j"
+  - Magas
 --- !u!1 &8636576627515598925
 GameObject:
   m_ObjectHideFlags: 0
@@ -3326,6 +3384,7 @@ GameObject:
   - component: {fileID: 7531554570652385288}
   - component: {fileID: 5896425880910317964}
   - component: {fileID: 6878628652490371958}
+  - component: {fileID: 3605991167355640660}
   m_Layer: 5
   m_Name: Quality
   m_TagString: Untagged
@@ -3474,6 +3533,23 @@ MonoBehaviour:
   - {fileID: 0}
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!114 &3605991167355640660
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8685732689392440881}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4634f15681ce2c447baf0508c532e1ed, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  languageButtonIndex: 0
+  _localizedTexts:
+  - Quality
+  - Kvalitet
+  - "Min\u0151s\xE9g"
 --- !u!1 &8763519860483995074
 GameObject:
   m_ObjectHideFlags: 0
@@ -3487,6 +3563,7 @@ GameObject:
   - component: {fileID: 1836763259929078953}
   - component: {fileID: 2236148241736443265}
   - component: {fileID: 2142452008263081265}
+  - component: {fileID: 7612731105020779089}
   m_Layer: 5
   m_Name: Low
   m_TagString: Untagged
@@ -3674,7 +3751,18 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1836763259929078953}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 8236185587667117893}
+        m_MethodName: MenuButtonPress
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &2142452008263081265
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3689,6 +3777,23 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Qualitybutton: {fileID: 2236148241736443265}
   settingLevel: 0
+--- !u!114 &7612731105020779089
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8763519860483995074}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4634f15681ce2c447baf0508c532e1ed, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  languageButtonIndex: 0
+  _localizedTexts:
+  - Low
+  - Lav
+  - Alacsony
 --- !u!1 &9121602902818751115
 GameObject:
   m_ObjectHideFlags: 0

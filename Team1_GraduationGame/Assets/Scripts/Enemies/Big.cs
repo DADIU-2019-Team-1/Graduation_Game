@@ -21,9 +21,9 @@ namespace Team1_GraduationGame.Enemies
 
         // Private:
         private LayerMask _layerMask;
-        private bool _active, _isAggro, _isSpawned, _isRotating, _playerSpotted, _lightOn, _timerRunning, _isChangingState;
+        private bool _active, _isAggro, _isSpawned, _isRotating, _playerSpotted, _lightOn, _timerRunning, _isChangingState, _returnAnim;
         private int _currentSpawnPoint = 0;
-        private Quaternion _lookRotation;
+        private Quaternion _lookRotation, _defaultRotation;
 
         // Public:
         public bool drawGizmos = true;
@@ -60,6 +60,8 @@ namespace Team1_GraduationGame.Enemies
                 fieldOfViewLight.spotAngle = fieldOfView;
             }
 
+            _defaultRotation = transform.rotation;
+
             if (visionGameObject != null)
                 _active = true;
             else
@@ -87,7 +89,7 @@ namespace Team1_GraduationGame.Enemies
                             Vector3 dir = _player.transform.position - visionGameObject.transform.position;
                             float enemyToPlayerAngle = Vector3.Angle(visionGameObject.transform.forward, dir);
 
-                            if (enemyToPlayerAngle < fieldOfView / 2)
+                            if (enemyToPlayerAngle < (fieldOfView + 4.0f) / 2.0f)
                             {
                                 RaycastHit hit;
 
@@ -122,6 +124,10 @@ namespace Team1_GraduationGame.Enemies
 
                 transform.rotation = Quaternion.RotateTowards(transform.rotation, rot, 85.0f * Time.fixedDeltaTime);
             }
+            else if (!_isAggro && _returnAnim)
+            {
+                transform.rotation = Quaternion.RotateTowards(transform.rotation, _defaultRotation, 35.0f * Time.fixedDeltaTime);
+            }
         }
 
         private void DistanceCheckerLoop()
@@ -136,7 +142,7 @@ namespace Team1_GraduationGame.Enemies
                         StopAllCoroutines();
                         StartCoroutine(ChangeState(true));
                     }
-                    else if (Vector3.Distance(transform.position, _player.transform.position) > spawnActivationDistance + 4.0f &&
+                    else if (Vector3.Distance(transform.position, _player.transform.position) > spawnActivationDistance + 5.0f &&
                              _isSpawned)
                     {
                         UpdateFOVLight(false, false);
@@ -172,7 +178,7 @@ namespace Team1_GraduationGame.Enemies
             {
                 StopAllCoroutines();
                 _isAggro = false;
-                _isSpawned = false;
+                _returnAnim = false;
                 _playerSpotted = false;
                 _timerRunning = false;
                 _isChangingState = false;
@@ -180,7 +186,8 @@ namespace Team1_GraduationGame.Enemies
                 _playerAnimator?.ResetTrigger("BigAttack");
                 _animator.ResetTrigger("Attack");
                 _animator.SetBool("Patrolling", false);
-                _animator.SetTrigger("Disappearing");
+                transform.rotation = _defaultRotation;
+                StartCoroutine(ChangeState(false));
                 UpdateFOVLight(false, false);
             }
         }
@@ -232,6 +239,7 @@ namespace Team1_GraduationGame.Enemies
             _playerAnimator?.ResetTrigger("BigAttack");
             _animator?.ResetTrigger("Attack");
             _active = true;
+            _returnAnim = false;
             playerDiedEvent?.Raise();
         }
 
@@ -268,8 +276,18 @@ namespace Team1_GraduationGame.Enemies
             UpdateFOVLight(true, false);
             _isAggro = false;
             _active = true;
+            _returnAnim = true;
             _animator.SetBool("Patrolling", true);
             _animator.ResetTrigger("Spotted");
+            StopAllCoroutines();
+            StartCoroutine(ReturnTimer());
+        }
+
+        private IEnumerator ReturnTimer()
+        {
+            yield return new WaitForSeconds(1.5f);
+
+            _returnAnim = false;
         }
 
 

@@ -14,6 +14,8 @@ namespace Team1_GraduationGame.SaveLoadSystem
         private const string SAVE_SEPERATOR = "#SAVE-VALUE#";
         public bool newGame = true;
         public int firstSceneIndex = 1;
+        private Vector3 _savePointPos;
+        private bool _useSavePointPos = false;
 
         // References:
         private GameObject _player;
@@ -38,8 +40,8 @@ namespace Team1_GraduationGame.SaveLoadSystem
                 PlayerPrefs.SetInt("loadGameOnAwake", 1);
                 SceneManager.LoadScene(PlayerPrefs.GetInt("currentScene"));
             }
-            else
-                Debug.Log("Save/Load Manager: No previous games to load");
+            //else
+            //    Debug.Log("Save/Load Manager: No previous games to load");
         }
 
         public void OpenLevel(int atBuildIndex)
@@ -62,6 +64,14 @@ namespace Team1_GraduationGame.SaveLoadSystem
             }
         }
 
+        public void SaveGame(Vector3 position)
+        {
+            _savePointPos = position;
+            _useSavePointPos = true;
+
+            SaveGame();
+        }
+
         public void SaveGame()
         {
             string tempSaveString = "";
@@ -70,7 +80,17 @@ namespace Team1_GraduationGame.SaveLoadSystem
             //// Player save: ////
             if (_player != null)
             {
-                Vector3 tempPlayerPosition = _player.transform.position;
+                Vector3 tempPlayerPosition;
+
+                if (_savePointPos != Vector3.zero && _useSavePointPos)
+                {
+                    tempPlayerPosition = _savePointPos;
+                    _useSavePointPos = false;
+                }
+                else
+                {
+                    tempPlayerPosition = _player.transform.position;
+                }
                 Quaternion tempPlayerRotation = _player.transform.rotation;
                 tempSaveString = JsonUtility.ToJson(tempPlayerPosition) + SAVE_SEPERATOR + JsonUtility.ToJson(tempPlayerRotation);
                 PlayerPrefs.SetString("playerSave", tempSaveString);

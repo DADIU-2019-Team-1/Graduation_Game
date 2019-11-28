@@ -174,6 +174,11 @@ namespace Team1_GraduationGame.DevelopmentTools
             Time.timeScale = pause ? 0 : 1;
         }
 
+        public void DeleteSaveFile()
+        {
+            PlayerPrefs.SetInt("previousGame", 0);
+        }
+
     }
 
 #if UNITY_EDITOR

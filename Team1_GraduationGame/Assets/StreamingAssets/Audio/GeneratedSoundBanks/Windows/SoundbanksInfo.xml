@@ -21,23 +21,26 @@
 			<ShortName>HMC_Start_Bank</ShortName>
 			<Path>HMC_Start_Bank.bnk</Path>
 			<IncludedEvents>
-				<Event Id="3665314627" Name="BigSis_Attack" ObjectPath="\Events\Default Work Unit\ENEMIES\BigSis\BigSis_Attack" DurationType="OneShot" DurationMin="3.002033" DurationMax="3.678604"/>
-				<Event Id="2445385739" Name="BigSis_Down" ObjectPath="\Events\Default Work Unit\ENEMIES\BigSis\BigSis_Down" DurationType="OneShot" DurationMin="3.190000" DurationMax="5.084753"/>
-				<Event Id="255820916" Name="BisSis_Appear" ObjectPath="\Events\Default Work Unit\ENEMIES\BigSis\BisSis_Appear" DurationType="Infinite"/>
-				<Event Id="146861159" Name="BisSis_Spot" ObjectPath="\Events\Default Work Unit\ENEMIES\BigSis\BisSis_Spot" DurationType="OneShot" DurationMin="4.682784" DurationMax="5.627020"/>
+				<Event Id="3665314627" Name="BigSis_Attack" ObjectPath="\Events\Default Work Unit\ENEMIES\BigSis\BigSis_Attack" MaxAttenuation="60.000000" DurationType="OneShot" DurationMin="3.002033" DurationMax="3.678604"/>
+				<Event Id="2445385739" Name="BigSis_Down" ObjectPath="\Events\Default Work Unit\ENEMIES\BigSis\BigSis_Down" MaxAttenuation="60.000000" DurationType="OneShot" DurationMin="3.190000" DurationMax="5.084753"/>
+				<Event Id="255820916" Name="BisSis_Appear" ObjectPath="\Events\Default Work Unit\ENEMIES\BigSis\BisSis_Appear" MaxAttenuation="60.000000" DurationType="Infinite"/>
+				<Event Id="146861159" Name="BisSis_Spot" ObjectPath="\Events\Default Work Unit\ENEMIES\BigSis\BisSis_Spot" MaxAttenuation="60.000000" DurationType="OneShot" DurationMin="4.682784" DurationMax="5.627020"/>
 				<Event Id="1647120744" Name="Dead_LPF" ObjectPath="\Events\Default Work Unit\Dead_LPF" DurationType="OneShot" DurationMin="6.749719" DurationMax="9.027532"/>
 				<Event Id="1826050074" Name="Empty_BigSis" ObjectPath="\Events\Default Work Unit\ENEMIES\BigSis\Empty_BigSis" DurationType="OneShot" DurationMin="1.000000" DurationMax="1.000000"/>
 				<Event Id="351150729" Name="Empty_Fam" ObjectPath="\Events\Default Work Unit\ENEMIES\Family\Empty_Fam" DurationType="OneShot" DurationMin="1.000000" DurationMax="1.000000"/>
 				<Event Id="669925540" Name="Empty_Fri" ObjectPath="\Events\Default Work Unit\ENEMIES\Friends\Empty_Fri" DurationType="OneShot" DurationMin="1.000000" DurationMax="1.000000"/>
 				<Event Id="71578932" Name="Empty_Grief" ObjectPath="\Events\Default Work Unit\ENEMIES\GRIEF MONSTER\Empty_Grief" DurationType="OneShot" DurationMin="1.000000" DurationMax="1.000000"/>
-				<Event Id="4185887082" Name="Fam_Attack" ObjectPath="\Events\Default Work Unit\ENEMIES\Family\Fam_Attack" DurationType="OneShot" DurationMin="7.090566" DurationMax="10.064057"/>
-				<Event Id="4168887876" Name="Fam_BASE_Start" ObjectPath="\Events\Default Work Unit\ENEMIES\Family\Fam_BASE_Start" DurationType="Infinite"/>
-				<Event Id="2259991288" Name="Fam_BASE_Stop" ObjectPath="\Events\Default Work Unit\ENEMIES\Family\Fam_BASE_Stop" DurationType="Infinite"/>
+				<Event Id="4185887082" Name="Fam_Attack" ObjectPath="\Events\Default Work Unit\ENEMIES\Family\Fam_Attack" MaxAttenuation="40.000000" DurationType="OneShot" DurationMin="7.090566" DurationMax="10.064057"/>
+				<Event Id="4168887876" Name="Fam_BASE_Start" ObjectPath="\Events\Default Work Unit\ENEMIES\Family\Fam_BASE_Start" MaxAttenuation="100.000000" DurationType="Infinite"/>
+				<Event Id="2259991288" Name="Fam_BASE_Stop" ObjectPath="\Events\Default Work Unit\ENEMIES\Family\Fam_BASE_Stop" MaxAttenuation="100.000000" DurationType="Infinite"/>
+				<Event Id="28577769" Name="Fam_Hold" ObjectPath="\Events\Default Work Unit\ENEMIES\Family\Fam_Hold" MaxAttenuation="0.000000" DurationType="OneShot" DurationMin="0.000000" DurationMax="0.000000"/>
+				<Event Id="3016005891" Name="Fam_Onset" ObjectPath="\Events\Default Work Unit\ENEMIES\Family\Fam_Onset" MaxAttenuation="40.000000" DurationType="Infinite"/>
 				<Event Id="2749812849" Name="Fri_Attack" ObjectPath="\Events\Default Work Unit\ENEMIES\Friends\Fri_Attack" DurationType="OneShot" DurationMin="4.520000" DurationMax="5.432716"/>
 				<Event Id="1914315619" Name="Fri_BASE_Start" ObjectPath="\Events\Default Work Unit\ENEMIES\Friends\Fri_BASE_Start" DurationType="Infinite"/>
 				<Event Id="841573473" Name="Fri_BASE_Stop" ObjectPath="\Events\Default Work Unit\ENEMIES\Friends\Fri_BASE_Stop" MaxAttenuation="0.000000" DurationType="OneShot" DurationMin="0.000000" DurationMax="0.000000"/>
 				<Event Id="1193266125" Name="Fri_Down" ObjectPath="\Events\Default Work Unit\ENEMIES\Friends\Fri_Down" DurationType="OneShot" DurationMin="2.360000" DurationMax="3.176568"/>
-				<Event Id="559410714" Name="Fri_Onset" ObjectPath="\Events\Default Work Unit\ENEMIES\Friends\Fri_Onset" MaxAttenuation="0.000000" DurationType="OneShot" DurationMin="0.000000" DurationMax="0.000000"/>
+				<Event Id="1153762078" Name="Fri_Hold" ObjectPath="\Events\Default Work Unit\ENEMIES\Friends\Fri_Hold" MaxAttenuation="0.000000" DurationType="OneShot" DurationMin="0.000000" DurationMax="0.000000"/>
+				<Event Id="559410714" Name="Fri_Onset" ObjectPath="\Events\Default Work Unit\ENEMIES\Friends\Fri_Onset" DurationType="Infinite"/>
 				<Event Id="2916966842" Name="Fri_UP" ObjectPath="\Events\Default Work Unit\ENEMIES\Friends\Fri_UP" DurationType="OneShot" DurationMin="2.850000" DurationMax="4.759239"/>
 				<Event Id="2473929957" Name="Grief_Attack" ObjectPath="\Events\Default Work Unit\ENEMIES\GRIEF MONSTER\Grief_Attack" MaxAttenuation="30.000000" DurationType="OneShot" DurationMin="4.615545" DurationMax="5.702107"/>
 				<Event Id="2826903308" Name="Grief_BaseMove_START" ObjectPath="\Events\Default Work Unit\ENEMIES\GRIEF MONSTER\Grief_BaseMove_START" MaxAttenuation="30.000000" DurationType="Infinite"/>
@@ -68,6 +71,10 @@
 				<File Id="7587334" Language="SFX">
 					<ShortName>Impact Wood Drag Through Leaf Debris Fast 01.wav</ShortName>
 					<Path>SFX\Impact Wood Drag Through Leaf Debris Fast 01_CE0B9B06.wem</Path>
+				</File>
+				<File Id="10588666" Language="SFX">
+					<ShortName>Friend Movement_Fast - 0009.wav</ShortName>
+					<Path>SFX\Friend Movement_Fast - 0009_FD69801D.wem</Path>
 				</File>
 				<File Id="12080662" Language="SFX">
 					<ShortName>Impact Stick Drag Through Dirt And Rocks 01.wav</ShortName>
@@ -105,9 +112,17 @@
 					<ShortName>Foley Footstep Soft Sole Dress Shoes Leaves And Twigs Debris Jump Quick 01.wav</ShortName>
 					<Path>SFX\Foley Footstep Soft Sole Dress Shoes Leaves And Twigs Debris Jump Quick 01_445A8AF0.wem</Path>
 				</File>
+				<File Id="44855814" Language="SFX">
+					<ShortName>Family Mov_Fast - 0010.wav</ShortName>
+					<Path>SFX\Family Mov_Fast - 0010_932E7570.wem</Path>
+				</File>
 				<File Id="52919807" Language="SFX">
 					<ShortName>Whisper 1.wav</ShortName>
 					<Path>SFX\Whisper 1_FD69801D.wem</Path>
+				</File>
+				<File Id="66430567" Language="SFX">
+					<ShortName>Friend Movement_Fast - 0008.wav</ShortName>
+					<Path>SFX\Friend Movement_Fast - 0008_FD69801D.wem</Path>
 				</File>
 				<File Id="67890716" Language="SFX">
 					<ShortName>SoftCarpet_Barefeet_Running.wav</ShortName>
@@ -175,7 +190,7 @@
 				</File>
 				<File Id="105145331" Language="SFX">
 					<ShortName>Family Still - 0000.wav</ShortName>
-					<Path>SFX\Family Still - 0000_FD69801D.wem</Path>
+					<Path>SFX\Family Still - 0000_83C2123B.wem</Path>
 				</File>
 				<File Id="106611309" Language="SFX">
 					<ShortName>SoftCarpet_Barefeet_Running.wav</ShortName>
@@ -253,6 +268,10 @@
 					<ShortName>SoftCarpet_Barefeet_Walking.wav</ShortName>
 					<Path>SFX\SoftCarpet_Barefeet_Walking_DB2D42C7.wem</Path>
 				</File>
+				<File Id="182069049" Language="SFX">
+					<ShortName>Family Mov_Fast - 0007.wav</ShortName>
+					<Path>SFX\Family Mov_Fast - 0007_5A740797.wem</Path>
+				</File>
 				<File Id="184152154" Language="SFX">
 					<ShortName>M_Breath_Walk.wav</ShortName>
 					<Path>SFX\M_Breath_Walk_BA7E3CA5.wem</Path>
@@ -268,6 +287,10 @@
 				<File Id="202294921" Language="SFX">
 					<ShortName>HMC_Memory_Note--EchoCall.wav</ShortName>
 					<Path>SFX\HMC_Memory_Note--EchoCall_5F79D6EF.wem</Path>
+				</File>
+				<File Id="205914331" Language="SFX">
+					<ShortName>Friend Movement_Fast - 0006.wav</ShortName>
+					<Path>SFX\Friend Movement_Fast - 0006_FD69801D.wem</Path>
 				</File>
 				<File Id="212611686" Language="SFX">
 					<ShortName>BigS Withdraw - 0000.wav</ShortName>
@@ -345,6 +368,10 @@
 					<ShortName>SoftCarpet_Barefeet_Running.wav</ShortName>
 					<Path>SFX\SoftCarpet_Barefeet_Running_3BBFD547.wem</Path>
 				</File>
+				<File Id="279260227" Language="SFX">
+					<ShortName>Family Mov_Slow - 0004.wav</ShortName>
+					<Path>SFX\Family Mov_Slow - 0004_AE23CCE8.wem</Path>
+				</File>
 				<File Id="279712050" Language="SFX">
 					<ShortName>Grief Reach the Top - 0005.wav</ShortName>
 					<Path>SFX\Grief Reach the Top - 0005_FD69801D.wem</Path>
@@ -373,9 +400,17 @@
 					<ShortName>NormalWood_Barefeet_Walking.wav</ShortName>
 					<Path>SFX\NormalWood_Barefeet_Walking_C9FF7F4E.wem</Path>
 				</File>
+				<File Id="311174487" Language="SFX">
+					<ShortName>Family Mov_Slow - 0001.wav</ShortName>
+					<Path>SFX\Family Mov_Slow - 0001_D777DCBD.wem</Path>
+				</File>
 				<File Id="317869895" Language="SFX">
 					<ShortName>Hub_end_1_1bpre_0ex--Low Intensity STEM.wav</ShortName>
 					<Path>SFX\Hub_end_1_1bpre_0ex--Low Intensity STEM_5F79D6EF.wem</Path>
+				</File>
+				<File Id="318158167" Language="SFX">
+					<ShortName>Friend Movement_Slow - 0002.wav</ShortName>
+					<Path>SFX\Friend Movement_Slow - 0002_FD69801D.wem</Path>
 				</File>
 				<File Id="322350777" Language="SFX">
 					<ShortName>SoftCarpet_Barefeet_Running.wav</ShortName>
@@ -465,6 +500,10 @@
 					<ShortName>Impact Wood Drag Through Leaf Debris Fast 01.wav</ShortName>
 					<Path>SFX\Impact Wood Drag Through Leaf Debris Fast 01_380E2FEC.wem</Path>
 				</File>
+				<File Id="421693115" Language="SFX">
+					<ShortName>Friend Movement_Slow - 0003.wav</ShortName>
+					<Path>SFX\Friend Movement_Slow - 0003_FD69801D.wem</Path>
+				</File>
 				<File Id="427837363" Language="SFX">
 					<ShortName>Whisper 4.wav</ShortName>
 					<Path>SFX\Whisper 4_FD69801D.wem</Path>
@@ -485,6 +524,10 @@
 					<ShortName>M_Breath_Sneak_.wav</ShortName>
 					<Path>SFX\M_Breath_Sneak__6C6EF63B.wem</Path>
 				</File>
+				<File Id="447883709" Language="SFX">
+					<ShortName>Family Mov_Slow - 0005.wav</ShortName>
+					<Path>SFX\Family Mov_Slow - 0005_7564639E.wem</Path>
+				</File>
 				<File Id="449947602" Language="SFX">
 					<ShortName>Outside_Short_D_1p_3x--Rythm STEM.wav</ShortName>
 					<Path>SFX\Outside_Short_D_1p_3x--Rythm STEM_5F79D6EF.wem</Path>
@@ -504,6 +547,10 @@
 				<File Id="471726036" Language="SFX">
 					<ShortName>Hub_end_2_2bpre_0ex--Rythm STEM.wav</ShortName>
 					<Path>SFX\Hub_end_2_2bpre_0ex--Rythm STEM_5F79D6EF.wem</Path>
+				</File>
+				<File Id="474883841" Language="SFX">
+					<ShortName>Family Mov_Fast - 0008.wav</ShortName>
+					<Path>SFX\Family Mov_Fast - 0008_289AB859.wem</Path>
 				</File>
 				<File Id="476671711" Language="SFX">
 					<ShortName>SoftCarpet_Barefeet_Walking.wav</ShortName>
@@ -564,6 +611,10 @@
 				<File Id="527274617" Language="SFX">
 					<ShortName>SoftCarpet_Barefeet_Walking.wav</ShortName>
 					<Path>SFX\SoftCarpet_Barefeet_Walking_C48080B7.wem</Path>
+				</File>
+				<File Id="530016498" Language="SFX">
+					<ShortName>Family Mov_Slow - 0003.wav</ShortName>
+					<Path>SFX\Family Mov_Slow - 0003_BD446721.wem</Path>
 				</File>
 				<File Id="530888869" Language="SFX">
 					<ShortName>Grief Move - 0000.wav</ShortName>
@@ -649,6 +700,10 @@
 					<ShortName>Outside_Short_Eb_1p_3x--Drone STEM.wav</ShortName>
 					<Path>SFX\Outside_Short_Eb_1p_3x--Drone STEM_5F79D6EF.wem</Path>
 				</File>
+				<File Id="590764742" Language="SFX">
+					<ShortName>Friend Movement_Slow - 0001.wav</ShortName>
+					<Path>SFX\Friend Movement_Slow - 0001_FD69801D.wem</Path>
+				</File>
 				<File Id="596314277" Language="SFX">
 					<ShortName>Grief_SinglHit.wav</ShortName>
 					<Path>SFX\Grief_SinglHit_5F79D6EF.wem</Path>
@@ -685,6 +740,10 @@
 					<ShortName>5th Ave - ShortLoop_1b--5th Ave - MidInt.wav</ShortName>
 					<Path>SFX\5th Ave - ShortLoop_1b--5th Ave - MidInt_5F79D6EF.wem</Path>
 				</File>
+				<File Id="634321907" Language="SFX">
+					<ShortName>Family Mov_Fast - 0006.wav</ShortName>
+					<Path>SFX\Family Mov_Fast - 0006_819F2236.wem</Path>
+				</File>
 				<File Id="637577314" Language="SFX">
 					<ShortName>Foley Cloth Flap Jacket 03.wav</ShortName>
 					<Path>SFX\Foley Cloth Flap Jacket 03_AA830445.wem</Path>
@@ -692,6 +751,10 @@
 				<File Id="638155992" Language="SFX">
 					<ShortName>FootstepsCarRoof_BW.7360.wav</ShortName>
 					<Path>SFX\FootstepsCarRoof_BW.7360_6FBB4DDC.wem</Path>
+				</File>
+				<File Id="650880066" Language="SFX">
+					<ShortName>Friend Movement_Slow - 0005.wav</ShortName>
+					<Path>SFX\Friend Movement_Slow - 0005_FD69801D.wem</Path>
 				</File>
 				<File Id="657753468" Language="SFX">
 					<ShortName>SoftCarpet_Barefeet_Walking.wav</ShortName>
@@ -793,6 +856,10 @@
 					<ShortName>Impact Human Grab Wood Frame 01.wav</ShortName>
 					<Path>SFX\Impact Human Grab Wood Frame 01_51D4C3B3.wem</Path>
 				</File>
+				<File Id="764999926" Language="SFX">
+					<ShortName>Family Mov_Slow - 0002.wav</ShortName>
+					<Path>SFX\Family Mov_Slow - 0002_094FAA23.wem</Path>
+				</File>
 				<File Id="766482218" Language="SFX">
 					<ShortName>FootstepsSnow_BW.61297.wav</ShortName>
 					<Path>SFX\FootstepsSnow_BW.61297_3709C892.wem</Path>
@@ -808,6 +875,14 @@
 				<File Id="769452553" Language="SFX">
 					<ShortName>Outside_Short_E_1p_3x--Low Intensity STEM.wav</ShortName>
 					<Path>SFX\Outside_Short_E_1p_3x--Low Intensity STEM_5F79D6EF.wem</Path>
+				</File>
+				<File Id="770057974" Language="SFX">
+					<ShortName>Family Mov_Fast - 0009.wav</ShortName>
+					<Path>SFX\Family Mov_Fast - 0009_5778E5ED.wem</Path>
+				</File>
+				<File Id="770950107" Language="SFX">
+					<ShortName>Friend Movement_Fast - 0010.wav</ShortName>
+					<Path>SFX\Friend Movement_Fast - 0010_FD69801D.wem</Path>
 				</File>
 				<File Id="775220630" Language="SFX">
 					<ShortName>M_Breath_Jump.wav</ShortName>
@@ -1025,6 +1100,10 @@
 					<ShortName>Outside_Short_PureF_1p_3x--Drone STEM.wav</ShortName>
 					<Path>SFX\Outside_Short_PureF_1p_3x--Drone STEM_5F79D6EF.wem</Path>
 				</File>
+				<File Id="956057027" Language="SFX">
+					<ShortName>Friend Movement_Fast - 0007.wav</ShortName>
+					<Path>SFX\Friend Movement_Fast - 0007_FD69801D.wem</Path>
+				</File>
 				<File Id="965268414" Language="SFX">
 					<ShortName>FootstepsSnow_BW.61297.wav</ShortName>
 					<Path>SFX\FootstepsSnow_BW.61297_2FB5FB10.wem</Path>
@@ -1100,6 +1179,10 @@
 				<File Id="1056178605" Language="SFX">
 					<ShortName>M_Breath_Jump.wav</ShortName>
 					<Path>SFX\M_Breath_Jump_B2D31987.wem</Path>
+				</File>
+				<File Id="1062231664" Language="SFX">
+					<ShortName>Friend Movement_Slow - 0004.wav</ShortName>
+					<Path>SFX\Friend Movement_Slow - 0004_FD69801D.wem</Path>
 				</File>
 				<File Id="1062741783" Language="SFX">
 					<ShortName>Concrete_Barefoot_Running.wav</ShortName>

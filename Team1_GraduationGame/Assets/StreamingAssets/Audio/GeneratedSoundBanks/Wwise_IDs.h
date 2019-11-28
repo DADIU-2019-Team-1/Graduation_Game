@@ -25,10 +25,13 @@ namespace AK
         static const AkUniqueID FAM_ATTACK = 4185887082U;
         static const AkUniqueID FAM_BASE_START = 4168887876U;
         static const AkUniqueID FAM_BASE_STOP = 2259991288U;
+        static const AkUniqueID FAM_HOLD = 28577769U;
+        static const AkUniqueID FAM_ONSET = 3016005891U;
         static const AkUniqueID FRI_ATTACK = 2749812849U;
         static const AkUniqueID FRI_BASE_START = 1914315619U;
         static const AkUniqueID FRI_BASE_STOP = 841573473U;
         static const AkUniqueID FRI_DOWN = 1193266125U;
+        static const AkUniqueID FRI_HOLD = 1153762078U;
         static const AkUniqueID FRI_ONSET = 559410714U;
         static const AkUniqueID FRI_UP = 2916966842U;
         static const AkUniqueID GRIEF_ATTACK = 2473929957U;
@@ -57,6 +60,7 @@ namespace AK
 
             namespace STATE
             {
+                static const AkUniqueID CUTSCENE_INMENU_MUSICSTOPPER = 1601656213U;
                 static const AkUniqueID END_FULLLULLABY_CREDITS = 2902281238U;
                 static const AkUniqueID EXIT_MEMORIES_HANGUPMEM = 2558751454U;
                 static const AkUniqueID GRAVE_SILENCE = 3525878376U;
@@ -126,9 +130,11 @@ namespace AK
         static const AkUniqueID AMB_INTENSITY = 752028789U;
         static const AkUniqueID DENSITY_FA_SSGRAIN = 2715217995U;
         static const AkUniqueID DIST_TO_MEMORY = 2843219839U;
+        static const AkUniqueID FAM_SLOWFAST = 2639143423U;
         static const AkUniqueID FAMILY_SPEED = 3969604801U;
         static const AkUniqueID FOOTSTEP_MATERIAL_CALCULATOR = 441085524U;
         static const AkUniqueID FOOTSTEP_STATE_CALCULATOR = 3250563732U;
+        static const AkUniqueID FRI_SLOWFAST = 1956253312U;
         static const AkUniqueID FRIEND_SPEED = 3859748677U;
         static const AkUniqueID FS_WETTISH = 1688601825U;
         static const AkUniqueID GRIEF_SPEED = 4088545558U;

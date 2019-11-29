@@ -9,9 +9,25 @@ namespace Team1_GraduationGame.UI
     public class WhiteFadeController : MonoBehaviour
     {
         public UnityEvent fadeEvent;
+        public bool delayFade;
+        public float splashDuration;
 
         public void RaiseFadeEvent()
         {
+            if (delayFade)
+            {
+                Debug.Log("Entered delayed fade");
+                StartCoroutine(delayedFade());
+            }
+            else
+                fadeEvent?.Invoke();
+        }
+
+        public IEnumerator delayedFade()
+        {
+            yield return new WaitForSeconds(splashDuration);
+            Debug.Log("Coroutine after wait");
+            delayFade = false;
             fadeEvent?.Invoke();
         }
     }

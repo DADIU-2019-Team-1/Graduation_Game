@@ -44,9 +44,18 @@ public class UIMenu : MonoBehaviour
     }
     IEnumerator HandleFade(CanvasGroup group, bool fadeIn)
     {
-        if (fadeIn)
+        if (group.gameObject.activeSelf == false)
         {
             group.gameObject.SetActive(true);
+        }
+
+        if (fadeIn)
+        {
+            group.alpha = 0.00f;
+        }
+        else
+        {
+            group.alpha = 1.00f;
         }
         do // We use do-while to run the loop once before checking the condition
         {

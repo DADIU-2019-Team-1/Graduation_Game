@@ -16,7 +16,7 @@ public class UIMenu : MonoBehaviour
     public event Action<bool> gamePauseState;
     private CanvasGroup _groupToFade;
     [SerializeField] private float _fadeAmount = 0.05f;
-    private bool _fading;
+    private bool _fading, _continueQueued;
 
     public void FadeOut(CanvasGroup group)
     {
@@ -81,6 +81,11 @@ public class UIMenu : MonoBehaviour
                 FadeIn(tempGroup);
             }
         }
+
+        if (_continueQueued)
+        {
+            ContinueGame();
+        }
     }
 
     public void ChangeLanguage(int languageIndex)
@@ -101,8 +106,14 @@ public class UIMenu : MonoBehaviour
     }
     public void ContinueGame()
     {
-        continueGameEvent?.Invoke();
-        menuButtonPressEvent?.Invoke();
+        if (_fading)
+        {
+            _continueQueued = true;
+        }
+        else
+        {
+            continueGameEvent?.Invoke();
+        }
     }
     public void PauseGame(bool pause)
     {

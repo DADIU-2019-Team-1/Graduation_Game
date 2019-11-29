@@ -741,7 +741,7 @@ public class Movement : MonoBehaviour
 
     public void SetActive(bool isActive)
     {
-        if (isActive)
+        if (!isActive)
         {
             playerRB.constraints = RigidbodyConstraints.FreezeAll;
             moveFrozen = true;

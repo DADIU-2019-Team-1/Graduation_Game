@@ -7,15 +7,25 @@ using UnityEditor;
 
 public class PlayerDeath : MonoBehaviour
 {
+    public AK.Wwise.Event deathEvent;
     public Animator fadeBlackAnimator;
     public SavePointManager spManager;
     private bool _allowStateChange, _hasFaded, _isFading;
     public float animationDuration = 1.0f;
+    private GameObject _player;
 
     public void Start()
     {
         fadeBlackAnimator = GetComponent<Animator>();
         spManager = FindObjectOfType<SavePointManager>();
+
+        _player = GameObject.FindGameObjectWithTag("Player");
+    }
+
+    public void PlayerFallingSound()
+    {
+        if (_player != null)
+            deathEvent?.Post(_player);
     }
 
     public void PlayerRespawn()
@@ -26,7 +36,6 @@ public class PlayerDeath : MonoBehaviour
                 StartCoroutine(FadeHandler());
         }
     }
-
 
     public void AnimationDone()
     {

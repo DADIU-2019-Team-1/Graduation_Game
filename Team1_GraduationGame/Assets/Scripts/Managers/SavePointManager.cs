@@ -23,6 +23,7 @@ namespace Team1_GraduationGame.SaveLoadSystem
         public SaveLoadManager saveLoadManager;
         public PlayableDirector _playableDirector;
         private WhiteFadeController _whiteFadeCtrl;
+        private Movement _playerMovement;
 
         // Public
         public int firstSceneBuildIndex = 0;
@@ -35,7 +36,8 @@ namespace Team1_GraduationGame.SaveLoadSystem
         {
             saveLoadManager = new SaveLoadManager();
             saveLoadManager.firstSceneIndex = firstSceneBuildIndex;
-            //_whiteFadeCtrl = Resources.FindObjectsOfTypeAll<WhiteFadeController>()[0]; // TODO
+            _whiteFadeCtrl = GameObject.FindGameObjectWithTag("InGameUI")?.GetComponent<WhiteFadeController>();
+            _playerMovement = GameObject.FindGameObjectWithTag("Player")?.GetComponent<Movement>();
         }
 
         private void Start()
@@ -59,7 +61,7 @@ namespace Team1_GraduationGame.SaveLoadSystem
 
                 PlayerPrefs.SetInt("loadGameOnAwake", 0);
 
-                //_whiteFadeCtrl?.RaiseFadeEvent(); // TODO
+                _whiteFadeCtrl?.RaiseFadeEvent();
 
                 saveLoadManager.LoadGame(true);
             }
@@ -94,10 +96,8 @@ namespace Team1_GraduationGame.SaveLoadSystem
                 {
                     GameObject tempPlayer = GameObject.FindGameObjectWithTag("Player");
 
-                    if (tempPlayer != null)
-                    {
-                        tempPlayer.GetComponent<Movement>().Frozen(false);
-                    }
+                    _playerMovement.Frozen(false);
+                    //_playerMovement.SetActive(true);
 
                     tempPlayer.transform.position =
                         savePoints[savePointNumber - 1].transform.position + transform.up;
@@ -115,7 +115,11 @@ namespace Team1_GraduationGame.SaveLoadSystem
 
                     LoadGame();
 
-                    tempPlayer.GetComponent<Movement>().Frozen(false);
+                    if (_playerMovement != null)
+                    {
+                        _playerMovement.Frozen(false);
+                        //_playerMovement.SetActive(true);
+                    }
                 }
             }
         }

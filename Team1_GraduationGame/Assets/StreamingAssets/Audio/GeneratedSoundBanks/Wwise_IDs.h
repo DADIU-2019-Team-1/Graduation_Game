@@ -24,6 +24,7 @@ namespace AK
         static const AkUniqueID EMPTY_FAM = 351150729U;
         static const AkUniqueID EMPTY_FRI = 669925540U;
         static const AkUniqueID EMPTY_GRIEF = 71578932U;
+        static const AkUniqueID FAKE_FRI_BASE_STARTSTOP = 3417249391U;
         static const AkUniqueID FAM_ATTACK = 4185887082U;
         static const AkUniqueID FAM_BASE_START = 4168887876U;
         static const AkUniqueID FAM_BASE_STOP = 2259991288U;
@@ -35,7 +36,6 @@ namespace AK
         static const AkUniqueID FRI_DOWN = 1193266125U;
         static const AkUniqueID FRI_HOLD = 1153762078U;
         static const AkUniqueID FRI_ONSET = 559410714U;
-        static const AkUniqueID FRI_UP = 2916966842U;
         static const AkUniqueID GRIEF_ATTACK = 2473929957U;
         static const AkUniqueID GRIEF_BASEMOVE_START = 2826903308U;
         static const AkUniqueID GRIEF_BASEMOVE_STOP = 3228817312U;

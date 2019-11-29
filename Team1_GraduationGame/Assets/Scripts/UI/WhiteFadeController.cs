@@ -20,7 +20,11 @@ namespace Team1_GraduationGame.UI
                 StartCoroutine(delayedFade());
             }
             else
+            {
+                Debug.Log("Invoked FadeEvent for gameobject " + gameObject);
+                StopAllCoroutines();
                 fadeEvent?.Invoke();
+            }
         }
 
         public IEnumerator delayedFade()
@@ -29,6 +33,7 @@ namespace Team1_GraduationGame.UI
             Debug.Log("Coroutine after wait");
             delayFade = false;
             fadeEvent?.Invoke();
+            StopAllCoroutines();
         }
     }
 }

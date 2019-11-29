@@ -12,6 +12,7 @@ namespace Team1_GraduationGame.Enemies
     {
         //References:
         private GameObject _player;
+        private Movement _playerMovement;
         private Animator _playerAnimator;
         public EnemySoundManager enemySoundManager;
         private Animator _animator;
@@ -38,6 +39,7 @@ namespace Team1_GraduationGame.Enemies
             {
                 _player = GameObject.FindGameObjectWithTag("Player");
                 _playerAnimator = _player.GetComponent<Animator>();
+                _playerMovement = _player.GetComponent<Movement>();
             }
 
             if (GetComponent<Animator>() != null)
@@ -183,6 +185,8 @@ namespace Team1_GraduationGame.Enemies
                 _playerSpotted = false;
                 _timerRunning = false;
                 _isChangingState = false;
+                //_playerMovement.SetActive(true);
+                _playerMovement.Frozen(false);
                 _animator.ResetTrigger("Appearing");
                 _playerAnimator?.ResetTrigger("BigAttack");
                 _animator.ResetTrigger("Attack");
@@ -228,7 +232,8 @@ namespace Team1_GraduationGame.Enemies
 
         private IEnumerator PlayerDied()
         {
-            _player.GetComponent<Movement>().Frozen(true);
+            _playerMovement.Frozen(true);
+            //_playerMovement.SetActive(false);
             _active = false;
 
             _animator.SetTrigger("Attack");

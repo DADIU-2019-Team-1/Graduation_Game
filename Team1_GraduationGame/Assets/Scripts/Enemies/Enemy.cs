@@ -608,6 +608,7 @@ namespace Team1_GraduationGame.Enemies
             if (Vector3.Distance(transform.position, _player.transform.position) <
                 thisEnemy.embraceDistance + 1.0f)
             {
+                //_movement.SetActive(false);
                 viewConeLight?.gameObject.SetActive(false);
                 CollisionWithPlayerSetter(false);
                 _playerAnimator?.SetTrigger("EnemyAttack" + thisEnemy.typeId);
@@ -670,6 +671,7 @@ namespace Team1_GraduationGame.Enemies
             _navMeshAgent.isStopped = false;
             _destinationSet = false;
             _movement.SetIsAttacked(false);
+            //_movement.SetActive(true);
             behaviourInactive = false;
             viewConeLight?.gameObject.SetActive(true);
             _animator?.ResetTrigger("PushedDown");

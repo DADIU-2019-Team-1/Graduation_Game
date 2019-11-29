@@ -7,6 +7,7 @@ namespace Team1_GraduationGame.SaveLoadSystem
     using Team1_GraduationGame.Enemies;
     using Team1_GraduationGame.Events;
     using Team1_GraduationGame.Interaction;
+    using Team1_GraduationGame.UI;
     using UnityEngine.SceneManagement;
     using UnityEngine.Playables;
     using UnityEngine;
@@ -21,6 +22,7 @@ namespace Team1_GraduationGame.SaveLoadSystem
         // References:
         public SaveLoadManager saveLoadManager;
         public PlayableDirector _playableDirector;
+        private WhiteFadeController _whiteFadeCtrl;
 
         // Public
         public int firstSceneBuildIndex = 0;
@@ -33,6 +35,7 @@ namespace Team1_GraduationGame.SaveLoadSystem
         {
             saveLoadManager = new SaveLoadManager();
             saveLoadManager.firstSceneIndex = firstSceneBuildIndex;
+            _whiteFadeCtrl = FindObjectOfType<WhiteFadeController>();
         }
 
         private void Start()
@@ -55,6 +58,9 @@ namespace Team1_GraduationGame.SaveLoadSystem
                 }
 
                 PlayerPrefs.SetInt("loadGameOnAwake", 0);
+
+                _whiteFadeCtrl?.RaiseFadeEvent();
+
                 saveLoadManager.LoadGame(true);
             }
 

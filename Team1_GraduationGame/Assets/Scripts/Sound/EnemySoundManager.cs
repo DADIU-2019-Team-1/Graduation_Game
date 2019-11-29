@@ -17,6 +17,7 @@ namespace Team1_GraduationGame.Sound
 
         // Wwise:
         [HideInInspector] public AK.Wwise.RTPC speedRTPC;
+        public bool usePushedDown = true, useGettingUp = true, useOnset = true, useHold = true;
         public AK.Wwise.Event attackingPlayerEvent, pushedDownEvent, gettingUpEvent, onsetEvent, holdEvent, spotEvent;  // TODO make sure all these vents gets raised
 
         private Enemy _thisEnemy;
@@ -57,11 +58,13 @@ namespace Team1_GraduationGame.Sound
         }
         public void PushedDown()
         {
-            pushedDownEvent?.Post(gameObject);
+            if (usePushedDown)
+                pushedDownEvent?.Post(gameObject);
         }
         public void GettingUp()
         {
-            gettingUpEvent?.Post(gameObject);
+            if (useGettingUp)
+                gettingUpEvent?.Post(gameObject);
         }
         public void Spotted()
         {
@@ -69,11 +72,13 @@ namespace Team1_GraduationGame.Sound
         }
         public void Onset()
         {
-            onsetEvent?.Post(gameObject);
+            if (useOnset)
+                onsetEvent?.Post(gameObject);
         }
         public void Hold()
         {
-            holdEvent?.Post(gameObject);
+            if (useHold)
+                holdEvent?.Post(gameObject);
         }
     }
 

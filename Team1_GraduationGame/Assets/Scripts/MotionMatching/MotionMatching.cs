@@ -45,14 +45,26 @@ namespace Team1_GraduationGame.MotionMatching
         private List<float> _trajCandidateValuesRef;
         private AnimationClip[] allClips;
         [Header("Collections")]
-        public HumanBodyBones[] joints;
+        public HumanBodyBones[] joints =
+        {
+            HumanBodyBones.Hips,
+            HumanBodyBones.LeftFoot,
+            HumanBodyBones.RightFoot,
+            HumanBodyBones.Neck
+        };
         public AnimContainer animContainer; // put ref to chosen animation container scriptable object
-        [SerializeField] private string[] states;
+        [SerializeField] private string[] states =
+        {
+            "Idle",
+            "Sneak",
+            "Walk",
+            "Run"
+        };
 
         // --- Variables
         [Header("Settings")]
         [SerializeField] private bool useJobs = true;
-        public bool _preProcess, _playAnimationMode;
+        public bool _preProcess, _loadAnimationsFromController, _playAnimationMode;
         public int pointsPerTrajectory = 4, framesBetweenTrajectoryPoints = 10;
         [SerializeField] private int queryRateInFrames = 10, candidatesPerMisc = 10, banQueueSize = 10;
 
@@ -93,25 +105,31 @@ namespace Team1_GraduationGame.MotionMatching
 #if UNITY_EDITOR
             if (_preProcess)
             {
-                // Get animations from animation controller, and store it in a scriptable object
-                if (animator != null)
+                if (_loadAnimationsFromController)
                 {
-                    allClips = animator.runtimeAnimatorController.animationClips;
-                    if (allClips == null)
-                        Debug.LogError(
-                            "Durnig preprocessing, tried to find animation clips in the animator controller, but there was none!");
+                    // Get animations from animation controller, and store it in a scriptable object
+                    if (animator != null)
+                    {
+                        allClips = animator.runtimeAnimatorController.animationClips;
+                        if (allClips == null)
+                            Debug.LogError(
+                                "Durnig preprocessing, tried to find animation clips in the animator controller, but there was none!");
+                    }
+                    else
+                    {
+                        Debug.LogError("No Animator was found in the supplied GameObject during mm preprocessing!",
+                            gameObject);
+                    }
+
+                    AnimContainer tempAnimContainer = new AnimContainer();
+                    tempAnimContainer.animationClips = allClips;
+                    EditorUtility.CopySerialized(tempAnimContainer, animContainer);
+                    AssetDatabase.SaveAssets();
                 }
                 else
                 {
-                    Debug.LogError("No Animator was found in the supplied GameObject during mm preprocessing!",
-                        gameObject);
+                    allClips = animContainer.animationClips;
                 }
-
-                AnimContainer tempAnimContainer = new AnimContainer();
-                tempAnimContainer.animationClips = allClips;
-                EditorUtility.CopySerialized(tempAnimContainer, animContainer);
-                AssetDatabase.SaveAssets();
-
                 preProcessing.Preprocess(allClips, joints, gameObject, animator, animationFrameRate, states);
             }
 #endif
@@ -211,6 +229,14 @@ namespace Team1_GraduationGame.MotionMatching
                     currentCoroutine = StartCoroutine(PlayAnimation());
                 }
             }
+
+            if (Input.GetKeyDown(KeyCode.T))
+            {
+                if (Time.timeScale == 1.0f)
+                    Time.timeScale = 0.5f;
+                else
+                    Time.timeScale = 1.0f;
+            }
         }
 #endif
 
@@ -272,7 +298,7 @@ namespace Team1_GraduationGame.MotionMatching
                 }
             }
 
-            Debug.Log("Updating animation: ID: " + _currentID + " -> " + id + " | Frame: " + (currentFrame + queryRateInFrames) + " -> " + frame + " | Name: " + currentClip.name + " -> " + featureVectors[_currentID].GetClipName() + ".");
+            Debug.Log("Updating animation: ID: " + _currentID + " -> " + id + " | Frame: " + (currentFrame + queryRateInFrames) + " -> " + frame + " | Name: " + featureVectors[_currentID].GetClipName() + " -> " + currentClip.name + ".");
             animator.CrossFadeInFixedTime(currentClip.name, queryRateInFrames / animationFrameRate/* * 0.3f*/, 0, frame / animationFrameRate); // 0.3f was recommended by Magnus
             _currentID = id;
             currentFrame = frame;
@@ -462,7 +488,7 @@ namespace Team1_GraduationGame.MotionMatching
                     candidateIDs = candidateIDs,
                     cPose_rootVel = charSpace.MultiplyPoint3x4(currentPose.GetRootVelocity()),
                     cPose_leftFootVel = charSpace.MultiplyPoint3x4(currentPose.GetLeftFootVelocity()),
-                    cPose_rightFootVel = charSpace.MultiplyPoint3x4(currentPose.GetRightFootPos()),
+                    cPose_rightFootVel = charSpace.MultiplyPoint3x4(currentPose.GetRightFootVelocity()),
                     cPose_neckVel = charSpace.MultiplyPoint3x4(currentPose.GetNeckVelocity()),
                     cPose_leftFootPos = charSpace.MultiplyPoint3x4(currentPose.GetLeftFootPos()),
                     cPose_rightFootPos = charSpace.MultiplyPoint3x4(currentPose.GetRightFootPos()),

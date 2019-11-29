@@ -216,13 +216,11 @@ namespace Team1_GraduationGame.Enemies
 
             if (isActive && !_isAggro)
             {
-                _animator.ResetTrigger("Appearing");
                 _animator.SetBool("Patrolling", true);
                 _isSpawned = true;
             }
             else if (!_isAggro)
             {
-                _animator.ResetTrigger("Disappearing");
                 _animator.SetBool("Patrolling", false);
                 _isSpawned = false;
             }
@@ -240,13 +238,12 @@ namespace Team1_GraduationGame.Enemies
             _playerAnimator.SetTrigger("BigAttack");
             enemySoundManager?.AttackPlayer();
 
-            yield return new WaitForSeconds(animAttackTime);
+            playerDiedEvent?.Raise();
 
-            _playerAnimator?.ResetTrigger("BigAttack");
-            _animator?.ResetTrigger("Attack");
+            yield return new WaitForSeconds(animAttackTime/2);
+
             _active = true;
             _returnAnim = false;
-            playerDiedEvent?.Raise();
         }
 
         private IEnumerator Aggro()

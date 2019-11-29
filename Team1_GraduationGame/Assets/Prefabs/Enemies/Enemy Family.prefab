@@ -250,6 +250,7 @@ MonoBehaviour:
   wayPointReachRange: 1.5
   hearingSensitivity: 5
   minimumAlwaysDetectRange: 1.4
+  pushDownLightIndication: 1
   drawGizmos: 1
   useWaitTime: 0
   rotateAtWaypoints: 0
@@ -259,9 +260,11 @@ MonoBehaviour:
   aggroConeColor: {r: 1, g: 0, b: 0, a: 1}
   animNoiseHeardTime: 3
   animAttackTime: 5
-  animGettingUpTime: 2
   useGlobalWaitTime: 1
+  behaviourInactive: 0
+  activateOnDistance: 1
   waitTime: 0
+  activationDistance: 65
 --- !u!114 &2537779613341137824
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -281,8 +284,9 @@ MonoBehaviour:
   angle: 90
   soundEmitDistance: 0
   interactCooldown: 1.5
+  minVelocityMagnitude: 0.005
   interactableOnce: 0
-  pushable: 0
+  pushable: 1
   useEvents: 0
   useAnimation: 0
   switchBetweenAnimations: 0
@@ -292,6 +296,7 @@ MonoBehaviour:
   checkForObstructions: 0
   emitSound: 1
   useCooldown: 0
+  checkIsMoving: 0
   eventOnInteraction:
     m_PersistentCalls:
       m_Calls: []

@@ -35,7 +35,7 @@ namespace Team1_GraduationGame.SaveLoadSystem
         {
             saveLoadManager = new SaveLoadManager();
             saveLoadManager.firstSceneIndex = firstSceneBuildIndex;
-            _whiteFadeCtrl = FindObjectOfType<WhiteFadeController>();
+            //_whiteFadeCtrl = Resources.FindObjectsOfTypeAll<WhiteFadeController>()[0]; // TODO
         }
 
         private void Start()
@@ -59,7 +59,7 @@ namespace Team1_GraduationGame.SaveLoadSystem
 
                 PlayerPrefs.SetInt("loadGameOnAwake", 0);
 
-                _whiteFadeCtrl?.RaiseFadeEvent();
+                //_whiteFadeCtrl?.RaiseFadeEvent(); // TODO
 
                 saveLoadManager.LoadGame(true);
             }

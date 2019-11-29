@@ -7,14 +7,23 @@ namespace Team1_GraduationGame.SaveLoadSystem
     using Team1_GraduationGame.Enemies;
     using Team1_GraduationGame.Events;
     using Team1_GraduationGame.Interaction;
+    using Team1_GraduationGame.UI;
     using UnityEngine.SceneManagement;
-    using UnityEditor;
+    using UnityEngine.Playables;
     using UnityEngine;
+    using TMPro;
+
+#if UNITY_EDITOR
+    using UnityEditor;
+#endif
 
     public class SavePointManager : MonoBehaviour
     {
         // References:
         public SaveLoadManager saveLoadManager;
+        public PlayableDirector _playableDirector;
+        private WhiteFadeController _whiteFadeCtrl;
+        private Movement _playerMovement;
 
         // Public
         public int firstSceneBuildIndex = 0;
@@ -27,19 +36,43 @@ namespace Team1_GraduationGame.SaveLoadSystem
         {
             saveLoadManager = new SaveLoadManager();
             saveLoadManager.firstSceneIndex = firstSceneBuildIndex;
-
-            if (PlayerPrefs.GetInt("loadGameOnAwake") == 1)
-            {
-                PlayerPrefs.SetInt("loadGameOnAwake", 0);
-                saveLoadManager.LoadGame(true);
-            }
+            _whiteFadeCtrl = GameObject.FindGameObjectWithTag("InGameUI")?.GetComponent<WhiteFadeController>();
+            _playerMovement = GameObject.FindGameObjectWithTag("Player")?.GetComponent<Movement>();
         }
 
         private void Start()
         {
-            if (FindObjectOfType<UIMenu>() != null)
+            if (PlayerPrefs.GetInt("previousGame") == 1)
             {
-                FindObjectOfType<UIMenu>().continueGameEvent += Continue;
+                GameObject continueTextObj = GameObject.FindGameObjectWithTag("ContinueBtn");
+                if (continueTextObj != null)
+                {
+                    TextMeshProUGUI continueText = continueTextObj.GetComponent<TextMeshProUGUI>();
+                    continueText.color = Color.white;
+                }
+            }
+
+            if (PlayerPrefs.GetInt("loadGameOnAwake") == 1)
+            {
+                if (_playableDirector != null)
+                {
+                    _playableDirector.time = _playableDirector.duration;
+                }
+
+                PlayerPrefs.SetInt("loadGameOnAwake", 0);
+
+                _whiteFadeCtrl?.RaiseFadeEvent();
+
+                saveLoadManager.LoadGame(true);
+            }
+
+            UIMenu[] menuObjects = Resources.FindObjectsOfTypeAll<UIMenu>();
+            if (menuObjects != null)
+            {
+                for (int i = 0; i < menuObjects.Length; i++)
+                {
+                    menuObjects[i].continueGameEvent += Continue;
+                }
             }
         }
 
@@ -62,6 +95,10 @@ namespace Team1_GraduationGame.SaveLoadSystem
                 if (GameObject.FindGameObjectWithTag("Player") != null)
                 {
                     GameObject tempPlayer = GameObject.FindGameObjectWithTag("Player");
+
+                    _playerMovement.Frozen(false);
+                    //_playerMovement.SetActive(true);
+
                     tempPlayer.transform.position =
                         savePoints[savePointNumber - 1].transform.position + transform.up;
                 }
@@ -78,7 +115,11 @@ namespace Team1_GraduationGame.SaveLoadSystem
 
                     LoadGame();
 
-                    tempPlayer.GetComponent<Movement>().Frozen(false);
+                    if (_playerMovement != null)
+                    {
+                        _playerMovement.Frozen(false);
+                        //_playerMovement.SetActive(true);
+                    }
                 }
             }
         }

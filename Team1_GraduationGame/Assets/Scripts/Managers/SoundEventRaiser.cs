@@ -18,18 +18,17 @@ namespace Team1_GraduationGame.Events
 
         private void Start()
         {
-            if (FindObjectOfType<UIMenu>() != null)
+            UIMenu[] menuObjects = Resources.FindObjectsOfTypeAll<UIMenu>();
+            if (menuObjects != null)
             {
-                UIMenu tempHubMenu = FindObjectOfType<UIMenu>();
-                tempHubMenu.startGameEvent += NewGameEvent;
-                tempHubMenu.musicSliderEvent += MusicSliderEvent;
-                tempHubMenu.sfxSliderEvent += SFXSliderEvent;
-                tempHubMenu.menuButtonPressEvent += MenuButtonPressEvent;
-            }
-
-            if (FindObjectOfType<UIMenu>() != null)
-            {
-                FindObjectOfType<UIMenu>().gamePauseState += InMenuEvent;
+                for (int i = 0; i < menuObjects.Length; i++)
+                {
+                    menuObjects[i].startGameEvent += NewGameEvent;
+                    menuObjects[i].musicSliderEvent += MusicSliderEvent;
+                    menuObjects[i].sfxSliderEvent += SFXSliderEvent;
+                    menuObjects[i].menuButtonPressEvent += MenuButtonPressEvent;
+                    menuObjects[i].gamePauseState += InMenuEvent;
+                }
             }
         }
 

@@ -9,6 +9,7 @@ namespace Team1_GraduationGame.Sound
     [RequireComponent(typeof(AkGameObj))]
     public class FootStepSystem : MonoBehaviour
     {
+        public bool checkMaterial = true;
         public string[] materialTypes;
         public AK.Wwise.Event footStepEvent;
         public AK.Wwise.RTPC materialRTPC;
@@ -29,17 +30,24 @@ namespace Team1_GraduationGame.Sound
         {
             if (_active)
             {
-                if (col.gameObject.GetComponent<Terrain>() != null)
+                if (checkMaterial)
                 {
-                    Terrain thisTerrain = col.gameObject.GetComponent<Terrain>();
-                    if (thisTerrain.terrainData.terrainLayers.Length > 0)
+                    if (col.gameObject.GetComponent<Terrain>() != null)
                     {
-                        FootStepRaise(thisTerrain.terrainData.terrainLayers[0].diffuseTexture.ToString());
+                        Terrain thisTerrain = col.gameObject.GetComponent<Terrain>();
+                        if (thisTerrain.terrainData.terrainLayers.Length > 0)   // Currently only finds the top layer in the terrain. Not sure how to detect if a second layer is used?
+                        {
+                            FootStepRaise(thisTerrain.terrainData.terrainLayers[0].diffuseTexture.ToString());
+                        }
+                    }
+                    else if (col.gameObject.GetComponent<Collider>() != null)
+                    {
+                        FootStepRaise(col.gameObject.name);
                     }
                 }
-                else if (col.gameObject.GetComponent<Collider>() != null)
+                else
                 {
-                    FootStepRaise(col.gameObject.name);
+                    footStepEvent.Post(gameObject);
                 }
             }
         }

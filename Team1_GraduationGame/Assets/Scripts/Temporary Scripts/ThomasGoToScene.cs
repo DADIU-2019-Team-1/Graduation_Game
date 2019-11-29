@@ -54,8 +54,9 @@ public class ThomasGoToScene : MonoBehaviour
                     {
                         _movement.targetSpeed = 0;
                         memoryDirection = Vector3.zero;
-
-                        atOrbTrigger.value = false;
+                        // Removed to test push frozen in orb range.
+                        //atOrbTrigger.value = false;
+                        
                         destinationReached = true;
                         //if(transform.GetChild(2).GetComponent<PlayableDirector>() != null)
                         //    transform.GetChild(2).GetComponent<PlayableDirector>().Play();

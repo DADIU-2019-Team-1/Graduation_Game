@@ -52,13 +52,22 @@ namespace Team1_GraduationGame.DevelopmentTools
 
             Application.logMessageReceived += Log;
 
-            if (FindObjectOfType<UIMenu>() != null)
-                FindObjectOfType<UIMenu>().cheatModeEvent += ToggleDevelopmentToolPanel;
-
             if (mainPanel.activeSelf == true)
                 _devToolActive = true;
 
             InvokeRepeating("CustomUpdate", 1.0f, 1.5f);
+        }
+
+        private void Start()
+        {
+            UIMenu[] menuObjects = Resources.FindObjectsOfTypeAll<UIMenu>();
+            if (menuObjects != null)
+            {
+                for (int i = 0; i < menuObjects.Length; i++)
+                {
+                    menuObjects[i].cheatModeEvent += ToggleDevelopmentToolPanel;
+                }
+            }
         }
 
         void OnEnable()
@@ -163,6 +172,11 @@ namespace Team1_GraduationGame.DevelopmentTools
         public void PauseGame(bool pause)
         {
             Time.timeScale = pause ? 0 : 1;
+        }
+
+        public void DeleteSaveFile()
+        {
+            PlayerPrefs.SetInt("previousGame", 0);
         }
 
     }

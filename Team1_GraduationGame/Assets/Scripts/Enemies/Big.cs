@@ -12,6 +12,7 @@ namespace Team1_GraduationGame.Enemies
     {
         //References:
         private GameObject _player;
+        private Movement _playerMovement;
         private Animator _playerAnimator;
         public EnemySoundManager enemySoundManager;
         private Animator _animator;
@@ -21,14 +22,13 @@ namespace Team1_GraduationGame.Enemies
 
         // Private:
         private LayerMask _layerMask;
-        private bool _active, _isAggro, _isSpawned, _isRotating, _turnLeft, _updateRotation, _playerSpotted, _lightOn, _timerRunning;
+        private bool _active, _isAggro, _isSpawned, _isRotating, _playerSpotted, _lightOn, _timerRunning, _isChangingState, _returnAnim;
         private int _currentSpawnPoint = 0;
-        private Quaternion _lookRotation;
+        private Quaternion _lookRotation, _defaultRotation;
 
         // Public:
         public bool drawGizmos = true;
-        public float spawnActivationDistance = 25.0f, fieldOfView = 65.0f, viewDistance = 20.0f, changeStateTime = 3.0f,
-            rotateDegreesPerSecond = 5.0f, rotateWaitTime = 0.0f, lookRangeTo = 230f, lookRangeFrom = 130f, aggroTime = 2.0f;
+        public float spawnActivationDistance = 25.0f, fieldOfView = 65.0f, viewDistance = 20.0f, changeStateTime = 3.0f, aggroTime = 2.0f;
         public Color normalConeColor = Color.yellow, aggroConeColor = Color.red;
         public float animAttackTime = 3.0f;
 
@@ -39,6 +39,7 @@ namespace Team1_GraduationGame.Enemies
             {
                 _player = GameObject.FindGameObjectWithTag("Player");
                 _playerAnimator = _player.GetComponent<Animator>();
+                _playerMovement = _player.GetComponent<Movement>();
             }
 
             if (GetComponent<Animator>() != null)
@@ -61,10 +62,17 @@ namespace Team1_GraduationGame.Enemies
                 fieldOfViewLight.spotAngle = fieldOfView;
             }
 
+            _defaultRotation = transform.rotation;
+
             if (visionGameObject != null)
                 _active = true;
             else
                 Debug.LogError("Big Enemy Error: Vision gameobject missing, please attach one!");
+        }
+
+        private void Start()
+        {
+            InvokeRepeating("DistanceCheckerLoop", 0.3f, 1.0f);
         }
 
         private void FixedUpdate()
@@ -83,7 +91,7 @@ namespace Team1_GraduationGame.Enemies
                             Vector3 dir = _player.transform.position - visionGameObject.transform.position;
                             float enemyToPlayerAngle = Vector3.Angle(visionGameObject.transform.forward, dir);
 
-                            if (enemyToPlayerAngle < fieldOfView / 2)
+                            if (enemyToPlayerAngle < (fieldOfView + 4.0f) / 2.0f)
                             {
                                 RaycastHit hit;
 
@@ -108,22 +116,6 @@ namespace Team1_GraduationGame.Enemies
                         UpdateFOVLight(false, false);
                 }
 
-                if (_player != null)
-                {
-                    if (Vector3.Distance(transform.position, _player.transform.position) < spawnActivationDistance && !_isSpawned)
-                    {
-                        UpdateFOVLight(true, false);
-                        StopCoroutine(ChangeState(false));
-                        StartCoroutine(ChangeState(true));
-                    }
-                    else if (Vector3.Distance(transform.position, _player.transform.position) > spawnActivationDistance &&
-                             _isSpawned)
-                    {
-                        UpdateFOVLight(false, false);
-                        StopCoroutine(ChangeState(true));
-                        StartCoroutine(ChangeState(false));
-                    }
-                }
             }
 
             if (_isAggro && !_active)
@@ -133,6 +125,34 @@ namespace Team1_GraduationGame.Enemies
                 Quaternion rot = Quaternion.LookRotation(_player.transform.position - transform.position) != Quaternion.identity ? Quaternion.LookRotation(_player.transform.position - transform.position) : transform.rotation;
 
                 transform.rotation = Quaternion.RotateTowards(transform.rotation, rot, 85.0f * Time.fixedDeltaTime);
+            }
+            else if (!_isAggro && _returnAnim)
+            {
+                transform.rotation = Quaternion.RotateTowards(transform.rotation, _defaultRotation, 35.0f * Time.fixedDeltaTime);
+            }
+        }
+
+        private void DistanceCheckerLoop()
+        {
+            if (_active)
+            {
+                if (_player != null && !_isChangingState)
+                {
+                    if (Vector3.Distance(transform.position, _player.transform.position) < spawnActivationDistance && !_isSpawned)
+                    {
+                        UpdateFOVLight(true, false);
+                        StopAllCoroutines();
+                        StartCoroutine(ChangeState(true));
+                    }
+                    else if (Vector3.Distance(transform.position, _player.transform.position) > spawnActivationDistance + 5.0f &&
+                             _isSpawned)
+                    {
+                        UpdateFOVLight(false, false);
+                        StopAllCoroutines();
+                        if (gameObject.activeSelf)
+                            StartCoroutine(ChangeState(false));
+                    }
+                }
             }
         }
 
@@ -161,20 +181,26 @@ namespace Team1_GraduationGame.Enemies
             {
                 StopAllCoroutines();
                 _isAggro = false;
-                _isSpawned = false;
+                _returnAnim = false;
                 _playerSpotted = false;
                 _timerRunning = false;
+                _isChangingState = false;
+                //_playerMovement.SetActive(true);
+                _playerMovement.Frozen(false);
                 _animator.ResetTrigger("Appearing");
                 _playerAnimator?.ResetTrigger("BigAttack");
                 _animator.ResetTrigger("Attack");
                 _animator.SetBool("Patrolling", false);
-                _animator.SetTrigger("Disappearing");
+                transform.rotation = _defaultRotation;
+                StartCoroutine(ChangeState(false));
                 UpdateFOVLight(false, false);
             }
         }
 
         private IEnumerator ChangeState(bool isActive)
         {
+            _isChangingState = true;
+
             if (isActive)
             {
                 _animator.SetTrigger("Appearing");
@@ -200,11 +226,14 @@ namespace Team1_GraduationGame.Enemies
                 _animator.SetBool("Patrolling", false);
                 _isSpawned = false;
             }
+
+            _isChangingState = false;
         }
 
         private IEnumerator PlayerDied()
         {
-            _player.GetComponent<Movement>().Frozen(true);
+            _playerMovement.Frozen(true);
+            //_playerMovement.SetActive(false);
             _active = false;
 
             _animator.SetTrigger("Attack");
@@ -216,6 +245,7 @@ namespace Team1_GraduationGame.Enemies
             _playerAnimator?.ResetTrigger("BigAttack");
             _animator?.ResetTrigger("Attack");
             _active = true;
+            _returnAnim = false;
             playerDiedEvent?.Raise();
         }
 
@@ -252,20 +282,20 @@ namespace Team1_GraduationGame.Enemies
             UpdateFOVLight(true, false);
             _isAggro = false;
             _active = true;
+            _returnAnim = true;
             _animator.SetBool("Patrolling", true);
             _animator.ResetTrigger("Spotted");
+            StopAllCoroutines();
+            StartCoroutine(ReturnTimer());
         }
 
-        private IEnumerator WaitTimer()
+        private IEnumerator ReturnTimer()
         {
-            _timerRunning = true;
-            _isRotating = false;
-            yield return new WaitForSeconds(rotateWaitTime);
+            yield return new WaitForSeconds(1.5f);
 
-            _isRotating = true;
-            _updateRotation = true;
-            _timerRunning = false;
+            _returnAnim = false;
         }
+
 
 //#if UNITY_EDITOR
 //        private void OnDrawGizmos()

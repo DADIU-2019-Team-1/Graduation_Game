@@ -147,7 +147,8 @@ namespace Team1_GraduationGame.Enemies
                     {
                         UpdateFOVLight(false, false);
                         StopAllCoroutines();
-                        StartCoroutine(ChangeState(false));
+                        if (gameObject.activeSelf)
+                            StartCoroutine(ChangeState(false));
                     }
                 }
             }

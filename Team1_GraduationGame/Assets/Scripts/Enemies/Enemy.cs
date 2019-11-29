@@ -540,16 +540,12 @@ namespace Team1_GraduationGame.Enemies
 
             yield return new WaitForSeconds(animNoiseHeardTime);
 
-            _animator?.ResetTrigger("NoiseHeard");
-            _animator?.SetTrigger("Reset");
-
             if (!_isAggro)
                 StartCoroutine(EnemyAggro());
 
             _active = true;
 
             yield return new WaitForSeconds(thisEnemy.aggroTime);
-            _animator?.ResetTrigger("Reset");
             _playerHeard = false;
         }
 
@@ -615,12 +611,15 @@ namespace Team1_GraduationGame.Enemies
                 _animator?.SetTrigger("Attack");
                 _enemySoundManager?.AttackPlayer();
 
-                yield return new WaitForSeconds(animAttackTime);
+                yield return new WaitForSeconds(animAttackTime/2);
 
-                CollisionWithPlayerSetter(true);
-                _playerAnimator?.ResetTrigger("EnemyAttack" + thisEnemy.typeId);
-                _movement?.SetIsAttacked(false);
                 playerDiedEvent?.Raise();
+
+                //yield return new WaitForSeconds(animAttackTime/2);
+
+                //CollisionWithPlayerSetter(true);
+                //_playerAnimator?.ResetTrigger("EnemyAttack" + thisEnemy.typeId);
+                //_movement?.SetIsAttacked(false);
             }
 
             _navMeshAgent.isStopped = false;
@@ -678,7 +677,6 @@ namespace Team1_GraduationGame.Enemies
             _animator?.ResetTrigger("GettingUp");
             _animator?.ResetTrigger("Attack");
             CollisionWithPlayerSetter(false);
-            _animator?.ResetTrigger("Reset");
         }
 
         public void SetIsActive(bool isActive) { _active = isActive; }

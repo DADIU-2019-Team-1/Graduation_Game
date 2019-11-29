@@ -191,6 +191,7 @@ namespace Team1_GraduationGame.Enemies
                 _playerAnimator?.ResetTrigger("BigAttack");
                 _animator.ResetTrigger("Attack");
                 _animator.SetBool("Patrolling", false);
+                _animator.SetTrigger("Reset");
                 transform.rotation = _defaultRotation;
                 StartCoroutine(ChangeState(false));
                 UpdateFOVLight(false, false);
@@ -216,13 +217,11 @@ namespace Team1_GraduationGame.Enemies
 
             if (isActive && !_isAggro)
             {
-                _animator.ResetTrigger("Appearing");
                 _animator.SetBool("Patrolling", true);
                 _isSpawned = true;
             }
             else if (!_isAggro)
             {
-                _animator.ResetTrigger("Disappearing");
                 _animator.SetBool("Patrolling", false);
                 _isSpawned = false;
             }
@@ -240,13 +239,12 @@ namespace Team1_GraduationGame.Enemies
             _playerAnimator.SetTrigger("BigAttack");
             enemySoundManager?.AttackPlayer();
 
-            yield return new WaitForSeconds(animAttackTime);
+            yield return new WaitForSeconds(animAttackTime/1.5f);
 
-            _playerAnimator?.ResetTrigger("BigAttack");
-            _animator?.ResetTrigger("Attack");
+            playerDiedEvent?.Raise();
+
             _active = true;
             _returnAnim = false;
-            playerDiedEvent?.Raise();
         }
 
         private IEnumerator Aggro()

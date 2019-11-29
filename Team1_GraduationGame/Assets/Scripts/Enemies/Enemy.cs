@@ -182,7 +182,7 @@ namespace Team1_GraduationGame.Enemies
             {
                 if (_active)
                 {
-                    if (!_isAggro && !_noWayPoints)
+                    if (!_isAggro && !_noWayPoints && !alwaysAggro)
                     {
                         if (_state != 0)
                             SwitchState(0); // Switch to walking
@@ -228,8 +228,11 @@ namespace Team1_GraduationGame.Enemies
 
                         if (Vector3.Distance(transform.position, _lastSighting) < thisEnemy.embraceDistance)
                         {
-                            _destinationSet = false;
-                            _isAggro = false;
+                            if (!alwaysAggro)
+                            {
+                                _destinationSet = false;
+                                _isAggro = false;
+                            }
                         }
                     }
 

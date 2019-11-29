@@ -129,7 +129,12 @@ public class ThomasGoToScene : MonoBehaviour
         if(FindObjectOfType<SavePointManager>() != null)
             FindObjectOfType<SavePointManager>().NextLevel();
         else
+        if(SceneManager.GetActiveScene().buildIndex != SceneManager.sceneCount -1)
             SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
+        else
+        {
+            SceneManager.LoadScene(0);
+        }
 
     }
 

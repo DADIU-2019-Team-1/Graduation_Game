@@ -7,13 +7,16 @@ namespace Team1_GraduationGame.Events
 {
     public class ColliderChecker : MonoBehaviour
     {
-        bool isActive = false;
-        bool isTrigger = false;
-        string tagName = "None";
-        bool isColliding = false;
-        float delayTime = 0f;
-        string eventToFire = "CollisionPlaceholderEvent";
-        GameObject eventManagerObj;
+        private bool isActive = false;
+        private bool isTrigger = false;
+        private string tagName = "None";
+        private bool isColliding = false, checkMotionState = false;
+        private float delayTime = 0f;
+        private string eventToFire = "CollisionPlaceholderEvent";
+        private int ignoreState = 1;
+        private GameObject eventManagerObj, player;
+        private EventManager parentEventManager;
+        private Movement playerMovement;
 
         void Start()
         {
@@ -26,7 +29,6 @@ namespace Team1_GraduationGame.Events
             {
                 gameObject.GetComponent<Collider>().isTrigger = true;
             }
-
         }
 
         void Update()
@@ -44,15 +46,34 @@ namespace Team1_GraduationGame.Events
                     if (tagName == "None")
                     {
                         isColliding = true;
-                        eventManagerObj.GetComponent<EventManager>().Fire(eventToFire);
+                        parentEventManager?.Fire(eventToFire);
                         DelayHandler();
 
                     }
                     else if (col.tag == tagName)
                     {
-                        isColliding = true;
-                        eventManagerObj.GetComponent<EventManager>().Fire(eventToFire);
-                        DelayHandler();
+                        if (!checkMotionState)
+                        {
+                            isColliding = true;
+                            parentEventManager?.Fire(eventToFire);
+                            DelayHandler();
+                        }
+                        else
+                        {
+                            if (playerMovement != null)
+                            {
+                                if (playerMovement.moveState.value <= ignoreState)
+                                {
+                                    // Don't do anything
+                                }
+                                else
+                                {
+                                    isColliding = true;
+                                    parentEventManager?.Fire(eventToFire);
+                                    DelayHandler();
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -61,7 +82,7 @@ namespace Team1_GraduationGame.Events
 
         private void DelayHandler()
         {
-            if (delayTime == 0f)
+            if (delayTime >= 0.15f)
             {
                 isActive = false;
             }
@@ -80,21 +101,21 @@ namespace Team1_GraduationGame.Events
                     if (tagName == "None")
                     {
                         isColliding = true;
-                        eventManagerObj.GetComponent<EventManager>().Fire(eventToFire);
+                        parentEventManager?.Fire(eventToFire);
                         DelayHandler();
 
                     }
                     else if (col.gameObject.tag == tagName)
                     {
                         isColliding = true;
-                        eventManagerObj.GetComponent<EventManager>().Fire(eventToFire);
+                        parentEventManager?.Fire(eventToFire);
                         DelayHandler();
                     }
                 }
             }
         }
 
-        public void SetUpColliderChecker(string eName, float dTime, bool triggerBool, GameObject eManObj, string tagString)
+        public void SetUpColliderChecker(string eName, float dTime, bool triggerBool, GameObject eManObj, string tagString, bool checkMotion)
         {
             SetEventManagerObject(eManObj);
             SetEventName(eName);
@@ -102,6 +123,11 @@ namespace Team1_GraduationGame.Events
             SetDelayTime(dTime);
             isTrigger = triggerBool;
             isActive = true;
+            checkMotionState = checkMotion;
+
+            player = GameObject.FindGameObjectWithTag("Player");
+            playerMovement = player?.GetComponent<Movement>();
+            parentEventManager = eventManagerObj.GetComponent<EventManager>();
         }
 
         public void SetUpColliderChecker(string eName, float dTime, bool triggerBool, GameObject eManObj)
@@ -112,6 +138,10 @@ namespace Team1_GraduationGame.Events
             tagName = "None";
             isTrigger = triggerBool;
             isActive = true;
+
+            player = GameObject.FindGameObjectWithTag("Player");
+            playerMovement = player?.GetComponent<Movement>();
+            parentEventManager = eventManagerObj.GetComponent<EventManager>();
         }
 
         public bool IsColliding()

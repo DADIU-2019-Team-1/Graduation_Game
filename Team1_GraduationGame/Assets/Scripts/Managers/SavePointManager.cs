@@ -97,7 +97,7 @@ namespace Team1_GraduationGame.SaveLoadSystem
                     GameObject tempPlayer = GameObject.FindGameObjectWithTag("Player");
 
                     _playerMovement.Frozen(false);
-                    //_playerMovement.SetActive(true);
+                    _playerMovement.SetActive(true);
 
                     tempPlayer.transform.position =
                         savePoints[savePointNumber - 1].transform.position + transform.up;
@@ -118,7 +118,7 @@ namespace Team1_GraduationGame.SaveLoadSystem
                     if (_playerMovement != null)
                     {
                         _playerMovement.Frozen(false);
-                        //_playerMovement.SetActive(true);
+                        _playerMovement.SetActive(true);
                     }
                 }
             }

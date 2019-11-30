@@ -135,9 +135,10 @@ namespace Team1_GraduationGame.Enemies
             InvokeRepeating("CustomUpdate", 0.5f, 0.7f);
 
             if (activateOnDistance)
-                InvokeRepeating("DistanceActivationChecker", 1.0f, 10.0f);
+                InvokeRepeating("DistanceActivationChecker", 0, 10.0f);
 
-            InvokeRepeating("OnTriggerStayLoop", 0.1f, 0.1f);
+            InvokeRepeating("OnTriggerStayLoop", 2.0f, 0.1f);
+            InvokeRepeating("BehaviourLoop", 1.0f, 0.1f);
         }
 
         /// <summary>
@@ -176,7 +177,7 @@ namespace Team1_GraduationGame.Enemies
             _accelerating = true; // Enables accelerating in the update loop to desired state
         }
 
-        private void FixedUpdate()
+        private void BehaviourLoop()
         {
             if (!behaviourInactive)
             {
@@ -206,17 +207,11 @@ namespace Team1_GraduationGame.Enemies
                         }
                     }
 
-                    if (alwaysAggro)    // If always aggro, this enemy should always know the position of the player
-                    {
-                        _lastSighting = _player.transform.position;
-                    }
-
                     if (_isAggro)
                     {
                         if (!_isHugging && _state != 1)
                             SwitchState(1); // Switch to running
 
-                        _navMeshAgent.SetDestination(_lastSighting);    // Go to last sighting, will be updated constantly if player still in range
                         _isRotating = true;
 
                         if (Vector3.Distance(transform.position, _player.transform.position) <
@@ -236,6 +231,59 @@ namespace Team1_GraduationGame.Enemies
                         }
                     }
 
+                    ViewLightConeControl();
+
+                    if (_active || _playerHeard)
+                    {
+                        if (!_hearingDisabled)
+                        {
+                            _hearingDistance = thisEnemy.hearingDistance;
+                            if (playerMoveState.value == 2)
+                                _hearingDistance = thisEnemy.hearingDistance * hearingSensitivity;
+
+                            float tempHearingPathLength = HearingPathLength();
+
+                            if (tempHearingPathLength < thisEnemy.hearingDistance && playerMoveState.value != 0 &&
+                                playerMoveState.value != 1)
+                            {
+                                if (_playerHeard)
+                                {
+                                    if (tempHearingPathLength < thisEnemy.hearingDistance / 2 && playerMoveState.value == 3)
+                                    {
+                                        StopCoroutine(PlayerHeard());
+                                        _playerHeard = false;
+                                        _active = true;
+                                        _animator?.ResetTrigger("NoiseHeard");
+                                        StartCoroutine(EnemyAggro());
+                                    }
+                                }
+
+                                _lastSighting = _player.transform.position;
+
+                                if (!_isAggro && !_playerHeard)
+                                    StartCoroutine(PlayerHeard());
+
+                            }
+                            else if (Vector3.Distance(transform.position, _player.transform.position) < minimumAlwaysDetectRange
+                            ) // If very very close the enemy will "hear" the player no matter what
+                            {
+                                _lastSighting = _player.transform.position;
+
+                                if (!_isAggro)
+                                    StartCoroutine(EnemyAggro());
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        private void FixedUpdate()
+        {
+            if (!behaviourInactive)
+            {
+                if (_active)
+                {
                     if (_isRotating)    // Is true if enemy should be rotating
                     {
                         Quaternion lookRotation;
@@ -246,6 +294,22 @@ namespace Team1_GraduationGame.Enemies
                             lookRotation = Quaternion.Euler(_wayPointRotations[_currentWayPoint]) != Quaternion.identity ? Quaternion.Euler(_wayPointRotations[_currentWayPoint]) : transform.rotation;
 
                         transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, _navMeshAgent.angularSpeed);
+                    }
+
+                    if (alwaysAggro)    // If always aggro, this enemy should always know the position of the player
+                    {
+                        _lastSighting = _player.transform.position;
+                    }
+
+
+                    if (_isAggro)
+                    {
+                        if (!_playerHeard)
+                        {
+                            _lastSighting = _player.transform.position;
+                        }
+
+                        _navMeshAgent.SetDestination(_lastSighting);    // Go to last sighting, will be updated constantly if player still in range
                     }
 
                     if (_accelerating && _state != 2)   // Used for accelerating the enemy speed, instead of instant speed change:
@@ -263,61 +327,20 @@ namespace Team1_GraduationGame.Enemies
                                 _accelerating = false;
                         }
                     }
-
-                    ViewLightConeControl();
-                }
-
-                if (_active || _playerHeard)
-                {
-                    if (!_hearingDisabled)
-                    {
-                        _hearingDistance = thisEnemy.hearingDistance;
-                        if (playerMoveState.value == 2)
-                            _hearingDistance = thisEnemy.hearingDistance * hearingSensitivity;
-
-                        float tempHearingPathLength = HearingPathLength();
-
-                        if (tempHearingPathLength < thisEnemy.hearingDistance && playerMoveState.value != 0 &&
-                            playerMoveState.value != 1)
-                        {
-                            if (_playerHeard)
-                            {
-                                if (tempHearingPathLength < thisEnemy.hearingDistance / 2 && playerMoveState.value == 3)
-                                {
-                                    StopCoroutine(PlayerHeard());
-                                    _playerHeard = false;
-                                    _active = true;
-                                    _animator?.ResetTrigger("NoiseHeard");
-                                    StartCoroutine(EnemyAggro());
-                                }
-                            }
-
-                            _lastSighting = _player.transform.position;
-
-                            if (!_isAggro && !_playerHeard)
-                                StartCoroutine(PlayerHeard());
-
-                        }
-                        else if (Vector3.Distance(transform.position, _player.transform.position) < minimumAlwaysDetectRange
-                        ) // If very very close the enemy will "hear" the player no matter what
-                        {
-                            _lastSighting = _player.transform.position;
-
-                            if (!_isAggro)
-                                StartCoroutine(EnemyAggro());
-                        }
-                    }
                 }
             }
         }
 
         private void CustomUpdate()
         {
-            _speed = _navMeshAgent.velocity.magnitude;
-
-            if (_animator != null)
+            if (!behaviourInactive)
             {
-                _animator.SetFloat("Speed", _speed);
+                _speed = _navMeshAgent.velocity.magnitude;
+
+                if (_animator != null)
+                {
+                    _animator.SetFloat("Speed", _speed);
+                }
             }
         }
 
@@ -405,10 +428,6 @@ namespace Team1_GraduationGame.Enemies
                             if (!_isAggro)
                                 StartCoroutine(EnemyAggro());
                         }
-                }
-                else if (_isAggro && !_playerHeard)
-                {
-                    _lastSighting = _player.transform.position;
                 }
             }
         }
@@ -546,6 +565,7 @@ namespace Team1_GraduationGame.Enemies
             if (!_isAggro)
                 StartCoroutine(EnemyAggro());
 
+            _animator.SetTrigger("Reset");
             _active = true;
 
             yield return new WaitForSeconds(thisEnemy.aggroTime);
@@ -607,7 +627,7 @@ namespace Team1_GraduationGame.Enemies
             if (Vector3.Distance(transform.position, _player.transform.position) <
                 thisEnemy.embraceDistance + 1.0f)
             {
-                //_movement.SetActive(false);
+                _movement.SetActive(false);
                 viewConeLight?.gameObject.SetActive(false);
                 CollisionWithPlayerSetter(false);
                 _playerAnimator?.SetTrigger("EnemyAttack" + thisEnemy.typeId);
@@ -639,11 +659,7 @@ namespace Team1_GraduationGame.Enemies
             yield return new WaitForSeconds(thisEnemy.pushedDownDuration);
             viewConeLight.color = normalConeColor;
             _animator?.ResetTrigger("PushedDown");
-            //_animator?.SetTrigger("GettingUp");
             _enemySoundManager?.GettingUp();
-
-            //yield return new WaitForSeconds(animGettingUpTime);
-            //_animator?.ResetTrigger("GettingUp");
 
             _navMeshAgent.isStopped = false;
             _active = true;
@@ -663,23 +679,26 @@ namespace Team1_GraduationGame.Enemies
         #region Setter, Getters and Reset
         public void ResetEnemy()
         {
-            _animator?.SetTrigger("Reset");
-            StopAllCoroutines();
+            if (!behaviourInactive)
+            {
+                _animator?.SetTrigger("Reset");
+                StopAllCoroutines();
+                _navMeshAgent.isStopped = false;
+                //_movement.SetIsAttacked(false);
+                //_movement.SetActive(true);
+                _animator?.ResetTrigger("PushedDown");
+                _animator?.ResetTrigger("GettingUp");
+                _animator?.ResetTrigger("Attack");
+                CollisionWithPlayerSetter(false);
+            }
             _onTriggerStayActive = false;
             _timerRunning = false;
             _active = true;
             _playerHeard = false;
             _isHugging = false;
-            _navMeshAgent.isStopped = false;
             _destinationSet = false;
-            _movement.SetIsAttacked(false);
-            //_movement.SetActive(true);
-            behaviourInactive = false;
+            //behaviourInactive = false;
             viewConeLight?.gameObject.SetActive(true);
-            _animator?.ResetTrigger("PushedDown");
-            _animator?.ResetTrigger("GettingUp");
-            _animator?.ResetTrigger("Attack");
-            CollisionWithPlayerSetter(false);
         }
 
         public void SetIsActive(bool isActive) { _active = isActive; }

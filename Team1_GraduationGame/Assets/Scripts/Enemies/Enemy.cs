@@ -19,6 +19,7 @@ namespace Team1_GraduationGame.Enemies
     {
         #region Variables
         // References:
+        public ParticleSystem _system;
         public BaseEnemy thisEnemy;
         public VoidEvent playerDiedEvent;
         public Light viewConeLight;
@@ -559,6 +560,7 @@ namespace Team1_GraduationGame.Enemies
             _active = false;
             _lastSighting = _player.transform.position;
             _animator?.SetTrigger("NoiseHeard");
+            _system.Play();
 
             yield return new WaitForSeconds(animNoiseHeardTime);
 

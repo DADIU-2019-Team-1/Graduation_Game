@@ -108,6 +108,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 383854d2ab436184f8094dd09d465817, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  VisionMesh: {fileID: 8437732397943527205}
   enemySoundManager: {fileID: 8840297198518347601}
   fieldOfViewLight: {fileID: 3080192382734531643}
   playerDiedEvent: {fileID: 11400000, guid: a91b977e02bad9345b91ce4665a3b978, type: 2}
@@ -117,9 +118,9 @@ MonoBehaviour:
   fieldOfView: 65
   viewDistance: 26
   changeStateTime: 3
-  aggroTime: 2
-  normalConeColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
-  aggroConeColor: {r: 1, g: 0, b: 0, a: 1}
+  aggroTime: 0.5
+  normalConeColor: {r: 1, g: 0.9607844, b: 0.7843138, a: 1}
+  aggroConeColor: {r: 0.6666667, g: 0.21568629, b: 0.6392157, a: 1}
   animAttackTime: 4
 --- !u!95 &537400660
 Animator:
@@ -207,6 +208,21 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1465889268154515376, guid: ca0e2354cc457f145b1d997cc849e6f4,
+        type: 3}
+      propertyPath: m_Shadows.m_Type
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1465889268154515376, guid: ca0e2354cc457f145b1d997cc849e6f4,
+        type: 3}
+      propertyPath: m_SpotAngle
+      value: 90
+      objectReference: {fileID: 0}
+    - target: {fileID: 1465889268154515376, guid: ca0e2354cc457f145b1d997cc849e6f4,
+        type: 3}
+      propertyPath: m_Range
+      value: 19.604483
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: ca0e2354cc457f145b1d997cc849e6f4, type: 3}
 --- !u!4 &1593266257331311366 stripped
@@ -224,6 +240,12 @@ GameObject:
 --- !u!108 &3080192382734531643 stripped
 Light:
   m_CorrespondingSourceObject: {fileID: 1465889268154515376, guid: ca0e2354cc457f145b1d997cc849e6f4,
+    type: 3}
+  m_PrefabInstance: {fileID: 4533128261309907851}
+  m_PrefabAsset: {fileID: 0}
+--- !u!23 &8437732397943527205 stripped
+MeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 5471927199610426542, guid: ca0e2354cc457f145b1d997cc849e6f4,
     type: 3}
   m_PrefabInstance: {fileID: 4533128261309907851}
   m_PrefabAsset: {fileID: 0}

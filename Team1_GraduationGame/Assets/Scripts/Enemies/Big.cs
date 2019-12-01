@@ -11,6 +11,7 @@ namespace Team1_GraduationGame.Enemies
     public class Big : MonoBehaviour
     {
         //References:
+        public Renderer VisionMesh;
         private GameObject _player;
         private Movement _playerMovement;
         private Animator _playerAnimator;
@@ -160,11 +161,13 @@ namespace Team1_GraduationGame.Enemies
                 if (on && !aggro)
                 {
                     fieldOfViewLight.color = normalConeColor;
+                    VisionMesh.material.SetColor("_Emission", normalConeColor);
                     _lightOn = true;
                 }
                 else if (on && aggro)
                 {
                     fieldOfViewLight.color = aggroConeColor;
+                    VisionMesh.material.SetColor("_Emission", aggroConeColor);
                     _lightOn = true;
                 }
                 else

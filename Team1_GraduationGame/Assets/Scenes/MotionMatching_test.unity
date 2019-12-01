@@ -6754,12 +6754,6 @@ Transform:
   m_Father: {fileID: 364446284}
   m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!224 &550547690 stripped
-RectTransform:
-  m_CorrespondingSourceObject: {fileID: 7396969353232483692, guid: 3a059f694aacafb428c2047fa1e71731,
-    type: 3}
-  m_PrefabInstance: {fileID: 654214478}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &552212855
 GameObject:
   m_ObjectHideFlags: 0
@@ -18150,12 +18144,6 @@ Transform:
   m_Father: {fileID: 965925534}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!224 &1316002903 stripped
-RectTransform:
-  m_CorrespondingSourceObject: {fileID: 7396969352948887614, guid: 3a059f694aacafb428c2047fa1e71731,
-    type: 3}
-  m_PrefabInstance: {fileID: 654214478}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1317178298
 GameObject:
   m_ObjectHideFlags: 0
@@ -29572,26 +29560,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 6368361481883957842, guid: 4939bc552506a2c44b78fbb97c2a2fe7,
-        type: 3}
-      propertyPath: stick
-      value: 
-      objectReference: {fileID: 1316002903}
-    - target: {fileID: 6368361481883957842, guid: 4939bc552506a2c44b78fbb97c2a2fe7,
-        type: 3}
-      propertyPath: stickLimit
-      value: 
-      objectReference: {fileID: 550547690}
-    - target: {fileID: 6368361481883957842, guid: 4939bc552506a2c44b78fbb97c2a2fe7,
-        type: 3}
-      propertyPath: rotationSpeed.UseUnique
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 6368361481883957842, guid: 4939bc552506a2c44b78fbb97c2a2fe7,
-        type: 3}
-      propertyPath: rotationSpeed.UniqueValue
-      value: 2
-      objectReference: {fileID: 0}
     - target: {fileID: 4489017154004419718, guid: 4939bc552506a2c44b78fbb97c2a2fe7,
         type: 3}
       propertyPath: m_LocalPosition.z
@@ -29610,7 +29578,7 @@ PrefabInstance:
     - target: {fileID: 6621415569614591621, guid: 4939bc552506a2c44b78fbb97c2a2fe7,
         type: 3}
       propertyPath: queryRateInFrames
-      value: 15
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 6621415569614591621, guid: 4939bc552506a2c44b78fbb97c2a2fe7,
         type: 3}
@@ -29660,22 +29628,27 @@ PrefabInstance:
     - target: {fileID: 6621415569614591621, guid: 4939bc552506a2c44b78fbb97c2a2fe7,
         type: 3}
       propertyPath: candidatesPerMisc
-      value: 15
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 6621415569614591621, guid: 4939bc552506a2c44b78fbb97c2a2fe7,
         type: 3}
       propertyPath: animLayerWeightChange
-      value: 2
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 6621415569614591621, guid: 4939bc552506a2c44b78fbb97c2a2fe7,
         type: 3}
       propertyPath: _preProcess
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6621415569614591621, guid: 4939bc552506a2c44b78fbb97c2a2fe7,
         type: 3}
       propertyPath: _loadAnimationsFromController
-      value: 1
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6621415569614591621, guid: 4939bc552506a2c44b78fbb97c2a2fe7,
+        type: 3}
+      propertyPath: pointsPerTrajectory
+      value: 4
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 4939bc552506a2c44b78fbb97c2a2fe7, type: 3}

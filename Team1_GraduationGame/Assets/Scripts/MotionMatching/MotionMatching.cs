@@ -19,20 +19,21 @@ namespace Team1_GraduationGame.MotionMatching
     {
         // TODOs
         // Must have
-        // TODO: Revise pose matching
-        // TODO: Cut down idle animations (some repetition)
-
+        // TODO: Fix release of input resulting in no smoothed stop trajectory (instant)
+        // TODO: Add a banning system for the last X id's
+        // TODO: Use and test the new state lists
+ 
         // Should have
         // TODO: Extrapolate empty trajectorypoints (points that go over the frame size for that clip)
-        // TODO: Collision detection with raycasting between the trajectory points
 
         // Nice to have
-        // TODO: Create LookUp system in preproccesing, that can be used instead of pose matching during runtime
-        // TODO: Create some debugger that shows various information about the data, especially the trajectory for each frame
-        // TODO: When preprocessing, also store the data that is being written to CSV as return to feature vector (do load and write step together when preprocessing)
         // TODO: Add idle events
         // TODO: Add method summaries and general documentation 
 
+        // Out of scope
+        // TODO: Collision detection with raycasting between the trajectory points
+        // TODO: Create LookUp system in preproccesing, that can be used instead of pose matching during runtime
+        // TODO: Create some debugger that shows various information about the data, especially the trajectory for each frame
 
         // --- References
         private Movement movement;
@@ -249,7 +250,7 @@ namespace Team1_GraduationGame.MotionMatching
                 for (int i = 0; i < movement.GetMovementTrajectory().GetTrajectoryPoints().Length; i++) // Gizmos for movement
                 {
                     // Position
-                    Gizmos.DrawWireSphere(movement.GetMovementTrajectory().GetTrajectoryPoints()[i].GetPoint(), 0.2f);
+                    Gizmos.DrawWireSphere(movement.GetMovementTrajectory().GetTrajectoryPoints()[i].GetPoint(), 0.1f);
                     if (i != 0)
                     {
                         Gizmos.DrawLine(movement.GetMovementTrajectory().GetTrajectoryPoints()[i - 1].GetPoint(), 
@@ -270,7 +271,7 @@ namespace Team1_GraduationGame.MotionMatching
                 for (int i = 0; i < featureVectors[_currentID].GetTrajectory().GetTrajectoryPoints().Length; i++)
                 {
                     // Position
-                    Gizmos.DrawWireSphere(invCharSpace.MultiplyPoint3x4(featureVectors[_currentID].GetTrajectory().GetTrajectoryPoints()[i].GetPoint()), 0.2f);
+                    Gizmos.DrawWireSphere(invCharSpace.MultiplyPoint3x4(featureVectors[_currentID].GetTrajectory().GetTrajectoryPoints()[i].GetPoint()), 0.1f);
 
                     if (i != 0)
                     {

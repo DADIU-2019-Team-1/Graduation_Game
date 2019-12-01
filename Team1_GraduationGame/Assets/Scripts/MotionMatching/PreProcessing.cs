@@ -18,7 +18,7 @@ namespace Team1_GraduationGame.MotionMatching
         private List<Vector3> allRootVels, allLFootVels, allRFootVels;
 
         // --- Variables
-        private const float velFactor = 10.0f;
+        private const float velFactor = 100.0f;
 
         public void Preprocess(AnimationClip[] allClips, HumanBodyBones[] joints, GameObject avatar, Animator animator,
             float frameSampleRate, string[] states)
@@ -66,10 +66,8 @@ namespace Team1_GraduationGame.MotionMatching
                     allFrames.Add(j);
                     allStates.Add(clipState);
                     Vector3 rootPos = startSpace.inverse.MultiplyPoint3x4(animator.GetBoneTransform(joints[0]).position);
-                    charSpace.SetTRS(
-                        new Vector3(animator.GetBoneTransform(joints[0]).position.x, 0.0f,
-                            animator.GetBoneTransform(joints[0]).position.z),
-                        animator.GetBoneTransform(joints[0]).rotation, Vector3.one);
+                    charSpace.SetTRS(new Vector3(animator.GetBoneTransform(joints[0]).position.x, 0.0f,
+                            animator.GetBoneTransform(joints[0]).position.z), animator.GetBoneTransform(joints[0]).rotation, Vector3.one);
                     Vector3 lFootPos = charSpace.inverse.MultiplyPoint3x4(animator.GetBoneTransform(joints[1]).position);
                     Vector3 rFootPos = charSpace.inverse.MultiplyPoint3x4(animator.GetBoneTransform(joints[2]).position);
                     Vector3 neckPos = charSpace.inverse.MultiplyPoint3x4(animator.GetBoneTransform(joints[3]).position);
@@ -85,7 +83,7 @@ namespace Team1_GraduationGame.MotionMatching
                         preRFootPos = rFootPos;
                         preNeckPos = neckPos;
 
-                        allPoints.Add(new TrajectoryPoint(rootPos,startSpace.inverse.MultiplyPoint3x4(animator.GetBoneTransform(joints[0]).forward)));
+                        allPoints.Add(new TrajectoryPoint(rootPos,startSpace.inverse.MultiplyVector(animator.GetBoneTransform(joints[0]).forward)));
                     }
                     else // Velocity calculations use j+1 - j instead of j - j-1, since there is no previous timestep, and the velocity in frame 0 should be similar to frame 1
                     {
@@ -104,7 +102,7 @@ namespace Team1_GraduationGame.MotionMatching
                             CalculateVelocity(rFootPos, preRFootPos, velFactor),
                             CalculateVelocity(neckPos, preNeckPos, velFactor)));
 
-                        allPoints.Add(new TrajectoryPoint(rootPos, startSpace.inverse.MultiplyPoint3x4(animator.GetBoneTransform(joints[0]).forward)));
+                        allPoints.Add(new TrajectoryPoint(rootPos, startSpace.inverse.MultiplyVector(animator.GetBoneTransform(joints[0]).forward)));
                     }
                 }
             }

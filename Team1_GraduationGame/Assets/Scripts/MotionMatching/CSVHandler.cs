@@ -105,8 +105,7 @@ namespace Team1_GraduationGame.MotionMatching
 
         public List<FeatureVector> ReadCSV(int trajPointsLength, int trajStepSize)
         {
-            StreamReader reader =
-                new StreamReader(new MemoryStream((Resources.Load("MotionMatching/AnimData") as TextAsset).bytes));
+            StreamReader reader = new StreamReader(new MemoryStream((Resources.Load("MotionMatching/AnimData") as TextAsset).bytes));
 
             bool ignoreHeaders = true;
 
@@ -147,8 +146,7 @@ namespace Team1_GraduationGame.MotionMatching
                         new Vector3(float.Parse(tempString[22], format), float.Parse(tempString[23], format),
                             float.Parse(tempString[24], format))));
 
-                    allPoints.Add(new TrajectoryPoint(
-                        new Vector3(float.Parse(tempString[3], format), 0.0f, float.Parse(tempString[4], format)),
+                    allPoints.Add(new TrajectoryPoint(new Vector3(float.Parse(tempString[3], format), 0.0f, float.Parse(tempString[4], format)),
                         new Vector3(float.Parse(tempString[25], format), 0.0f, float.Parse(tempString[26], format))));
                 }
                 else

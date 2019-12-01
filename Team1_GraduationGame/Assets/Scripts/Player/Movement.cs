@@ -811,8 +811,8 @@ public class Movement : MonoBehaviour
         for (int i = 0; i < trajPoints.Length * mm.framesBetweenTrajectoryPoints; i++)
         {
             previousPlayerPos = playerPos;
-            float newRotationSpeedGoal = Mathf.Min(rotationSpeed.value, Vector3.Angle(playerForward, direction) * 0.01f) * wayToRotate;
-            newRotationSpeedCurrent += (newRotationSpeedGoal - newRotationSpeedCurrent) * 0.01f;
+            float newRotationSpeedGoal = Mathf.Min(rotationSpeed.value, Vector3.Angle(playerForward, direction) * 0.001f) * wayToRotate;
+            newRotationSpeedCurrent += (newRotationSpeedGoal - newRotationSpeedCurrent) * 0.001f;
 
             playerRot = Quaternion.Slerp(playerRot, lookRotation, Time.deltaTime * Mathf.Abs(newRotationSpeedCurrent));
             playerForward = playerRot * Vector3.forward;

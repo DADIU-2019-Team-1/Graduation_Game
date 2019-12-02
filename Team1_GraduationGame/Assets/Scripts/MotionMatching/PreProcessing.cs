@@ -12,13 +12,12 @@ namespace Team1_GraduationGame.MotionMatching
 
         // --- Collections
         private List<string> allClipNames;
-        private List<int> allFrames, allStates;
+        private List<int> allClipFrameCounts, allFrames, allStates;
         private List<MMPose> allPoses;
         private List<TrajectoryPoint> allPoints;
-        private List<Vector3> allRootVels, allLFootVels, allRFootVels;
 
         // --- Variables
-        private const float velFactor = 10.0f;
+        private const float velFactor = 100.0f;
 
         public void Preprocess(AnimationClip[] allClips, HumanBodyBones[] joints, GameObject avatar, Animator animator,
             float frameSampleRate, string[] states)
@@ -26,6 +25,7 @@ namespace Team1_GraduationGame.MotionMatching
             csvHandler = new CSVHandler();
 
             allClipNames = new List<string>();
+            allClipFrameCounts = new List<int>();
             allFrames = new List<int>();
             allStates = new List<int>();
             allPoses = new List<MMPose>();
@@ -48,31 +48,29 @@ namespace Team1_GraduationGame.MotionMatching
                 int clipState = -1;
                 for (int j = 0; j < states.Length; j++)
                 {
-                    Debug.Log("Checking state for " + lowercaseName + " | Is it " + states[j] + "?");
                     if (lowercaseName.Contains(states[j]) && !lowercaseName.Contains("from" + states[j]))
                     {
-                        Debug.Log("Yes! Set clip state to " + j + " which is " + states[j]);
                         clipState = j;
                         break;
                     }
                 }
                 if (clipState == -1)
                 {
-                    Debug.Log(i + " skipped");
+                    Debug.Log("During preprocessing, clip " + allClips[i].name + " did not fit into any states, and was therefore not stored as a feature vector!");
                     continue;
                 }
 
+                int clipFrameCount = (int) (allClips[i].length * frameSampleRate) - 1;
                 for (int j = 0; j < (int) (allClips[i].length * frameSampleRate); j++)
                 {
                     allClips[i].SampleAnimation(avatar, j / frameSampleRate);
                     allClipNames.Add(allClips[i].name);
+                    allClipFrameCounts.Add(clipFrameCount);
                     allFrames.Add(j);
                     allStates.Add(clipState);
                     Vector3 rootPos = startSpace.inverse.MultiplyPoint3x4(animator.GetBoneTransform(joints[0]).position);
-                    charSpace.SetTRS(
-                        new Vector3(animator.GetBoneTransform(joints[0]).position.x, 0.0f,
-                            animator.GetBoneTransform(joints[0]).position.z),
-                        animator.GetBoneTransform(joints[0]).rotation, Vector3.one);
+                    charSpace.SetTRS(new Vector3(animator.GetBoneTransform(joints[0]).position.x, 0.0f,
+                            animator.GetBoneTransform(joints[0]).position.z), animator.GetBoneTransform(joints[0]).rotation, Vector3.one);
                     Vector3 lFootPos = charSpace.inverse.MultiplyPoint3x4(animator.GetBoneTransform(joints[1]).position);
                     Vector3 rFootPos = charSpace.inverse.MultiplyPoint3x4(animator.GetBoneTransform(joints[2]).position);
                     Vector3 neckPos = charSpace.inverse.MultiplyPoint3x4(animator.GetBoneTransform(joints[3]).position);
@@ -88,7 +86,7 @@ namespace Team1_GraduationGame.MotionMatching
                         preRFootPos = rFootPos;
                         preNeckPos = neckPos;
 
-                        allPoints.Add(new TrajectoryPoint(rootPos,startSpace.inverse.MultiplyPoint3x4(animator.GetBoneTransform(joints[0]).forward)));
+                        allPoints.Add(new TrajectoryPoint(rootPos,startSpace.inverse.MultiplyVector(animator.GetBoneTransform(joints[0]).forward)));
                     }
                     else // Velocity calculations use j+1 - j instead of j - j-1, since there is no previous timestep, and the velocity in frame 0 should be similar to frame 1
                     {
@@ -107,12 +105,12 @@ namespace Team1_GraduationGame.MotionMatching
                             CalculateVelocity(rFootPos, preRFootPos, velFactor),
                             CalculateVelocity(neckPos, preNeckPos, velFactor)));
 
-                        allPoints.Add(new TrajectoryPoint(rootPos, startSpace.inverse.MultiplyPoint3x4(animator.GetBoneTransform(joints[0]).forward)));
+                        allPoints.Add(new TrajectoryPoint(rootPos, startSpace.inverse.MultiplyVector(animator.GetBoneTransform(joints[0]).forward)));
                     }
                 }
             }
 
-            csvHandler.WriteCSV(allPoses, allPoints, allClipNames, allFrames, allStates);
+            csvHandler.WriteCSV(allPoses, allPoints, allClipNames, allClipFrameCounts, allFrames, allStates);
         }
 
         public List<FeatureVector> LoadData(int pointsPerTrajectory, int framesBetweenTrajectoryPoints)
@@ -120,19 +118,11 @@ namespace Team1_GraduationGame.MotionMatching
             if (csvHandler == null)
                 csvHandler = new CSVHandler();
             return csvHandler.ReadCSV(pointsPerTrajectory, framesBetweenTrajectoryPoints);
-            ;
         }
 
         public Vector3 CalculateVelocity(Vector3 currentPos, Vector3 previousPose, float velocityFactor)
         {
             return (currentPos - previousPose) * velocityFactor;
         }
-
-        public Vector3 CalculateVelocity(Vector3 currentPos, Vector3 previousPose, Matrix4x4 newSpace,
-            float velocityFactor)
-        {
-            return (newSpace.MultiplyPoint3x4(currentPos) - newSpace.MultiplyPoint3x4(previousPose)) * velocityFactor;
-        }
-
     }
 }

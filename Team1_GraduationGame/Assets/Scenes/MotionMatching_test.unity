@@ -968,6 +968,12 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 82100920}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!224 &86945372 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 7396969353232483692, guid: 3a059f694aacafb428c2047fa1e71731,
+    type: 3}
+  m_PrefabInstance: {fileID: 654214478}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &98400080
 GameObject:
   m_ObjectHideFlags: 0
@@ -2576,6 +2582,12 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 8
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!224 &233468719 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 7396969352948887614, guid: 3a059f694aacafb428c2047fa1e71731,
+    type: 3}
+  m_PrefabInstance: {fileID: 654214478}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &240641686
 GameObject:
   m_ObjectHideFlags: 0
@@ -29577,18 +29589,8 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6621415569614591621, guid: 4939bc552506a2c44b78fbb97c2a2fe7,
         type: 3}
-      propertyPath: queryRateInFrames
-      value: 10
-      objectReference: {fileID: 0}
-    - target: {fileID: 6621415569614591621, guid: 4939bc552506a2c44b78fbb97c2a2fe7,
-        type: 3}
       propertyPath: _playAnimationMode
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6621415569614591621, guid: 4939bc552506a2c44b78fbb97c2a2fe7,
-        type: 3}
-      propertyPath: weightRootVel
-      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6621415569614591621, guid: 4939bc552506a2c44b78fbb97c2a2fe7,
         type: 3}
@@ -29600,55 +29602,15 @@ PrefabInstance:
       propertyPath: weightRFootVel
       value: 1
       objectReference: {fileID: 0}
-    - target: {fileID: 6621415569614591621, guid: 4939bc552506a2c44b78fbb97c2a2fe7,
+    - target: {fileID: 6368361481883957842, guid: 4939bc552506a2c44b78fbb97c2a2fe7,
         type: 3}
-      propertyPath: weightNeckVel
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 6621415569614591621, guid: 4939bc552506a2c44b78fbb97c2a2fe7,
+      propertyPath: stick
+      value: 
+      objectReference: {fileID: 233468719}
+    - target: {fileID: 6368361481883957842, guid: 4939bc552506a2c44b78fbb97c2a2fe7,
         type: 3}
-      propertyPath: weightNeckPos
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 6621415569614591621, guid: 4939bc552506a2c44b78fbb97c2a2fe7,
-        type: 3}
-      propertyPath: weightFeetPos
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 6621415569614591621, guid: 4939bc552506a2c44b78fbb97c2a2fe7,
-        type: 3}
-      propertyPath: weightTrajForwards
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 6621415569614591621, guid: 4939bc552506a2c44b78fbb97c2a2fe7,
-        type: 3}
-      propertyPath: weightTrajPositions
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 6621415569614591621, guid: 4939bc552506a2c44b78fbb97c2a2fe7,
-        type: 3}
-      propertyPath: candidatesPerMisc
-      value: 10
-      objectReference: {fileID: 0}
-    - target: {fileID: 6621415569614591621, guid: 4939bc552506a2c44b78fbb97c2a2fe7,
-        type: 3}
-      propertyPath: animLayerWeightChange
-      value: 5
-      objectReference: {fileID: 0}
-    - target: {fileID: 6621415569614591621, guid: 4939bc552506a2c44b78fbb97c2a2fe7,
-        type: 3}
-      propertyPath: _preProcess
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6621415569614591621, guid: 4939bc552506a2c44b78fbb97c2a2fe7,
-        type: 3}
-      propertyPath: _loadAnimationsFromController
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6621415569614591621, guid: 4939bc552506a2c44b78fbb97c2a2fe7,
-        type: 3}
-      propertyPath: pointsPerTrajectory
-      value: 4
-      objectReference: {fileID: 0}
+      propertyPath: stickLimit
+      value: 
+      objectReference: {fileID: 86945372}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 4939bc552506a2c44b78fbb97c2a2fe7, type: 3}

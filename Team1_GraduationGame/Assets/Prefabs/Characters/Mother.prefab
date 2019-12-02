@@ -674,6 +674,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 635296c0989c9ee49aaf3f6c9a0db0a8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  pointsPerTrajectory: 4
+  framesBetweenTrajectoryPoints: 10
+  queryRateInFrames: 15
+  candidatesFromTrajectory: 20
+  banQueueSize: 10
+  animLayerWeightChange: 2
+  animationFrameRate: 50
+  weightRootVel: 1
+  weightFeetVel: 1
+  weightNeckVel: 1
+  weightNeckPos: 1
+  weightFeetPos: 1
+  weightTrajPositions: 1
+  weightTrajForwards: 1
   joints: 00000000050000000600000009000000
   animContainer: {fileID: 11400000, guid: bb37ea0515a28f0469bc40358b2d1e27, type: 2}
   states:
@@ -681,25 +695,8 @@ MonoBehaviour:
   - Sneak
   - Walk
   - Run
-  _preProcess: 0
-  _playAnimationMode: 0
-  pointsPerTrajectory: 5
-  framesBetweenTrajectoryPoints: 10
-  _isMotionMatching: 0
-  queryRateInFrames: 15
-  candidatesPerMisc: 10
-  banQueueSize: 10
-  animLayerWeightChange: 2
-  animationFrameRate: 50
-  weightRootVel: 1
-  weightLFootVel: 1
-  weightRFootVel: 1
-  weightNeckVel: 1
-  weightNeckPos: 1
-  weightFeetPos: 1
-  weightTrajPositions: 1
-  weightTrajForwards: 1
-  useJobs: 1
+  _preProcess: 1
+  _loadAnimationsFromController: 0
 --- !u!1 &7785683376642587000
 GameObject:
   m_ObjectHideFlags: 0

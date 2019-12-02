@@ -38,7 +38,7 @@ namespace Team1_GraduationGame.Enemies
         public bool pushDownLightIndication = true, drawGizmos = true, useWaitTime, rotateAtWaypoints, loopWaypointRoutine = true, alwaysAggro;
         public Color normalConeColor = Color.yellow, aggroConeColor = Color.red;
         public float animNoiseHeardTime = 2.0f, animAttackTime = 3.0f/*, animGettingUpTime = 2.0f*/;
-        [HideInInspector] public bool useGlobalWaitTime = true, behaviourInactive, activateOnDistance = true;
+        [HideInInspector] public bool useGlobalWaitTime = true, behaviourInactive = true, activateOnDistance = true;
         [HideInInspector] public float waitTime = 0.0f, activationDistance = 65.0f;
 
         // Private variables:
@@ -136,7 +136,7 @@ namespace Team1_GraduationGame.Enemies
             InvokeRepeating("CustomUpdate", 0.5f, 0.7f);
 
             if (activateOnDistance)
-                InvokeRepeating("DistanceActivationChecker", 0, 10.0f);
+                InvokeRepeating("DistanceActivationChecker", 0.1f, 10.0f);
 
             InvokeRepeating("OnTriggerStayLoop", 2.0f, 0.1f);
             InvokeRepeating("BehaviourLoop", 1.0f, 0.1f);

@@ -31,11 +31,6 @@ namespace Team1_GraduationGame.Events
             }
         }
 
-        void Update()
-        {
-
-        }
-
         private void OnTriggerEnter(Collider col)
         {
 

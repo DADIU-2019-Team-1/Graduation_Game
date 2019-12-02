@@ -235,7 +235,7 @@ namespace Team1_GraduationGame.SaveLoadSystem
                 string[] tempDataString2 = tempLoadString.Split(new[] { SAVE_SEPERATOR }, System.StringSplitOptions.None);
 
                 _enemies = GameObject.FindGameObjectsWithTag("Enemy");
-                _bigs = GameObject.FindObjectsOfType<Big>();
+                _bigs = Resources.FindObjectsOfTypeAll<Big>();
 
                 if (_enemies != null)
                 {

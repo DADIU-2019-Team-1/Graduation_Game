@@ -156,7 +156,7 @@ namespace Team1_GraduationGame.Events
         [HideInInspector] public int gameObjectAmount = 0;
         [HideInInspector] public GameObject[] theseGameObjects;
         [HideInInspector] public string collisionTag = "";
-        [HideInInspector] public bool isTrigger = true;
+        [HideInInspector] public bool isTrigger = true, checkMotionState = false;
         [HideInInspector] public float fireCooldown = 0.0f, delayForFire = 0.0f;
         [HideInInspector] public int[] specificRotations;
 
@@ -178,7 +178,7 @@ namespace Team1_GraduationGame.Events
                     }
                     else
                     {
-                        thisGameObject.GetComponent<ColliderChecker>().SetUpColliderChecker(eventName, fireCooldown, isTrigger, attachedManager, collisionTag);
+                        thisGameObject.GetComponent<ColliderChecker>().SetUpColliderChecker(eventName, fireCooldown, isTrigger, attachedManager, collisionTag, checkMotionState);
                     }
 
                 }
@@ -472,6 +472,7 @@ namespace Team1_GraduationGame.Events
                             script.events[i].fireCooldown = EditorGUILayout.FloatField("Fire Cooldown", script.events[i].fireCooldown);
                             script.events[i].collisionTag = EditorGUILayout.TextField("Collision Tag Name", script.events[i].collisionTag);
                             script.events[i].isTrigger = EditorGUILayout.Toggle("Is Trigger?", script.events[i].isTrigger);
+                            script.events[i].checkMotionState = EditorGUILayout.Toggle("Check Motion State?", script.events[i].checkMotionState);
                             script.events[i].thisGameObject = EditorGUILayout.ObjectField("Collider Object", script.events[i].thisGameObject, typeof(GameObject), true) as GameObject;
                             EditorGUILayout.HelpBox("This fires an event when the selected object collides with a specific tag. NOTICE, the names are case sensitive!. Please use 'is trigger' depending on the nature of the collision.", MessageType.Info);
                         }

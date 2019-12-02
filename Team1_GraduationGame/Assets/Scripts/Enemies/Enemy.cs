@@ -560,7 +560,9 @@ namespace Team1_GraduationGame.Enemies
             _active = false;
             _lastSighting = _player.transform.position;
             _animator?.SetTrigger("NoiseHeard");
-            particleSystem?.Play();
+
+            if (particleSystem != null)
+                particleSystem.Play();
 
             yield return new WaitForSeconds(animNoiseHeardTime);
 

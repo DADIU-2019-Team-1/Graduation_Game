@@ -63,7 +63,6 @@ namespace AK
 
             namespace STATE
             {
-                static const AkUniqueID CUTSCENE_INMENU_MUSICSTOPPER = 1601656213U;
                 static const AkUniqueID END_FULLLULLABY_CREDITS = 2902281238U;
                 static const AkUniqueID EXIT_MEMORIES_HANGUPMEM = 2558751454U;
                 static const AkUniqueID GRAVE_SILENCE = 3525878376U;
@@ -74,7 +73,6 @@ namespace AK
                 static const AkUniqueID MEMORY_LULLABY = 3074462064U;
                 static const AkUniqueID MENU_LOAD = 3222607803U;
                 static const AkUniqueID OUTSIDE = 438105790U;
-                static const AkUniqueID PLAYER_DIED = 2295196519U;
                 static const AkUniqueID THE4COLDMEMORY_LOWAMB = 111690814U;
             } // namespace STATE
         } // namespace GAMESTATE

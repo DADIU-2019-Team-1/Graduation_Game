@@ -31,12 +31,6 @@ namespace Team1_GraduationGame.Managers
 
         private void Start()
         {
-            Invoke("DelayedStart", PlayerPrefs.GetInt("loadGameOnAwake") == 1 ? 0.0f : 1.0f);
-        }
-
-
-        private void DelayedStart()
-        {
             tagStrings = new string[soundEvents.Length];
 
             if (soundEvents != null)
@@ -83,12 +77,19 @@ namespace Team1_GraduationGame.Managers
             {
                 for (int i = 0; i < soundEvents.Length; i++)
                 {
-                    if ((int) soundEvents[i].triggerTypeSelector == 4)
+                    if ((int)soundEvents[i].triggerTypeSelector == 4)
                     {
                         soundEvents[i].EventRaised(0);
                     }
                 }
             }
+
+            //Invoke("DelayedStart", PlayerPrefs.GetInt("loadGameOnAwake") == 1 ? 0.0f : 1.0f);
+        }
+
+        private void DelayedStart()
+        {
+            
         }
 
         public void StartCoroutine(int id)

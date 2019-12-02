@@ -173,13 +173,13 @@ namespace Team1_GraduationGame.SaveLoadSystem
 
             if (gameState != null)
             {
-                AKRESULT tempResult = AkSoundEngine.GetState(gameState.Id, out uint currentState);
+                AKRESULT tempResult = AkSoundEngine.GetState(gameState.GroupId, out uint currentState);
                 PlayerPrefs.SetInt("gameState", (int)currentState);
             }
 
             if (levelState != null)
             {
-                AKRESULT tempResult = AkSoundEngine.GetState(levelState.Id, out uint currentState);
+                AKRESULT tempResult = AkSoundEngine.GetState(levelState.GroupId, out uint currentState);
                 PlayerPrefs.SetInt("levelState", (int)currentState);
             }
         }
@@ -193,10 +193,10 @@ namespace Team1_GraduationGame.SaveLoadSystem
                 ambIntensity.SetGlobalValue(PlayerPrefs.GetFloat("ambIntensRTPC"));
 
             if (gameState != null)
-                AkSoundEngine.SetState(gameState.Id, (uint)PlayerPrefs.GetInt("gameState"));
+                AkSoundEngine.SetState(gameState.GroupId, (uint)PlayerPrefs.GetInt("gameState"));
 
             if (levelState != null)
-                AkSoundEngine.SetState(levelState.Id, (uint)PlayerPrefs.GetInt("levelState"));
+                AkSoundEngine.SetState(levelState.GroupId, (uint)PlayerPrefs.GetInt("levelState"));
         }
 
 #if UNITY_EDITOR

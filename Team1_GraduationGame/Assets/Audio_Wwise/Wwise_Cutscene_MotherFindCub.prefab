@@ -1,0 +1,119 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &7493548816489515594
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2809530455391422026}
+  - component: {fileID: 6891132094994043845}
+  - component: {fileID: 7165639245939171807}
+  m_Layer: 0
+  m_Name: Wwise_Cutscene_MotherFindCub
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2809530455391422026
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7493548816489515594}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &6891132094994043845
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7493548816489515594}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f56c9a8239fcd2e468d4759dd7119fb1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_listeners:
+    initialListenerList: []
+    useDefaultListeners: 1
+  isEnvironmentAware: 1
+  isStaticObject: 0
+  m_positionOffsetData:
+    KeepMe: 0
+    positionOffset: {x: 0, y: 0, z: 0}
+  m_posOffsetData: {fileID: 0}
+  listenerMask: 1
+--- !u!114 &7165639245939171807
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7493548816489515594}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 66cf44fb066f7904cb2846ab1f856813, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  attachCollider: 0
+  soundEvents:
+  - thisSoundManager: {fileID: 0}
+    soundEventId: 0
+    triggerTypeSelector: 4
+    triggerDelay: 9
+    triggerEvent: {fileID: 0}
+    triggerFloatEvent: {fileID: 0}
+    rtpcRoleBool: 0
+    customValue: 0
+    transitionDuration: 0
+    behaviorSelector: 1
+    soundManagerGameObject: {fileID: 7493548816489515594}
+    targetGameObject: {fileID: 0}
+    secondGameObject: {fileID: 0}
+    callbacks: []
+    wwiseEvent:
+      idInternal: 0
+      valueGuidInternal: 
+      WwiseObjectReference: {fileID: 0}
+    wwiseState:
+      idInternal: 0
+      valueGuidInternal: 
+      groupIdInternal: 0
+      groupGuidInternal: 
+      WwiseObjectReference: {fileID: 11400000, guid: f22347b70d4bc32428d01a7e8211489c,
+        type: 2}
+    wwiseSwitch:
+      idInternal: 0
+      valueGuidInternal: 
+      groupIdInternal: 0
+      groupGuidInternal: 
+      WwiseObjectReference: {fileID: 0}
+    wwiseRTPC:
+      idInternal: 0
+      valueGuidInternal: 
+      WwiseObjectReference: {fileID: 0}
+    rtpcScriptableObject: {fileID: 0}
+    actionOnEventType: 0
+    curveInterpolation: 0
+    useCallbacks: 0
+    useActionOnEvent: 0
+    rtpcGlobal: 0
+    runOnce: 1
+    useOtherGameObject: 0
+    setCustomRtpcFloat: 0
+    isActive: 1
+    objDistanceToRtpc: 0
+    checkForTag: 0
+    useValueFromEvent: 0
+    tag: 

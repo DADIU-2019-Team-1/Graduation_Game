@@ -172,10 +172,6 @@ namespace Team1_GraduationGame.SaveLoadSystem
             PlayerPrefs.SetInt("currentScene", SceneManager.GetActiveScene().buildIndex);
 
             PlayerPrefs.SetInt("previousGame", 1);
-
-#if UNITY_EDITOR
-            Debug.Log("Save/Load Manager: Succesfully saved the game");
-#endif
         }
 
         /// <summary>
@@ -235,7 +231,7 @@ namespace Team1_GraduationGame.SaveLoadSystem
                 string[] tempDataString2 = tempLoadString.Split(new[] { SAVE_SEPERATOR }, System.StringSplitOptions.None);
 
                 _enemies = GameObject.FindGameObjectsWithTag("Enemy");
-                _bigs = GameObject.FindObjectsOfType<Big>();
+                _bigs = Resources.FindObjectsOfTypeAll<Big>();
 
                 if (_enemies != null)
                 {
@@ -299,11 +295,6 @@ namespace Team1_GraduationGame.SaveLoadSystem
                 Debug.Log("Save/Load Manager: Failed to load the game. Player not found");
                 return;
             }
-
-#if UNITY_EDITOR
-            Debug.Log("Save/Load Manager: Succesfully loaded the game");
-#endif
-
         }
 
         public class SavePointContainer

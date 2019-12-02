@@ -141,6 +141,7 @@ MonoBehaviour:
     theseGameObjects: []
     collisionTag: Player
     isTrigger: 1
+    checkMotionState: 0
     fireCooldown: 0
     delayForFire: 0
     specificRotations: 
@@ -1034,6 +1035,7 @@ MonoBehaviour:
     theseGameObjects: []
     collisionTag: 
     isTrigger: 1
+    checkMotionState: 0
     fireCooldown: 0
     delayForFire: 0
     specificRotations: 
@@ -1423,6 +1425,7 @@ MonoBehaviour:
     theseGameObjects: []
     collisionTag: Player
     isTrigger: 1
+    checkMotionState: 0
     fireCooldown: 0
     delayForFire: 0
     specificRotations: 
@@ -1948,6 +1951,31 @@ PrefabInstance:
       propertyPath: m_Center.z
       value: -0.35620022
       objectReference: {fileID: 0}
+    - target: {fileID: 5042391759831828550, guid: 49bf16381e1ccea42b277731ec12f9f1,
+        type: 3}
+      propertyPath: events.Array.data[0].function
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 5042391759831828550, guid: 49bf16381e1ccea42b277731ec12f9f1,
+        type: 3}
+      propertyPath: events.Array.data[0].collisionTag
+      value: Player
+      objectReference: {fileID: 0}
+    - target: {fileID: 5042391758025632940, guid: 49bf16381e1ccea42b277731ec12f9f1,
+        type: 3}
+      propertyPath: m_AdditionalShaderChannelsFlag
+      value: 25
+      objectReference: {fileID: 0}
+    - target: {fileID: 5042391758080930128, guid: 49bf16381e1ccea42b277731ec12f9f1,
+        type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -44
+      objectReference: {fileID: 0}
+    - target: {fileID: 5042391759521145220, guid: 49bf16381e1ccea42b277731ec12f9f1,
+        type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -44
+      objectReference: {fileID: 0}
     - target: {fileID: 5042391759370571377, guid: 49bf16381e1ccea42b277731ec12f9f1,
         type: 3}
       propertyPath: m_AnchoredPosition.y
@@ -1962,31 +1990,6 @@ PrefabInstance:
         type: 3}
       propertyPath: m_SizeDelta.y
       value: 50
-      objectReference: {fileID: 0}
-    - target: {fileID: 5042391758080930128, guid: 49bf16381e1ccea42b277731ec12f9f1,
-        type: 3}
-      propertyPath: m_AnchoredPosition.y
-      value: -44
-      objectReference: {fileID: 0}
-    - target: {fileID: 5042391759521145220, guid: 49bf16381e1ccea42b277731ec12f9f1,
-        type: 3}
-      propertyPath: m_AnchoredPosition.y
-      value: -44
-      objectReference: {fileID: 0}
-    - target: {fileID: 5042391758025632940, guid: 49bf16381e1ccea42b277731ec12f9f1,
-        type: 3}
-      propertyPath: m_AdditionalShaderChannelsFlag
-      value: 25
-      objectReference: {fileID: 0}
-    - target: {fileID: 5042391759831828550, guid: 49bf16381e1ccea42b277731ec12f9f1,
-        type: 3}
-      propertyPath: events.Array.data[0].function
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 5042391759831828550, guid: 49bf16381e1ccea42b277731ec12f9f1,
-        type: 3}
-      propertyPath: events.Array.data[0].collisionTag
-      value: Player
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 5042391759370571382, guid: 49bf16381e1ccea42b277731ec12f9f1, type: 3}
@@ -2125,6 +2128,21 @@ PrefabInstance:
       propertyPath: m_Center.z
       value: 1.4343996
       objectReference: {fileID: 0}
+    - target: {fileID: 5042391758025632940, guid: 49bf16381e1ccea42b277731ec12f9f1,
+        type: 3}
+      propertyPath: m_AdditionalShaderChannelsFlag
+      value: 25
+      objectReference: {fileID: 0}
+    - target: {fileID: 5042391758025632943, guid: 49bf16381e1ccea42b277731ec12f9f1,
+        type: 3}
+      propertyPath: m_Controller
+      value: 
+      objectReference: {fileID: 9100000, guid: d86b13e616146e44e8eb0ee2bfa61e10, type: 2}
+    - target: {fileID: 5042391758080930128, guid: 49bf16381e1ccea42b277731ec12f9f1,
+        type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: -78
+      objectReference: {fileID: 0}
     - target: {fileID: 5042391759370571377, guid: 49bf16381e1ccea42b277731ec12f9f1,
         type: 3}
       propertyPath: m_SizeDelta.x
@@ -2134,6 +2152,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_SizeDelta.y
       value: 50
+      objectReference: {fileID: 0}
+    - target: {fileID: 5042391759521145223, guid: 49bf16381e1ccea42b277731ec12f9f1,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5042391758080930129, guid: 49bf16381e1ccea42b277731ec12f9f1,
         type: 3}
@@ -2147,25 +2170,20 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 21300000, guid: c2fbdbd66b24ee84382c04facebe32c9,
         type: 3}
-    - target: {fileID: 5042391758080930128, guid: 49bf16381e1ccea42b277731ec12f9f1,
+    - target: {fileID: 5208361042676770425, guid: 49bf16381e1ccea42b277731ec12f9f1,
         type: 3}
-      propertyPath: m_AnchoredPosition.x
-      value: -78
+      propertyPath: _localizedTexts.Array.data[0]
+      value: Move finger slightly to sneak.
       objectReference: {fileID: 0}
-    - target: {fileID: 5042391758025632940, guid: 49bf16381e1ccea42b277731ec12f9f1,
+    - target: {fileID: 5208361042676770425, guid: 49bf16381e1ccea42b277731ec12f9f1,
         type: 3}
-      propertyPath: m_AdditionalShaderChannelsFlag
-      value: 25
+      propertyPath: _localizedTexts.Array.data[1]
+      value: "Bev\xE6ge fingeren let for at snige sig"
       objectReference: {fileID: 0}
-    - target: {fileID: 5042391758025632943, guid: 49bf16381e1ccea42b277731ec12f9f1,
+    - target: {fileID: 5208361042676770425, guid: 49bf16381e1ccea42b277731ec12f9f1,
         type: 3}
-      propertyPath: m_Controller
-      value: 
-      objectReference: {fileID: 9100000, guid: d86b13e616146e44e8eb0ee2bfa61e10, type: 2}
-    - target: {fileID: 5042391759521145223, guid: 49bf16381e1ccea42b277731ec12f9f1,
-        type: 3}
-      propertyPath: m_IsActive
-      value: 1
+      propertyPath: _localizedTexts.Array.data[2]
+      value: "Lopakod\xE1shoz mozgasd az ujjad enyh\xE9n a kijelz\u0151 bal oldal\xE1n."
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 5042391759370571382, guid: 49bf16381e1ccea42b277731ec12f9f1, type: 3}
@@ -2299,6 +2317,41 @@ PrefabInstance:
       propertyPath: m_Center.z
       value: 1.4343996
       objectReference: {fileID: 0}
+    - target: {fileID: 5042391759831828550, guid: 49bf16381e1ccea42b277731ec12f9f1,
+        type: 3}
+      propertyPath: events.Array.data[0].eventName
+      value: TurnOnUISwipe
+      objectReference: {fileID: 0}
+    - target: {fileID: 5042391759831828550, guid: 49bf16381e1ccea42b277731ec12f9f1,
+        type: 3}
+      propertyPath: events.Array.data[0].function
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 5042391759831828550, guid: 49bf16381e1ccea42b277731ec12f9f1,
+        type: 3}
+      propertyPath: events.Array.data[0].collisionTag
+      value: Player
+      objectReference: {fileID: 0}
+    - target: {fileID: 5042391758025632940, guid: 49bf16381e1ccea42b277731ec12f9f1,
+        type: 3}
+      propertyPath: m_AdditionalShaderChannelsFlag
+      value: 25
+      objectReference: {fileID: 0}
+    - target: {fileID: 5042391758025632943, guid: 49bf16381e1ccea42b277731ec12f9f1,
+        type: 3}
+      propertyPath: m_Controller
+      value: 
+      objectReference: {fileID: 9100000, guid: c2b5bf0d9a0f7e04cbaca9fa1232b78e, type: 2}
+    - target: {fileID: 5042391758080930128, guid: 49bf16381e1ccea42b277731ec12f9f1,
+        type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -44
+      objectReference: {fileID: 0}
+    - target: {fileID: 5042391759521145220, guid: 49bf16381e1ccea42b277731ec12f9f1,
+        type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -44
+      objectReference: {fileID: 0}
     - target: {fileID: 5042391759370571377, guid: 49bf16381e1ccea42b277731ec12f9f1,
         type: 3}
       propertyPath: m_AnchoredPosition.x
@@ -2322,52 +2375,18 @@ PrefabInstance:
     - target: {fileID: 5208361042676770425, guid: 49bf16381e1ccea42b277731ec12f9f1,
         type: 3}
       propertyPath: _localizedTexts.Array.data[0]
-      value: Swipe right screen to push.
+      value: 'Swipe in any direction on right side of screen to push. '
       objectReference: {fileID: 0}
     - target: {fileID: 5208361042676770425, guid: 49bf16381e1ccea42b277731ec12f9f1,
         type: 3}
       propertyPath: _localizedTexts.Array.data[1]
-      value: "Stryg h\xF8jre sk\xE6rm for at skubbe"
+      value: "Stryg i enhver retning p\xE5 h\xF8jre sk\xE6rm for at skubbe"
       objectReference: {fileID: 0}
     - target: {fileID: 5208361042676770425, guid: 49bf16381e1ccea42b277731ec12f9f1,
         type: 3}
       propertyPath: _localizedTexts.Array.data[2]
-      value: "L\xF6k\xE9shez gyorsan h\xFAzd az ujjad a kijelz\u0151 jobb oldal\xE1n"
-      objectReference: {fileID: 0}
-    - target: {fileID: 5042391758080930128, guid: 49bf16381e1ccea42b277731ec12f9f1,
-        type: 3}
-      propertyPath: m_AnchoredPosition.y
-      value: -44
-      objectReference: {fileID: 0}
-    - target: {fileID: 5042391759521145220, guid: 49bf16381e1ccea42b277731ec12f9f1,
-        type: 3}
-      propertyPath: m_AnchoredPosition.y
-      value: -44
-      objectReference: {fileID: 0}
-    - target: {fileID: 5042391758025632940, guid: 49bf16381e1ccea42b277731ec12f9f1,
-        type: 3}
-      propertyPath: m_AdditionalShaderChannelsFlag
-      value: 25
-      objectReference: {fileID: 0}
-    - target: {fileID: 5042391758025632943, guid: 49bf16381e1ccea42b277731ec12f9f1,
-        type: 3}
-      propertyPath: m_Controller
-      value: 
-      objectReference: {fileID: 9100000, guid: c2b5bf0d9a0f7e04cbaca9fa1232b78e, type: 2}
-    - target: {fileID: 5042391759831828550, guid: 49bf16381e1ccea42b277731ec12f9f1,
-        type: 3}
-      propertyPath: events.Array.data[0].eventName
-      value: TurnOnUISwipe
-      objectReference: {fileID: 0}
-    - target: {fileID: 5042391759831828550, guid: 49bf16381e1ccea42b277731ec12f9f1,
-        type: 3}
-      propertyPath: events.Array.data[0].function
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 5042391759831828550, guid: 49bf16381e1ccea42b277731ec12f9f1,
-        type: 3}
-      propertyPath: events.Array.data[0].collisionTag
-      value: Player
+      value: "L\xF6k\xE9shez gyorsan h\xFAzd az ujjad a kijelz\u0151 jobb oldal\xE1n
+        b\xE1rmelyik ir\xE1nyba."
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 5042391759370571382, guid: 49bf16381e1ccea42b277731ec12f9f1, type: 3}
@@ -2490,6 +2509,46 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: -231.8
       objectReference: {fileID: 0}
+    - target: {fileID: 5042391759831828550, guid: 49bf16381e1ccea42b277731ec12f9f1,
+        type: 3}
+      propertyPath: events.Array.data[0].function
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 5042391759831828550, guid: 49bf16381e1ccea42b277731ec12f9f1,
+        type: 3}
+      propertyPath: events.Array.data[0].collisionTag
+      value: Player
+      objectReference: {fileID: 0}
+    - target: {fileID: 5042391758025632940, guid: 49bf16381e1ccea42b277731ec12f9f1,
+        type: 3}
+      propertyPath: m_AdditionalShaderChannelsFlag
+      value: 25
+      objectReference: {fileID: 0}
+    - target: {fileID: 5042391758025632943, guid: 49bf16381e1ccea42b277731ec12f9f1,
+        type: 3}
+      propertyPath: m_Controller
+      value: 
+      objectReference: {fileID: 9100000, guid: 9cc2e4b117f0bce4f9546e8f23d8c1ac, type: 2}
+    - target: {fileID: 5042391758080930128, guid: 49bf16381e1ccea42b277731ec12f9f1,
+        type: 3}
+      propertyPath: m_LocalScale.x
+      value: -1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5042391758080930128, guid: 49bf16381e1ccea42b277731ec12f9f1,
+        type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -44.000004
+      objectReference: {fileID: 0}
+    - target: {fileID: 5042391759521145220, guid: 49bf16381e1ccea42b277731ec12f9f1,
+        type: 3}
+      propertyPath: m_LocalScale.x
+      value: -1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5042391759521145220, guid: 49bf16381e1ccea42b277731ec12f9f1,
+        type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -44.000004
+      objectReference: {fileID: 0}
     - target: {fileID: 5042391759370571377, guid: 49bf16381e1ccea42b277731ec12f9f1,
         type: 3}
       propertyPath: m_LocalPosition.z
@@ -2523,52 +2582,12 @@ PrefabInstance:
     - target: {fileID: 5208361042676770425, guid: 49bf16381e1ccea42b277731ec12f9f1,
         type: 3}
       propertyPath: _localizedTexts.Array.data[1]
-      value: "Tr\xE6k venstre  side for at bev\xE6ge"
+      value: "Tr\xE6k Finger venstre side for at bev\xE6ge"
       objectReference: {fileID: 0}
     - target: {fileID: 5208361042676770425, guid: 49bf16381e1ccea42b277731ec12f9f1,
         type: 3}
       propertyPath: _localizedTexts.Array.data[2]
       value: "Ir\xE1ny\xEDt\xE1shoz mozgasd az ujjad a kijelz\u0151 bal oldal\xE1n"
-      objectReference: {fileID: 0}
-    - target: {fileID: 5042391758080930128, guid: 49bf16381e1ccea42b277731ec12f9f1,
-        type: 3}
-      propertyPath: m_LocalScale.x
-      value: -1
-      objectReference: {fileID: 0}
-    - target: {fileID: 5042391758080930128, guid: 49bf16381e1ccea42b277731ec12f9f1,
-        type: 3}
-      propertyPath: m_AnchoredPosition.y
-      value: -44.000004
-      objectReference: {fileID: 0}
-    - target: {fileID: 5042391759521145220, guid: 49bf16381e1ccea42b277731ec12f9f1,
-        type: 3}
-      propertyPath: m_LocalScale.x
-      value: -1
-      objectReference: {fileID: 0}
-    - target: {fileID: 5042391759521145220, guid: 49bf16381e1ccea42b277731ec12f9f1,
-        type: 3}
-      propertyPath: m_AnchoredPosition.y
-      value: -44.000004
-      objectReference: {fileID: 0}
-    - target: {fileID: 5042391758025632940, guid: 49bf16381e1ccea42b277731ec12f9f1,
-        type: 3}
-      propertyPath: m_AdditionalShaderChannelsFlag
-      value: 25
-      objectReference: {fileID: 0}
-    - target: {fileID: 5042391758025632943, guid: 49bf16381e1ccea42b277731ec12f9f1,
-        type: 3}
-      propertyPath: m_Controller
-      value: 
-      objectReference: {fileID: 9100000, guid: 9cc2e4b117f0bce4f9546e8f23d8c1ac, type: 2}
-    - target: {fileID: 5042391759831828550, guid: 49bf16381e1ccea42b277731ec12f9f1,
-        type: 3}
-      propertyPath: events.Array.data[0].function
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 5042391759831828550, guid: 49bf16381e1ccea42b277731ec12f9f1,
-        type: 3}
-      propertyPath: events.Array.data[0].collisionTag
-      value: Player
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 5042391759370571382, guid: 49bf16381e1ccea42b277731ec12f9f1, type: 3}

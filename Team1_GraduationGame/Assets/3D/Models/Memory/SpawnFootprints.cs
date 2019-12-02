@@ -9,13 +9,7 @@ public class SpawnFootprints : MonoBehaviour
     public Transform LfootPos;
     public Transform RfootPos;
     public Transform Mother;
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
 
-    // Update is called once per frame
     public void FootprintSpawnL()
     {
         GameObject gameObject = Instantiate(Lclone, LfootPos.position,Quaternion.identity);

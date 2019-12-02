@@ -137,29 +137,6 @@ namespace Team1_GraduationGame.MotionMatching
             allClips = animContainer.animationClips;
             featureVectors = preProcessing.LoadData(pointsPerTrajectory, framesBetweenTrajectoryPoints);
 
-            for (int i = 0; i < allClips.Length; i++)
-            {
-                int frames = (int)(allClips[i].length * animationFrameRate);
-                for (int j = 0; j < featureVectors.Count; j++)
-                {
-                    if (featureVectors[j].GetClipName() == allClips[i].name)
-                    {
-                        featureVectors[j].SetFrameCount(frames);
-                    }
-                }
-            }
-
-            featureVectorStates = new List<FeatureVector>[states.Length];
-            for (int j = 0; j < states.Length; j++)
-            {
-                featureVectorStates[j] = new List<FeatureVector>();
-            }
-            for (int i = 0; i < featureVectors.Count; i++)
-            {
-                int featureState = featureVectors[i].GetState();
-                featureVectorStates[featureState].Add(featureVectors[i]);
-            }
-
             _trajCandidatesRef = new List<FeatureVector>();
             _trajPossibleCandidatesRef = new List<FeatureVector>();
             _trajCandidateValuesRef = new List<float>();
@@ -191,7 +168,6 @@ namespace Team1_GraduationGame.MotionMatching
 
             if (!_playAnimationMode)
             {
-                UpdateAnimation(0, 0);
                 StartCoroutine(MotionMatch());
             }
         }
@@ -214,32 +190,6 @@ namespace Team1_GraduationGame.MotionMatching
                 counter++;
             }
         }
-
-
-#if UNITY_EDITOR
-        private void Update()
-        {
-            if (_playAnimationMode)
-            {
-                StopCoroutine(MotionMatch());
-                if (Input.GetKeyDown(KeyCode.B))
-                {
-                    if (currentCoroutine != null)
-                        StopCoroutine(currentCoroutine);
-                    transform.position = Vector3.zero;
-                    currentCoroutine = StartCoroutine(PlayAnimation());
-                }
-            }
-
-            if (Input.GetKeyDown(KeyCode.T))
-            {
-                if (Time.timeScale == 1.0f)
-                    Time.timeScale = 0.5f;
-                else
-                    Time.timeScale = 1.0f;
-            }
-        }
-#endif
 
         private void OnDrawGizmos()
         {
@@ -600,9 +550,6 @@ namespace Team1_GraduationGame.MotionMatching
             {
                 candidateValues[j] = float.MaxValue;
             }
-
-            int enam = 0;
-            int enamsingle = 0;
 
             for (int i = 0; i < featureIDs.Length; i++)
             {

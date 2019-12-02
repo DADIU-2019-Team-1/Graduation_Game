@@ -12,10 +12,9 @@ namespace Team1_GraduationGame.MotionMatching
 
         // --- Collections
         private List<string> allClipNames;
-        private List<int> allFrames, allStates;
+        private List<int> allClipFrameCounts, allFrames, allStates;
         private List<MMPose> allPoses;
         private List<TrajectoryPoint> allPoints;
-        private List<Vector3> allRootVels, allLFootVels, allRFootVels;
 
         // --- Variables
         private const float velFactor = 100.0f;
@@ -26,6 +25,7 @@ namespace Team1_GraduationGame.MotionMatching
             csvHandler = new CSVHandler();
 
             allClipNames = new List<string>();
+            allClipFrameCounts = new List<int>();
             allFrames = new List<int>();
             allStates = new List<int>();
             allPoses = new List<MMPose>();
@@ -56,13 +56,16 @@ namespace Team1_GraduationGame.MotionMatching
                 }
                 if (clipState == -1)
                 {
+                    Debug.Log("During preprocessing, clip " + allClips[i].name + " did not fit into any states, and was therefore not stored as a feature vector!");
                     continue;
                 }
 
+                int clipFrameCount = (int) (allClips[i].length * frameSampleRate) - 1;
                 for (int j = 0; j < (int) (allClips[i].length * frameSampleRate); j++)
                 {
                     allClips[i].SampleAnimation(avatar, j / frameSampleRate);
                     allClipNames.Add(allClips[i].name);
+                    allClipFrameCounts.Add(clipFrameCount);
                     allFrames.Add(j);
                     allStates.Add(clipState);
                     Vector3 rootPos = startSpace.inverse.MultiplyPoint3x4(animator.GetBoneTransform(joints[0]).position);
@@ -107,7 +110,7 @@ namespace Team1_GraduationGame.MotionMatching
                 }
             }
 
-            csvHandler.WriteCSV(allPoses, allPoints, allClipNames, allFrames, allStates);
+            csvHandler.WriteCSV(allPoses, allPoints, allClipNames, allClipFrameCounts, allFrames, allStates);
         }
 
         public List<FeatureVector> LoadData(int pointsPerTrajectory, int framesBetweenTrajectoryPoints)
@@ -115,19 +118,11 @@ namespace Team1_GraduationGame.MotionMatching
             if (csvHandler == null)
                 csvHandler = new CSVHandler();
             return csvHandler.ReadCSV(pointsPerTrajectory, framesBetweenTrajectoryPoints);
-            ;
         }
 
         public Vector3 CalculateVelocity(Vector3 currentPos, Vector3 previousPose, float velocityFactor)
         {
             return (currentPos - previousPose) * velocityFactor;
         }
-
-        public Vector3 CalculateVelocity(Vector3 currentPos, Vector3 previousPose, Matrix4x4 newSpace,
-            float velocityFactor)
-        {
-            return (newSpace.MultiplyPoint3x4(currentPos) - newSpace.MultiplyPoint3x4(previousPose)) * velocityFactor;
-        }
-
     }
 }

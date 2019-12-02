@@ -777,6 +777,12 @@ public class Movement : MonoBehaviour
     }
 
 
+    public void memorySettings(bool memoryactive) {
+        canJump = memoryactive;
+        canPush = memoryactive;
+    }
+
+
 
     public void SetState()
     {

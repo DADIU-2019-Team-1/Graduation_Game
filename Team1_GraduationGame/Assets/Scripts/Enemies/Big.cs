@@ -11,6 +11,7 @@ namespace Team1_GraduationGame.Enemies
     public class Big : MonoBehaviour
     {
         //References:
+        public Renderer VisionMesh;
         private GameObject _player;
         private Movement _playerMovement;
         private Animator _playerAnimator;
@@ -134,24 +135,21 @@ namespace Team1_GraduationGame.Enemies
 
         private void DistanceCheckerLoop()
         {
-            if (_active)
+            if (_player != null && !_isChangingState)
             {
-                if (_player != null && !_isChangingState)
+                if (Vector3.Distance(transform.position, _player.transform.position) < spawnActivationDistance && !_isSpawned)
                 {
-                    if (Vector3.Distance(transform.position, _player.transform.position) < spawnActivationDistance && !_isSpawned)
-                    {
-                        UpdateFOVLight(true, false);
-                        StopAllCoroutines();
-                        StartCoroutine(ChangeState(true));
-                    }
-                    else if (Vector3.Distance(transform.position, _player.transform.position) > spawnActivationDistance + 5.0f &&
-                             _isSpawned)
-                    {
-                        UpdateFOVLight(false, false);
-                        StopAllCoroutines();
-                        if (gameObject.activeSelf)
-                            StartCoroutine(ChangeState(false));
-                    }
+                    UpdateFOVLight(true, false);
+                    StopAllCoroutines();
+                    StartCoroutine(ChangeState(true));
+                }
+                else if (Vector3.Distance(transform.position, _player.transform.position) > spawnActivationDistance + 5.0f &&
+                         _isSpawned)
+                {
+                    UpdateFOVLight(false, false);
+                    StopAllCoroutines();
+                    if (gameObject.activeSelf)
+                        StartCoroutine(ChangeState(false));
                 }
             }
         }
@@ -163,11 +161,13 @@ namespace Team1_GraduationGame.Enemies
                 if (on && !aggro)
                 {
                     fieldOfViewLight.color = normalConeColor;
+                    VisionMesh.material.SetColor("_Emission", normalConeColor);
                     _lightOn = true;
                 }
                 else if (on && aggro)
                 {
                     fieldOfViewLight.color = aggroConeColor;
+                    VisionMesh.material.SetColor("_Emission", aggroConeColor);
                     _lightOn = true;
                 }
                 else
@@ -180,13 +180,14 @@ namespace Team1_GraduationGame.Enemies
             if (_animator != null)
             {
                 StopAllCoroutines();
+                _active = true;
                 _isAggro = false;
                 _returnAnim = false;
                 _playerSpotted = false;
                 _timerRunning = false;
                 _isChangingState = false;
                 //_playerMovement.SetActive(true);
-                _playerMovement.Frozen(false);
+                //_playerMovement.Frozen(false);
                 _animator.ResetTrigger("Appearing");
                 _playerAnimator?.ResetTrigger("BigAttack");
                 _animator.ResetTrigger("Attack");
@@ -232,7 +233,7 @@ namespace Team1_GraduationGame.Enemies
         private IEnumerator PlayerDied()
         {
             _playerMovement.Frozen(true);
-            //_playerMovement.SetActive(false);
+            _playerMovement.SetActive(false);
             _active = false;
 
             _animator.SetTrigger("Attack");

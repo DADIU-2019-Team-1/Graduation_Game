@@ -138,14 +138,14 @@ public class Movement : MonoBehaviour
     {
         currentSpeed.value = Vector3.Distance(transform.position, _previousPosition) / Time.fixedDeltaTime;
 
-        // Tried a particle system for the ground
+        //Tried a particle system for the ground
         // if (currentSpeed.value > 4 && isJumping == false)
         // {
         //     Groundparticles.Play();
         // } else {
         //     Groundparticles.Stop();
         // }
-        // I set a temp Speed animator if we arent using motion matching
+        //I set a temp Speed animator if we arent using motion matching
 
         if (animator.runtimeAnimatorController != null)
         {
@@ -741,7 +741,7 @@ public class Movement : MonoBehaviour
 
     public void SetActive(bool isActive)
     {
-        if (isActive)
+        if (!isActive)
         {
             playerRB.constraints = RigidbodyConstraints.FreezeAll;
             moveFrozen = true;

@@ -31,6 +31,9 @@ namespace Team1_GraduationGame.SaveLoadSystem
         [HideInInspector] public List<GameObject> savePoints;
         [HideInInspector] public int previousCheckPoint = 1;
 
+        // Wwise references:
+        [HideInInspector] public AK.Wwise.RTPC distanceToMem, ambIntensity;
+        [HideInInspector] public AK.Wwise.State gameState, levelState;
 
         public void Awake()
         {
@@ -137,11 +140,15 @@ namespace Team1_GraduationGame.SaveLoadSystem
         public void SaveGame()
         {
             saveLoadManager?.SaveGame();
+
+            // AudioSave(); // TODO
         }
 
         public void LoadGame()
         {
             saveLoadManager?.LoadGame();
+
+            // AudioLoad(); // TODO
         }
 
         public void NextLevel()
@@ -152,6 +159,16 @@ namespace Team1_GraduationGame.SaveLoadSystem
         public void ResetLevel()
         {
             SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        }
+
+        private void AudioSave()
+        {
+
+        }
+
+        private void AudioLoad()
+        {
+
         }
 
 #if UNITY_EDITOR

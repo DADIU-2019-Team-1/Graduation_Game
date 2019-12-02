@@ -31,7 +31,7 @@ namespace Team1_GraduationGame.SaveLoadSystem
         }
         [HideInInspector] public colliderTypes attachCollider;
 
-        public void Awake()
+        private void Awake()
         {
             if (Application.isPlaying)
                 if (transform.parent.gameObject.GetComponent<SavePointManager>() != null)
@@ -40,9 +40,9 @@ namespace Team1_GraduationGame.SaveLoadSystem
 
         private void OnTriggerEnter(Collider col)
         {
-            if (Application.isPlaying && !savingDisabled)
+            if (Application.isPlaying && !savingDisabled && !savePointUsed)
             {
-                if (col.tag == "Player" && !savePointUsed)
+                if (col.tag == "Player")
                 {
                     if (useSavePointPosition)
                         thisSavePointManager.saveLoadManager.SaveGame(gameObject.transform.position);

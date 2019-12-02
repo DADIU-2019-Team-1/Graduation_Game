@@ -7,6 +7,7 @@ using Team1_GraduationGame.Interaction;
 using Team1_GraduationGame.Events;
 using Team1_GraduationGame.MotionMatching;
 using Team1_GraduationGame.Sound;
+using Unity.Mathematics;
 using UnityEditor;
 
 [RequireComponent(typeof(Rigidbody), typeof(SphereCollider))]
@@ -578,12 +579,10 @@ public class Movement : MonoBehaviour
         int wayToRotate = CrossProductPositive(transform.forward, _direction) ? 1 : -1;
         rotationSpeedGoal = Mathf.Min(rotationSpeed.value, Vector3.Angle(transform.forward, _direction) * (isPushing? pushRotationAngleReactionFactor: rotationAngleReactionFactor)) * wayToRotate;
         rotationSpeedCurrent += (rotationSpeedGoal - rotationSpeedCurrent) * (isPushing? pushRotationAccelerationFactor: rotationAccelerationFactor);
-        
         transform.rotation = Quaternion.Slerp(transform.rotation,isPushing? pushRotation: lookRotation, Time.deltaTime * Mathf.Abs(rotationSpeedCurrent));
-        
         if (!isJumping)
         {
-            playerRB.MovePosition(transform.position + (_direction + transform.forward /* * rotation factor can be inserted  here*/).normalized * ((targetSpeed - currentSpeed.value) * accelerationFactor + currentSpeed.value) * Time.fixedDeltaTime);
+            playerRB.MovePosition(transform.position + (_direction + transform.forward).normalized * ((targetSpeed - currentSpeed.value) * accelerationFactor + currentSpeed.value) * Time.fixedDeltaTime);
         }
         else
         {
@@ -808,37 +807,22 @@ public class Movement : MonoBehaviour
 
     public Trajectory GetMovementTrajectory()
     {
-        //for (int i = 0; i < trajPoints.Length; i++)
-        //{
-        //    if (i > 0)
-        //    {
-        //        //Vector3 tempPos = trajPoints[i - 1].GetPoint() + Quaternion.Slerp(transform.rotation, lookRotation, (float) (i + 1) / trajPoints.Length) * Vector3.forward * Mathf.Clamp(speed, 0.1f, 1.0f);
-        //        Vector3 tempPos = trajPoints[i - 1].GetPoint() + direction /*trajPoints[i - 1].GetForward()*/ * currentSpeed.value;
-
-        //        Vector3 tempForward = tempPos + (Quaternion.Slerp(transform.rotation, lookRotation,
-        //                                  (float)i / trajPoints.Length) * Vector3.forward * rotationSpeed.value).normalized;
-
-        //        trajPoints[i] = new TrajectoryPoint(tempPos, tempForward);
-        //    }
-        //    else
-        //        trajPoints[i] = new TrajectoryPoint(transform.position, transform.position + transform.forward);
-        //}
         float newRotationSpeedCurrent = rotationSpeedCurrent;
         Vector3 playerPos = transform.position, previousPlayerPos;
         Vector3 playerForward = transform.forward;
         Quaternion playerRot = transform.rotation;
-        float simulatedSpeed = currentSpeed.value;
+        float simulatedSpeed = currentSpeed.value / math.clamp(math.abs(Vector3.Angle(playerForward, direction) / 20.0f), 1.0f, 4.0f);
         int wayToRotate = CrossProductPositive(playerForward, direction) ? 1 : -1;
         int j = 0;
         for (int i = 0; i < trajPoints.Length * mm.framesBetweenTrajectoryPoints; i++)
         {
             previousPlayerPos = playerPos;
-            float newRotationSpeedGoal = Mathf.Min(rotationSpeed.value, Vector3.Angle(playerForward, direction) * rotationAngleReactionFactor) * wayToRotate;
-            newRotationSpeedCurrent += (newRotationSpeedGoal - newRotationSpeedCurrent) * rotationAccelerationFactor;
+            float newRotationSpeedGoal = Mathf.Min(rotationSpeed.value, Vector3.Angle(playerForward, direction) * 0.001f) * wayToRotate;
+            newRotationSpeedCurrent += (newRotationSpeedGoal - newRotationSpeedCurrent) * 0.001f;
 
             playerRot = Quaternion.Slerp(playerRot, lookRotation, Time.deltaTime * Mathf.Abs(newRotationSpeedCurrent));
             playerForward = playerRot * Vector3.forward;
-            playerPos += (direction + playerForward).normalized * ((targetSpeed - simulatedSpeed) * accelerationFactor + simulatedSpeed) * Time.fixedDeltaTime;
+            playerPos += (direction + playerForward).normalized * ((targetSpeed - simulatedSpeed) * 0.01f + simulatedSpeed) * Time.fixedDeltaTime;
 
             if (i % mm.framesBetweenTrajectoryPoints == 0)
             {

@@ -4,26 +4,21 @@ using UnityEngine;
 public class FeatureVector
 {
 	private readonly int id, frame, state;
-	private int allFrames;
+	private readonly int clipFrameCount;
     private readonly string clipName;
     private readonly MMPose pose;
     private readonly Trajectory trajectory;
 
-    public FeatureVector(MMPose pose, Trajectory trajectory, int id, string clipName, int frame, int state)
+    public FeatureVector(MMPose pose, Trajectory trajectory, int id, string clipName, int clipFrameCount, int frame, int state)
     {
         this.pose = pose;
         this.trajectory = trajectory;
         this.id = id;
         this.clipName = clipName;
+        this.clipFrameCount = clipFrameCount;
         this.frame = frame;
         this.state = state;
     }
-
-    public void SetFrameCount(int frameCountForID)
-    {
-	    allFrames = frameCountForID;
-    }
-
     public MMPose GetPose()
     {
         return pose;
@@ -50,6 +45,6 @@ public class FeatureVector
     }
     public int GetFrameCountForID()
     {
-	    return allFrames;
+	    return clipFrameCount;
     }
 }

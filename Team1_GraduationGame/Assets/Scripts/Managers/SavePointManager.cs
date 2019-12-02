@@ -143,14 +143,14 @@ namespace Team1_GraduationGame.SaveLoadSystem
         {
             saveLoadManager?.SaveGame();
 
-            // AudioSave(); // TODO
+            AudioSave(); // TODO test
         }
 
         public void LoadGame()
         {
             saveLoadManager?.LoadGame();
 
-            // AudioLoad(); // TODO
+            AudioLoad(); // TODO test
         }
 
         public void NextLevel()

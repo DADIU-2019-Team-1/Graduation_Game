@@ -686,7 +686,7 @@ namespace Team1_GraduationGame.Enemies
                 _animator?.SetTrigger("Reset");
                 StopAllCoroutines();
                 _navMeshAgent.isStopped = false;
-                _movement.SetIsAttacked(false);
+                //_movement.SetIsAttacked(false);
                 //_movement.SetActive(true);
                 _animator?.ResetTrigger("PushedDown");
                 _animator?.ResetTrigger("GettingUp");

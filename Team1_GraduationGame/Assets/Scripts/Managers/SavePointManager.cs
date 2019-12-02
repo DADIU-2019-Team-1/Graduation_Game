@@ -27,10 +27,13 @@ namespace Team1_GraduationGame.SaveLoadSystem
 
         // Public
         public int firstSceneBuildIndex = 0;
-        public bool drawGizmos = true;
+        public bool drawGizmos = true, setupAudioSave;
         [HideInInspector] public List<GameObject> savePoints;
         [HideInInspector] public int previousCheckPoint = 1;
 
+        // Wwise references:
+        [HideInInspector] public AK.Wwise.RTPC distanceToMem, ambIntensity;
+        [HideInInspector] public AK.Wwise.State gameState, levelState;
 
         public void Awake()
         {
@@ -98,6 +101,7 @@ namespace Team1_GraduationGame.SaveLoadSystem
 
                     _playerMovement.Frozen(false);
                     _playerMovement.SetActive(true);
+                    _playerMovement.SetIsAttacked(false);
 
                     tempPlayer.transform.position =
                         savePoints[savePointNumber - 1].transform.position + transform.up;
@@ -119,6 +123,7 @@ namespace Team1_GraduationGame.SaveLoadSystem
                     {
                         _playerMovement.Frozen(false);
                         _playerMovement.SetActive(true);
+                        _playerMovement.SetIsAttacked(false);
                     }
                 }
             }
@@ -137,11 +142,15 @@ namespace Team1_GraduationGame.SaveLoadSystem
         public void SaveGame()
         {
             saveLoadManager?.SaveGame();
+
+            // AudioSave(); // TODO
         }
 
         public void LoadGame()
         {
             saveLoadManager?.LoadGame();
+
+            // AudioLoad(); // TODO
         }
 
         public void NextLevel()
@@ -152,6 +161,42 @@ namespace Team1_GraduationGame.SaveLoadSystem
         public void ResetLevel()
         {
             SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        }
+
+        private void AudioSave()
+        {
+            if (distanceToMem != null)
+                PlayerPrefs.SetFloat("distanceRTPC", distanceToMem.GetGlobalValue());
+
+            if (ambIntensity != null)
+                PlayerPrefs.SetFloat("ambIntensRTPC", ambIntensity.GetGlobalValue());
+
+            if (gameState != null)
+            {
+                AKRESULT tempResult = AkSoundEngine.GetState(gameState.Id, out uint currentState);
+                PlayerPrefs.SetInt("gameState", (int)currentState);
+            }
+
+            if (levelState != null)
+            {
+                AKRESULT tempResult = AkSoundEngine.GetState(levelState.Id, out uint currentState);
+                PlayerPrefs.SetInt("levelState", (int)currentState);
+            }
+        }
+
+        private void AudioLoad()
+        {
+            if (distanceToMem != null)
+                distanceToMem.SetGlobalValue(PlayerPrefs.GetFloat("distanceRTPC"));
+
+            if (ambIntensity != null)
+                ambIntensity.SetGlobalValue(PlayerPrefs.GetFloat("ambIntensRTPC"));
+
+            if (gameState != null)
+                AkSoundEngine.SetState(gameState.Id, (uint)PlayerPrefs.GetInt("gameState"));
+
+            if (levelState != null)
+                AkSoundEngine.SetState(levelState.Id, (uint)PlayerPrefs.GetInt("levelState"));
         }
 
 #if UNITY_EDITOR
@@ -233,6 +278,23 @@ namespace Team1_GraduationGame.SaveLoadSystem
             if (GUILayout.Button("Add SavePoint"))
             {
                 script.AddSavePoint();
+            }
+
+            if (script.setupAudioSave)
+            {
+                SerializedProperty distanceToMemProp = serializedObject.FindProperty("distanceToMem");
+                EditorGUILayout.PropertyField(distanceToMemProp);
+
+                SerializedProperty amdIntensityProp = serializedObject.FindProperty("ambIntensity");
+                EditorGUILayout.PropertyField(amdIntensityProp);
+
+                SerializedProperty gameStateProp = serializedObject.FindProperty("gameState");
+                EditorGUILayout.PropertyField(gameStateProp);
+
+                SerializedProperty levelStateProp = serializedObject.FindProperty("levelState");
+                EditorGUILayout.PropertyField(levelStateProp);
+
+                serializedObject.ApplyModifiedProperties();
             }
 
             if (GUI.changed)

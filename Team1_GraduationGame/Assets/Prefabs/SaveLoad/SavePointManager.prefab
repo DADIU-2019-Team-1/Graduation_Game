@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6464282928393575679}
   - component: {fileID: 6464282928393575676}
+  - component: {fileID: 6110365582065178638}
   m_Layer: 0
   m_Name: SavePointManager
   m_TagString: Untagged
@@ -43,9 +44,55 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 078114d4c92989248a09588aec1a4ad3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  newGameEvent: {fileID: 11400000, guid: 5f9d122e2f97bcd42805a9377f8edb72, type: 2}
-  inMenuEvent: {fileID: 11400000, guid: 046e544e62402bf4ba94cb5f0f0b25b1, type: 2}
+  _playableDirector: {fileID: 0}
   firstSceneBuildIndex: 0
   drawGizmos: 1
+  setupAudioSave: 1
   savePoints: []
   previousCheckPoint: 1
+  distanceToMem:
+    idInternal: 0
+    valueGuidInternal: 
+    WwiseObjectReference: {fileID: 11400000, guid: 2b2b445c0908ebe4886f309041d3e27c,
+      type: 2}
+  ambIntensity:
+    idInternal: 0
+    valueGuidInternal: 
+    WwiseObjectReference: {fileID: 11400000, guid: a3b2b7cc0d680c4489e12ae695cb7a0f,
+      type: 2}
+  gameState:
+    idInternal: 0
+    valueGuidInternal: 
+    groupIdInternal: 0
+    groupGuidInternal: 
+    WwiseObjectReference: {fileID: 11400000, guid: c52f9a622dd0d9d4cb248b8eb399b590,
+      type: 2}
+  levelState:
+    idInternal: 0
+    valueGuidInternal: 
+    groupIdInternal: 0
+    groupGuidInternal: 
+    WwiseObjectReference: {fileID: 11400000, guid: dbebfc2c468cd9a4cb28f6ca9010cda3,
+      type: 2}
+--- !u!114 &6110365582065178638
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6464282928393575677}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f56c9a8239fcd2e468d4759dd7119fb1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_listeners:
+    initialListenerList: []
+    useDefaultListeners: 1
+  isEnvironmentAware: 1
+  isStaticObject: 0
+  m_positionOffsetData:
+    KeepMe: 0
+    positionOffset: {x: 0, y: 0, z: 0}
+  m_posOffsetData: {fileID: 0}
+  listenerMask: 1

@@ -19,7 +19,7 @@ namespace Team1_GraduationGame.Enemies
     {
         #region Variables
         // References:
-        public ParticleSystem _system;
+        public ParticleSystem particleSystem;
         public BaseEnemy thisEnemy;
         public VoidEvent playerDiedEvent;
         public Light viewConeLight;
@@ -560,7 +560,7 @@ namespace Team1_GraduationGame.Enemies
             _active = false;
             _lastSighting = _player.transform.position;
             _animator?.SetTrigger("NoiseHeard");
-            _system.Play();
+            particleSystem?.Play();
 
             yield return new WaitForSeconds(animNoiseHeardTime);
 
@@ -686,7 +686,7 @@ namespace Team1_GraduationGame.Enemies
                 _animator?.SetTrigger("Reset");
                 StopAllCoroutines();
                 _navMeshAgent.isStopped = false;
-                _movement.SetIsAttacked(false);
+                //_movement.SetIsAttacked(false);
                 //_movement.SetActive(true);
                 _animator?.ResetTrigger("PushedDown");
                 _animator?.ResetTrigger("GettingUp");

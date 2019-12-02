@@ -17,6 +17,11 @@ namespace Team1_GraduationGame.Events
 
         void Start()
         {
+            Invoke("DelayedStart", PlayerPrefs.GetInt("loadGameOnAwake") == 1 ? 0.0f : 3.0f);
+        }
+
+        void DelayedStart()
+        {
             for (int i = 0; i < events.Length; i++)
             {
                 if (events[i].eventName != "" || events[i].eventToFire != null)
@@ -26,7 +31,9 @@ namespace Team1_GraduationGame.Events
                 }
                 else
                 {
-                    Debug.Log("EventManager Notice: event number " + i + " is not set up correctly!");
+#if UNITY_EDITOR
+                    Debug.LogError("EventManager Notice: event number " + i + " is not set up correctly!");
+#endif
                 }
 
                 if ((int) events[i].function == 8)
@@ -100,7 +107,9 @@ namespace Team1_GraduationGame.Events
 
         public void ResetScene()
         {
+            #if UNITY_EDITOR
             Debug.Log("EventManager: Reset Scene");
+            #endif
             SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
         }
 
@@ -174,7 +183,9 @@ namespace Team1_GraduationGame.Events
 
                     if (hasFired)
                     {
+                    #if UNITY_EDITOR
                         Debug.Log(eventName + " event already fired");
+                    #endif
                     }
                     else
                     {
@@ -184,7 +195,7 @@ namespace Team1_GraduationGame.Events
                 }
                 else
                 {
-                    Debug.Log(eventName + " error: ColliderChecker script missing!");
+                    Debug.LogError(eventName + " error: ColliderChecker script missing!");
                 }
             }
             else
@@ -207,7 +218,9 @@ namespace Team1_GraduationGame.Events
 
                     if (hasFired)
                     {
+#if UNITY_EDITOR
                         Debug.Log(eventName + " event already fired");
+#endif
                     }
                     else
                     {
@@ -217,7 +230,7 @@ namespace Team1_GraduationGame.Events
                 }
                 else
                 {
-                    Debug.Log(eventName + " error: ColliderChecker script missing!");
+                    Debug.LogError(eventName + " error: ColliderChecker script missing!");
                 }
             }
             else
@@ -244,7 +257,7 @@ namespace Team1_GraduationGame.Events
                         yield return new WaitForSeconds(delayForFire);
                         loop = false;
                         eventToFire.Invoke();
-                        Debug.Log(eventName + " event fired!");
+                        //Debug.Log(eventName + " event fired!");
                     }
 
                 }
@@ -257,12 +270,14 @@ namespace Team1_GraduationGame.Events
 
             if (hasFired)
             {
+#if UNITY_EDITOR
                 Debug.Log(eventName + " event already fired");
+#endif
             }
             else
             {
                 eventToFire.Invoke();
-                Debug.Log(eventName + " event fired!");
+                //Debug.Log(eventName + " event fired!");
                 hasFired = true;
             }
 
@@ -283,7 +298,7 @@ namespace Team1_GraduationGame.Events
                 yield return new WaitForSeconds(delayForFire);
 
                 eventToFire.Invoke();
-                Debug.Log(eventName + " event fired!");
+                //Debug.Log(eventName + " event fired!");
 
                 if (fireCooldown == 0)
                 {
@@ -333,7 +348,7 @@ namespace Team1_GraduationGame.Events
                 {
                     yield return new WaitForSeconds(delayForFire);
                     eventToFire.Invoke();
-                    Debug.Log(eventName + " event fired!");
+                    //Debug.Log(eventName + " event fired!");
                     yield return new WaitForSeconds(fireCooldown);
 
                     if (fireCooldown == 0)
@@ -355,7 +370,7 @@ namespace Team1_GraduationGame.Events
                     yield return new WaitForSeconds(delayForFire);
 
                     eventToFire.Invoke();
-                    Debug.Log(eventName + " event fired!");
+                    //Debug.Log(eventName + " event fired!");
 
                     if (fireCooldown == 0)
                     {
@@ -393,7 +408,7 @@ namespace Team1_GraduationGame.Events
                 {
                     yield return new WaitForSeconds(delayForFire);
                     eventToFire.Invoke();
-                    Debug.Log(eventName + " event fired!");
+                    //Debug.Log(eventName + " event fired!");
                     yield return new WaitForSeconds(fireCooldown);
 
                     if (fireCooldown == 0)

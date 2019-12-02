@@ -29,29 +29,29 @@ namespace Team1_GraduationGame.Managers
         private string[] tagStrings;
         private bool _collisionActive, _useStart, _customUpdateActive;
 
-        private void Awake()
+        private void Start()
         {
             tagStrings = new string[soundEvents.Length];
 
             if (soundEvents != null)
                 for (int i = 0; i < soundEvents.Length; i++)
                 {
-                    if ((int) soundEvents[i].triggerTypeSelector == 0)
+                    if ((int)soundEvents[i].triggerTypeSelector == 0)
                     {
                         soundEvents[i].soundEventListener = new SoundVoidEventListener();
                         soundEvents[i].soundEventListener.GameEvent = soundEvents[i].triggerEvent;
                         soundEvents[i].soundEventListener.SoundEventClass = soundEvents[i];
                         soundEvents[i].soundEventListener.Enable();
-                    } 
-                    else if ((int) soundEvents[i].triggerTypeSelector == 1)
+                    }
+                    else if ((int)soundEvents[i].triggerTypeSelector == 1)
                     {
                         soundEvents[i].soundFloatEventListener = new SoundFloatEventListener();
                         soundEvents[i].soundFloatEventListener.GameEvent = soundEvents[i].triggerFloatEvent;
                         soundEvents[i].soundFloatEventListener.SoundEventClass = soundEvents[i];
                         soundEvents[i].soundFloatEventListener.Enable();
                     }
-                    else if ((int) soundEvents[i].triggerTypeSelector == 2 ||
-                             (int) soundEvents[i].triggerTypeSelector == 3 || 
+                    else if ((int)soundEvents[i].triggerTypeSelector == 2 ||
+                             (int)soundEvents[i].triggerTypeSelector == 3 ||
                              (int)soundEvents[i].triggerTypeSelector == 6)
                     {
                         _collisionActive = true;
@@ -60,7 +60,7 @@ namespace Team1_GraduationGame.Managers
                             tagStrings[i] = soundEvents[i].tag;
                         }
                     }
-                    else if ((int) soundEvents[i].triggerTypeSelector == 4)
+                    else if ((int)soundEvents[i].triggerTypeSelector == 4)
                     {
                         _useStart = true;
                     }
@@ -72,20 +72,24 @@ namespace Team1_GraduationGame.Managers
                     soundEvents[i].soundEventId = i;
                     soundEvents[i].soundManagerGameObject = gameObject;
                 }
-        }
 
-        private void Start()
-        {
             if (_useStart)
             {
                 for (int i = 0; i < soundEvents.Length; i++)
                 {
-                    if ((int) soundEvents[i].triggerTypeSelector == 4)
+                    if ((int)soundEvents[i].triggerTypeSelector == 4)
                     {
                         soundEvents[i].EventRaised(0);
                     }
                 }
             }
+
+            //Invoke("DelayedStart", PlayerPrefs.GetInt("loadGameOnAwake") == 1 ? 0.0f : 1.0f);
+        }
+
+        private void DelayedStart()
+        {
+            
         }
 
         public void StartCoroutine(int id)

@@ -19,7 +19,7 @@ namespace Team1_GraduationGame.Enemies
     {
         #region Variables
         // References:
-        public ParticleSystem _system;
+        public ParticleSystem particleSystem;
         public BaseEnemy thisEnemy;
         public VoidEvent playerDiedEvent;
         public Light viewConeLight;
@@ -38,7 +38,7 @@ namespace Team1_GraduationGame.Enemies
         public bool pushDownLightIndication = true, drawGizmos = true, useWaitTime, rotateAtWaypoints, loopWaypointRoutine = true, alwaysAggro;
         public Color normalConeColor = Color.yellow, aggroConeColor = Color.red;
         public float animNoiseHeardTime = 2.0f, animAttackTime = 3.0f/*, animGettingUpTime = 2.0f*/;
-        [HideInInspector] public bool useGlobalWaitTime = true, behaviourInactive, activateOnDistance = true;
+        [HideInInspector] public bool useGlobalWaitTime = true, behaviourInactive = true, activateOnDistance = true;
         [HideInInspector] public float waitTime = 0.0f, activationDistance = 65.0f;
 
         // Private variables:
@@ -136,9 +136,9 @@ namespace Team1_GraduationGame.Enemies
             InvokeRepeating("CustomUpdate", 0.5f, 0.7f);
 
             if (activateOnDistance)
-                InvokeRepeating("DistanceActivationChecker", 0, 10.0f);
+                InvokeRepeating("DistanceActivationChecker", 0, 8.0f);
 
-            InvokeRepeating("OnTriggerStayLoop", 2.0f, 0.1f);
+            InvokeRepeating("OnTriggerStayLoop", 4.0f, 0.1f);
             InvokeRepeating("BehaviourLoop", 1.0f, 0.1f);
         }
 
@@ -560,7 +560,7 @@ namespace Team1_GraduationGame.Enemies
             _active = false;
             _lastSighting = _player.transform.position;
             _animator?.SetTrigger("NoiseHeard");
-            _system.Play();
+            particleSystem?.Play();
 
             yield return new WaitForSeconds(animNoiseHeardTime);
 
@@ -686,7 +686,7 @@ namespace Team1_GraduationGame.Enemies
                 _animator?.SetTrigger("Reset");
                 StopAllCoroutines();
                 _navMeshAgent.isStopped = false;
-                _movement.SetIsAttacked(false);
+                //_movement.SetIsAttacked(false);
                 //_movement.SetActive(true);
                 _animator?.ResetTrigger("PushedDown");
                 _animator?.ResetTrigger("GettingUp");

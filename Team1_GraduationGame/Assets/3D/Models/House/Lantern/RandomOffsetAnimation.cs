@@ -7,7 +7,12 @@ public class RandomOffsetAnimation : MonoBehaviour
     private Animator animator;
     public int Offset;
 
-    void Start()
+    private void Start()
+    {
+        Invoke("DelayedStart", PlayerPrefs.GetInt("loadGameOnAwake") == 1 ? 0.0f : 2.5f);
+    }
+
+    private void DelayedStart()
     {
         animator = GetComponent<Animator>();
         if (Offset != 0)

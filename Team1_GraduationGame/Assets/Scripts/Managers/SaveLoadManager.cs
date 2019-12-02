@@ -174,7 +174,7 @@ namespace Team1_GraduationGame.SaveLoadSystem
             PlayerPrefs.SetInt("previousGame", 1);
 
 #if UNITY_EDITOR
-            Debug.Log("Save/Load Manager: Succesfully saved the game");
+            //Debug.Log("Save/Load Manager: Succesfully saved the game");
 #endif
         }
 

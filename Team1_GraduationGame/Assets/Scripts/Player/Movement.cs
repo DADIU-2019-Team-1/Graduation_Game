@@ -254,7 +254,7 @@ public class Movement : MonoBehaviour
                 Vector2 swipeOffSet = new Vector2(swipeEndPos.x - swipeStartPos.x, swipeEndPos.y - swipeStartPos.y);
                 swipeDirection = swipeOffSet.normalized;
 
-                if (swipeOffSet.magnitude > swipePixelDistance.value && canPush)
+                if (swipeOffSet.sqrMagnitude > Mathf.Pow(swipePixelDistance.value, 2) && canPush)
                 {
                     //Debug.Log("Entered first push if");
                     if (attackCooldown <= 0)
@@ -358,7 +358,7 @@ public class Movement : MonoBehaviour
             Vector2 swipeOffSet = new Vector2(swipeEndPos.x - swipeStartPos.x, swipeEndPos.y - swipeStartPos.y);
             swipeDirection = swipeOffSet.normalized;
 
-            if (swipeOffSet.magnitude > swipePixelDistance.value && Input.mousePosition.x > Screen.width / 2 && !canMove && !atOrbTrigger.value)
+            if (swipeOffSet.sqrMagnitude > Mathf.Pow(swipePixelDistance.value, 2) && Input.mousePosition.x > Screen.width / 2 && !canMove && !atOrbTrigger.value)
             {
                 //Debug.Log("Entered swipe");
                 if (attackCooldown <= 0 && canPush)

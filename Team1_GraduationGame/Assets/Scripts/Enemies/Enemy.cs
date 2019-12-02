@@ -136,9 +136,9 @@ namespace Team1_GraduationGame.Enemies
             InvokeRepeating("CustomUpdate", 0.5f, 0.7f);
 
             if (activateOnDistance)
-                InvokeRepeating("DistanceActivationChecker", 0, 10.0f);
+                InvokeRepeating("DistanceActivationChecker", 0, 8.0f);
 
-            InvokeRepeating("OnTriggerStayLoop", 2.0f, 0.1f);
+            InvokeRepeating("OnTriggerStayLoop", 4.0f, 0.1f);
             InvokeRepeating("BehaviourLoop", 1.0f, 0.1f);
         }
 

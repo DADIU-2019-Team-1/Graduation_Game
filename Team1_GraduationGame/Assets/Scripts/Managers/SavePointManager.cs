@@ -101,6 +101,7 @@ namespace Team1_GraduationGame.SaveLoadSystem
 
                     _playerMovement.Frozen(false);
                     _playerMovement.SetActive(true);
+                    _playerMovement.SetIsAttacked(false);
 
                     tempPlayer.transform.position =
                         savePoints[savePointNumber - 1].transform.position + transform.up;
@@ -122,6 +123,7 @@ namespace Team1_GraduationGame.SaveLoadSystem
                     {
                         _playerMovement.Frozen(false);
                         _playerMovement.SetActive(true);
+                        _playerMovement.SetIsAttacked(false);
                     }
                 }
             }

@@ -6200,7 +6200,6 @@ MonoBehaviour:
     UseUnique: 0
     UniqueValue: 0
     Variable: {fileID: 11400000, guid: 0b0405ea76f7c494b87ebaf278d69805, type: 2}
-  fovUpdateTime: 0.05
   previousTrackIndex: 0
   nextTrackIndex: 0
   trackX: 0
@@ -16677,11 +16676,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 6549661346483449288, guid: 811dfc56067438542a1451c69e1f1064,
-        type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 6549661346483449286, guid: 811dfc56067438542a1451c69e1f1064,
         type: 3}
       propertyPath: m_BoundingSphereOverride.x
@@ -16701,6 +16695,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_BoundingSphereOverride.w
       value: 2.258339e+11
+      objectReference: {fileID: 0}
+    - target: {fileID: 6549661346483449288, guid: 811dfc56067438542a1451c69e1f1064,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 811dfc56067438542a1451c69e1f1064, type: 3}
@@ -22312,75 +22311,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 06d569a269c164a49928e7b0bcb184b1, type: 3}
---- !u!1 &1228051000 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 2653260553609452768, guid: 06d569a269c164a49928e7b0bcb184b1,
-    type: 3}
-  m_PrefabInstance: {fileID: 1228050999}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &1228051001
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1228051000}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 66cf44fb066f7904cb2846ab1f856813, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  attachCollider: 0
-  soundEvents:
-  - thisSoundManager: {fileID: 0}
-    soundEventId: 0
-    triggerTypeSelector: 4
-    triggerDelay: 9
-    triggerEvent: {fileID: 0}
-    triggerFloatEvent: {fileID: 0}
-    rtpcRoleBool: 0
-    customValue: 0
-    transitionDuration: 0
-    behaviorSelector: 1
-    soundManagerGameObject: {fileID: 1228051000}
-    targetGameObject: {fileID: 0}
-    secondGameObject: {fileID: 0}
-    callbacks: []
-    wwiseEvent:
-      idInternal: 0
-      valueGuidInternal: 
-      WwiseObjectReference: {fileID: 0}
-    wwiseState:
-      idInternal: 0
-      valueGuidInternal: 
-      groupIdInternal: 0
-      groupGuidInternal: 
-      WwiseObjectReference: {fileID: 11400000, guid: f22347b70d4bc32428d01a7e8211489c,
-        type: 2}
-    wwiseSwitch:
-      idInternal: 0
-      valueGuidInternal: 
-      groupIdInternal: 0
-      groupGuidInternal: 
-      WwiseObjectReference: {fileID: 0}
-    wwiseRTPC:
-      idInternal: 0
-      valueGuidInternal: 
-      WwiseObjectReference: {fileID: 0}
-    rtpcScriptableObject: {fileID: 0}
-    actionOnEventType: 0
-    curveInterpolation: 0
-    useCallbacks: 0
-    useActionOnEvent: 0
-    rtpcGlobal: 0
-    runOnce: 0
-    useOtherGameObject: 0
-    setCustomRtpcFloat: 0
-    isActive: 1
-    objDistanceToRtpc: 0
-    checkForTag: 0
-    useValueFromEvent: 0
-    tag: 
 --- !u!1001 &1229041183
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -34308,6 +34238,26 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6549661346483449286, guid: 811dfc56067438542a1451c69e1f1064,
+        type: 3}
+      propertyPath: m_BoundingSphereOverride.x
+      value: 2.258339e+11
+      objectReference: {fileID: 0}
+    - target: {fileID: 6549661346483449286, guid: 811dfc56067438542a1451c69e1f1064,
+        type: 3}
+      propertyPath: m_BoundingSphereOverride.y
+      value: 2.258339e+11
+      objectReference: {fileID: 0}
+    - target: {fileID: 6549661346483449286, guid: 811dfc56067438542a1451c69e1f1064,
+        type: 3}
+      propertyPath: m_BoundingSphereOverride.z
+      value: 2.258339e+11
+      objectReference: {fileID: 0}
+    - target: {fileID: 6549661346483449286, guid: 811dfc56067438542a1451c69e1f1064,
+        type: 3}
+      propertyPath: m_BoundingSphereOverride.w
+      value: 2.258339e+11
+      objectReference: {fileID: 0}
     - target: {fileID: 6549661346451067337, guid: 811dfc56067438542a1451c69e1f1064,
         type: 3}
       propertyPath: ForceModule.x.scalar
@@ -34342,26 +34292,6 @@ PrefabInstance:
         type: 3}
       propertyPath: ShapeModule.radius.value
       value: 0.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 6549661346483449286, guid: 811dfc56067438542a1451c69e1f1064,
-        type: 3}
-      propertyPath: m_BoundingSphereOverride.x
-      value: 2.258339e+11
-      objectReference: {fileID: 0}
-    - target: {fileID: 6549661346483449286, guid: 811dfc56067438542a1451c69e1f1064,
-        type: 3}
-      propertyPath: m_BoundingSphereOverride.y
-      value: 2.258339e+11
-      objectReference: {fileID: 0}
-    - target: {fileID: 6549661346483449286, guid: 811dfc56067438542a1451c69e1f1064,
-        type: 3}
-      propertyPath: m_BoundingSphereOverride.z
-      value: 2.258339e+11
-      objectReference: {fileID: 0}
-    - target: {fileID: 6549661346483449286, guid: 811dfc56067438542a1451c69e1f1064,
-        type: 3}
-      propertyPath: m_BoundingSphereOverride.w
-      value: 2.258339e+11
       objectReference: {fileID: 0}
     - target: {fileID: 133629570716422273, guid: 811dfc56067438542a1451c69e1f1064,
         type: 3}
@@ -48923,7 +48853,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   player: {fileID: 1148712129}
   camMovement: {fileID: 266520762}
-  defaultOffset: {x: 0, y: 5.94, z: 5}
   lookDirFactor: 0.172
   offsetTrack:
   - offsetLook: {x: 0, y: 0, z: 0}
@@ -52534,7 +52463,6 @@ MonoBehaviour:
     UseUnique: 0
     UniqueValue: 0
     Variable: {fileID: 11400000, guid: 0b0405ea76f7c494b87ebaf278d69805, type: 2}
-  fovUpdateTime: 0.05
   previousTrackIndex: 0
   nextTrackIndex: 0
   trackX: 0
@@ -57951,7 +57879,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   player: {fileID: 1148712129}
   camMovement: {fileID: 1098462716279446206}
-  defaultOffset: {x: 0, y: 5.94, z: 5}
   lookDirFactor: 0.172
   offsetTrack:
   - offsetLook: {x: 2.69, y: 1.7, z: -1.14}

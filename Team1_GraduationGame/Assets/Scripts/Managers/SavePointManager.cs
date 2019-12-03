@@ -24,6 +24,7 @@ namespace Team1_GraduationGame.SaveLoadSystem
         public PlayableDirector _playableDirector;
         private WhiteFadeController _whiteFadeCtrl;
         private Movement _playerMovement;
+        public Camera _mainCam, _cutSceneCam;
 
         // Public
         public int firstSceneBuildIndex = 0;
@@ -63,6 +64,12 @@ namespace Team1_GraduationGame.SaveLoadSystem
                 }
 
                 PlayerPrefs.SetInt("loadGameOnAwake", 0);
+
+                if (_mainCam != null && _cutSceneCam != null)
+                {
+                    _mainCam.enabled = true;
+                    _cutSceneCam.enabled = false;
+                }
 
                 _whiteFadeCtrl?.RaiseFadeEvent();
 

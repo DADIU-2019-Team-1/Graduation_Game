@@ -1,7 +1,5 @@
-﻿#if UNITY_EDITOR
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿// Code Owner: Jannik Neerdal
+#if UNITY_EDITOR
 using UnityEditor;
 
 namespace Team1_GraduationGame.Editor

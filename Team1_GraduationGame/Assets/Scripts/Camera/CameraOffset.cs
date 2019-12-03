@@ -1,4 +1,4 @@
-﻿// Code owner: Jannik Neerdal
+﻿// Code owner: Jannik Neerdal - Optimized
 using UnityEngine;
 
 [System.Serializable]

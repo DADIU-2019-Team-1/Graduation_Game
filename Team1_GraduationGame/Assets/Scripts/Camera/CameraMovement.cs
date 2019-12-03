@@ -32,11 +32,14 @@ public class CameraMovement : MonoBehaviour
 
     // --- Hidden
     private List<GameObject> focusObjects = new List<GameObject>();
-    private Quaternion targetRotation;
-    private Vector3 _camMovement, lookPosition;
+    private Quaternion _targetRotation;
+    private Vector3 _camMovement,
+        _lookPosition, 
+        _currentPosition;
     private float _heightIncrease;
     private bool _endOfRail;
-    [HideInInspector] public int previousTrackIndex, nextTrackIndex;
+    [HideInInspector] public int previousTrackIndex, 
+        nextTrackIndex;
     [HideInInspector] public float trackX;
 
     void Start()
@@ -109,27 +112,35 @@ public class CameraMovement : MonoBehaviour
         if (!_endOfRail)
         {
             // Position update
-            transform.position = Vector3.SmoothDamp(transform.position, new Vector3(player.position.x, railCam.position.y + _heightIncrease, railCam.position.z) + _cameraLook.camPosOffset,
+            _currentPosition = Vector3.SmoothDamp(_currentPosition, new Vector3(player.position.x, railCam.position.y + _heightIncrease, railCam.position.z) + _cameraLook.camPosOffset,
                 ref _camMovement, camMoveTime.value * Time.deltaTime);
-            if (transform.position.x < (_trackPath.m_Waypoints[0].position.x + trackX) || transform.position.x > _trackPath.m_Waypoints[_trackPath.m_Waypoints.Length - 1].position.x + trackX)
-                _endOfRail = true;
+            if (Vector3.SqrMagnitude(transform.position - _currentPosition) >= 0.001f) // Only update the transform if there is a change in the position
+            {
+                transform.position = _currentPosition;
+                if (transform.position.x < (_trackPath.m_Waypoints[0].position.x + trackX) || transform.position.x > _trackPath.m_Waypoints[_trackPath.m_Waypoints.Length - 1].position.x + trackX)
+                    _endOfRail = true;
+            }
         }
         else
         {
             // Only Y and Z update
-            transform.position = Vector3.SmoothDamp(transform.position, new Vector3(transform.position.x, railCam.position.y + _heightIncrease, railCam.position.z),
+            _currentPosition = Vector3.SmoothDamp(_currentPosition, new Vector3(transform.position.x, railCam.position.y + _heightIncrease, railCam.position.z),
                 ref _camMovement, camMoveTime.value * Time.deltaTime);
-            if (player.position.x + _cameraLook.camPosOffset.x >= (_trackPath.m_Waypoints[0].position.x + trackX) && player.position.x + _cameraLook.camPosOffset.x <= _trackPath.m_Waypoints[_trackPath.m_Waypoints.Length - 1].position.x + trackX)
-                _endOfRail = false;
+            if (Vector3.SqrMagnitude(transform.position - _currentPosition) >= 0.001f) // Only update the transform if there is a change in the position
+            {
+                transform.position = _currentPosition;
+                if (player.position.x + _cameraLook.camPosOffset.x >= (_trackPath.m_Waypoints[0].position.x + trackX) && player.position.x + _cameraLook.camPosOffset.x <= _trackPath.m_Waypoints[_trackPath.m_Waypoints.Length - 1].position.x + trackX)
+                    _endOfRail = false;
+            }
         }
     }
 
     void LateUpdate()
     {
         // Rotation update - Should be after position update to avoid jitter
-        lookPosition = CalculateLookPosition(player.position, _cameraLook.camTarget, focusRange.value, focusObjects);
-        targetRotation = lookPosition - transform.position != Vector3.zero ? Quaternion.LookRotation(lookPosition - transform.position) : transform.rotation;
-        transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, camLookSpeed.value * Time.deltaTime);
+        _lookPosition = CalculateLookPosition(player.position, _cameraLook.camTarget, focusRange.value, focusObjects);
+        _targetRotation = _lookPosition - transform.position != Vector3.zero ? Quaternion.LookRotation(_lookPosition - transform.position) : transform.rotation;
+        transform.rotation = Quaternion.Slerp(transform.rotation, _targetRotation, camLookSpeed.value * Time.deltaTime);
     }
 
     /// <summary>

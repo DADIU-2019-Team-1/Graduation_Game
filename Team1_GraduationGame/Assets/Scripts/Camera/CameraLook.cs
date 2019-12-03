@@ -1,6 +1,8 @@
 ﻿// Code owner: Jannik Neerdal - Optimized
-using UnityEngine;
 using Cinemachine;
+using UnityEngine;
+using Unity.Mathematics;
+
 public class CameraLook : MonoBehaviour
 {
     // --- Inspector
@@ -22,7 +24,8 @@ public class CameraLook : MonoBehaviour
     private Vector3 _lookDir,
         _camLookOffset;
     private float _offsetTrackLerpValue, 
-        _startingFOV;
+        _startingFOV,
+        _cameraFOV;
 
     private void Awake()
     {
@@ -107,7 +110,9 @@ public class CameraLook : MonoBehaviour
                              (cmPath.m_Waypoints[camMovement.nextTrackIndex].position.x - cmPath.m_Waypoints[camMovement.previousTrackIndex].position.x);
             _camLookOffset = Vector3.Lerp(offsetTrack[camMovement.previousTrackIndex].GetLook(), offsetTrack[camMovement.nextTrackIndex].GetLook(), _offsetTrackLerpValue);
             camPosOffset = Vector3.Lerp(offsetTrack[camMovement.previousTrackIndex].GetPos(), offsetTrack[camMovement.nextTrackIndex].GetPos(), _offsetTrackLerpValue);
-            cam.fieldOfView = Mathf.Lerp(_startingFOV + offsetTrack[camMovement.previousTrackIndex].GetFOV(), _startingFOV + offsetTrack[camMovement.nextTrackIndex].GetFOV(), _offsetTrackLerpValue);
+            _cameraFOV = math.lerp(_startingFOV + offsetTrack[camMovement.previousTrackIndex].GetFOV(),_startingFOV + offsetTrack[camMovement.nextTrackIndex].GetFOV(), _offsetTrackLerpValue);
+            if (cam.fieldOfView != _cameraFOV) // Only update the camera FOV if there was a change
+                cam.fieldOfView = _cameraFOV;
         }
         else if (camMovement == null)
         {

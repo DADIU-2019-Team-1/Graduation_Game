@@ -183,9 +183,7 @@ namespace Team1_GraduationGame.Events
 
                     if (hasFired)
                     {
-                    #if UNITY_EDITOR
-                        Debug.Log(eventName + " event already fired");
-                    #endif
+                        //    Debug.Log(eventName + " event already fired");
                     }
                     else
                     {
@@ -270,9 +268,7 @@ namespace Team1_GraduationGame.Events
 
             if (hasFired)
             {
-#if UNITY_EDITOR
-                Debug.Log(eventName + " event already fired");
-#endif
+                //Debug.Log(eventName + " event already fired");
             }
             else
             {

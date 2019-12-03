@@ -455,6 +455,7 @@ public class Movement : MonoBehaviour
                 for (int j = 0; j < jumpPlatforms.Count; j++)
                 {
                     jumpPlatforms[j].GetComponent<Collider>().material = null;
+                    
                 }
 
             }
@@ -598,14 +599,13 @@ public class Movement : MonoBehaviour
 //#endif
         }
 
-        if (!isJumping && !(Physics.Raycast(leftToePos.transform.position, Vector3.down, ghostJumpHeight.value, _layerMask) ||
-                           Physics.Raycast(rightToePos.transform.position, Vector3.down, ghostJumpHeight.value, _layerMask) ||
-                           Physics.Raycast(leftHeelPos.transform.position, Vector3.down, ghostJumpHeight.value, _layerMask) ||
-                           Physics.Raycast(rightHeelPos.transform.position, Vector3.down, ghostJumpHeight.value, _layerMask) ||
-                           Physics.Raycast(transform.position + Vector3.up, Vector3.down, ghostJumpHeight.value + 1.0f, _layerMask)))
+        if (!isJumping && !(Physics.Raycast(leftToePos.transform.position, Vector3.down, 0.3f, _layerMask) ||
+                           Physics.Raycast(rightToePos.transform.position, Vector3.down, 0.3f, _layerMask) ||
+                           Physics.Raycast(leftHeelPos.transform.position, Vector3.down, 0.3f, _layerMask) ||
+                           Physics.Raycast(rightHeelPos.transform.position, Vector3.down, 0.3f, _layerMask) ||
+                           Physics.Raycast(transform.position + Vector3.up, Vector3.down, 0.3f + 1.0f, _layerMask)))
         {
             isJumping = true;
-            // TODO: Uncomment this again. 
             //playerSoundManager?.MiniJumpEvent();
 
             // also setting jump on temp Animator
@@ -624,6 +624,7 @@ public class Movement : MonoBehaviour
             for (int j = 0; j < jumpPlatforms.Count; j++)
             {
                 jumpPlatforms[j].GetComponent<Collider>().material = _jumpMaterial;
+                
             }
             playerRB.AddForce(((Vector3.up * jumpHeight) + (direction * jumpLength.value)), ForceMode.Impulse);
             /*         if(playerRB.velocity.y <= 0) {
@@ -651,14 +652,14 @@ public class Movement : MonoBehaviour
 
     public void playerAttack(Vector3 direction)
     {
-        float angle = ((float)attackDegree.value * Mathf.Deg2Rad) / 2;
-        for (float j = -angle; j <= angle; j += 0.02f)
-        {
-            float x = direction.x * Mathf.Cos(j) - direction.z * Mathf.Sin(j);
-            float z = direction.z * Mathf.Cos(j) + direction.x * Mathf.Sin(j);
-            Vector3 newPoint = new Vector3(x, 0, z);
-            Debug.DrawLine(playerRB.transform.position, playerRB.transform.position + newPoint * attackRange.value, Color.magenta, 0.5f);
-        }
+        //float angle = ((float)attackDegree.value * Mathf.Deg2Rad) / 2;
+        //for (float j = -angle; j <= angle; j += 0.02f)
+        //{
+        //    float x = direction.x * Mathf.Cos(j) - direction.z * Mathf.Sin(j);
+        //    float z = direction.z * Mathf.Cos(j) + direction.x * Mathf.Sin(j);
+        //    Vector3 newPoint = new Vector3(x, 0, z);
+        //    Debug.DrawLine(playerRB.transform.position, playerRB.transform.position + newPoint * attackRange.value, Color.magenta, 0.5f);
+        //}
 
         //attackCooldown = attackCoolDown.value;
         

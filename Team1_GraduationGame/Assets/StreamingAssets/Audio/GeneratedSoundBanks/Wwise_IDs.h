@@ -178,7 +178,7 @@ namespace AK
         static const AkUniqueID MUSIC = 3991942870U;
         static const AkUniqueID PLAYER = 1069431850U;
         static const AkUniqueID SFX = 393239870U;
-        static const AkUniqueID WIND = 1537061107U;
+        static const AkUniqueID WIND__ = 1307022420U;
     } // namespace BUSSES
 
     namespace AUDIO_DEVICES

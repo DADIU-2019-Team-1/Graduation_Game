@@ -149,15 +149,19 @@ namespace Team1_GraduationGame.SaveLoadSystem
         public void SaveGame()
         {
             saveLoadManager?.SaveGame();
+            AudioSave();
+        }
 
-            AudioSave(); // TODO test
+        public void SaveGame(Vector3 pos)
+        {
+            saveLoadManager?.SaveGame(pos);
+            AudioSave();
         }
 
         public void LoadGame()
         {
             saveLoadManager?.LoadGame();
-
-            AudioLoad(); // TODO test
+            AudioLoad();
         }
 
         public void NextLevel()
@@ -181,12 +185,14 @@ namespace Team1_GraduationGame.SaveLoadSystem
             if (gameState != null)
             {
                 AKRESULT tempResult = AkSoundEngine.GetState(gameState.GroupId, out uint currentState);
+                //Debug.Log(tempResult + " | " + currentState);
                 PlayerPrefs.SetInt("gameState", (int)currentState);
             }
 
             if (levelState != null)
             {
                 AKRESULT tempResult = AkSoundEngine.GetState(levelState.GroupId, out uint currentState);
+                //Debug.Log(tempResult + " | " + currentState);
                 PlayerPrefs.SetInt("levelState", (int)currentState);
             }
         }

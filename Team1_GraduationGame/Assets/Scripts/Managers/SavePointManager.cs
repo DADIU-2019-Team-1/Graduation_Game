@@ -23,6 +23,7 @@ namespace Team1_GraduationGame.SaveLoadSystem
         public SaveLoadManager saveLoadManager;
         public PlayableDirector _playableDirector;
         private WhiteFadeController _whiteFadeCtrl;
+        private UIMenu _uiMenu;
         private Movement _playerMovement;
         public Camera _mainCam, _cutSceneCam;
 
@@ -83,6 +84,8 @@ namespace Team1_GraduationGame.SaveLoadSystem
                 {
                     menuObjects[i].continueGameEvent += Continue;
                 }
+
+                _uiMenu = menuObjects[0];
             }
         }
 
@@ -143,7 +146,15 @@ namespace Team1_GraduationGame.SaveLoadSystem
 
         public void Continue()
         {
-            saveLoadManager?.ContinueGame();
+            if (PlayerPrefs.GetInt("currentScene") == 0)
+            {
+                if (PlayerPrefs.GetInt("previousGame") == 1 && _uiMenu != null)
+                    _uiMenu.StartGame();
+            }
+            else
+            {
+                saveLoadManager?.ContinueGame();
+            }
         }
 
         public void SaveGame()

@@ -1,21 +1,45 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿// Code Owner: Jannik Neerdal
+using System;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
+[RequireComponent(typeof(Button))]
 public class ChangeQuality : MonoBehaviour
 {
-    public Button Qualitybutton;
-    public int settingLevel;
-    // Start is called before the first frame update
-    void Start()
+    [SerializeField] private int settingLevel;
+    public event Action<int> changeQuality;
+    private Button _thisBtn;
+    private ChangeQuality[] _qualityBtns;
+
+    private void Awake()
     {
-        Qualitybutton.onClick.AddListener(TaskOnClick);
+        _thisBtn = GetComponent<Button>();
+        _qualityBtns = Resources.FindObjectsOfTypeAll<ChangeQuality>();
+        for (int i = 0; i < _qualityBtns.Length; i++)
+        {
+            _qualityBtns[i].changeQuality += QualityChangeHandler;
+        }
+        QualityChangeHandler(PlayerPrefs.GetInt("Quality"));
     }
 
-    void TaskOnClick()
+    public void ChangeQualityEvent()
     {
-        //Output this to console when Button1 or Button3 is clicked
+        changeQuality?.Invoke(settingLevel);
         QualitySettings.SetQualityLevel(settingLevel, true);
+        QualityChangeHandler(settingLevel);
+        PlayerPrefs.SetInt("Quality", settingLevel);
+    }
+
+    private void QualityChangeHandler(int setting)
+    {
+        if (setting == settingLevel)
+        {
+            _thisBtn.interactable = false; // Button is of the same language as the event, so it should not be pressed
+        }
+        else
+        {
+            _thisBtn.interactable = true; // Button is of a language as the event, so it should not be pressed
+        }
     }
 }

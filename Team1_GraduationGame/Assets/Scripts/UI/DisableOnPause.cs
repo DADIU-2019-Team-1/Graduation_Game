@@ -1,4 +1,4 @@
-﻿using System.Collections;
+﻿// Code Owner: Jannik Neerdal - Optimized
 using UnityEngine;
 
 public class DisableOnPause : MonoBehaviour

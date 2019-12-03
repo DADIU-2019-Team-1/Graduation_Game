@@ -749,7 +749,7 @@ public class Movement : MonoBehaviour
     {
         if (!isActive)
         {
-            playerRB.constraints = RigidbodyConstraints.FreezeAll;
+            playerRB.constraints = RigidbodyConstraints.FreezePositionX | RigidbodyConstraints.FreezePositionZ | RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
             moveFrozen = true;
             canJump = false;
             canPush = false;

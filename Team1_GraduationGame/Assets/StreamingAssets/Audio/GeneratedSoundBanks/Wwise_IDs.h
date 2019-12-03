@@ -42,8 +42,8 @@ namespace AK
         static const AkUniqueID GRIEF_BASEMOVE_START = 2826903308U;
         static const AkUniqueID GRIEF_BASEMOVE_STOP = 3228817312U;
         static const AkUniqueID GRIEF_REACHTHETOP = 1595833916U;
+        static const AkUniqueID PLAY_3D_ECHOCALL_MEMORY_PLAYLIST = 2876045914U;
         static const AkUniqueID PLAY_AMB_OUTSIDE = 121174090U;
-        static const AkUniqueID PLAY_ECHOCALL_MEMORY_PLAYLIST = 3108390310U;
         static const AkUniqueID PLAY_FS_JUMPTOLAND = 1737921590U;
         static const AkUniqueID PLAY_FS_MINIJUMP = 4119942951U;
         static const AkUniqueID PLAY_FS_SYSTEM = 2874393337U;
@@ -54,7 +54,7 @@ namespace AK
         static const AkUniqueID PLAY_PUSH_TOYOBJECTS = 3994783433U;
         static const AkUniqueID PLAY_RUMBLE_BLEND = 728827549U;
         static const AkUniqueID PLAY_UI_TONECALL = 3222526703U;
-        static const AkUniqueID STOP_ECHOCALL_MEMORY_PLAYLIST = 3307487220U;
+        static const AkUniqueID STOP_3D_ECHOCALL_MEMORY_PLAYLIST = 2940522268U;
     } // namespace EVENTS
 
     namespace STATES

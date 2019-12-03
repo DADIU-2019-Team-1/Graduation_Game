@@ -33,7 +33,7 @@ namespace Team1_GraduationGame.Sound
                 if (!_footStepCooldown)
                 {
                     _footStepCooldown = true;
-                    
+                    Debug.Log("TEST");
                     if (checkMaterial)
                     {
                         if (col.gameObject.GetComponent<Terrain>() != null)
@@ -54,7 +54,7 @@ namespace Team1_GraduationGame.Sound
                         footStepEvent.Post(gameObject);
                     }
 
-                    Invoke("FootStepCooldown", 0.4f);
+                    Invoke("FootStepCooldown", 0.3f);
                 }
             }
         }

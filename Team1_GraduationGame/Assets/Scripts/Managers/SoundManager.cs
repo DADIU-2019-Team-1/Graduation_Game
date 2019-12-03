@@ -83,13 +83,6 @@ namespace Team1_GraduationGame.Managers
                     }
                 }
             }
-
-            //Invoke("DelayedStart", PlayerPrefs.GetInt("loadGameOnAwake") == 1 ? 0.0f : 1.0f);
-        }
-
-        private void DelayedStart()
-        {
-            
         }
 
         public void StartCoroutine(int id)
@@ -428,7 +421,6 @@ namespace Team1_GraduationGame.Managers
                         {
                             if (rtpcScriptableObject != null)
                                 AkSoundEngine.SetRTPCValue(wwiseRTPC.Name, rtpcScriptableObject.value);
-                            // wwiseRTPC.SetValue(soundManagerGameObject, rtpcScriptableObject.value);
                         }
                         else if (setCustomRtpcFloat)
                         {
@@ -437,7 +429,6 @@ namespace Team1_GraduationGame.Managers
                         else // Then we use value from event
                         {
                             AkSoundEngine.SetRTPCValue(wwiseRTPC.Name, _parsedValue);
-                            // wwiseRTPC.SetValue(soundManagerGameObject, _parsedValue);
                         }
                     }
                 }
@@ -473,14 +464,12 @@ namespace Team1_GraduationGame.Managers
                         if (targetGameObject == null || !useOtherGameObject)
                         {
                             AkSoundEngine.SetRTPCValue(wwiseRTPC.Name, GetDistanceBetweenObjects(soundManagerGameObject, secondGameObject));
-                            // wwiseRTPC.SetValue(soundManagerGameObject, GetDistanceBetweenObjects(soundManagerGameObject, secondGameObject));
                             if (targetGameObject == null && useOtherGameObject)
                                 Debug.LogWarning("SoundManager: Target GameObject is not set! - Using default object instead");
                         }
                         else
                         {
                             AkSoundEngine.SetRTPCValue(wwiseRTPC.Name, GetDistanceBetweenObjects(targetGameObject, secondGameObject));
-                            // wwiseRTPC.SetValue(targetGameObject, GetDistanceBetweenObjects(targetGameObject, secondGameObject));
                         }
                     }
                 }

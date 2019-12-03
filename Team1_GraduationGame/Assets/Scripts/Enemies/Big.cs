@@ -6,6 +6,7 @@ namespace Team1_GraduationGame.Enemies
     using Team1_GraduationGame.Enemies;
     using Team1_GraduationGame.Events;
     using Team1_GraduationGame.Sound;
+    using Unity.Mathematics;
     using UnityEngine;
 
     public class Big : MonoBehaviour
@@ -24,14 +25,15 @@ namespace Team1_GraduationGame.Enemies
         // Private:
         private LayerMask _layerMask;
         private bool _active, _isAggro, _isSpawned, _isRotating, _playerSpotted, _lightOn, _timerRunning, _isChangingState, _returnAnim;
-        private int _currentSpawnPoint = 0;
+        private float _calcActivationDist;
         private Quaternion _lookRotation, _defaultRotation;
+        private WaitForSeconds _stateChangeWait, _aggroTimeWait, _animTimeWait;
 
         // Public:
         public bool drawGizmos = true;
         public float spawnActivationDistance = 25.0f, fieldOfView = 65.0f, viewDistance = 20.0f, changeStateTime = 3.0f, aggroTime = 2.0f;
         public Color normalConeColor = Color.yellow, aggroConeColor = Color.red;
-        public float animAttackTime = 3.0f;
+        public float animAttackTime = 3.6f;
 
 
         private void Awake()
@@ -69,6 +71,12 @@ namespace Team1_GraduationGame.Enemies
                 _active = true;
             else
                 Debug.LogError("Big Enemy Error: Vision gameobject missing, please attach one!");
+
+            _calcActivationDist = math.pow(spawnActivationDistance, 2);
+
+            _stateChangeWait = new WaitForSeconds(changeStateTime);
+            _aggroTimeWait = new WaitForSeconds(aggroTime);
+            _animTimeWait = new WaitForSeconds(animAttackTime);
         }
 
         private void Start()
@@ -137,13 +145,13 @@ namespace Team1_GraduationGame.Enemies
         {
             if (_player != null && !_isChangingState)
             {
-                if (Vector3.Distance(transform.position, _player.transform.position) < spawnActivationDistance && !_isSpawned)
+                if (math.distancesq(transform.position, _player.transform.position) < _calcActivationDist && !_isSpawned)
                 {
                     UpdateFOVLight(true, false);
                     StopAllCoroutines();
                     StartCoroutine(ChangeState(true));
                 }
-                else if (Vector3.Distance(transform.position, _player.transform.position) > spawnActivationDistance + 5.0f &&
+                else if (math.distancesq(transform.position, _player.transform.position) > math.pow(spawnActivationDistance + 5.0f, 2) &&
                          _isSpawned)
                 {
                     UpdateFOVLight(false, false);
@@ -186,8 +194,6 @@ namespace Team1_GraduationGame.Enemies
                 _playerSpotted = false;
                 _timerRunning = false;
                 _isChangingState = false;
-                //_playerMovement.SetActive(true);
-                //_playerMovement.Frozen(false);
                 _animator.ResetTrigger("Appearing");
                 _playerAnimator?.ResetTrigger("BigAttack");
                 _animator.ResetTrigger("Attack");
@@ -214,7 +220,7 @@ namespace Team1_GraduationGame.Enemies
                 enemySoundManager?.PushedDown();
             }
 
-            yield return new WaitForSeconds(changeStateTime);
+            yield return _stateChangeWait;
 
             if (isActive && !_isAggro)
             {
@@ -240,7 +246,7 @@ namespace Team1_GraduationGame.Enemies
             _playerAnimator.SetTrigger("BigAttack");
             enemySoundManager?.AttackPlayer();
 
-            yield return new WaitForSeconds(animAttackTime/1.5f);
+            yield return _animTimeWait;
 
             playerDiedEvent?.Raise();
 
@@ -260,7 +266,7 @@ namespace Team1_GraduationGame.Enemies
             _animator.SetTrigger("Spotted");
             enemySoundManager?.Spotted();
 
-            yield return new WaitForSeconds(aggroTime);
+            yield return _aggroTimeWait;
 
             Vector3 dir = _player.transform.position - visionGameObject.transform.position;
             RaycastHit hit;
@@ -285,27 +291,12 @@ namespace Team1_GraduationGame.Enemies
             _animator.SetBool("Patrolling", true);
             _animator.ResetTrigger("Spotted");
             StopAllCoroutines();
-            StartCoroutine(ReturnTimer());
+            Invoke("ReturnTimer", 1.5f);
         }
 
-        private IEnumerator ReturnTimer()
+        private void ReturnTimer()
         {
-            yield return new WaitForSeconds(1.5f);
-
             _returnAnim = false;
         }
-
-
-//#if UNITY_EDITOR
-//        private void OnDrawGizmos()
-//        {
-//            if (drawGizmos && Application.isEditor && visionGameObject != null)
-//            {
-//                Gizmos.color = Color.red;
-
-//                Gizmos.DrawLine(visionGameObject.transform.position + visionGameObject.transform.up, visionGameObject.transform.forward * viewDistance + (visionGameObject.transform.position + visionGameObject.transform.up));
-//            }
-//        }
-//#endif
     }
 }

@@ -83,7 +83,7 @@ namespace Team1_GraduationGame.Events
             }
             else
             {
-                StartCoroutine(ColCooldown());
+                Invoke("ColCooldown", delayTime);
             }
         }
 
@@ -164,9 +164,8 @@ namespace Team1_GraduationGame.Events
             eventManagerObj = eManObj;
         }
 
-        IEnumerator ColCooldown()
+        private void ColCooldown()
         {
-            yield return new WaitForSeconds(delayTime);
             isActive = true;
         }
     }

@@ -1,12 +1,13 @@
-﻿// Code owner: Jannik Neerdal
+﻿// Code owner: Jannik Neerdal - Optimized
 using System.Collections;
 using Cinemachine;
-using Team1_GraduationGame.SaveLoadSystem;
+using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.Playables;
 
 public class MenuCamera : MonoBehaviour
 {
+    // --- Inspector
     [SerializeField] private CinemachineSmoothPath _rail;
     [SerializeField] private CinemachineVirtualCamera railCamera;
     [SerializeField] private Transform[] lookAtTargets;
@@ -15,10 +16,15 @@ public class MenuCamera : MonoBehaviour
     [SerializeField] private FloatReference camLookSpeed, camMoveTime;
     [SerializeField] private FloatReference activateMenuThreshold, waitBeforeMoving;
     [SerializeField] [Range(0.01f, 1.0f)] private float fadeAmount = 0.05f;
-    private int currentTargetIndex, railIndex = 0, currentLookAt = 0;
-    private Quaternion targetRotation;
-    private Vector3 camMovement;
-    private bool _move, _startingGame;
+
+    // --- Hidden
+    private int _currentTargetIndex, 
+        _railIndex = 0, 
+        _currentLookAt = 0;
+    private Quaternion _targetRotation;
+    private Vector3 _camMovement;
+    private bool _move, 
+        _startingGame;
 
     void Start()
     {
@@ -29,13 +35,14 @@ public class MenuCamera : MonoBehaviour
         if (startingTimeline == null)
             startingTimeline = FindObjectOfType<PlayableDirector>();
 
-        UIMenu[] menus = FindObjectsOfType<UIMenu>();
+        UIMenu[] menus = Resources.FindObjectsOfTypeAll<UIMenu>(); // Find all event-sending objects, even if they are inactive
         for (int i = 0; i < menus.Length; i++)
         {
-            menus[i].menuChangeEvent += ChangeLookAt;
-            menus[i].startGameEvent += StartGame;
+            menus[i].menuChangeEvent += ChangeLookAt; // Subscribe ChangeLookAt to the menuChangeEvent
+            menus[i].startGameEvent += StartGame; // Subscribe StartGame to the startGameEvent
         }
 
+        // If there are lookAtTargets assigned in the inspector, initialize the camera to look at the first target
         if (lookAtTargets.Length > 0)
         {
             transform.LookAt(lookAtTargets[0].position);
@@ -47,12 +54,12 @@ public class MenuCamera : MonoBehaviour
         if (!_startingGame)
         {
             // Object activation
-            if (Vector3.Distance(transform.position, _rail.m_Waypoints[railIndex].position + _rail.transform.position) <= activateMenuThreshold.value)
+            if (math.distancesq(transform.position, _rail.m_Waypoints[_railIndex].position + _rail.transform.position) <= math.pow(activateMenuThreshold.value,2))
             {
-                StopCoroutine(WaitForTextFade());
+                StopCoroutine(nameof(WaitForTextFade));
                 for (int i = 0; i < menuObjectsToSetActivate.Length; i++)
                 {
-                    if (i == currentLookAt)
+                    if (i == _currentLookAt)
                     {
                         menuObjectsToSetActivate[i].gameObject.SetActive(true);
                         menuObjectsToSetActivate[i].alpha += fadeAmount;
@@ -78,16 +85,15 @@ public class MenuCamera : MonoBehaviour
 
             if (_move)
             {
-                // Position update // TODO: Optimize so not only smoothing x axis (or smoothing all)
+                // Position update - Currently only smoothes on the x-axis
                 transform.position = new Vector3(transform.position.x, railCamera.transform.position.y, railCamera.transform.position.z);
-                transform.position = Vector3.SmoothDamp(transform.position, new Vector3(_rail.m_Waypoints[railIndex].position.x + _rail.transform.position.x, transform.position.y, transform.position.z),
-                    ref camMovement, camMoveTime.value * Time.deltaTime);
+                transform.position = Vector3.SmoothDamp(transform.position, new Vector3(_rail.m_Waypoints[_railIndex].position.x + _rail.transform.position.x, transform.position.y, transform.position.z),
+                    ref _camMovement, camMoveTime.value * Time.deltaTime);
 
                 // Rotation update
-
-                targetRotation = lookAtTargets[currentTargetIndex].position - transform.position != Vector3.zero
-                    ? Quaternion.LookRotation(lookAtTargets[currentTargetIndex].position - transform.position) : Quaternion.identity;
-                transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, camLookSpeed.value * Time.deltaTime);
+                _targetRotation = lookAtTargets[_currentTargetIndex].position - transform.position != Vector3.zero
+                    ? Quaternion.LookRotation(lookAtTargets[_currentTargetIndex].position - transform.position) : Quaternion.identity;
+                transform.rotation = Quaternion.Slerp(transform.rotation, _targetRotation, camLookSpeed.value * Time.deltaTime);
             }
         }
         else
@@ -114,8 +120,8 @@ public class MenuCamera : MonoBehaviour
     public void ChangeLookAt(int i)
     {
         _move = false;
-        currentTargetIndex = i;
-        railIndex = currentTargetIndex > 0 ? _rail.m_Waypoints.Length - 1 : 0;
+        _currentTargetIndex = i;
+        _railIndex = _currentTargetIndex > 0 ? _rail.m_Waypoints.Length - 1 : 0;
     }
 
     public void StartGame()
@@ -132,10 +138,10 @@ public class MenuCamera : MonoBehaviour
         yield return new WaitForSeconds(waitBeforeMoving.value);
         if (!_move)
         {
-            currentLookAt = currentTargetIndex;
-            if (currentTargetIndex > lookAtTargets.Length - 1)
+            _currentLookAt = _currentTargetIndex;
+            if (_currentTargetIndex > lookAtTargets.Length - 1)
             {
-                currentTargetIndex = lookAtTargets.Length - 1;
+                _currentTargetIndex = lookAtTargets.Length - 1;
             }
         }
         _move = true;

@@ -1,8 +1,5 @@
 ﻿// https://forum.unity.com/threads/how-to-change-the-name-of-list-elements-in-the-inspector.448910/#post-2904879
-
-using System;
 #if UNITY_EDITOR
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 

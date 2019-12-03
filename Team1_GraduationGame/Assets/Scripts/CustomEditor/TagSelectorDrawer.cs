@@ -1,4 +1,5 @@
-﻿#if UNITY_EDITOR
+﻿// Found implementation online
+#if UNITY_EDITOR
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;

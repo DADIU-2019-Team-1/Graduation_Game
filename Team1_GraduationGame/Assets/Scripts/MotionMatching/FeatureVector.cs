@@ -1,6 +1,4 @@
-﻿using Unity.Mathematics;
-using UnityEngine;
-
+﻿// Code Owner: Jannik Neerdal
 public class FeatureVector
 {
 	private readonly int id, frame, state;

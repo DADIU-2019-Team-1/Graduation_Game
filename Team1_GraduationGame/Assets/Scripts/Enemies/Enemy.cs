@@ -313,7 +313,6 @@ namespace Team1_GraduationGame.Enemies
                         _lastSighting = _player.transform.position;
                     }
 
-
                     if (_isAggro)
                     {
                         if (!_playerHeard)
@@ -540,14 +539,7 @@ namespace Team1_GraduationGame.Enemies
 
         public void CollisionWithPlayerSetter(bool isColliding)
         {
-            if (isColliding)
-            {
-                Physics.IgnoreCollision(_player.GetComponent<Collider>(), GetComponent<Collider>(), false);
-            }
-            else
-            {
-                Physics.IgnoreCollision(_player.GetComponent<Collider>(), GetComponent<Collider>(), true);
-            }
+            Physics.IgnoreCollision(_player.GetComponent<Collider>(), GetComponent<Collider>(), !isColliding);
         }
 
         #region Co-Routines
@@ -653,11 +645,6 @@ namespace Team1_GraduationGame.Enemies
 
                 playerDiedEvent?.Raise();
 
-                //yield return new WaitForSeconds(animAttackTime/2);
-
-                //CollisionWithPlayerSetter(true);
-                //_playerAnimator?.ResetTrigger("EnemyAttack" + thisEnemy.typeId);
-                //_movement?.SetIsAttacked(false);
             }
 
             _navMeshAgent.isStopped = false;

@@ -9,6 +9,7 @@ using Team1_GraduationGame.MotionMatching;
 using Team1_GraduationGame.Sound;
 using Unity.Mathematics;
 using UnityEditor;
+using Unity.Mathematics;
 
 [RequireComponent(typeof(Rigidbody), typeof(SphereCollider))]
 
@@ -139,6 +140,7 @@ public class Movement : MonoBehaviour
     {
         currentSpeed.value = Vector3.Distance(transform.position, _previousPosition) / Time.fixedDeltaTime;
 
+        
         //Tried a particle system for the ground
         // if (currentSpeed.value > 4 && isJumping == false)
         // {
@@ -206,7 +208,8 @@ public class Movement : MonoBehaviour
                 //touchMoved = true;
                 Vector3 offset = new Vector3(t.position.x - stickLimit.transform.position.x, 0, t.position.y - stickLimit.transform.position.y);
                 direction = Vector3.ClampMagnitude(offset, 1.0f);
-                float dragDist = Vector2.Distance(stick.transform.position, stickLimit.transform.position);
+                //float dragDist = Vector2.Distance(stick.transform.position, stickLimit.transform.position);
+                float dragDist = math.distancesq(stick.transform.position, stickLimit.transform.position);
                 Vector2 joyDiff = t.position - new Vector2(stickLimit.transform.position.x, stickLimit.transform.position.y);
                 joyDiff = Vector2.ClampMagnitude(joyDiff, radius.value);
 
@@ -255,7 +258,7 @@ public class Movement : MonoBehaviour
                 Vector2 swipeOffSet = new Vector2(swipeEndPos.x - swipeStartPos.x, swipeEndPos.y - swipeStartPos.y);
                 swipeDirection = swipeOffSet.normalized;
 
-                if (swipeOffSet.magnitude > swipePixelDistance.value && canPush)
+                if (swipeOffSet.sqrMagnitude > Mathf.Pow(swipePixelDistance.value, 2) && canPush)
                 {
                     //Debug.Log("Entered first push if");
                     if (attackCooldown <= 0)
@@ -359,7 +362,7 @@ public class Movement : MonoBehaviour
             Vector2 swipeOffSet = new Vector2(swipeEndPos.x - swipeStartPos.x, swipeEndPos.y - swipeStartPos.y);
             swipeDirection = swipeOffSet.normalized;
 
-            if (swipeOffSet.magnitude > swipePixelDistance.value && Input.mousePosition.x > Screen.width / 2 && !canMove && !atOrbTrigger.value)
+            if (swipeOffSet.sqrMagnitude > Mathf.Pow(swipePixelDistance.value, 2) && Input.mousePosition.x > Screen.width / 2 && !canMove && !atOrbTrigger.value)
             {
                 //Debug.Log("Entered swipe");
                 if (attackCooldown <= 0 && canPush)
@@ -395,7 +398,8 @@ public class Movement : MonoBehaviour
 
             Vector3 offset = new Vector3(currTouchPos.x - initTouchPos.x, 0, currTouchPos.y - initTouchPos.y);
             direction = Vector3.ClampMagnitude(offset, 1.0f);
-            float dragDist = Vector2.Distance(stick.transform.position, stickLimit.transform.position);
+            // float dragDist = Vector2.Distance(stick.transform.position, stickLimit.transform.position);
+            float dragDist = math.distancesq(stick.transform.position, stickLimit.transform.position);
             Vector2 joyDiff = Input.mousePosition - stickLimit.transform.position;
             joyDiff = Vector2.ClampMagnitude(joyDiff, radius.value);
             PlayerMoveRequest(dragDist);
@@ -519,12 +523,12 @@ public class Movement : MonoBehaviour
         {
             if (inSneakZone)
             {
-                if (dragDist < radius.value * idleThreshold)
+                if (dragDist < Mathf.Pow(radius.value * idleThreshold, 2))
                 {
                     //movePlayer(direction, 0);
                     //moveState.value = 0;
                 }
-                else if (dragDist < radius.value * zoneSneakThreshold)
+                else if (dragDist < Mathf.Pow(radius.value * zoneSneakThreshold,2))
                 {
                     targetSpeed = sneakSpeed.value;
                     //movePlayer(direction);
@@ -540,16 +544,16 @@ public class Movement : MonoBehaviour
             }
             else
             {
-                if (dragDist < radius.value * idleThreshold) // Idle
+                if (dragDist < Mathf.Pow(radius.value * idleThreshold, 2)) // Idle
                 {
                     // Empty
                 }
-                else if (dragDist < radius.value * sneakThreshold) // Sneak
+                else if (dragDist < Mathf.Pow(radius.value * sneakThreshold, 2)) // Sneak
                 {
                     targetSpeed = sneakSpeed.value;
                     //movePlayer(direction);
                 }
-                else if (dragDist < radius.value * runThreshold) // Walk
+                else if (dragDist < Mathf.Pow(radius.value * runThreshold, 2)) // Walk
                 {
                     targetSpeed = walkSpeed.value;
                     //movePlayer(direction);
@@ -601,7 +605,8 @@ public class Movement : MonoBehaviour
                            Physics.Raycast(transform.position + Vector3.up, Vector3.down, ghostJumpHeight.value + 1.0f, _layerMask)))
         {
             isJumping = true;
-            playerSoundManager?.MiniJumpEvent();
+            // TODO: Uncomment this again. 
+            //playerSoundManager?.MiniJumpEvent();
 
             // also setting jump on temp Animator
             if (animator.runtimeAnimatorController != null)
@@ -666,13 +671,14 @@ public class Movement : MonoBehaviour
             // if in range
             Vector3 closestPoint = pushCollider.ClosestPointOnBounds(transform.position);
             //Instantiate(GameObject.CreatePrimitive(PrimitiveType.Cube), closestPoint, Quaternion.identity);
-            float refDistance = Vector3.Distance(closestPoint, transform.position);
+            //float refDistance = Vector3.Distance(closestPoint, transform.position);
+            float refDistance = math.distancesq(closestPoint, transform.position);
             //transform.rotation = Quaternion.LookRotation(direction);
             //playerRB.AddForce(direction.normalized * pushForce.value, ForceMode.Impulse);
 
 
             
-            if (refDistance <= attackRange.value)
+            if (refDistance <= Mathf.Pow(attackRange.value,2))
             {
 
                 // Do math stuff. Need to find relative angle downwards to pivot. 

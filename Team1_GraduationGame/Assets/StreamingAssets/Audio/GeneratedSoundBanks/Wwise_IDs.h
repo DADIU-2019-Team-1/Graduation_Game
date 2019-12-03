@@ -36,6 +36,8 @@ namespace AK
         static const AkUniqueID FRI_DOWN = 1193266125U;
         static const AkUniqueID FRI_HOLD = 1153762078U;
         static const AkUniqueID FRI_ONSET = 559410714U;
+        static const AkUniqueID FRI_SPOT = 2501615553U;
+        static const AkUniqueID FULLSTOPENEMIES = 2665399762U;
         static const AkUniqueID GRIEF_ATTACK = 2473929957U;
         static const AkUniqueID GRIEF_BASEMOVE_START = 2826903308U;
         static const AkUniqueID GRIEF_BASEMOVE_STOP = 3228817312U;

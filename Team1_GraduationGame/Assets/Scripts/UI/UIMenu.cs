@@ -17,7 +17,7 @@ public class UIMenu : MonoBehaviour
         sfxSliderEvent;
     public event Action<bool> gamePauseState;
     private CanvasGroup _groupToFade;
-    private bool _fading, 
+    private bool _fading,
         _continueQueued;
     private WaitForSecondsRealtime fixedDelayTime = new WaitForSecondsRealtime(0.02f);
     
@@ -111,6 +111,7 @@ public class UIMenu : MonoBehaviour
         menuChangeEvent?.Invoke(i);
         menuButtonPressEvent?.Invoke();
     }
+
     public void StartGame()
     {
         startGameEvent?.Invoke();

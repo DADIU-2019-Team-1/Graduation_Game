@@ -13,6 +13,7 @@ public class PlayerDeath : MonoBehaviour
     private bool _allowStateChange, _hasFaded, _isFading;
     public float animationDuration = 1.0f;
     private GameObject _player;
+    private WaitForSeconds _shortWait, _animWait;
 
     public void Start()
     {
@@ -20,6 +21,9 @@ public class PlayerDeath : MonoBehaviour
         spManager = FindObjectOfType<SavePointManager>();
 
         _player = GameObject.FindGameObjectWithTag("Player");
+
+        _shortWait = new WaitForSeconds(0.75f);
+        _animWait = new WaitForSeconds(animationDuration);
     }
 
     public void PlayerFallingSound()
@@ -33,7 +37,10 @@ public class PlayerDeath : MonoBehaviour
         if (spManager != null)
         {
             if (!_isFading)
+            {
+                _isFading = true;
                 StartCoroutine(FadeHandler());
+            }
         }
     }
 
@@ -47,19 +54,17 @@ public class PlayerDeath : MonoBehaviour
     
     private IEnumerator FadeHandler()
     {
-        _isFading = true;
-
         fadeBlackAnimator.SetTrigger("FadeOut");
 
-        yield return new WaitForSeconds(animationDuration);
+        yield return _animWait;
 
         spManager.LoadToPreviousCheckpoint();
 
-        yield return new WaitForSeconds(0.75f);
+        yield return _shortWait;
 
         fadeBlackAnimator.SetTrigger("FadeIn");
 
-        yield return new WaitForSeconds(0.75f);
+        yield return _shortWait;
 
         fadeBlackAnimator.SetTrigger("Reset");
 

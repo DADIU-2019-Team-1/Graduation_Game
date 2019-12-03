@@ -36,13 +36,13 @@ namespace AK
         static const AkUniqueID FRI_DOWN = 1193266125U;
         static const AkUniqueID FRI_HOLD = 1153762078U;
         static const AkUniqueID FRI_ONSET = 559410714U;
+        static const AkUniqueID FRI_SPOT = 2501615553U;
         static const AkUniqueID GRIEF_ATTACK = 2473929957U;
         static const AkUniqueID GRIEF_BASEMOVE_START = 2826903308U;
         static const AkUniqueID GRIEF_BASEMOVE_STOP = 3228817312U;
         static const AkUniqueID GRIEF_REACHTHETOP = 1595833916U;
         static const AkUniqueID PLAY_AMB_OUTSIDE = 121174090U;
         static const AkUniqueID PLAY_ECHOCALL_MEMORY_PLAYLIST = 3108390310U;
-        static const AkUniqueID PLAY_FRI_SPOT = 3742412370U;
         static const AkUniqueID PLAY_FS_JUMPTOLAND = 1737921590U;
         static const AkUniqueID PLAY_FS_MINIJUMP = 4119942951U;
         static const AkUniqueID PLAY_FS_SYSTEM = 2874393337U;

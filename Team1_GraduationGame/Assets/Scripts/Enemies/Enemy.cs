@@ -38,7 +38,7 @@ namespace Team1_GraduationGame.Enemies
         public float wayPointReachRange = 1.0f, hearingSensitivity = 2.0f, minimumAlwaysDetectRange = 1.3f;
         public bool pushDownLightIndication = true, drawGizmos = true, useWaitTime, rotateAtWaypoints, loopWaypointRoutine = true, alwaysAggro;
         public Color normalConeColor = Color.yellow, aggroConeColor = Color.red;
-        public float animNoiseHeardTime = 2.0f, animAttackTime = 3.0f/*, animGettingUpTime = 2.0f*/;
+        public float animNoiseHeardTime = 2.0f, animAttackTime = 3.0f;
         [HideInInspector] public bool useGlobalWaitTime = true, behaviourInactive = true, activateOnDistance = true;
         [HideInInspector] public float waitTime = 0.0f, activationDistance = 65.0f;
 
@@ -50,6 +50,7 @@ namespace Team1_GraduationGame.Enemies
         private Vector3[] _wayPointRotations;
         private SphereCollider _thisCollider;
         private LayerMask _layerMask;
+        private WaitForSeconds _lightConeWait, _aggroWait, _attackWait, _pushedDownWait, _animAttackWait, _animNoiseWait;
         private int _currentWayPoint = 0, _state = 0;
         private float[] _waitTimes;
         private float _targetSpeed, _hearingDistance, _lightConeIntensity, _speed, _calcEmbraceDist, 
@@ -130,6 +131,13 @@ namespace Team1_GraduationGame.Enemies
 
                 if (alwaysAggro)
                     _isAggro = true;
+
+                _aggroWait = new WaitForSeconds(thisEnemy.aggroTime);
+                _attackWait = new WaitForSeconds(thisEnemy.embraceDelay);
+                _lightConeWait = new WaitForSeconds(0.05f);
+                _pushedDownWait = new WaitForSeconds(thisEnemy.pushedDownDuration);
+                _animNoiseWait = new WaitForSeconds(animNoiseHeardTime);
+                _animAttackWait = new WaitForSeconds(animAttackTime/2);
             }
         }
         #endregion
@@ -233,8 +241,7 @@ namespace Team1_GraduationGame.Enemies
                             if (!_isHugging)    // If not already hugging/attacking then start hug/attack co-routine.
                                 StartCoroutine(EnemyHug());
                         }
-
-                        if (math.distancesq(transform.position, _lastSighting) < _calcEmbraceDist)
+                        else if (math.distancesq(transform.position, _lastSighting) < _calcEmbraceDist)
                         {
                             if (!alwaysAggro)
                             {
@@ -408,7 +415,11 @@ namespace Team1_GraduationGame.Enemies
             }
             else if (useWaitTime && !_timerRunning)
             {
-                StartCoroutine(WaitTimer());
+                if (_waitTimes[_currentWayPoint] > 0)
+                    Invoke("WaitTimer", _waitTimes[_currentWayPoint]);
+                else if (useGlobalWaitTime)
+                    Invoke("WaitTimer", waitTime);
+
                 _timerRunning = true;
             }
         }
@@ -542,7 +553,14 @@ namespace Team1_GraduationGame.Enemies
             Physics.IgnoreCollision(_player.GetComponent<Collider>(), GetComponent<Collider>(), !isColliding);
         }
 
-        #region Co-Routines
+        #region Co-Routines & Invokes
+
+        private void WaitTimer()
+        {
+            _currentWayPoint = (_currentWayPoint + 1) % wayPoints.Count;
+            _destinationSet = false;
+            _timerRunning = false;
+        }
 
         private IEnumerator LightConeFade()
         {
@@ -550,7 +568,7 @@ namespace Team1_GraduationGame.Enemies
             while (loop)
             {
                 viewConeLight.intensity += 1;
-                yield return new WaitForSeconds(0.05f);
+                yield return _lightConeWait;
 
                 if (viewConeLight.intensity >= _lightConeIntensity)
                     loop = false;
@@ -567,7 +585,7 @@ namespace Team1_GraduationGame.Enemies
             if (particleSystem != null)
                 particleSystem.Play();
 
-            yield return new WaitForSeconds(animNoiseHeardTime);
+            yield return _animNoiseWait;
 
             if (!_isAggro)
                 StartCoroutine(EnemyAggro());
@@ -575,27 +593,15 @@ namespace Team1_GraduationGame.Enemies
             _animator.SetTrigger("Reset");
             _active = true;
 
-            yield return new WaitForSeconds(thisEnemy.aggroTime);
+            yield return _aggroWait;
             _playerHeard = false;
-        }
-
-        private IEnumerator WaitTimer()
-        {
-            if (_waitTimes[_currentWayPoint] > 0)
-                yield return new WaitForSeconds(_waitTimes[_currentWayPoint]);
-            else if (useGlobalWaitTime)
-                yield return new WaitForSeconds(waitTime);
-
-            _currentWayPoint = (_currentWayPoint + 1) % wayPoints.Count;
-            _destinationSet = false;
-            _timerRunning = false;
         }
 
         private IEnumerator EnemyAggro()
         {
             _enemySoundManager?.Spotted();
             _isAggro = true;
-            yield return new WaitForSeconds(thisEnemy.aggroTime);
+            yield return _aggroWait;
 
             if (!_inTriggerZone)
             {
@@ -629,7 +635,7 @@ namespace Team1_GraduationGame.Enemies
 
             transform.LookAt(_player.transform.position);
 
-            yield return new WaitForSeconds(thisEnemy.embraceDelay);
+            yield return _attackWait;
 
             if (math.distancesq(transform.position, _player.transform.position) <
                 math.pow(thisEnemy.embraceDistance + 1.0f, 2))
@@ -641,7 +647,7 @@ namespace Team1_GraduationGame.Enemies
                 _animator?.SetTrigger("Attack");
                 _enemySoundManager?.AttackPlayer();
 
-                yield return new WaitForSeconds(animAttackTime/2);
+                yield return _animAttackWait;
 
                 playerDiedEvent?.Raise();
 
@@ -658,7 +664,7 @@ namespace Team1_GraduationGame.Enemies
 
         private IEnumerator PushDownDelay()
         {
-            yield return new WaitForSeconds(thisEnemy.pushedDownDuration);
+            yield return _pushedDownWait;
             viewConeLight.color = normalConeColor;
             _animator?.ResetTrigger("PushedDown");
             _enemySoundManager?.GettingUp();

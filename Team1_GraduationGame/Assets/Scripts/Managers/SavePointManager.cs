@@ -65,7 +65,11 @@ namespace Team1_GraduationGame.SaveLoadSystem
 
                 PlayerPrefs.SetInt("loadGameOnAwake", 0);
 
-                //_mainCam
+                if (_mainCam != null && _cutSceneCam != null)
+                {
+                    _mainCam.enabled = true;
+                    _cutSceneCam.enabled = false;
+                }
 
                 _whiteFadeCtrl?.RaiseFadeEvent();
 

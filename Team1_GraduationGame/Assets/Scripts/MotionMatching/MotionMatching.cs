@@ -14,22 +14,13 @@ namespace Team1_GraduationGame.MotionMatching
     [RequireComponent(typeof(Animator))]
     public class MotionMatching : MonoBehaviour
     {
-        // TODOs
-        // Must have
-        // TODO: Fix release of input resulting in no smoothed stop trajectory (instant)
- 
-        // Should have
-        // TODO: Extrapolate empty trajectorypoints (points that go over the frame size for that clip)
-
-        // Nice to have
+        #region Future work
         // TODO: Add idle events
-        // TODO: Add method summaries and general documentation 
-
-        // Out of scope
+        // TODO: Extrapolate empty trajectorypoints (points that go over the frame size for that clip)
         // TODO: Collision detection with raycasting between the trajectory points
         // TODO: Create LookUp system in preproccesing, that can be used instead of pose matching during runtime
         // TODO: Create some debugger that shows various information about the data, especially the trajectory for each frame
-
+        #endregion
         // INSPECTOR
         [Header("Settings")]
         public int pointsPerTrajectory = 4;
@@ -75,10 +66,8 @@ namespace Team1_GraduationGame.MotionMatching
 
         // --- Collections
         private AnimationClip[] allClips;
-        private List<FeatureVector> featureVectors, 
-            _trajCandidatesRef = new List<FeatureVector>(), 
-            _trajPossibleCandidatesRef = new List<FeatureVector>();
-        private List<float> _trajCandidateValuesRef = new List<float>();
+        private List<FeatureVector> featureVectors,
+            _trajCandidatesRef = new List<FeatureVector>();
         private NativeArray<float3> _trajectoryPositions, 
             _trajectoryForwards;
         private NativeArray<int> _featureIDs,
@@ -175,7 +164,7 @@ namespace Team1_GraduationGame.MotionMatching
             if (_fixedUpdateMMCounter >= queryRateInFrames)
             {
                 _currentID += queryRateInFrames;
-                List<FeatureVector> candidates = TrajectoryMatching(movement.GetMovementTrajectory(), ref _trajCandidatesRef, ref _trajPossibleCandidatesRef, ref _trajCandidateValuesRef);
+                List<FeatureVector> candidates = TrajectoryMatching(movement.GetMovementTrajectory(), ref _trajCandidatesRef);
                 int candidateID = PoseMatching(candidates);
                 UpdateAnimation(candidateID, featureVectors[candidateID].GetFrame());
                 _fixedUpdateMMCounter = 0;
@@ -276,7 +265,7 @@ namespace Team1_GraduationGame.MotionMatching
             }
         }
 
-        List<FeatureVector> TrajectoryMatching(Trajectory movementTraj, ref List<FeatureVector> candidates, ref List<FeatureVector> possibleCandidates, ref List<float> candidateValues)
+        List<FeatureVector> TrajectoryMatching(Trajectory movementTraj, ref List<FeatureVector> candidates)
         {
             candidates.Clear();
             NativeArray<int> trajectoryCandidateIDs = new NativeArray<int>(candidatesFromTrajectory, Allocator.TempJob);
@@ -353,13 +342,13 @@ namespace Team1_GraduationGame.MotionMatching
                 chunkLength = poseFeatureCount,
                 bestID = bestIDArray,
                 candidateIDs = candidateIDs,
-                cPose_rootVel = /*charSpace.MultiplyPoint3x4(*/currentPose.GetRootVelocity(),
-                cPose_leftFootVel = /*charSpace.MultiplyPoint3x4(*/currentPose.GetLeftFootVelocity(),
-                cPose_rightFootVel = /*charSpace.MultiplyPoint3x4(*/currentPose.GetRightFootVelocity(),
-                cPose_neckVel = /*charSpace.MultiplyPoint3x4(*/currentPose.GetNeckVelocity(),
-                cPose_leftFootPos = /*charSpace.MultiplyPoint3x4(*/currentPose.GetLeftFootPos(),
-                cPose_rightFootPos = /*charSpace.MultiplyPoint3x4(*/currentPose.GetRightFootPos(),
-                cPose_neckPos = /*charSpace.MultiplyPoint3x4(*/currentPose.GetNeckPos(),
+                cPose_rootVel = currentPose.GetRootVelocity(),
+                cPose_leftFootVel = currentPose.GetLeftFootVelocity(),
+                cPose_rightFootVel = currentPose.GetRightFootVelocity(),
+                cPose_neckVel = currentPose.GetNeckVelocity(),
+                cPose_leftFootPos = currentPose.GetLeftFootPos(),
+                cPose_rightFootPos = currentPose.GetRightFootPos(),
+                cPose_neckPos = currentPose.GetNeckPos(),
                 candidatesPoseData = candidatesPoseData,
                 rootVelWeight = weightRootVel,
                 feetVelWeight = weightFeetVel,
@@ -374,7 +363,7 @@ namespace Team1_GraduationGame.MotionMatching
             candidateIDs.Dispose();
             candidatesPoseData.Dispose();
 
-            //// This part basically autoplays animations if the candidate is from the same clip, and it is not at the end of the animation
+            // This part basically autoplays animations if the candidate is from the same clip, and it is not at the end of the animation
             //if (featureVectors[bestID].GetClipName() == featureVectors[_currentID].GetClipName() &&
             //    featureVectors[_currentID].GetFrame() + queryRateInFrames <=
             //    featureVectors[_currentID].GetFrameCountForID())
@@ -485,14 +474,14 @@ namespace Team1_GraduationGame.MotionMatching
             float currentDiff = float.MaxValue;
             for (int i = 0; i < candidatesPoseData.Length; i += chunkLength)
             {
-                float velocityDiffs = math.pow(math.distancesq(cPose_rootVel, /*charSpace.MultiplyPoint3x4(*/candidatesPoseData[i]) * rootVelWeight + 1, 2);
-                velocityDiffs += math.pow(math.distancesq(cPose_leftFootVel, /*charSpace.MultiplyPoint3x4(*/candidatesPoseData[i + 1]) * feetVelWeight + 1, 2);
-                velocityDiffs += math.pow(math.distancesq(cPose_rightFootVel, /*charSpace.MultiplyPoint3x4(*/candidatesPoseData[i + 2]) * feetVelWeight + 1, 2);
-                velocityDiffs += math.pow(math.distancesq(cPose_neckVel, /*charSpace.MultiplyPoint3x4(*/candidatesPoseData[i + 3]) * neckVelWeight + 1, 2);
+                float velocityDiffs = math.pow(math.distancesq(cPose_rootVel, candidatesPoseData[i]) * rootVelWeight + 1, 2);
+                velocityDiffs += math.pow(math.distancesq(cPose_leftFootVel, candidatesPoseData[i + 1]) * feetVelWeight + 1, 2);
+                velocityDiffs += math.pow(math.distancesq(cPose_rightFootVel, candidatesPoseData[i + 2]) * feetVelWeight + 1, 2);
+                velocityDiffs += math.pow(math.distancesq(cPose_neckVel, candidatesPoseData[i + 3]) * neckVelWeight + 1, 2);
 
-                float positionDiffs = math.pow(math.distancesq(cPose_leftFootPos, /*charSpace.MultiplyPoint3x4(*/candidatesPoseData[i + 4]) * feetPosWeight + 1, 2);
-                positionDiffs += math.pow(math.distancesq(cPose_rightFootPos, /*charSpace.MultiplyPoint3x4(*/candidatesPoseData[i + 5]) * feetPosWeight + 1, 2);
-                positionDiffs += math.pow(math.distancesq(cPose_neckPos, /*charSpace.MultiplyPoint3x4(*/candidatesPoseData[i + 6]) * neckPosWeight + 1, 2);
+                float positionDiffs = math.pow(math.distancesq(cPose_leftFootPos, candidatesPoseData[i + 4]) * feetPosWeight + 1, 2);
+                positionDiffs += math.pow(math.distancesq(cPose_rightFootPos, candidatesPoseData[i + 5]) * feetPosWeight + 1, 2);
+                positionDiffs += math.pow(math.distancesq(cPose_neckPos, candidatesPoseData[i + 6]) * neckPosWeight + 1, 2);
 
                 float candidateDiff = velocityDiffs + positionDiffs;
                 if (candidateDiff < currentDiff)

@@ -737,10 +737,8 @@ public class Movement : MonoBehaviour
                 trajPoints[j] = new TrajectoryPoint(playerPos, playerForward);
                 j++;
             }
-
             simulatedSpeed = Vector3.Distance(playerPos, previousPlayerPos) / Time.fixedDeltaTime;
         }
-
         return new Trajectory(trajPoints);
     }
 

@@ -721,7 +721,7 @@ public class Movement : MonoBehaviour
         float simulatedSpeed = currentSpeed.value / math.clamp(math.abs(Vector3.Angle(playerForward, direction) / 20.0f), 1.0f, 4.0f);
         int wayToRotate = CrossProductPositive(playerForward, direction) ? 1 : -1;
         int j = 0;
-        for (int i = 0; i < trajPoints.Length * mm.framesBetweenTrajectoryPoints; i++)
+        for (int i = 0; i < trajPoints.Length * mm.framesBetweenTrajectoryPoints ; i++)
         {
             previousPlayerPos = playerPos;
             float newRotationSpeedGoal = Mathf.Min(rotationSpeed.value, Vector3.Angle(playerForward, direction) * 0.001f) * wayToRotate;

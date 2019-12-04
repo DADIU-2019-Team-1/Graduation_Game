@@ -263,7 +263,7 @@ namespace Team1_GraduationGame.MotionMatching
                 }
             }
 
-            //Debug.Log("Updating animation: ID: " + _currentID + " -> " + id + " | Frame: " + featureVectors[_currentID].GetFrame() + " -> " + frame + " | Name: " + featureVectors[_currentID].GetClipName() + " -> " + _currentClip.name + ".");
+            Debug.Log("Updating animation: ID: " + _currentID + " -> " + id + " | Frame: " + featureVectors[_currentID].GetFrame() + " -> " + frame + " | Name: " + featureVectors[_currentID].GetClipName() + " -> " + _currentClip.name + ".");
             animator.CrossFadeInFixedTime(_currentClip.name, queryRateInFrames / animationFrameRate, 0, frame / animationFrameRate); // 0.3f was recommended by Magnus
             _currentID = id;
             _bannedIDs.Add(id);
@@ -353,13 +353,13 @@ namespace Team1_GraduationGame.MotionMatching
                 chunkLength = poseFeatureCount,
                 bestID = bestIDArray,
                 candidateIDs = candidateIDs,
-                cPose_rootVel = charSpace.MultiplyPoint3x4(currentPose.GetRootVelocity()),
-                cPose_leftFootVel = charSpace.MultiplyPoint3x4(currentPose.GetLeftFootVelocity()),
-                cPose_rightFootVel = charSpace.MultiplyPoint3x4(currentPose.GetRightFootVelocity()),
-                cPose_neckVel = charSpace.MultiplyPoint3x4(currentPose.GetNeckVelocity()),
-                cPose_leftFootPos = charSpace.MultiplyPoint3x4(currentPose.GetLeftFootPos()),
-                cPose_rightFootPos = charSpace.MultiplyPoint3x4(currentPose.GetRightFootPos()),
-                cPose_neckPos = charSpace.MultiplyPoint3x4(currentPose.GetNeckPos()),
+                cPose_rootVel = /*charSpace.MultiplyPoint3x4(*/currentPose.GetRootVelocity(),
+                cPose_leftFootVel = /*charSpace.MultiplyPoint3x4(*/currentPose.GetLeftFootVelocity(),
+                cPose_rightFootVel = /*charSpace.MultiplyPoint3x4(*/currentPose.GetRightFootVelocity(),
+                cPose_neckVel = /*charSpace.MultiplyPoint3x4(*/currentPose.GetNeckVelocity(),
+                cPose_leftFootPos = /*charSpace.MultiplyPoint3x4(*/currentPose.GetLeftFootPos(),
+                cPose_rightFootPos = /*charSpace.MultiplyPoint3x4(*/currentPose.GetRightFootPos(),
+                cPose_neckPos = /*charSpace.MultiplyPoint3x4(*/currentPose.GetNeckPos(),
                 candidatesPoseData = candidatesPoseData,
                 rootVelWeight = weightRootVel,
                 feetVelWeight = weightFeetVel,
@@ -431,7 +431,7 @@ namespace Team1_GraduationGame.MotionMatching
             {
                 if (featureState[i] == state) // Animation has the desired state
                 {
-                    if ((featureIDs[i] > currentID || featureIDs[i] < currentID - queryRate * 2) && featureFrame[i] + queryRate <= frameCountForIDs[i] && !bannedIDs.Contains(featureIDs[i]))
+                    if ((featureIDs[i] > currentID || featureIDs[i] < currentID - queryRate) && featureFrame[i] + queryRate <= frameCountForIDs[i] && !bannedIDs.Contains(featureIDs[i]))
                     {
                         float comparison = 0;
                         animationMatrix.SetTRS(animPositionArray[i], Quaternion.identity, Vector3.one);
@@ -485,14 +485,14 @@ namespace Team1_GraduationGame.MotionMatching
             float currentDiff = float.MaxValue;
             for (int i = 0; i < candidatesPoseData.Length; i += chunkLength)
             {
-                float velocityDiffs = math.pow(math.distancesq(cPose_rootVel, charSpace.MultiplyPoint3x4(candidatesPoseData[i])) * rootVelWeight + 1, 2);
-                velocityDiffs += math.pow(math.distancesq(cPose_leftFootVel, charSpace.MultiplyPoint3x4(candidatesPoseData[i + 1])) * feetVelWeight + 1, 2);
-                velocityDiffs += math.pow(math.distancesq(cPose_rightFootVel, charSpace.MultiplyPoint3x4(candidatesPoseData[i + 2])) * feetVelWeight + 1, 2);
-                velocityDiffs += math.pow(math.distancesq(cPose_neckVel, charSpace.MultiplyPoint3x4(candidatesPoseData[i + 3])) * neckVelWeight + 1, 2);
+                float velocityDiffs = math.pow(math.distancesq(cPose_rootVel, /*charSpace.MultiplyPoint3x4(*/candidatesPoseData[i]) * rootVelWeight + 1, 2);
+                velocityDiffs += math.pow(math.distancesq(cPose_leftFootVel, /*charSpace.MultiplyPoint3x4(*/candidatesPoseData[i + 1]) * feetVelWeight + 1, 2);
+                velocityDiffs += math.pow(math.distancesq(cPose_rightFootVel, /*charSpace.MultiplyPoint3x4(*/candidatesPoseData[i + 2]) * feetVelWeight + 1, 2);
+                velocityDiffs += math.pow(math.distancesq(cPose_neckVel, /*charSpace.MultiplyPoint3x4(*/candidatesPoseData[i + 3]) * neckVelWeight + 1, 2);
 
-                float positionDiffs = math.pow(math.distancesq(cPose_leftFootPos, charSpace.MultiplyPoint3x4(candidatesPoseData[i + 4])) * feetPosWeight + 1, 2);
-                positionDiffs += math.pow(math.distancesq(cPose_rightFootPos, charSpace.MultiplyPoint3x4(candidatesPoseData[i + 5])) * feetPosWeight + 1, 2);
-                positionDiffs += math.pow(math.distancesq(cPose_neckPos, charSpace.MultiplyPoint3x4(candidatesPoseData[i + 6])) * neckPosWeight + 1, 2);
+                float positionDiffs = math.pow(math.distancesq(cPose_leftFootPos, /*charSpace.MultiplyPoint3x4(*/candidatesPoseData[i + 4]) * feetPosWeight + 1, 2);
+                positionDiffs += math.pow(math.distancesq(cPose_rightFootPos, /*charSpace.MultiplyPoint3x4(*/candidatesPoseData[i + 5]) * feetPosWeight + 1, 2);
+                positionDiffs += math.pow(math.distancesq(cPose_neckPos, /*charSpace.MultiplyPoint3x4(*/candidatesPoseData[i + 6]) * neckPosWeight + 1, 2);
 
                 float candidateDiff = velocityDiffs + positionDiffs;
                 if (candidateDiff < currentDiff)

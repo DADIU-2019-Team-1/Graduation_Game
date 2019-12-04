@@ -399,7 +399,7 @@ public class Movement : MonoBehaviour
             }
         }
         // Making sure touches only run on Android
-        if (touchMoved || currentSpeed.value >= 0.1f)
+        if (touchMoved)
         {
             movePlayer(direction);
         }

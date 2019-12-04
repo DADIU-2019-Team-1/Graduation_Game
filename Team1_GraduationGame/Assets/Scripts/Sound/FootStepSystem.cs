@@ -33,7 +33,10 @@ namespace Team1_GraduationGame.Sound
                 if (!_footStepCooldown)
                 {
                     _footStepCooldown = true;
-                    
+
+                    if (col.tag == "Enemy" || col.tag == "Player")
+                        return;
+
                     if (checkMaterial)
                     {
                         if (col.gameObject.GetComponent<Terrain>() != null)

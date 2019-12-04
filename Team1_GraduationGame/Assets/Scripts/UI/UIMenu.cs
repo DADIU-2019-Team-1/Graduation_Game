@@ -2,6 +2,7 @@
 using System;
 using System.Collections;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class UIMenu : MonoBehaviour
 {
@@ -146,7 +147,8 @@ public class UIMenu : MonoBehaviour
         }
         else
         {
-            returnToMainMenuEvent?.Invoke();
+            SceneManager.LoadScene(0);
+            Time.timeScale = 1;
         }
     }
 

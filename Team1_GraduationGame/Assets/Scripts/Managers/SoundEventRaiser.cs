@@ -19,8 +19,23 @@ namespace Team1_GraduationGame.Events
 
         private void Start()
         {
+            Invoke("DelayedStart", 0.7f);
+        }
+
+        private void DelayedStart()
+        {
+            if (PlayerPrefs.GetInt("GameRanBool") == 0)
+            {
+                PlayerPrefs.SetFloat("SFXSliderSave", 10);
+                PlayerPrefs.SetFloat("MusicSliderSave", 10);
+                PlayerPrefs.SetInt("GameRanBool", 1);
+            }
+
             SceneManager.sceneLoaded += OnSceneLoad;
             OnSceneLoad();
+
+            musicSliderEvent?.Raise(PlayerPrefs.GetFloat("MusicSliderSave"));
+            sfxSliderEvent?.Raise(PlayerPrefs.GetFloat("SFXSliderSave"));
         }
 
         private void OnSceneLoad(Scene scene, LoadSceneMode mode)
@@ -55,10 +70,12 @@ namespace Team1_GraduationGame.Events
         }
         private void MusicSliderEvent(float value)
         {
+            PlayerPrefs.SetFloat("MusicSliderSave", value);
             musicSliderEvent?.Raise(value);
         }
         private void SFXSliderEvent(float value)
         {
+            PlayerPrefs.SetFloat("SFXSliderSave", value);
             sfxSliderEvent?.Raise(value);
         }
         public void InHubEvent()

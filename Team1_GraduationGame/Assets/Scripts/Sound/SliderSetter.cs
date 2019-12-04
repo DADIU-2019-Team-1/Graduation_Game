@@ -16,6 +16,22 @@ namespace Team1_GraduationGame.Sound
             gameObject.GetComponent<Slider>();
         }
 
+        private void Start()
+        {
+            if (_thisSlider == null)
+            {
+                _thisSlider = GetComponent<Slider>();
+            }
+
+            if (_thisSlider != null)
+            {
+                if (uniqueId == 1)
+                    _thisSlider.value = PlayerPrefs.GetFloat("SFXSliderSave");
+                else if (uniqueId == 2)
+                    _thisSlider.value = PlayerPrefs.GetFloat("MusicSliderSave");
+            }
+        }
+
         public void SetSlider(float value)
         {
             if (_thisSlider != null)

@@ -455,6 +455,7 @@ public class Movement : MonoBehaviour
                 if (dragDist < Mathf.Pow(radius.value * idleThreshold, 2))
                 {
                     // Do nothing
+                    targetSpeed = 0.0f;
                 }
                 else if (dragDist < Mathf.Pow(radius.value * zoneSneakThreshold, 2))
                 {

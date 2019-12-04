@@ -17,7 +17,7 @@ namespace Team1_GraduationGame.Events
 
         void Start()
         {
-            Invoke("DelayedStart", PlayerPrefs.GetInt("loadGameOnAwake") == 1 ? 0.0f : 0.5f);
+            Invoke("DelayedStart", PlayerPrefs.GetInt("loadGameOnAwake") == 1 ? 0.0f : 0.3f);
         }
 
         void DelayedStart()

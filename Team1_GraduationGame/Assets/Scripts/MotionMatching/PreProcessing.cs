@@ -40,6 +40,11 @@ namespace Team1_GraduationGame.MotionMatching
                 Quaternion startRotForClip = animator.GetBoneTransform(joints[0]).rotation;
                 startSpace.SetTRS(startPosForClip, startRotForClip, Vector3.one);
 
+                if (i == 0)
+                {
+                    Debug.Log("Position " + startSpace.MultiplyPoint3x4(animator.GetBoneTransform(joints[0]).position) + " | Forward " + animator.GetBoneTransform(joints[0]).forward + " | Rotation: " + animator.GetBoneTransform(joints[0]).rotation);
+                }
+
                 Vector3 preRootPos = Vector3.zero,
                     preLFootPos = Vector3.zero,
                     preRFootPos = Vector3.zero,

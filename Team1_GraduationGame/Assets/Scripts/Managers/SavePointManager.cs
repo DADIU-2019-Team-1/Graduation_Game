@@ -192,6 +192,11 @@ namespace Team1_GraduationGame.SaveLoadSystem
             SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
         }
 
+        public void DeleteSave()
+        {
+            PlayerPrefs.SetInt("previousGame", 0);
+        }
+
         private void AudioSave()
         {
             if (distanceToMem != null)

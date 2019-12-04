@@ -104,7 +104,7 @@ namespace Team1_GraduationGame.Enemies
                             {
                                 RaycastHit hit;
 
-                                if (Physics.Raycast(visionGameObject.transform.position + transform.up, dir, out hit, viewDistance, _layerMask))
+                                if (Physics.Raycast(visionGameObject.transform.position, dir, out hit, viewDistance, _layerMask))
                                     if (hit.collider.tag == _player.tag)
                                     {
                                         _active = false;

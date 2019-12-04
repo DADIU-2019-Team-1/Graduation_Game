@@ -1,14 +1,10 @@
 ﻿// Codeowners: Nicolai Hansen, Sebastian Andresen.
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Team1_GraduationGame.Interaction;
-using Team1_GraduationGame.Events;
 using Team1_GraduationGame.MotionMatching;
 using Team1_GraduationGame.Sound;
-using Unity.Mathematics;
-using UnityEditor;
 using Unity.Mathematics;
 
 [RequireComponent(typeof(Rigidbody), typeof(SphereCollider))]
@@ -17,20 +13,17 @@ public class Movement : MonoBehaviour
 {
     private Rigidbody playerRB;
     private bool touchStart = false, canMove = false, canJump = true, canPush = true, isPushing = false, moveFrozen = false, isAttacked = false, touchMoved = false, touchEndedJump = false;
-    private float rotationSpeedCurrent, rotationSpeedMax = 5.0f, rotationSpeedGoal, rotationAccelerationFactor = 0.1f, pushRotationAccelerationFactor = 0.7f, rotationAngleReactionFactor = 0.1f, pushRotationAngleReactionFactor = 0.7f;
+    private float rotationSpeedCurrent, rotationSpeedGoal, rotationAccelerationFactor = 0.1f, pushRotationAccelerationFactor = 0.7f, rotationAngleReactionFactor = 0.1f, pushRotationAngleReactionFactor = 0.7f;
 
     [HideInInspector]
     public float targetSpeed;
     public bool isJumping = false, inSneakZone = false;
 
-    // Tried a particle system for the ground
-    public ParticleSystem Groundparticles;
-
     public PlayerSoundManager playerSoundManager;
 
     [SerializeField] private float accelerationFactor = 0.1f;
 
-    private Vector3 initTouchPos, currTouchPos, joystickPos, stickLimitPos, velocity;
+    private Vector3 initTouchPos, currTouchPos;
     private Quaternion lookRotation, pushRotation;
 
     [HideInInspector]
@@ -45,28 +38,18 @@ public class Movement : MonoBehaviour
     [Tooltip("Put the joystick border here")]
     public Transform stickLimit;
 
-    public FloatReference sneakSpeed, walkSpeed, runSpeed, rotationSpeed, jumpHeight, jumpSpeed, fallMultiplier, attackRange, swipeTimeThreshold, defaultPushForce, pushForce;
+    public FloatReference sneakSpeed, walkSpeed, runSpeed, rotationSpeed, jumpHeight, fallMultiplier, attackRange;
     public IntReference radius, attackDegree, swipePixelDistance, attackCoolDown;
 
     private PhysicMaterial _jumpMaterial;
     [Tooltip("Height in meters for checking jump")]
     public FloatReference ghostJumpHeight;
-
     public FloatReference jumpLength;
-
     public FloatVariable currentSpeed;
     public IntVariable moveState;
-
     public GameObject leftHeelPos, rightHeelPos, rightToePos, leftToePos;
-
     private CapsuleCollider _collider;
-
-    //Comment out this when motionmatching works!
     private Animator animator;
-
-    //private SphereCollider playerTrigger;
-
-    //public FloatReference floatingWeight;
 
     private int leftTouch = 99;
     private int rightTouch = 98;
@@ -145,7 +128,6 @@ public class Movement : MonoBehaviour
         }
 
         lookRotation = direction != Vector3.zero ? Quaternion.LookRotation(direction) : Quaternion.identity;
-        velocity = direction.normalized * currentSpeed.value;
 
 #if UNITY_ANDROID
         int i = 0;

@@ -1,6 +1,5 @@
 ﻿// Code Owner: Jannik Neerdal
 using System.Collections.Generic;
-using Unity.Collections;
 using UnityEngine;
 
 namespace Team1_GraduationGame.MotionMatching
@@ -18,6 +17,7 @@ namespace Team1_GraduationGame.MotionMatching
 
         // --- Variables
         private const float velFactor = 100.0f;
+        private bool ignoreRotation;
 
         public void Preprocess(AnimationClip[] allClips, HumanBodyBones[] joints, GameObject avatar, Animator animator,
             float frameSampleRate, string[] states)
@@ -36,14 +36,11 @@ namespace Team1_GraduationGame.MotionMatching
             for (int i = 0; i < allClips.Length; i++)
             {
                 allClips[i].SampleAnimation(avatar, 0); // First frame of currently sampled animation
-                Vector3 startPosForClip = new Vector3(animator.GetBoneTransform(joints[0]).position.x, 0.0f, animator.GetBoneTransform(joints[0]).position.z);
+                Vector3 startPosForClip = animator.GetBoneTransform(joints[0]).position.GetXZVector3();
                 Quaternion startRotForClip = animator.GetBoneTransform(joints[0]).rotation;
                 startSpace.SetTRS(startPosForClip, startRotForClip, Vector3.one);
 
-                if (i == 0)
-                {
-                    Debug.Log("Position " + startSpace.MultiplyPoint3x4(animator.GetBoneTransform(joints[0]).position) + " | Forward " + animator.GetBoneTransform(joints[0]).forward + " | Rotation: " + animator.GetBoneTransform(joints[0]).rotation);
-                }
+                //Debug.Log("Clip " + i + ": Original Forward " + animator.GetBoneTransform(joints[0]).forward + " | New Forward " + startSpace.inverse.MultiplyVector(animator.GetBoneTransform(joints[0]).forward) + " | Rotation: " + animator.GetBoneTransform(joints[0]).rotation.eulerAngles);
 
                 Vector3 preRootPos = Vector3.zero,
                     preLFootPos = Vector3.zero,
@@ -65,6 +62,8 @@ namespace Team1_GraduationGame.MotionMatching
                     continue;
                 }
 
+                ignoreRotation = lowercaseName.Contains("forward");
+
                 int clipFrameCount = (int) (allClips[i].length * frameSampleRate) - 1;
                 for (int j = 0; j < (int) (allClips[i].length * frameSampleRate); j++)
                 {
@@ -73,9 +72,12 @@ namespace Team1_GraduationGame.MotionMatching
                     allClipFrameCounts.Add(clipFrameCount);
                     allFrames.Add(j);
                     allStates.Add(clipState);
-                    Vector3 rootPos = startSpace.inverse.MultiplyPoint3x4(animator.GetBoneTransform(joints[0]).position);
-                    charSpace.SetTRS(new Vector3(animator.GetBoneTransform(joints[0]).position.x, 0.0f,
-                            animator.GetBoneTransform(joints[0]).position.z), animator.GetBoneTransform(joints[0]).rotation, Vector3.one);
+
+                    Vector3 rootPos = startSpace.inverse.MultiplyPoint3x4(animator.GetBoneTransform(joints[0]).position.GetXZVector3());
+                    if (ignoreRotation) // Ignore x-axis for forward animations to eliminitate bad tracking data
+                        rootPos = new Vector3(0.0f, 0.0f, rootPos.z);
+
+                    charSpace.SetTRS(animator.GetBoneTransform(joints[0]).position.GetXZVector3(), animator.GetBoneTransform(joints[0]).rotation, Vector3.one);
                     Vector3 lFootPos = charSpace.inverse.MultiplyPoint3x4(animator.GetBoneTransform(joints[1]).position);
                     Vector3 rFootPos = charSpace.inverse.MultiplyPoint3x4(animator.GetBoneTransform(joints[2]).position);
                     Vector3 neckPos = charSpace.inverse.MultiplyPoint3x4(animator.GetBoneTransform(joints[3]).position);
@@ -91,7 +93,10 @@ namespace Team1_GraduationGame.MotionMatching
                         preRFootPos = rFootPos;
                         preNeckPos = neckPos;
 
-                        allPoints.Add(new TrajectoryPoint(rootPos,startSpace.inverse.MultiplyVector(animator.GetBoneTransform(joints[0]).forward)));
+                        if (ignoreRotation) // If we ignore x-axis, simply set the forward to (0,0,1)
+                            allPoints.Add(new TrajectoryPoint(rootPos, Vector3.forward));
+                        else
+                            allPoints.Add(new TrajectoryPoint(rootPos, startSpace.inverse.MultiplyVector(animator.GetBoneTransform(joints[0]).forward)));
                     }
                     else // Velocity calculations use j+1 - j instead of j - j-1, since there is no previous timestep, and the velocity in frame 0 should be similar to frame 1
                     {
@@ -100,7 +105,7 @@ namespace Team1_GraduationGame.MotionMatching
                         preRFootPos = rFootPos;
                         preNeckPos = neckPos;
                         allClips[i].SampleAnimation(avatar, 1 / allClips[i].frameRate); // Sampling animation at frame 1 to get difference between frame 0 and 1
-                        rootPos = startSpace.inverse.MultiplyPoint3x4(animator.GetBoneTransform(joints[0]).position);
+                        rootPos = startSpace.inverse.MultiplyPoint3x4(animator.GetBoneTransform(joints[0]).position.GetXZVector3());
                         lFootPos = charSpace.inverse.MultiplyPoint3x4(animator.GetBoneTransform(joints[1]).position);
                         rFootPos = charSpace.inverse.MultiplyPoint3x4(animator.GetBoneTransform(joints[2]).position);
                         neckPos = charSpace.inverse.MultiplyPoint3x4(animator.GetBoneTransform(joints[3]).position);
@@ -110,7 +115,10 @@ namespace Team1_GraduationGame.MotionMatching
                             CalculateVelocity(rFootPos, preRFootPos, velFactor),
                             CalculateVelocity(neckPos, preNeckPos, velFactor)));
 
-                        allPoints.Add(new TrajectoryPoint(rootPos, startSpace.inverse.MultiplyVector(animator.GetBoneTransform(joints[0]).forward)));
+                        if (ignoreRotation) // If we ignore x-axis, simply set the forward to (0,0,1)
+                            allPoints.Add(new TrajectoryPoint(rootPos, Vector3.forward));
+                        else
+                            allPoints.Add(new TrajectoryPoint(rootPos, startSpace.inverse.MultiplyVector(animator.GetBoneTransform(joints[0]).forward)));
                     }
                 }
             }

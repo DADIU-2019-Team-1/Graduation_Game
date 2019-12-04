@@ -11,7 +11,7 @@ public class ChangeQuality : MonoBehaviour
     public event Action<int> changeQuality;
     private Button _thisBtn;
     private ChangeQuality[] _qualityBtns;
-    public GameObject[] terrains;
+    public GameObject TerrainQuality;
 
 
 
@@ -30,36 +30,9 @@ public class ChangeQuality : MonoBehaviour
     {
         changeQuality?.Invoke(settingLevel);
         QualitySettings.SetQualityLevel(settingLevel, true);
-        // Set terrain to not draw grass if settingLevel at 0
-        if(settingLevel == 0)
-        {
-            if( terrains != null)
-            {
-                foreach(GameObject terrainVar in terrains)
-                {
-                    terrainVar.GetComponent<Terrain>().drawTreesAndFoliage = false;
-                }
-
-            
-            }
-        }
-        // Set terrain to do draw grass if settingLevel higher than 0
-        else 
-        {
-            if( terrains != null)
-            {
-                foreach(GameObject terrainVar in terrains)
-                {
-                    terrainVar.GetComponent<Terrain>().drawTreesAndFoliage = true;
-                }
-
-            
-            }
-        }
-
-
         QualityChangeHandler(settingLevel);
         PlayerPrefs.SetInt("Quality", settingLevel);
+        TerrainQuality.GetComponent<TerrainQuality>().updateTerrainQuality();
     }
 
     private void QualityChangeHandler(int setting)

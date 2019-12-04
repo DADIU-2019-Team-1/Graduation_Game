@@ -23,7 +23,9 @@ namespace Team1_GraduationGame.SaveLoadSystem
         public SaveLoadManager saveLoadManager;
         public PlayableDirector _playableDirector;
         private WhiteFadeController _whiteFadeCtrl;
+        private UIMenu _uiMenu;
         private Movement _playerMovement;
+        public Camera _mainCam, _cutSceneCam;
 
         // Public
         public int firstSceneBuildIndex = 0;
@@ -64,6 +66,12 @@ namespace Team1_GraduationGame.SaveLoadSystem
 
                 PlayerPrefs.SetInt("loadGameOnAwake", 0);
 
+                if (_mainCam != null && _cutSceneCam != null)
+                {
+                    _mainCam.enabled = true;
+                    _cutSceneCam.enabled = false;
+                }
+
                 _whiteFadeCtrl?.RaiseFadeEvent();
 
                 saveLoadManager.LoadGame(true);
@@ -76,6 +84,8 @@ namespace Team1_GraduationGame.SaveLoadSystem
                 {
                     menuObjects[i].continueGameEvent += Continue;
                 }
+
+                _uiMenu = menuObjects[0];
             }
         }
 
@@ -136,21 +146,33 @@ namespace Team1_GraduationGame.SaveLoadSystem
 
         public void Continue()
         {
-            saveLoadManager?.ContinueGame();
+            if (PlayerPrefs.GetInt("currentScene") == 0)
+            {
+                if (PlayerPrefs.GetInt("previousGame") == 1 && _uiMenu != null)
+                    _uiMenu.StartGame();
+            }
+            else
+            {
+                saveLoadManager?.ContinueGame();
+            }
         }
 
         public void SaveGame()
         {
             saveLoadManager?.SaveGame();
+            AudioSave();
+        }
 
-            AudioSave(); // TODO test
+        public void SaveGame(Vector3 pos)
+        {
+            saveLoadManager?.SaveGame(pos);
+            AudioSave();
         }
 
         public void LoadGame()
         {
             saveLoadManager?.LoadGame();
-
-            AudioLoad(); // TODO test
+            AudioLoad();
         }
 
         public void NextLevel()
@@ -174,12 +196,14 @@ namespace Team1_GraduationGame.SaveLoadSystem
             if (gameState != null)
             {
                 AKRESULT tempResult = AkSoundEngine.GetState(gameState.GroupId, out uint currentState);
+                //Debug.Log(tempResult + " | " + currentState);
                 PlayerPrefs.SetInt("gameState", (int)currentState);
             }
 
             if (levelState != null)
             {
                 AKRESULT tempResult = AkSoundEngine.GetState(levelState.GroupId, out uint currentState);
+                //Debug.Log(tempResult + " | " + currentState);
                 PlayerPrefs.SetInt("levelState", (int)currentState);
             }
         }

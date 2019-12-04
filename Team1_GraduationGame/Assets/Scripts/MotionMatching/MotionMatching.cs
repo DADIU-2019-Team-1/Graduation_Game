@@ -1,14 +1,13 @@
 ﻿// Code Owner: Jannik Neerdal
-using System.Collections;
 using System.Collections.Generic;
 using Unity.Burst;
 using Unity.Collections;
 using Unity.Jobs;
 using Unity.Mathematics;
+using UnityEngine;
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
-using UnityEngine;
 
 namespace Team1_GraduationGame.MotionMatching
 {

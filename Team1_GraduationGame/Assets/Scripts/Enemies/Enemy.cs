@@ -9,6 +9,7 @@ namespace Team1_GraduationGame.Enemies
     using Team1_GraduationGame.Sound;
     using System.Linq;
     using UnityEngine.AI;
+    using Unity.Mathematics;
 
 #if UNITY_EDITOR
     using UnityEditor;
@@ -37,7 +38,7 @@ namespace Team1_GraduationGame.Enemies
         public float wayPointReachRange = 1.0f, hearingSensitivity = 2.0f, minimumAlwaysDetectRange = 1.3f;
         public bool pushDownLightIndication = true, drawGizmos = true, useWaitTime, rotateAtWaypoints, loopWaypointRoutine = true, alwaysAggro;
         public Color normalConeColor = Color.yellow, aggroConeColor = Color.red;
-        public float animNoiseHeardTime = 2.0f, animAttackTime = 3.0f/*, animGettingUpTime = 2.0f*/;
+        public float animNoiseHeardTime = 2.0f, animAttackTime = 3.0f;
         [HideInInspector] public bool useGlobalWaitTime = true, behaviourInactive = true, activateOnDistance = true;
         [HideInInspector] public float waitTime = 0.0f, activationDistance = 65.0f;
 
@@ -49,9 +50,11 @@ namespace Team1_GraduationGame.Enemies
         private Vector3[] _wayPointRotations;
         private SphereCollider _thisCollider;
         private LayerMask _layerMask;
+        private WaitForSeconds _lightConeWait, _aggroWait, _attackWait, _pushedDownWait, _animAttackWait, _animNoiseWait;
         private int _currentWayPoint = 0, _state = 0;
         private float[] _waitTimes;
-        private float _targetSpeed, _hearingDistance, _lightConeIntensity, _speed;
+        private float _targetSpeed, _hearingDistance, _lightConeIntensity, _speed, _calcEmbraceDist, 
+            _calcAlwaysHearDist, _calcWayPointDist, _calcHearingDist, _calcActivationDist;
 
         #endregion
 
@@ -59,9 +62,6 @@ namespace Team1_GraduationGame.Enemies
         void Awake()
         {
             _player = GameObject.FindGameObjectWithTag("Player");
-            _layerMask = LayerMask.GetMask("Enemies");
-            _layerMask |= LayerMask.GetMask("Ignore Raycast");
-            _layerMask = ~_layerMask;
 
             if (_player != null && thisEnemy != null)
             {
@@ -70,6 +70,10 @@ namespace Team1_GraduationGame.Enemies
                     _hearingDisabled = true;
                     Debug.LogError("Enemy hearing and light FOV disabled: Player move state scriptable object not attached");
                 }
+
+                _layerMask = LayerMask.GetMask("Enemies");
+                _layerMask |= LayerMask.GetMask("Ignore Raycast");
+                _layerMask = ~_layerMask;
 
                 _playerAnimator = _player.GetComponent<Animator>();
                 _active = true;
@@ -127,19 +131,35 @@ namespace Team1_GraduationGame.Enemies
 
                 if (alwaysAggro)
                     _isAggro = true;
+
+                _aggroWait = new WaitForSeconds(thisEnemy.aggroTime);
+                _attackWait = new WaitForSeconds(thisEnemy.embraceDelay);
+                _lightConeWait = new WaitForSeconds(0.05f);
+                _pushedDownWait = new WaitForSeconds(thisEnemy.pushedDownDuration);
+                _animNoiseWait = new WaitForSeconds(animNoiseHeardTime);
+                _animAttackWait = new WaitForSeconds(animAttackTime/2);
             }
         }
         #endregion
 
         private void Start()
         {
-            InvokeRepeating("CustomUpdate", 0.5f, 0.7f);
+            if (_active)
+            {
+                // Pre-calculations
+                _calcActivationDist = math.pow(activationDistance, 2);
+                _calcAlwaysHearDist = math.pow(minimumAlwaysDetectRange, 2);
+                _calcEmbraceDist = math.pow(thisEnemy.embraceDistance, 2);
+                _calcHearingDist = math.pow(thisEnemy.hearingDistance, 2);
+                _calcWayPointDist = math.pow(wayPointReachRange, 2);
 
-            if (activateOnDistance)
-                InvokeRepeating("DistanceActivationChecker", 0, 8.0f);
+                if (activateOnDistance)
+                    InvokeRepeating("DistanceActivationChecker", 0, 8.0f);
 
-            InvokeRepeating("OnTriggerStayLoop", 4.0f, 0.1f);
-            InvokeRepeating("BehaviourLoop", 1.0f, 0.1f);
+                InvokeRepeating("CustomUpdate", 0.5f, 0.7f);
+                InvokeRepeating("OnTriggerStayLoop", 4.0f, 0.1f);
+                InvokeRepeating("BehaviourLoop", 1.0f, 0.1f);
+            }
         }
 
         /// <summary>
@@ -189,7 +209,7 @@ namespace Team1_GraduationGame.Enemies
                         if (_state != 0)
                             SwitchState(0); // Switch to walking
 
-                        if (Vector3.Distance(transform.position, wayPoints[_currentWayPoint].transform.position) < wayPointReachRange)  // Checks whether enemy reached its waypoint
+                        if (math.distancesq(transform.position, wayPoints[_currentWayPoint].transform.position) < _calcWayPointDist)  // Checks whether enemy reached its waypoint
                         {
                             if (!rotateAtWaypoints) // Checks if enemy should rotate in specific direction at waypoint.
                                 _isRotating = false;
@@ -215,14 +235,13 @@ namespace Team1_GraduationGame.Enemies
 
                         _isRotating = true;
 
-                        if (Vector3.Distance(transform.position, _player.transform.position) <
-                            thisEnemy.embraceDistance && _isAggro)  // Is player in hug/attack range?
+                        if (math.distancesq(transform.position, _player.transform.position) <
+                            _calcEmbraceDist && _isAggro)  // Is player in hug/attack range?
                         {
                             if (!_isHugging)    // If not already hugging/attacking then start hug/attack co-routine.
                                 StartCoroutine(EnemyHug());
                         }
-
-                        if (Vector3.Distance(transform.position, _lastSighting) < thisEnemy.embraceDistance)
+                        else if (math.distancesq(transform.position, _lastSighting) < _calcEmbraceDist)
                         {
                             if (!alwaysAggro)
                             {
@@ -244,12 +263,12 @@ namespace Team1_GraduationGame.Enemies
 
                             float tempHearingPathLength = HearingPathLength();
 
-                            if (tempHearingPathLength < thisEnemy.hearingDistance && playerMoveState.value != 0 &&
+                            if (tempHearingPathLength < _calcHearingDist && playerMoveState.value != 0 &&
                                 playerMoveState.value != 1)
                             {
                                 if (_playerHeard)
                                 {
-                                    if (tempHearingPathLength < thisEnemy.hearingDistance / 2 && playerMoveState.value == 3)
+                                    if (tempHearingPathLength < _calcHearingDist / 2 && playerMoveState.value == 3)
                                     {
                                         StopCoroutine(PlayerHeard());
                                         _playerHeard = false;
@@ -265,8 +284,7 @@ namespace Team1_GraduationGame.Enemies
                                     StartCoroutine(PlayerHeard());
 
                             }
-                            else if (Vector3.Distance(transform.position, _player.transform.position) < minimumAlwaysDetectRange
-                            ) // If very very close the enemy will "hear" the player no matter what
+                            else if (math.distancesq(transform.position, _player.transform.position) < _calcAlwaysHearDist) // If very very close the enemy will "hear" the player no matter what
                             {
                                 _lastSighting = _player.transform.position;
 
@@ -301,7 +319,6 @@ namespace Team1_GraduationGame.Enemies
                     {
                         _lastSighting = _player.transform.position;
                     }
-
 
                     if (_isAggro)
                     {
@@ -347,11 +364,11 @@ namespace Team1_GraduationGame.Enemies
 
         private void DistanceActivationChecker()
         {
-            if (Vector3.Distance(transform.position, _player.transform.position) < activationDistance && behaviourInactive)
+            if (math.distancesq(transform.position, _player.transform.position) < _calcActivationDist && behaviourInactive)
             {
                 BehaviourInactive(false);
             }
-            else if (Vector3.Distance(transform.position, _player.transform.position) > activationDistance && !behaviourInactive)
+            else if (math.distancesq(transform.position, _player.transform.position) > _calcActivationDist && !behaviourInactive)
             {
                 BehaviourInactive(true);
             }
@@ -398,7 +415,11 @@ namespace Team1_GraduationGame.Enemies
             }
             else if (useWaitTime && !_timerRunning)
             {
-                StartCoroutine(WaitTimer());
+                if (_waitTimes[_currentWayPoint] > 0)
+                    Invoke("WaitTimer", _waitTimes[_currentWayPoint]);
+                else if (useGlobalWaitTime)
+                    Invoke("WaitTimer", waitTime);
+
                 _timerRunning = true;
             }
         }
@@ -521,7 +542,7 @@ namespace Team1_GraduationGame.Enemies
 
             for (int i = 0; i < allPathPoints.Length - 1; i++)
             {
-                tempPathLength += Vector3.Distance(allPathPoints[i], allPathPoints[i + 1]);
+                tempPathLength += math.distancesq(allPathPoints[i], allPathPoints[i + 1]);
             }
 
             return tempPathLength;
@@ -529,17 +550,17 @@ namespace Team1_GraduationGame.Enemies
 
         public void CollisionWithPlayerSetter(bool isColliding)
         {
-            if (isColliding)
-            {
-                Physics.IgnoreCollision(_player.GetComponent<Collider>(), GetComponent<Collider>(), false);
-            }
-            else
-            {
-                Physics.IgnoreCollision(_player.GetComponent<Collider>(), GetComponent<Collider>(), true);
-            }
+            Physics.IgnoreCollision(_player.GetComponent<Collider>(), GetComponent<Collider>(), !isColliding);
         }
 
-        #region Co-Routines
+        #region Co-Routines & Invokes
+
+        private void WaitTimer()
+        {
+            _currentWayPoint = (_currentWayPoint + 1) % wayPoints.Count;
+            _destinationSet = false;
+            _timerRunning = false;
+        }
 
         private IEnumerator LightConeFade()
         {
@@ -547,7 +568,7 @@ namespace Team1_GraduationGame.Enemies
             while (loop)
             {
                 viewConeLight.intensity += 1;
-                yield return new WaitForSeconds(0.05f);
+                yield return _lightConeWait;
 
                 if (viewConeLight.intensity >= _lightConeIntensity)
                     loop = false;
@@ -564,7 +585,7 @@ namespace Team1_GraduationGame.Enemies
             if (particleSystem != null)
                 particleSystem.Play();
 
-            yield return new WaitForSeconds(animNoiseHeardTime);
+            yield return _animNoiseWait;
 
             if (!_isAggro)
                 StartCoroutine(EnemyAggro());
@@ -572,27 +593,15 @@ namespace Team1_GraduationGame.Enemies
             _animator.SetTrigger("Reset");
             _active = true;
 
-            yield return new WaitForSeconds(thisEnemy.aggroTime);
+            yield return _aggroWait;
             _playerHeard = false;
-        }
-
-        private IEnumerator WaitTimer()
-        {
-            if (_waitTimes[_currentWayPoint] > 0)
-                yield return new WaitForSeconds(_waitTimes[_currentWayPoint]);
-            else if (useGlobalWaitTime)
-                yield return new WaitForSeconds(waitTime);
-
-            _currentWayPoint = (_currentWayPoint + 1) % wayPoints.Count;
-            _destinationSet = false;
-            _timerRunning = false;
         }
 
         private IEnumerator EnemyAggro()
         {
             _enemySoundManager?.Spotted();
             _isAggro = true;
-            yield return new WaitForSeconds(thisEnemy.aggroTime);
+            yield return _aggroWait;
 
             if (!_inTriggerZone)
             {
@@ -626,10 +635,10 @@ namespace Team1_GraduationGame.Enemies
 
             transform.LookAt(_player.transform.position);
 
-            yield return new WaitForSeconds(thisEnemy.embraceDelay);
+            yield return _attackWait;
 
-            if (Vector3.Distance(transform.position, _player.transform.position) <
-                thisEnemy.embraceDistance + 1.0f)
+            if (math.distancesq(transform.position, _player.transform.position) <
+                math.pow(thisEnemy.embraceDistance + 1.0f, 2))
             {
                 _movement.SetActive(false);
                 viewConeLight?.gameObject.SetActive(false);
@@ -638,15 +647,10 @@ namespace Team1_GraduationGame.Enemies
                 _animator?.SetTrigger("Attack");
                 _enemySoundManager?.AttackPlayer();
 
-                yield return new WaitForSeconds(animAttackTime/2);
+                yield return _animAttackWait;
 
                 playerDiedEvent?.Raise();
 
-                //yield return new WaitForSeconds(animAttackTime/2);
-
-                //CollisionWithPlayerSetter(true);
-                //_playerAnimator?.ResetTrigger("EnemyAttack" + thisEnemy.typeId);
-                //_movement?.SetIsAttacked(false);
             }
 
             _navMeshAgent.isStopped = false;
@@ -660,7 +664,7 @@ namespace Team1_GraduationGame.Enemies
 
         private IEnumerator PushDownDelay()
         {
-            yield return new WaitForSeconds(thisEnemy.pushedDownDuration);
+            yield return _pushedDownWait;
             viewConeLight.color = normalConeColor;
             _animator?.ResetTrigger("PushedDown");
             _enemySoundManager?.GettingUp();

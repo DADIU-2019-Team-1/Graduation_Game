@@ -27,7 +27,7 @@ public class CreditsScroll : MonoBehaviour
 
         }
 
-        if (rectTransform.anchoredPosition.y >= 4170)
+        if (rectTransform.anchoredPosition.y >= 9700)
         {
             startScroll = false;
         }

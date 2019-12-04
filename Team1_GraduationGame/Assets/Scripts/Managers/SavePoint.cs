@@ -45,9 +45,9 @@ namespace Team1_GraduationGame.SaveLoadSystem
                 if (col.tag == "Player")
                 {
                     if (useSavePointPosition)
-                        thisSavePointManager.saveLoadManager.SaveGame(gameObject.transform.position);
+                        thisSavePointManager.SaveGame(gameObject.transform.position);
                     else
-                        thisSavePointManager.saveLoadManager.SaveGame();
+                        thisSavePointManager.SaveGame();
 
                     thisSavePointManager.previousCheckPoint = thisID;
                     savePointUsed = true;

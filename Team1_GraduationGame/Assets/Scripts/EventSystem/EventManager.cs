@@ -17,7 +17,7 @@ namespace Team1_GraduationGame.Events
 
         void Start()
         {
-            Invoke("DelayedStart", PlayerPrefs.GetInt("loadGameOnAwake") == 1 ? 0.0f : 3.0f);
+            Invoke("DelayedStart", PlayerPrefs.GetInt("loadGameOnAwake") == 1 ? 0.0f : 2.3f);
         }
 
         void DelayedStart()
@@ -27,13 +27,14 @@ namespace Team1_GraduationGame.Events
                 if (events[i].eventName != "" || events[i].eventToFire != null)
                 {
                     events[i].attachedManager = this.gameObject;
+                    events[i].SetUpEvent();
                     StartClassCoroutine(i, (int)events[i].function);
                 }
                 else
                 {
-#if UNITY_EDITOR
+                    #if UNITY_EDITOR
                     Debug.LogError("EventManager Notice: event number " + i + " is not set up correctly!");
-#endif
+                    #endif
                 }
 
                 if ((int) events[i].function == 8)
@@ -137,11 +138,11 @@ namespace Team1_GraduationGame.Events
     [System.Serializable]
     public class ThisEventSystem
     {
-        [HideInInspector] public GameObject attachedManager;
-
         private bool hasFired = false;
-        [HideInInspector] public bool activeInInspector = false;
+        private WaitForSeconds _delayForFire, _coolDownDelay, _smallDelay = new WaitForSeconds(0.3f);
 
+        [HideInInspector] public GameObject attachedManager;
+        [HideInInspector] public bool activeInInspector = false;
         [HideInInspector] public string eventName = "";
 
         public enum myFuncEnum
@@ -169,6 +170,12 @@ namespace Team1_GraduationGame.Events
         [HideInInspector] public float fireCooldown = 0.0f, delayForFire = 0.0f;
         [HideInInspector] public int[] specificRotations;
 
+        public void SetUpEvent()
+        {
+            _delayForFire = new WaitForSeconds(delayForFire);
+            _coolDownDelay = new WaitForSeconds(fireCooldown);
+        }
+
         public void OnCollisionWithTag()
         {
             if (thisGameObject != null)
@@ -183,9 +190,7 @@ namespace Team1_GraduationGame.Events
 
                     if (hasFired)
                     {
-                    #if UNITY_EDITOR
-                        Debug.Log(eventName + " event already fired");
-                    #endif
+                        //    Debug.Log(eventName + " event already fired");
                     }
                     else
                     {
@@ -218,9 +223,7 @@ namespace Team1_GraduationGame.Events
 
                     if (hasFired)
                     {
-#if UNITY_EDITOR
-                        Debug.Log(eventName + " event already fired");
-#endif
+                        //Debug.Log(eventName + " event already fired");
                     }
                     else
                     {
@@ -250,14 +253,13 @@ namespace Team1_GraduationGame.Events
                 bool loop = true;
                 while (loop)
                 {
-                    yield return new WaitForSeconds(0.1f);
+                    yield return _smallDelay;
 
                     if (thisGameObject == null)
                     {
-                        yield return new WaitForSeconds(delayForFire);
+                        yield return _delayForFire;
                         loop = false;
                         eventToFire.Invoke();
-                        //Debug.Log(eventName + " event fired!");
                     }
 
                 }
@@ -266,24 +268,21 @@ namespace Team1_GraduationGame.Events
 
         public IEnumerator ExternalFire()
         {
-            yield return new WaitForSeconds(delayForFire);
+            yield return _delayForFire;
 
             if (hasFired)
             {
-#if UNITY_EDITOR
-                Debug.Log(eventName + " event already fired");
-#endif
+                //Debug.Log(eventName + " event already fired");
             }
             else
             {
                 eventToFire.Invoke();
-                //Debug.Log(eventName + " event fired!");
                 hasFired = true;
             }
 
             if (fireCooldown > 0f)
             {
-                yield return new WaitForSeconds(fireCooldown);
+                yield return _coolDownDelay;
                 hasFired = false;
             }
 
@@ -295,17 +294,16 @@ namespace Team1_GraduationGame.Events
             bool loop = true;
             while (loop)
             {
-                yield return new WaitForSeconds(delayForFire);
+                yield return _delayForFire;
 
                 eventToFire.Invoke();
-                //Debug.Log(eventName + " event fired!");
 
                 if (fireCooldown == 0)
                 {
                     loop = false;
                 }
 
-                yield return new WaitForSeconds(fireCooldown);
+                yield return _coolDownDelay;
 
             }
         }
@@ -331,7 +329,7 @@ namespace Team1_GraduationGame.Events
 
             while (loop)
             {
-                yield return new WaitForSeconds(0.3f);
+                yield return _smallDelay;
 
                 int j = 0;
                 for (int i = 0; i < theseGameObjects.Length; i++)
@@ -346,10 +344,11 @@ namespace Team1_GraduationGame.Events
 
                 if (j == theseGameObjects.Length)
                 {
-                    yield return new WaitForSeconds(delayForFire);
+                    yield return _delayForFire;
+
                     eventToFire.Invoke();
-                    //Debug.Log(eventName + " event fired!");
-                    yield return new WaitForSeconds(fireCooldown);
+
+                    yield return _coolDownDelay;
 
                     if (fireCooldown == 0)
                     {
@@ -367,32 +366,27 @@ namespace Team1_GraduationGame.Events
             {
                 if (thisGameObject.transform.position != tempPos)
                 {
-                    yield return new WaitForSeconds(delayForFire);
+                    yield return _delayForFire;
 
                     eventToFire.Invoke();
-                    //Debug.Log(eventName + " event fired!");
 
                     if (fireCooldown == 0)
                     {
                         loop = false;
                     }
 
-                    yield return new WaitForSeconds(fireCooldown);
+                    yield return _coolDownDelay;
                 }
             }
         }
 
         public IEnumerator OnObjectsRotateDirection()
         {
-            bool loop = false;
-            if (theseGameObjects != null && specificRotations != null)
-            {
-                loop = true;
-            }
+            bool loop = theseGameObjects != null && specificRotations != null;
 
             while (loop)
             {
-                yield return new WaitForSeconds(0.3f);
+                yield return _smallDelay;
 
                 int j = 0;
                 for (int i = 0; i < theseGameObjects.Length; i++)
@@ -406,10 +400,11 @@ namespace Team1_GraduationGame.Events
 
                 if (j == theseGameObjects.Length)
                 {
-                    yield return new WaitForSeconds(delayForFire);
+                    yield return _delayForFire;
+
                     eventToFire.Invoke();
-                    //Debug.Log(eventName + " event fired!");
-                    yield return new WaitForSeconds(fireCooldown);
+
+                    yield return _coolDownDelay;
 
                     if (fireCooldown == 0)
                     {

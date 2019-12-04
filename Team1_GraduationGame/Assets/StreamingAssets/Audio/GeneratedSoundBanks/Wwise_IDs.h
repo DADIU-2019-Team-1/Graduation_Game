@@ -36,12 +36,14 @@ namespace AK
         static const AkUniqueID FRI_DOWN = 1193266125U;
         static const AkUniqueID FRI_HOLD = 1153762078U;
         static const AkUniqueID FRI_ONSET = 559410714U;
+        static const AkUniqueID FRI_SPOT = 2501615553U;
+        static const AkUniqueID FULLSTOPENEMIES = 2665399762U;
         static const AkUniqueID GRIEF_ATTACK = 2473929957U;
         static const AkUniqueID GRIEF_BASEMOVE_START = 2826903308U;
         static const AkUniqueID GRIEF_BASEMOVE_STOP = 3228817312U;
         static const AkUniqueID GRIEF_REACHTHETOP = 1595833916U;
+        static const AkUniqueID PLAY_3D_ECHOCALL_MEMORY_PLAYLIST = 2876045914U;
         static const AkUniqueID PLAY_AMB_OUTSIDE = 121174090U;
-        static const AkUniqueID PLAY_ECHOCALL_MEMORY_PLAYLIST = 3108390310U;
         static const AkUniqueID PLAY_FS_JUMPTOLAND = 1737921590U;
         static const AkUniqueID PLAY_FS_MINIJUMP = 4119942951U;
         static const AkUniqueID PLAY_FS_SYSTEM = 2874393337U;
@@ -52,7 +54,7 @@ namespace AK
         static const AkUniqueID PLAY_PUSH_TOYOBJECTS = 3994783433U;
         static const AkUniqueID PLAY_RUMBLE_BLEND = 728827549U;
         static const AkUniqueID PLAY_UI_TONECALL = 3222526703U;
-        static const AkUniqueID STOP_ECHOCALL_MEMORY_PLAYLIST = 3307487220U;
+        static const AkUniqueID STOP_3D_ECHOCALL_MEMORY_PLAYLIST = 2940522268U;
     } // namespace EVENTS
 
     namespace STATES
@@ -141,6 +143,7 @@ namespace AK
         static const AkUniqueID INSTRUMENT_FA_SSGRAIN = 2317409760U;
         static const AkUniqueID MASTER_MUSIC_INMENUSLIDER = 708145369U;
         static const AkUniqueID MASTER_SFX_INMENUSLIDER = 2198029213U;
+        static const AkUniqueID METER_3DCALL_DUCKER = 1344540479U;
         static const AkUniqueID METER_WIND = 3084119761U;
         static const AkUniqueID PLAYBACK_RATE = 1524500807U;
         static const AkUniqueID PROXIMITY_FA_SSGRAIN = 1791284502U;
@@ -176,7 +179,7 @@ namespace AK
         static const AkUniqueID MUSIC = 3991942870U;
         static const AkUniqueID PLAYER = 1069431850U;
         static const AkUniqueID SFX = 393239870U;
-        static const AkUniqueID WIND = 1537061107U;
+        static const AkUniqueID WIND__ = 1307022420U;
     } // namespace BUSSES
 
     namespace AUDIO_DEVICES

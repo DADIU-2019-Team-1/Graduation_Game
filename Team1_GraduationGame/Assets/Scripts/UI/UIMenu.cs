@@ -1,23 +1,26 @@
-﻿// Code Owner: Jannik Neerdal
+﻿// Code Owner: Jannik Neerdal - Optimized
 using System;
 using System.Collections;
 using UnityEngine;
 
 public class UIMenu : MonoBehaviour
 {
-    public event Action startGameEvent;
-    public event Action continueGameEvent; // TODO: Continue is not yet implemented 
-    public event Action menuButtonPressEvent;
-    public event Action cheatModeEvent;
-    public event Action<int> menuChangeEvent;
-    public event Action<int> languageChangeEvent;
-    public event Action<float> musicSliderEvent;
-    public event Action<float> sfxSliderEvent;
+    [SerializeField] private float _fadeAmount = 0.05f;
+
+    public event Action startGameEvent,
+        continueGameEvent,
+        menuButtonPressEvent,
+        cheatModeEvent;
+    public event Action<int> menuChangeEvent,
+        languageChangeEvent;
+    public event Action<float> musicSliderEvent,
+        sfxSliderEvent;
     public event Action<bool> gamePauseState;
     private CanvasGroup _groupToFade;
-    [SerializeField] private float _fadeAmount = 0.05f;
-    private bool _fading, _continueQueued;
-
+    private bool _fading,
+        _continueQueued;
+    private WaitForSecondsRealtime fixedDelayTime = new WaitForSecondsRealtime(0.02f);
+    
     public void FadeOut(CanvasGroup group)
     {
         if (_fading)
@@ -68,7 +71,7 @@ public class UIMenu : MonoBehaviour
                 group.alpha -= _fadeAmount;
             }
 
-            yield return new WaitForSecondsRealtime(0.02f);
+            yield return fixedDelayTime;
         } while (group.alpha != 1.00f && group.alpha != 0.00f);
         if (!fadeIn)
         {
@@ -108,6 +111,7 @@ public class UIMenu : MonoBehaviour
         menuChangeEvent?.Invoke(i);
         menuButtonPressEvent?.Invoke();
     }
+
     public void StartGame()
     {
         startGameEvent?.Invoke();

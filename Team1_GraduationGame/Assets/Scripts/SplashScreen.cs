@@ -18,7 +18,6 @@ public class SplashScreen : MonoBehaviour
         {
             if (fadeControllers[i] != null)
             {
-                Debug.Log("Found fade controller");
                 fadeControllers[i].RaiseFadeEvent();
             }
         }
@@ -30,11 +29,9 @@ public class SplashScreen : MonoBehaviour
     {
         if (Input.GetMouseButtonDown(0) && fadeControllers[0] != null && UnityEngine.Rendering.SplashScreen.isFinished && !_doOnce)
         {
-            Debug.Log("Clicked during splash screen");
             fadeControllers[0].StopAllCoroutines();
             fadeControllers[0].fadeEvent?.Invoke();
             _doOnce = true;
-            Debug.Log("Should stop coroutine");
         }
     }
 }

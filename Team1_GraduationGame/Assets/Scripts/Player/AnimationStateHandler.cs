@@ -1,25 +1,23 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿// Code Owner: Jannik Neerdal
 using Team1_GraduationGame.MotionMatching;
 using UnityEngine;
 
 public class AnimationStateHandler : StateMachineBehaviour
 {
-    private MotionMatching mm;
+    private MotionMatching _mm;
 
     public override void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
         if (stateInfo.IsName("MotionMatching"))
         {
-            if (mm != null)
+            if (_mm != null)
             {
-                mm.ChangeLayerWeight(layerIndex, 0);
+                _mm.ChangeLayerWeight(layerIndex, 0);
             }
             else
             {
-                mm = FindObjectOfType<MotionMatching>();
-                mm.ChangeLayerWeight(layerIndex, 0);
+                _mm = FindObjectOfType<MotionMatching>();
+                _mm.ChangeLayerWeight(layerIndex, 0);
             }
         }
     }
@@ -28,14 +26,14 @@ public class AnimationStateHandler : StateMachineBehaviour
     {
         if (stateInfo.IsName("MotionMatching"))
         {
-            if (mm != null)
+            if (_mm != null)
             {
-                mm.ChangeLayerWeight(layerIndex, 1);
+                _mm.ChangeLayerWeight(layerIndex, 1);
             }
             else
             {
-                mm = FindObjectOfType<MotionMatching>();
-                mm.ChangeLayerWeight(layerIndex, 1);
+                _mm = FindObjectOfType<MotionMatching>();
+                _mm.ChangeLayerWeight(layerIndex, 1);
             }
         }
     }

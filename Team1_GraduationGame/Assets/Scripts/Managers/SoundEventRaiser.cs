@@ -4,6 +4,7 @@ namespace Team1_GraduationGame.Events
     using System.Collections;
     using System.Collections.Generic;
     using Team1_GraduationGame.Events;
+    using UnityEngine.SceneManagement;
     using UnityEngine;
 
     public class SoundEventRaiser : MonoBehaviour
@@ -17,6 +18,17 @@ namespace Team1_GraduationGame.Events
         public FloatEvent sfxSliderEvent;
 
         private void Start()
+        {
+            SceneManager.sceneLoaded += OnSceneLoad;
+            OnSceneLoad();
+        }
+
+        private void OnSceneLoad(Scene scene, LoadSceneMode mode)
+        {
+            OnSceneLoad();
+        }
+
+        private void OnSceneLoad()
         {
             UIMenu[] menuObjects = Resources.FindObjectsOfTypeAll<UIMenu>();
             if (menuObjects != null)

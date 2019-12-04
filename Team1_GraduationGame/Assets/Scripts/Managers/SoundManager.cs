@@ -36,6 +36,8 @@ namespace Team1_GraduationGame.Managers
             if (soundEvents != null)
                 for (int i = 0; i < soundEvents.Length; i++)
                 {
+                    soundEvents[i].SetUpEvent();
+
                     if ((int)soundEvents[i].triggerTypeSelector == 0)
                     {
                         soundEvents[i].soundEventListener = new SoundVoidEventListener();
@@ -282,7 +284,13 @@ namespace Team1_GraduationGame.Managers
 
         // Other:
         [HideInInspector] public string tag;
+        private WaitForSeconds _triggerDelayWait;
         #endregion
+
+        public void SetUpEvent()
+        {
+            _triggerDelayWait = new WaitForSeconds(triggerDelay);
+        }
 
         #region Wwise play/stop events
         public void PlayWwiseEvent()
@@ -504,7 +512,7 @@ namespace Team1_GraduationGame.Managers
 
         public IEnumerator WaitForDelay()
         {
-            yield return new WaitForSeconds(triggerDelay);
+            yield return _triggerDelayWait;
             SelectBehavior();
         }
     }

@@ -13,7 +13,7 @@ public class CreditsScroll : MonoBehaviour
         startPos = rectTransform.anchoredPosition + new Vector2(0.0f, rectTransform.position.y);
     }
 
-    void Update()
+    void FixedUpdate()
     {
         if(gameObject.activeInHierarchy)
             TextScroll();

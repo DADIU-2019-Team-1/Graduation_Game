@@ -1,14 +1,10 @@
 ﻿// Codeowners: Nicolai Hansen, Sebastian Andresen.
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Team1_GraduationGame.Interaction;
-using Team1_GraduationGame.Events;
 using Team1_GraduationGame.MotionMatching;
 using Team1_GraduationGame.Sound;
-using Unity.Mathematics;
-using UnityEditor;
 using Unity.Mathematics;
 
 [RequireComponent(typeof(Rigidbody), typeof(SphereCollider))]
@@ -17,22 +13,19 @@ public class Movement : MonoBehaviour
 {
     private Rigidbody playerRB;
     private bool touchStart = false, canMove = false, canJump = true, canPush = true, isPushing = false, moveFrozen = false, isAttacked = false, touchMoved = false, touchEndedJump = false;
-    private float rotationSpeedCurrent, rotationSpeedMax = 5.0f, rotationSpeedGoal, rotationAccelerationFactor = 0.1f, pushRotationAccelerationFactor = 0.7f, rotationAngleReactionFactor = 0.1f, pushRotationAngleReactionFactor = 0.7f;
-    
+    private float rotationSpeedCurrent, rotationSpeedGoal, rotationAccelerationFactor = 0.1f, pushRotationAccelerationFactor = 0.7f, rotationAngleReactionFactor = 0.1f, pushRotationAngleReactionFactor = 0.7f;
+
     [HideInInspector]
     public float targetSpeed;
     public bool isJumping = false, inSneakZone = false;
-
-    // Tried a particle system for the ground
-    public ParticleSystem Groundparticles;
 
     public PlayerSoundManager playerSoundManager;
 
     [SerializeField] private float accelerationFactor = 0.1f;
 
-    private Vector3 initTouchPos, currTouchPos, joystickPos, stickLimitPos, velocity;
+    private Vector3 initTouchPos, currTouchPos;
     private Quaternion lookRotation, pushRotation;
-    
+
     [HideInInspector]
     public Vector3 direction = Vector3.zero, pushDirection = Vector3.zero;
 
@@ -45,29 +38,18 @@ public class Movement : MonoBehaviour
     [Tooltip("Put the joystick border here")]
     public Transform stickLimit;
 
-    public FloatReference sneakSpeed, walkSpeed, runSpeed, rotationSpeed, jumpHeight, jumpSpeed, fallMultiplier, attackRange, swipeTimeThreshold, defaultPushForce, pushForce;
+    public FloatReference sneakSpeed, walkSpeed, runSpeed, rotationSpeed, jumpHeight, fallMultiplier, attackRange;
     public IntReference radius, attackDegree, swipePixelDistance, attackCoolDown;
 
     private PhysicMaterial _jumpMaterial;
     [Tooltip("Height in meters for checking jump")]
     public FloatReference ghostJumpHeight;
-
     public FloatReference jumpLength;
-
     public FloatVariable currentSpeed;
     public IntVariable moveState;
-    private RaycastHit[] hit;
-
     public GameObject leftHeelPos, rightHeelPos, rightToePos, leftToePos;
-
     private CapsuleCollider _collider;
-    
-    //Comment out this when motionmatching works!
     private Animator animator;
-
-    //private SphereCollider playerTrigger;
-
-    //public FloatReference floatingWeight;
 
     private int leftTouch = 99;
     private int rightTouch = 98;
@@ -116,20 +98,20 @@ public class Movement : MonoBehaviour
             mm = GetComponent<MotionMatching>();
             trajPoints = new TrajectoryPoint[mm.pointsPerTrajectory];
         }
-
         //playerTrigger = GetComponent<SphereCollider>();
         //playerTrigger.radius = attackRange.value;
         //playerTrigger.isTrigger = true;
         _jumpMaterial = setJumpMaterial();
         _collider = GetComponent<CapsuleCollider>();
-
         //_layerMask = ~LayerMask.GetMask("Character");
     }
     void Start()
     {
         interactableObjects = new List<GameObject>();
         for (int i = 0; i < tagsToInteractWith.Length; i++)
+        {
             interactableObjects.AddRange(GameObject.FindGameObjectsWithTag(tagsToInteractWith[i]));
+        }
         for (int j = 0; j < jumpPlatformTag.Length; j++)
         {
             jumpPlatforms.AddRange(GameObject.FindGameObjectsWithTag(jumpPlatformTag[j]));
@@ -140,23 +122,12 @@ public class Movement : MonoBehaviour
     {
         currentSpeed.value = Vector3.Distance(transform.position, _previousPosition) / Time.fixedDeltaTime;
 
-        
-        //Tried a particle system for the ground
-        // if (currentSpeed.value > 4 && isJumping == false)
-        // {
-        //     Groundparticles.Play();
-        // } else {
-        //     Groundparticles.Stop();
-        // }
-        //I set a temp Speed animator if we arent using motion matching
-
         if (animator.runtimeAnimatorController != null)
         {
             animator.SetFloat("Speed", currentSpeed.value);
         }
 
         lookRotation = direction != Vector3.zero ? Quaternion.LookRotation(direction) : Quaternion.identity;
-        velocity = direction.normalized * currentSpeed.value;
 
 #if UNITY_ANDROID
         int i = 0;
@@ -195,9 +166,7 @@ public class Movement : MonoBehaviour
                         swipeStartPos = t.position;
 
                     }
-
                 }
-
             }
             // If you moved your finger, or keeping it still, and it's the left finger, the player can move, and not frozen.
             // Calculate/constrict the joystick UI to the touched position, calculate the dragged distance, and move with that. 
@@ -208,7 +177,6 @@ public class Movement : MonoBehaviour
                 //touchMoved = true;
                 Vector3 offset = new Vector3(t.position.x - stickLimit.transform.position.x, 0, t.position.y - stickLimit.transform.position.y);
                 direction = Vector3.ClampMagnitude(offset, 1.0f);
-                //float dragDist = Vector2.Distance(stick.transform.position, stickLimit.transform.position);
                 float dragDist = math.distancesq(stick.transform.position, stickLimit.transform.position);
                 Vector2 joyDiff = t.position - new Vector2(stickLimit.transform.position.x, stickLimit.transform.position.y);
                 joyDiff = Vector2.ClampMagnitude(joyDiff, radius.value);
@@ -216,15 +184,11 @@ public class Movement : MonoBehaviour
                 //requestMovement = true;
                 PlayerMoveRequest(dragDist);
                 touchMoved = true;
-
                 stick.transform.position = joyDiff + new Vector2(stickLimit.transform.position.x, stickLimit.transform.position.y);
-
             }
             // It never enters this.
             // If the touch is no longer supported somehow, and it's on the right screen, and not at an orb.
             // "Unassign" the right touch, and jump in the direction of your last movement.
-
-
 
             // If touch ended, and it's the left finger.
             // Unassign left touch, remove the joystick, can no longer move, joystick direction reset. 
@@ -248,7 +212,6 @@ public class Movement : MonoBehaviour
 
                 direction = new Vector3(0, 0, 0);
                 touchMoved = false;
-                
             }
             if (t.phase == TouchPhase.Ended && rightTouch == t.fingerId && !atOrbTrigger.value)
             {
@@ -266,13 +229,8 @@ public class Movement : MonoBehaviour
                         //Debug.Log("Entered second push if");
                         pushDirection = new Vector3(swipeDirection.x, 0, swipeDirection.y);
                         pushRotation = pushDirection != Vector3.zero ? Quaternion.LookRotation(pushDirection) : Quaternion.identity;
-
-
                         attackCooldown = attackCoolDown.value;
-
                         isPushing = true;
-                        //playerAttack(pushDirection);
-                        // I set a temp push animator if we arent using motion matching
                         if (animator.runtimeAnimatorController != null)
                         {
                             animator.SetTrigger("Attack");
@@ -285,12 +243,9 @@ public class Movement : MonoBehaviour
                     touchEndedJump = true;
                     //Debug.Log("Entered Jump");
                     // Jump feels sluggish inside else if, but when only if, triggers every time and you never swipe/do both always.
-                    //playerJump(direction, jumpHeight.value);
                 }
-
-
             }
-
+            ++i;
 
             //else if (t.phase == TouchPhase.Canceled /*|| t.phase == TouchPhase.Stationary) */ && rightTouch == t.fingerId && !atOrbTrigger.value)
             //{
@@ -305,15 +260,12 @@ public class Movement : MonoBehaviour
             //    Debug.Log("Entered Stationary");
             //}
 
-            ++i;
-
             // if((t.phase == TouchPhase.Ended || t.phase == TouchPhase.Canceled) && !isJumping && leftTouch != t.fingerId) {
             //     stickLimit.gameObject.SetActive(false);
             //     stick.gameObject.SetActive(false);
             // }
         }
 #endif
-
         // Making sure Mouse only runs on PC.
         // If this says && !UNITY_ANDROID, delete it. This is used to test on Unity Remote
 #if UNITY_EDITOR
@@ -327,6 +279,7 @@ public class Movement : MonoBehaviour
 
             stickLimit.transform.position = Input.mousePosition;
             stick.transform.position = Input.mousePosition;
+
             // If the anchor point for Joystick is on the left side of the screen, allow movement.
             if (stickLimit.transform.position.x < Screen.width / 2 && !moveFrozen)
             {
@@ -339,9 +292,7 @@ public class Movement : MonoBehaviour
             {
                 //Debug.Log("Entered jump statement");
                 swipeStartPos = Input.mousePosition;
-                //playerJump(Vector3.up, jumpHeight.value);
             }
-
         }
         if (Input.GetMouseButton(0))
         {
@@ -381,31 +332,23 @@ public class Movement : MonoBehaviour
                         animator.SetTrigger("Attack");
                     }
                 }
-
             }
-
             else if (!moveFrozen && Input.mousePosition.x > Screen.width / 2 && canJump)
             {
-                
                 touchEndedJump = true;
                 //Debug.Log("Entered jump statement mouse up: " + touchEndedJump);
-                //playerJump(direction, jumpHeight.value);
             }
         }
 
         if (touchStart && canMove && !moveFrozen)
         {
-
             Vector3 offset = new Vector3(currTouchPos.x - initTouchPos.x, 0, currTouchPos.y - initTouchPos.y);
             direction = Vector3.ClampMagnitude(offset, 1.0f);
-            // float dragDist = Vector2.Distance(stick.transform.position, stickLimit.transform.position);
             float dragDist = math.distancesq(stick.transform.position, stickLimit.transform.position);
             Vector2 joyDiff = Input.mousePosition - stickLimit.transform.position;
             joyDiff = Vector2.ClampMagnitude(joyDiff, radius.value);
             PlayerMoveRequest(dragDist);
-
             touchMoved = true;
-
             stick.transform.position = joyDiff + new Vector2(stickLimit.transform.position.x, stickLimit.transform.position.y);
         }
         else
@@ -421,13 +364,10 @@ public class Movement : MonoBehaviour
             }
 
             touchMoved = false;
-
         }
 
         if (Input.GetKey(KeyCode.Space) && !isJumping && canJump)
         {
-            
-            //playerJump(direction, jumpHeight.value);
             touchEndedJump = true;
             //Debug.Log("Entered Space jump: " + touchEndedJump);
         }
@@ -455,26 +395,19 @@ public class Movement : MonoBehaviour
                 for (int j = 0; j < jumpPlatforms.Count; j++)
                 {
                     jumpPlatforms[j].GetComponent<Collider>().material = null;
-                    
                 }
-
             }
-
-
-
-
         }
         // Making sure touches only run on Android
-            if (touchMoved)
-            {
-                movePlayer(direction);
-            }
+        if (touchMoved || currentSpeed.value >= 0.1f)
+        {
+            movePlayer(direction);
+        }
 
-            if (touchEndedJump)
-            {
-                playerJump(direction, jumpHeight.value);
-                //touchEndedJump = false;
-            }
+        if (touchEndedJump)
+        {
+            playerJump(direction, jumpHeight.value);
+        }
         SetState();
 
         if (isPushing)
@@ -485,21 +418,15 @@ public class Movement : MonoBehaviour
                 targetSpeed = runSpeed.value;
                 movePlayer(pushDirection);
             }
-
             else
             {
                 isPushing = false;
-                
             }
-
         }
-
-
 
         if (attackCooldown > 0)
         {
-            attackCooldown--; 
-            
+            attackCooldown--;
         }
     }
 
@@ -518,6 +445,7 @@ public class Movement : MonoBehaviour
             inSneakZone = false;
         }
     }
+
     private void PlayerMoveRequest(float dragDist)
     {
         if (!isPushing)
@@ -526,20 +454,15 @@ public class Movement : MonoBehaviour
             {
                 if (dragDist < Mathf.Pow(radius.value * idleThreshold, 2))
                 {
-                    //movePlayer(direction, 0);
-                    //moveState.value = 0;
+                    // Do nothing
                 }
-                else if (dragDist < Mathf.Pow(radius.value * zoneSneakThreshold,2))
+                else if (dragDist < Mathf.Pow(radius.value * zoneSneakThreshold, 2))
                 {
                     targetSpeed = sneakSpeed.value;
-                    //movePlayer(direction);
-                    //moveState.value = 1;
                 }
                 else
                 {
                     targetSpeed = walkSpeed.value;
-                    //movePlayer(direction);
-                    //moveState.value = 2;
                 }
 
             }
@@ -547,29 +470,25 @@ public class Movement : MonoBehaviour
             {
                 if (dragDist < Mathf.Pow(radius.value * idleThreshold, 2)) // Idle
                 {
-                    // Empty
+                    // Do nothing
                 }
                 else if (dragDist < Mathf.Pow(radius.value * sneakThreshold, 2)) // Sneak
                 {
                     targetSpeed = sneakSpeed.value;
-                    //movePlayer(direction);
                 }
                 else if (dragDist < Mathf.Pow(radius.value * runThreshold, 2)) // Walk
                 {
                     targetSpeed = walkSpeed.value;
-                    //movePlayer(direction);
                 }
                 else // Run
                 {
                     targetSpeed = runSpeed.value;
-                    //movePlayer(direction);
                 }
             }
         }
-
     }
 
-    private Boolean CrossProductPositive(Vector3 a, Vector3 b)
+    private bool CrossProductPositive(Vector3 a, Vector3 b)
     {
         return a.x * b.z - a.z * b.x >= 0;
     }
@@ -582,21 +501,16 @@ public class Movement : MonoBehaviour
         }
 
         int wayToRotate = CrossProductPositive(transform.forward, _direction) ? 1 : -1;
-        rotationSpeedGoal = Mathf.Min(rotationSpeed.value, Vector3.Angle(transform.forward, _direction) * (isPushing? pushRotationAngleReactionFactor: rotationAngleReactionFactor)) * wayToRotate;
-        rotationSpeedCurrent += (rotationSpeedGoal - rotationSpeedCurrent) * (isPushing? pushRotationAccelerationFactor: rotationAccelerationFactor);
-        transform.rotation = Quaternion.Slerp(transform.rotation,isPushing? pushRotation: lookRotation, Time.deltaTime * Mathf.Abs(rotationSpeedCurrent));
+        rotationSpeedGoal = Mathf.Min(rotationSpeed.value, Vector3.Angle(transform.forward, _direction) * (isPushing ? pushRotationAngleReactionFactor : rotationAngleReactionFactor)) * wayToRotate;
+        rotationSpeedCurrent += (rotationSpeedGoal - rotationSpeedCurrent) * (isPushing ? pushRotationAccelerationFactor : rotationAccelerationFactor);
+        transform.rotation = Quaternion.Slerp(transform.rotation, isPushing ? pushRotation : lookRotation, Time.deltaTime * Mathf.Abs(rotationSpeedCurrent));
         if (!isJumping)
         {
             playerRB.MovePosition(transform.position + (_direction + transform.forward).normalized * ((targetSpeed - currentSpeed.value) * accelerationFactor + currentSpeed.value) * Time.fixedDeltaTime);
         }
         else
         {
-//#if UNITY_EDITOR
             playerRB.MovePosition(transform.position + (_direction * targetSpeed * Time.deltaTime));
-//#endif
-//#if UNITY_ANDROID
-//            playerRB.AddForce(direction * targetSpeed * Time.deltaTime, ForceMode.Impulse);
-//#endif
         }
 
         if (!isJumping && !(Physics.Raycast(leftToePos.transform.position, Vector3.down, 0.3f, _layerMask) ||
@@ -606,9 +520,8 @@ public class Movement : MonoBehaviour
                            Physics.Raycast(transform.position + Vector3.up, Vector3.down, 0.3f + 1.0f, _layerMask)))
         {
             isJumping = true;
-            //playerSoundManager?.MiniJumpEvent();
+            playerSoundManager?.MiniJumpEvent();
 
-            // also setting jump on temp Animator
             if (animator.runtimeAnimatorController != null)
             {
                 animator.SetTrigger("Jump");
@@ -624,7 +537,7 @@ public class Movement : MonoBehaviour
             for (int j = 0; j < jumpPlatforms.Count; j++)
             {
                 jumpPlatforms[j].GetComponent<Collider>().material = _jumpMaterial;
-                
+
             }
             playerRB.AddForce(((Vector3.up * jumpHeight) + (direction * jumpLength.value)), ForceMode.Impulse);
             /*         if(playerRB.velocity.y <= 0) {
@@ -642,11 +555,7 @@ public class Movement : MonoBehaviour
 
             playerSoundManager?.JumpEvent();
             //_collider.material = _jumpMaterial;
-
-
         }
-
-
         //canJump = false;
     }
 
@@ -662,9 +571,8 @@ public class Movement : MonoBehaviour
         //}
 
         //attackCooldown = attackCoolDown.value;
-        
         //isPushing = true;
-        
+
         // check all objects
         for (int i = 0; i < interactableObjects.Count; i++)
         {
@@ -677,14 +585,10 @@ public class Movement : MonoBehaviour
             //transform.rotation = Quaternion.LookRotation(direction);
             //playerRB.AddForce(direction.normalized * pushForce.value, ForceMode.Impulse);
 
-
-            
-            if (refDistance <= Mathf.Pow(attackRange.value,2))
+            if (refDistance <= Mathf.Pow(attackRange.value, 2))
             {
-
                 // Do math stuff. Need to find relative angle downwards to pivot. 
                 Vector3 hipClosestPoint = pushCollider.ClosestPointOnBounds(transform.position + Vector3.up);
-
                 Vector3 hipVectorToObject = hipClosestPoint - (transform.position + Vector3.up);
 
                 //Debug.DrawLine(transform.position, hipVectorToObject, Color.black, 5);
@@ -701,7 +605,7 @@ public class Movement : MonoBehaviour
                         // interact
                         // Sometimes returns nullreference errors.
                         interactableObjects[i].GetComponent<Interactable>().Interact();
-                        
+
                         playerSoundManager?.AttackEvent();
                         //if (attackEvent != null)
                         //    attackEvent.Raise();
@@ -709,7 +613,6 @@ public class Movement : MonoBehaviour
                     }
                 }
                 // and in attack degree
-
             }
         }
         attack?.Invoke();
@@ -726,23 +629,19 @@ public class Movement : MonoBehaviour
         moveFrozen = move;
 
         if (atOrbTrigger == null)
+        {
             return;
+        }
 
         if (moveFrozen && !atOrbTrigger.value)
         {
             playerRB.constraints = RigidbodyConstraints.FreezePositionX | RigidbodyConstraints.FreezePositionZ | RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
-
         }
-            
         else
         {
             playerRB.constraints = RigidbodyConstraints.None;
             playerRB.constraints = RigidbodyConstraints.FreezeRotationZ | RigidbodyConstraints.FreezeRotationX;
-
-            
-            
         }
-
     }
 
     public void SetActive(bool isActive)
@@ -783,7 +682,8 @@ public class Movement : MonoBehaviour
     }
 
 
-    public void memorySettings(bool memoryactive) {
+    public void memorySettings(bool memoryactive)
+    {
         canJump = memoryactive;
         canPush = memoryactive;
     }

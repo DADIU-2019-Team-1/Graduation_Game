@@ -9,6 +9,7 @@ public class UIMenu : MonoBehaviour
 
     public event Action startGameEvent,
         continueGameEvent,
+        returnToMainMenuEvent,
         menuButtonPressEvent,
         cheatModeEvent;
     public event Action<int> menuChangeEvent,
@@ -18,7 +19,8 @@ public class UIMenu : MonoBehaviour
     public event Action<bool> gamePauseState;
     private CanvasGroup _groupToFade;
     private bool _fading,
-        _continueQueued;
+        _continueQueued,
+        _mainMenuQueued;
     private WaitForSecondsRealtime fixedDelayTime = new WaitForSecondsRealtime(0.02f);
     
     public void FadeOut(CanvasGroup group)
@@ -96,7 +98,14 @@ public class UIMenu : MonoBehaviour
 
         if (_continueQueued)
         {
+            //_continueQueued = false;
             ContinueGame();
+        }
+
+        if (_mainMenuQueued)
+        {
+            _mainMenuQueued = false;
+            ReturnToMainMenu();
         }
     }
 
@@ -128,6 +137,19 @@ public class UIMenu : MonoBehaviour
             continueGameEvent?.Invoke();
         }
     }
+
+    public void ReturnToMainMenu()
+    {
+        if (_fading)
+        {
+            _mainMenuQueued = true;
+        }
+        else
+        {
+            returnToMainMenuEvent?.Invoke();
+        }
+    }
+
     public void PauseGame(bool pause)
     {
         Time.timeScale = pause ? 0 : 1;

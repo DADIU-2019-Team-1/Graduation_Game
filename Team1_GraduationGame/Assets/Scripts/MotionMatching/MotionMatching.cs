@@ -252,8 +252,8 @@ namespace Team1_GraduationGame.MotionMatching
                 }
             }
 
-            Debug.Log("Updating animation: ID: " + _currentID + " -> " + id + " | Frame: " + featureVectors[_currentID].GetFrame() + " -> " + frame + " | Name: " + featureVectors[_currentID].GetClipName() + " -> " + _currentClip.name + ".");
-            animator.CrossFadeInFixedTime(_currentClip.name, queryRateInFrames / animationFrameRate, 0, frame / animationFrameRate); // 0.3f was recommended by Magnus
+            //Debug.Log("Updating animation: ID: " + _currentID + " -> " + id + " | Frame: " + featureVectors[_currentID].GetFrame() + " -> " + frame + " | Name: " + featureVectors[_currentID].GetClipName() + " -> " + _currentClip.name + ".");
+            animator.CrossFadeInFixedTime(_currentClip.name, /*queryRateInFrames / animationFrameRate */0.3f, 0, frame / animationFrameRate); // 0.3f was recommended by Magnus
             _currentID = id;
             _bannedIDs.Add(id);
             if (_bannedIDs.Length > banQueueSize)

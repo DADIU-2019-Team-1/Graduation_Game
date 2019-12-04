@@ -66,6 +66,7 @@ namespace AK
             {
                 static const AkUniqueID END_FULLLULLABY_CREDITS = 2902281238U;
                 static const AkUniqueID EXIT_MEMORIES_HANGUPMEM = 2558751454U;
+                static const AkUniqueID GRAVE_MEMORYCALL = 765772562U;
                 static const AkUniqueID GRAVE_SILENCE = 3525878376U;
                 static const AkUniqueID GRIEF_APPEARS = 3170210169U;
                 static const AkUniqueID GRIEF_CHASE = 535181753U;

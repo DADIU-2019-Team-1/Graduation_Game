@@ -52,7 +52,6 @@ namespace AK
         static const AkUniqueID PLAY_PUSH = 1749591466U;
         static const AkUniqueID PLAY_PUSH_BIGOBJECTS = 2101881411U;
         static const AkUniqueID PLAY_PUSH_TOYOBJECTS = 3994783433U;
-        static const AkUniqueID PLAY_RUMBLE_BLEND = 728827549U;
         static const AkUniqueID PLAY_UI_TONECALL = 3222526703U;
         static const AkUniqueID STOP_3D_ECHOCALL_MEMORY_PLAYLIST = 2940522268U;
     } // namespace EVENTS

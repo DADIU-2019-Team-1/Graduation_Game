@@ -143,6 +143,7 @@ namespace AK
         static const AkUniqueID INSTRUMENT_FA_SSGRAIN = 2317409760U;
         static const AkUniqueID MASTER_MUSIC_INMENUSLIDER = 708145369U;
         static const AkUniqueID MASTER_SFX_INMENUSLIDER = 2198029213U;
+        static const AkUniqueID METER_3DCALL_DUCKER = 1344540479U;
         static const AkUniqueID METER_WIND = 3084119761U;
         static const AkUniqueID PLAYBACK_RATE = 1524500807U;
         static const AkUniqueID PROXIMITY_FA_SSGRAIN = 1791284502U;

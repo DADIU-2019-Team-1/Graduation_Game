@@ -7054,6 +7054,7 @@ GameObject:
   - component: {fileID: 846145383}
   - component: {fileID: 846145382}
   - component: {fileID: 846145385}
+  - component: {fileID: 846145386}
   m_Layer: 0
   m_Name: GameObject
   m_TagString: Untagged
@@ -7116,6 +7117,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _fadeAmount: 0.05
+--- !u!114 &846145386
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 846145381}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 622bec472489c93469b3da3af03b7488, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &853517845
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -35478,7 +35491,7 @@ PrefabInstance:
     - target: {fileID: 4236950305934467030, guid: 1fb0ef5b686df544ea0929b232b93d07,
         type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0.00000006657903
+      value: 0.000000066579034
       objectReference: {fileID: 0}
     - target: {fileID: 4236950305934467030, guid: 1fb0ef5b686df544ea0929b232b93d07,
         type: 3}
@@ -35488,7 +35501,7 @@ PrefabInstance:
     - target: {fileID: 4236950305934467030, guid: 1fb0ef5b686df544ea0929b232b93d07,
         type: 3}
       propertyPath: m_LocalRotation.z
-      value: -5.311911e-17
+      value: 8.441592e-17
       objectReference: {fileID: 0}
     - target: {fileID: 1202700655315781152, guid: 1fb0ef5b686df544ea0929b232b93d07,
         type: 3}
@@ -35543,7 +35556,7 @@ PrefabInstance:
     - target: {fileID: 5202307007389410390, guid: 1fb0ef5b686df544ea0929b232b93d07,
         type: 3}
       propertyPath: m_LocalRotation.x
-      value: -0.464881
+      value: -0.46488103
       objectReference: {fileID: 0}
     - target: {fileID: 5202307007389410390, guid: 1fb0ef5b686df544ea0929b232b93d07,
         type: 3}
@@ -35553,7 +35566,7 @@ PrefabInstance:
     - target: {fileID: 5202307007389410390, guid: 1fb0ef5b686df544ea0929b232b93d07,
         type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0.464881
+      value: 0.46488103
       objectReference: {fileID: 0}
     - target: {fileID: 5202307007389410390, guid: 1fb0ef5b686df544ea0929b232b93d07,
         type: 3}
@@ -35563,22 +35576,22 @@ PrefabInstance:
     - target: {fileID: 1449661432953284496, guid: 1fb0ef5b686df544ea0929b232b93d07,
         type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0.12234278
+      value: 0.12234277
       objectReference: {fileID: 0}
     - target: {fileID: 1449661432953284496, guid: 1fb0ef5b686df544ea0929b232b93d07,
         type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0.14435357
+      value: 0.14435355
       objectReference: {fileID: 0}
     - target: {fileID: 1449661432953284496, guid: 1fb0ef5b686df544ea0929b232b93d07,
         type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0.6348696
+      value: 0.6348695
       objectReference: {fileID: 0}
     - target: {fileID: 1449661432953284496, guid: 1fb0ef5b686df544ea0929b232b93d07,
         type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0.7490895
+      value: 0.7490894
       objectReference: {fileID: 0}
     - target: {fileID: 6846152616924255892, guid: 1fb0ef5b686df544ea0929b232b93d07,
         type: 3}
@@ -37493,6 +37506,7 @@ MonoBehaviour:
   m_Events:
     m_Signals:
     - {fileID: 11400000, guid: 538c31943a5a1764cadece8526f10a64, type: 2}
+    - {fileID: 11400000, guid: b2aca3347e05db2468ae6d5d4a702026, type: 2}
     m_Events:
     - m_PersistentCalls:
         m_Calls:
@@ -37509,6 +37523,19 @@ MonoBehaviour:
           m_CallState: 2
         - m_Target: {fileID: 846145385}
           m_MethodName: ReturnToMainMenu
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+    - m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 846145386}
+          m_MethodName: ResetSaves
           m_Mode: 1
           m_Arguments:
             m_ObjectArgument: {fileID: 0}

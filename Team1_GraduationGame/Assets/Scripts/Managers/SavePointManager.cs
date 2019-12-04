@@ -83,7 +83,6 @@ namespace Team1_GraduationGame.SaveLoadSystem
                 for (int i = 0; i < menuObjects.Length; i++)
                 {
                     menuObjects[i].continueGameEvent += Continue;
-                    menuObjects[i].returnToMainMenuEvent += ReturnToMainMenu;
                 }
 
                 _uiMenu = menuObjects[0];
@@ -156,12 +155,6 @@ namespace Team1_GraduationGame.SaveLoadSystem
             {
                 saveLoadManager?.ContinueGame();
             }
-        }
-
-        public void ReturnToMainMenu()
-        {
-            SceneManager.LoadScene(0);
-            Time.timeScale = 1;
         }
 
         public void SaveGame()

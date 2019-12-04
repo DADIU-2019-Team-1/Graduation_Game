@@ -84,5 +84,10 @@ namespace Team1_GraduationGame.Sound
                 }
             }
         }
+
+        public void DisableMaterialCheck()
+        {
+            checkMaterial = false;
+        }
     }
 }

@@ -200,7 +200,8 @@ namespace Team1_GraduationGame.Enemies
                 _animator.SetBool("Patrolling", false);
                 _animator.SetTrigger("Reset");
                 transform.rotation = _defaultRotation;
-                StartCoroutine(ChangeState(false));
+                if (gameObject.activeSelf)
+                    StartCoroutine(ChangeState(false));
                 UpdateFOVLight(false, false);
             }
         }

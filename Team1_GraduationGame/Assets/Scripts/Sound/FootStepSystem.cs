@@ -32,32 +32,32 @@ namespace Team1_GraduationGame.Sound
             {
                 if (!_footStepCooldown)
                 {
-                    _footStepCooldown = true;
-
-                    if (col.tag == "Enemy" || col.tag == "Player")
-                        return;
-
-                    if (checkMaterial)
+                    if (!CompareTag("Enemy") && !CompareTag("Player"))
                     {
-                        if (col.gameObject.GetComponent<Terrain>() != null)
+                        _footStepCooldown = true;
+
+                        if (checkMaterial)
                         {
-                            Terrain thisTerrain = col.gameObject.GetComponent<Terrain>();
-                            if (thisTerrain.terrainData.terrainLayers.Length > 0)   // Currently only finds the top layer in the terrain. Not sure how to detect if a second layer is used?
+                            if (col.gameObject.GetComponent<Terrain>() != null)
                             {
-                                FootStepRaise(thisTerrain.terrainData.terrainLayers[0].diffuseTexture.ToString());
+                                Terrain thisTerrain = col.gameObject.GetComponent<Terrain>();
+                                if (thisTerrain.terrainData.terrainLayers.Length > 0)   // Currently only finds the top layer in the terrain. Not sure how to detect if a second layer is used?
+                                {
+                                    FootStepRaise(thisTerrain.terrainData.terrainLayers[0].diffuseTexture.ToString());
+                                }
+                            }
+                            else if (col.gameObject.GetComponent<Collider>() != null)
+                            {
+                                FootStepRaise(col.gameObject.name);
                             }
                         }
-                        else if (col.gameObject.GetComponent<Collider>() != null)
+                        else
                         {
-                            FootStepRaise(col.gameObject.name);
+                            footStepEvent.Post(gameObject);
                         }
-                    }
-                    else
-                    {
-                        footStepEvent.Post(gameObject);
-                    }
 
-                    Invoke("FootStepCooldown", 0.3f);
+                        Invoke("FootStepCooldown", 0.3f);
+                    }
                 }
             }
         }

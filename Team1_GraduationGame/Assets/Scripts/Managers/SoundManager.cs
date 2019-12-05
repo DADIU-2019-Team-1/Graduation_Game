@@ -87,6 +87,20 @@ namespace Team1_GraduationGame.Managers
             }
         }
 
+        public void StartReset()
+        {
+            AkSoundEngine.StopAll();
+
+            for (int i = 0; i < soundEvents.Length; i++)
+            {
+                if ((int)soundEvents[i].triggerTypeSelector == 4)
+                {
+                    soundEvents[i].ResetEventFired();
+                    soundEvents[i].EventRaised(0);
+                }
+            }
+        }
+
         public void StartCoroutine(int id)
         {
             if (soundEvents[id] != null)
@@ -290,6 +304,11 @@ namespace Team1_GraduationGame.Managers
         public void SetUpEvent()
         {
             _triggerDelayWait = new WaitForSeconds(triggerDelay);
+        }
+
+        public void ResetEventFired()
+        {
+            _eventFired = false;
         }
 
         #region Wwise play/stop events

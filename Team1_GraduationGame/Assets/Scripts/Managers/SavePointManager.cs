@@ -8,6 +8,7 @@ namespace Team1_GraduationGame.SaveLoadSystem
     using Team1_GraduationGame.Events;
     using Team1_GraduationGame.Interaction;
     using Team1_GraduationGame.UI;
+    using Team1_GraduationGame.Managers;
     using UnityEngine.SceneManagement;
     using UnityEngine.Playables;
     using UnityEngine;
@@ -83,6 +84,7 @@ namespace Team1_GraduationGame.SaveLoadSystem
                 for (int i = 0; i < menuObjects.Length; i++)
                 {
                     menuObjects[i].continueGameEvent += Continue;
+                    menuObjects[i].startGameEvent += NewGame;
                 }
 
                 _uiMenu = menuObjects[0];
@@ -141,7 +143,13 @@ namespace Team1_GraduationGame.SaveLoadSystem
 
         public void NewGame()
         {
-            saveLoadManager?.NewGame();
+            if (PlayerPrefs.GetInt("currentScene") >= 0)
+            {
+                if (PlayerPrefs.GetInt("previousGame") == 1)
+                {
+                    GameObject.FindGameObjectWithTag("Wwise_Master")?.GetComponent<SoundManager>()?.StartReset();
+                }
+            }
         }
 
         public void Continue()
@@ -149,7 +157,10 @@ namespace Team1_GraduationGame.SaveLoadSystem
             if (PlayerPrefs.GetInt("currentScene") == 0)
             {
                 if (PlayerPrefs.GetInt("previousGame") == 1 && _uiMenu != null)
+                {
                     _uiMenu.StartGame();
+                    GameObject.FindGameObjectWithTag("Wwise_Master")?.GetComponent<SoundManager>()?.StartReset();
+                }
             }
             else
             {

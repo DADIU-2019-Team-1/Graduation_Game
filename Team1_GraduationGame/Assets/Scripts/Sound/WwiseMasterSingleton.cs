@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class WwiseMasterSingleton : MonoBehaviour
 {
-    private void Start()
+    private void Awake()
     {
         GameObject[] _wwiseMasters = GameObject.FindGameObjectsWithTag("Wwise_Master");
 

@@ -27,7 +27,9 @@ public class CreditsScroll : MonoBehaviour
 
         }
 
-        if (rectTransform.anchoredPosition.y >= 9700)
+
+        // There should be a 1500 points offset from text stop to logo.
+        if (rectTransform.anchoredPosition.y >= 11200)
         {
             startScroll = false;
         }

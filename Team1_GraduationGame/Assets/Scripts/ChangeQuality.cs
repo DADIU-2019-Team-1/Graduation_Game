@@ -11,6 +11,9 @@ public class ChangeQuality : MonoBehaviour
     public event Action<int> changeQuality;
     private Button _thisBtn;
     private ChangeQuality[] _qualityBtns;
+    public GameObject TerrainQuality;
+
+
 
     private void Awake()
     {
@@ -29,6 +32,7 @@ public class ChangeQuality : MonoBehaviour
         QualitySettings.SetQualityLevel(settingLevel, true);
         QualityChangeHandler(settingLevel);
         PlayerPrefs.SetInt("Quality", settingLevel);
+        TerrainQuality.GetComponent<TerrainQuality>().updateTerrainQuality();
     }
 
     private void QualityChangeHandler(int setting)

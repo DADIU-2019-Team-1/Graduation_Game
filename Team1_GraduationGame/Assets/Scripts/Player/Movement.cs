@@ -399,7 +399,7 @@ public class Movement : MonoBehaviour
             }
         }
         // Making sure touches only run on Android
-        if (touchMoved || currentSpeed.value >= 0.1f)
+        if (touchMoved)
         {
             movePlayer(direction);
         }
@@ -722,7 +722,7 @@ public class Movement : MonoBehaviour
         float simulatedSpeed = currentSpeed.value / math.clamp(math.abs(Vector3.Angle(playerForward, direction) / 20.0f), 1.0f, 4.0f);
         int wayToRotate = CrossProductPositive(playerForward, direction) ? 1 : -1;
         int j = 0;
-        for (int i = 0; i < trajPoints.Length * mm.framesBetweenTrajectoryPoints; i++)
+        for (int i = 0; i < trajPoints.Length * mm.framesBetweenTrajectoryPoints ; i++)
         {
             previousPlayerPos = playerPos;
             float newRotationSpeedGoal = Mathf.Min(rotationSpeed.value, Vector3.Angle(playerForward, direction) * 0.001f) * wayToRotate;
@@ -737,10 +737,8 @@ public class Movement : MonoBehaviour
                 trajPoints[j] = new TrajectoryPoint(playerPos, playerForward);
                 j++;
             }
-
             simulatedSpeed = Vector3.Distance(playerPos, previousPlayerPos) / Time.fixedDeltaTime;
         }
-
         return new Trajectory(trajPoints);
     }
 

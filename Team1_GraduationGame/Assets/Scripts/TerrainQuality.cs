@@ -1,45 +1,41 @@
-﻿using System.Collections;
+﻿// Code adapted from Jakob Baldwin by Jannik Neerdal
 using System.Collections.Generic;
+using Unity.Entities;
 using UnityEngine;
-
-
 
 public class TerrainQuality : MonoBehaviour
 {
-
     public GameObject[] terrains;
-    // Start is called before the first frame update
+    private List<Terrain> _terrainComponents;
     void Start()
     {
+        for (int i = 0; i < terrains.Length; i++)
+        {
+            if (terrains[i] != null)
+            {
+                _terrainComponents.Add(terrains[i].GetComponent<Terrain>());
+                Debug.Log(_terrainComponents[i].gameObject.name + " is loaded as a terrain for terrain quality change.");
+            }
+        }
         updateTerrainQuality();
     }
 
-    // Update is called once per frame
     public void updateTerrainQuality()
     {
+        Debug.Log("Terrain Quality updated for " + _terrainComponents.Count + " terrains.");
         if(QualitySettings.GetQualityLevel() == 0)
         {
-            if( terrains != null)
+            for (int i = 0; i < _terrainComponents.Count; i++)
             {
-                foreach(GameObject terrainVar in terrains)
-                {
-                    terrainVar.GetComponent<Terrain>().drawTreesAndFoliage = false;
-                }
-
-            
+                _terrainComponents[i].drawTreesAndFoliage = false;
             }
         }
         // Set terrain to do draw grass if settingLevel higher than 0
-        else 
+        else
         {
-            if( terrains != null)
+            for (int i = 0; i < _terrainComponents.Count; i++)
             {
-                foreach(GameObject terrainVar in terrains)
-                {
-                    terrainVar.GetComponent<Terrain>().drawTreesAndFoliage = true;
-                }
-
-            
+                _terrainComponents[i].drawTreesAndFoliage = true;
             }
         }
     }

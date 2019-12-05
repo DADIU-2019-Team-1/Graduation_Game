@@ -709,7 +709,6 @@ public class Movement : MonoBehaviour
         {
             moveState.value = 3;
         }
-
         playerSoundManager?.MotionStateUpdate(moveState.value);
     }
 

@@ -10,7 +10,6 @@ public class SplashScreen : MonoBehaviour
     void Start()
     {
         // Set the Quality to the stored quality in player prefs
-        QualitySettings.SetQualityLevel(PlayerPrefs.GetInt("Quality"));
         fadeControllers = new List<WhiteFadeController>();
         fadeControllers.Add(GetComponent<WhiteFadeController>());
         fadeControllers.AddRange(GetComponentsInChildren<WhiteFadeController>());

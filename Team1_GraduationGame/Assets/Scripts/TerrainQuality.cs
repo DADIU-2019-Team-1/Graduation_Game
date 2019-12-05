@@ -6,7 +6,7 @@ using UnityEngine;
 public class TerrainQuality : MonoBehaviour
 {
     public GameObject[] terrains;
-    private List<Terrain> _terrainComponents;
+    private List<Terrain> _terrainComponents = new List<Terrain>();
     void Start()
     {
         for (int i = 0; i < terrains.Length; i++)
@@ -14,7 +14,6 @@ public class TerrainQuality : MonoBehaviour
             if (terrains[i] != null)
             {
                 _terrainComponents.Add(terrains[i].GetComponent<Terrain>());
-                Debug.Log(_terrainComponents[i].gameObject.name + " is loaded as a terrain for terrain quality change.");
             }
         }
         updateTerrainQuality();
@@ -22,7 +21,6 @@ public class TerrainQuality : MonoBehaviour
 
     public void updateTerrainQuality()
     {
-        Debug.Log("Terrain Quality updated for " + _terrainComponents.Count + " terrains.");
         if(QualitySettings.GetQualityLevel() == 0)
         {
             for (int i = 0; i < _terrainComponents.Count; i++)

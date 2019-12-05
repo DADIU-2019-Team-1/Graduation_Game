@@ -45,7 +45,7 @@ namespace Team1_GraduationGame.Events
                         DelayHandler();
 
                     }
-                    else if (col.tag == tagName)
+                    else if (col.CompareTag(tagName))
                     {
                         if (!checkMotionState)
                         {
@@ -77,7 +77,7 @@ namespace Team1_GraduationGame.Events
 
         private void DelayHandler()
         {
-            if (delayTime >= 0.15f)
+            if (delayTime == 0)
             {
                 isActive = false;
             }

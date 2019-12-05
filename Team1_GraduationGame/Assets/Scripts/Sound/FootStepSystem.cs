@@ -32,7 +32,7 @@ namespace Team1_GraduationGame.Sound
             {
                 if (!_footStepCooldown)
                 {
-                    if (!CompareTag("Enemy") && !CompareTag("Player"))
+                    if (!col.CompareTag("Enemy") && !col.CompareTag("Player"))
                     {
                         _footStepCooldown = true;
 
@@ -56,7 +56,7 @@ namespace Team1_GraduationGame.Sound
                             footStepEvent.Post(gameObject);
                         }
 
-                        Invoke("FootStepCooldown", 0.3f);
+                        Invoke("FootStepCooldown", 0.4f);
                     }
                 }
             }

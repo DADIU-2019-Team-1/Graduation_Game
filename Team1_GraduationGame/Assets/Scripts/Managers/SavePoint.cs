@@ -42,7 +42,7 @@ namespace Team1_GraduationGame.SaveLoadSystem
         {
             if (Application.isPlaying && !savingDisabled && !savePointUsed)
             {
-                if (col.tag == "Player")
+                if (col.CompareTag("Player"))
                 {
                     if (useSavePointPosition)
                         thisSavePointManager.SaveGame(gameObject.transform.position);

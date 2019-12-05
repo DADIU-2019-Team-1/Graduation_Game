@@ -45,7 +45,7 @@ namespace Team1_GraduationGame.Events
                         DelayHandler();
 
                     }
-                    else if (col.tag == tagName)
+                    else if (CompareTag(tagName))
                     {
                         if (!checkMotionState)
                         {
@@ -100,7 +100,7 @@ namespace Team1_GraduationGame.Events
                         DelayHandler();
 
                     }
-                    else if (col.gameObject.tag == tagName)
+                    else if (CompareTag(tagName))
                     {
                         isColliding = true;
                         parentEventManager?.Fire(eventToFire);

@@ -28,7 +28,7 @@ namespace Team1_GraduationGame.Events
             {
                 PlayerPrefs.SetFloat("SFXSliderSave", 10);
                 PlayerPrefs.SetFloat("MusicSliderSave", 10);
-                PlayerPrefs.SetInt("Quality", 5);
+                PlayerPrefs.SetInt("Quality", 0);
                 PlayerPrefs.SetInt("GameRanBool", 1);
             }
             QualitySettings.SetQualityLevel(PlayerPrefs.GetInt("Quality"));

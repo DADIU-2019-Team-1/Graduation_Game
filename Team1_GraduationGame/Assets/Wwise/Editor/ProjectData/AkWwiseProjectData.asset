@@ -17,21 +17,21 @@ MonoBehaviour:
     ParentPhysicalPath: 
     guid: bb1ad5a9a3f545458a87895d37bf4612
     GuidInternal: 
-    m_lastTime: -8586298718968728679
+    m_lastTime: -8586227743498389645
     List: []
   AuxBusWwu:
   - PhysicalPath: Master-Mixer Hierarchy\Default Work Unit.wwu
     ParentPhysicalPath: 
     guid: 48daf6f70164444b820a1d909d54dc89
     GuidInternal: 
-    m_lastTime: -8586269775128808517
+    m_lastTime: -8586227743506215158
     List: []
   BankWwu:
   - PhysicalPath: SoundBanks\Default Work Unit.wwu
     ParentPhysicalPath: 
     guid: 85e7e9d1e1b20248bfd7f7ded631a2b7
     GuidInternal: 
-    m_lastTime: -8586281378683158979
+    m_lastTime: -8586227743502977010
     List:
     - name: HMC_Start_Bank
       guid: c183e36e504dbc4dba565d00ce0ab966
@@ -47,7 +47,7 @@ MonoBehaviour:
     ParentPhysicalPath: 
     guid: 90243057bcb2464a8758196960c07052
     GuidInternal: 
-    m_lastTime: -8586270013110578714
+    m_lastTime: -8586227743501917621
     List:
     - name: BigSis_Attack
       guid: 131050ff281e9841bd0f9ea1492b18c0
@@ -62,11 +62,11 @@ MonoBehaviour:
       - ElementName: BigSis_Attack
         ObjectType: 3
       Path: Default Work Unit\ENEMIES\BigSis\BigSis_Attack
-      maxAttenuation: 0
-      maxDuration: 0
-      minDuration: 0
+      maxAttenuation: 60000000
+      maxDuration: 7167322
+      minDuration: 6382321
     - name: BigSis_BASE_Start
-      guid: 447fdd1c7266954aa87c2ed0d2c454d3
+      guid: f1a307a0d407b546a0589a392550cde3
       id: 1022407497
       PathAndIcons:
       - ElementName: Default Work Unit
@@ -78,11 +78,11 @@ MonoBehaviour:
       - ElementName: BigSis_BASE_Start
         ObjectType: 3
       Path: Default Work Unit\ENEMIES\BigSis\BigSis_BASE_Start
-      maxAttenuation: 0
-      maxDuration: 0
-      minDuration: 0
+      maxAttenuation: 60000000
+      maxDuration: -1
+      minDuration: -1
     - name: BigSis_BASE_Stop
-      guid: ec88f24257ec954ca903017ef375099f
+      guid: 6df53cf699c8094e93b2852fa9f21f09
       id: 2709824483
       PathAndIcons:
       - ElementName: Default Work Unit
@@ -110,12 +110,12 @@ MonoBehaviour:
       - ElementName: BigSis_Down
         ObjectType: 3
       Path: Default Work Unit\ENEMIES\BigSis\BigSis_Down
-      maxAttenuation: 0
-      maxDuration: 0
-      minDuration: 0
-    - name: BisSis_Onset
-      guid: e5f9669f7fdbf6429caff9806f18158e
-      id: 2202781944
+      maxAttenuation: 60000000
+      maxDuration: 5084753
+      minDuration: 3190000
+    - name: BisSis_Appear
+      guid: c2ff2ab14174dd4d9c4af4af7b3e689f
+      id: 255820916
       PathAndIcons:
       - ElementName: Default Work Unit
         ObjectType: 12
@@ -123,12 +123,12 @@ MonoBehaviour:
         ObjectType: 4
       - ElementName: BigSis
         ObjectType: 4
-      - ElementName: BisSis_Onset
+      - ElementName: BisSis_Appear
         ObjectType: 3
-      Path: Default Work Unit\ENEMIES\BigSis\BisSis_Onset
-      maxAttenuation: 0
-      maxDuration: 0
-      minDuration: 0
+      Path: Default Work Unit\ENEMIES\BigSis\BisSis_Appear
+      maxAttenuation: 60000000
+      maxDuration: -1
+      minDuration: -1
     - name: BisSis_Spot
       guid: 99f0f1fbae124d4b856a38eefe6fbd97
       id: 146861159
@@ -142,25 +142,9 @@ MonoBehaviour:
       - ElementName: BisSis_Spot
         ObjectType: 3
       Path: Default Work Unit\ENEMIES\BigSis\BisSis_Spot
-      maxAttenuation: 0
-      maxDuration: 0
-      minDuration: 0
-    - name: BisSis_UP
-      guid: c2ff2ab14174dd4d9c4af4af7b3e689f
-      id: 1148761992
-      PathAndIcons:
-      - ElementName: Default Work Unit
-        ObjectType: 12
-      - ElementName: ENEMIES
-        ObjectType: 4
-      - ElementName: BigSis
-        ObjectType: 4
-      - ElementName: BisSis_UP
-        ObjectType: 3
-      Path: Default Work Unit\ENEMIES\BigSis\BisSis_UP
-      maxAttenuation: 0
-      maxDuration: 0
-      minDuration: 0
+      maxAttenuation: 60000000
+      maxDuration: 3872785
+      minDuration: 3359431
     - name: Dead_LPF
       guid: 979a4d2e5ec23444b36566a17e66fe9f
       id: 1647120744
@@ -171,8 +155,8 @@ MonoBehaviour:
         ObjectType: 3
       Path: Default Work Unit\Dead_LPF
       maxAttenuation: 0
-      maxDuration: 8.627532
-      minDuration: 6.349719
+      maxDuration: 0
+      minDuration: 0
     - name: Empty_BigSis
       guid: 7b99c370fe01554db14f75e1899bdd1e
       id: 1826050074
@@ -187,8 +171,8 @@ MonoBehaviour:
         ObjectType: 3
       Path: Default Work Unit\ENEMIES\BigSis\Empty_BigSis
       maxAttenuation: 0
-      maxDuration: 1
-      minDuration: 1
+      maxDuration: 1000000
+      minDuration: 1000000
     - name: Empty_Fam
       guid: d17324acc690f541872573cb90b7ca8c
       id: 351150729
@@ -203,8 +187,8 @@ MonoBehaviour:
         ObjectType: 3
       Path: Default Work Unit\ENEMIES\Family\Empty_Fam
       maxAttenuation: 0
-      maxDuration: 1
-      minDuration: 1
+      maxDuration: 1000000
+      minDuration: 1000000
     - name: Empty_Fri
       guid: cc92b336e95f364ca0ec41167064ac4a
       id: 669925540
@@ -219,8 +203,8 @@ MonoBehaviour:
         ObjectType: 3
       Path: Default Work Unit\ENEMIES\Friends\Empty_Fri
       maxAttenuation: 0
-      maxDuration: 1
-      minDuration: 1
+      maxDuration: 1000000
+      minDuration: 1000000
     - name: Empty_Grief
       guid: 1c69f2972e82a644867f98ba19340914
       id: 71578932
@@ -235,8 +219,24 @@ MonoBehaviour:
         ObjectType: 3
       Path: Default Work Unit\ENEMIES\GRIEF MONSTER\Empty_Grief
       maxAttenuation: 0
-      maxDuration: 1
-      minDuration: 1
+      maxDuration: 1000000
+      minDuration: 1000000
+    - name: Fake_Fri_Base_StartStop
+      guid: 8be6e3eef1dadc4fb433955b5676f053
+      id: 3417249391
+      PathAndIcons:
+      - ElementName: Default Work Unit
+        ObjectType: 12
+      - ElementName: ENEMIES
+        ObjectType: 4
+      - ElementName: Friends
+        ObjectType: 4
+      - ElementName: Fake_Fri_Base_StartStop
+        ObjectType: 3
+      Path: Default Work Unit\ENEMIES\Friends\Fake_Fri_Base_StartStop
+      maxAttenuation: 20000000
+      maxDuration: -1
+      minDuration: -1
     - name: Fam_Attack
       guid: f32af6270201034280d295807be98ec7
       id: 4185887082
@@ -250,9 +250,9 @@ MonoBehaviour:
       - ElementName: Fam_Attack
         ObjectType: 3
       Path: Default Work Unit\ENEMIES\Family\Fam_Attack
-      maxAttenuation: 0
-      maxDuration: 0
-      minDuration: 0
+      maxAttenuation: 40000000
+      maxDuration: 4962138
+      minDuration: 4240362
     - name: Fam_BASE_Start
       guid: 597ea5df1f770948a703d136b046d8c5
       id: 4168887876
@@ -266,9 +266,9 @@ MonoBehaviour:
       - ElementName: Fam_BASE_Start
         ObjectType: 3
       Path: Default Work Unit\ENEMIES\Family\Fam_BASE_Start
-      maxAttenuation: 0
-      maxDuration: 0
-      minDuration: 0
+      maxAttenuation: 35000000
+      maxDuration: -1
+      minDuration: -1
     - name: Fam_BASE_Stop
       guid: 6a60252606f84f4fa58dcc224a53b787
       id: 2259991288
@@ -285,9 +285,9 @@ MonoBehaviour:
       maxAttenuation: 0
       maxDuration: 0
       minDuration: 0
-    - name: Fam_Down
-      guid: 324b8a75fe9cee4995c8ce2f2414d058
-      id: 840362894
+    - name: Fam_Hold
+      guid: c1f656edcb33004590d6c8ae08660883
+      id: 28577769
       PathAndIcons:
       - ElementName: Default Work Unit
         ObjectType: 12
@@ -295,14 +295,14 @@ MonoBehaviour:
         ObjectType: 4
       - ElementName: Family
         ObjectType: 4
-      - ElementName: Fam_Down
+      - ElementName: Fam_Hold
         ObjectType: 3
-      Path: Default Work Unit\ENEMIES\Family\Fam_Down
+      Path: Default Work Unit\ENEMIES\Family\Fam_Hold
       maxAttenuation: 0
       maxDuration: 0
       minDuration: 0
     - name: Fam_Onset
-      guid: e884028089b25d4093b0051a78c97059
+      guid: 36781bb7aa626f4da768c3a0648aa7f8
       id: 3016005891
       PathAndIcons:
       - ElementName: Default Work Unit
@@ -314,25 +314,9 @@ MonoBehaviour:
       - ElementName: Fam_Onset
         ObjectType: 3
       Path: Default Work Unit\ENEMIES\Family\Fam_Onset
-      maxAttenuation: 0
-      maxDuration: 0
-      minDuration: 0
-    - name: Fam_UP
-      guid: 1aa8d773e9844a48bd8f32f97a015455
-      id: 2928015061
-      PathAndIcons:
-      - ElementName: Default Work Unit
-        ObjectType: 12
-      - ElementName: ENEMIES
-        ObjectType: 4
-      - ElementName: Family
-        ObjectType: 4
-      - ElementName: Fam_UP
-        ObjectType: 3
-      Path: Default Work Unit\ENEMIES\Family\Fam_UP
-      maxAttenuation: 0
-      maxDuration: 0
-      minDuration: 0
+      maxAttenuation: 40000000
+      maxDuration: -1
+      minDuration: -1
     - name: Fri_Attack
       guid: 68e2171961897846b9e07c3d23d420d3
       id: 2749812849
@@ -346,9 +330,9 @@ MonoBehaviour:
       - ElementName: Fri_Attack
         ObjectType: 3
       Path: Default Work Unit\ENEMIES\Friends\Fri_Attack
-      maxAttenuation: 0
-      maxDuration: 0
-      minDuration: 0
+      maxAttenuation: 30000000
+      maxDuration: 5432716
+      minDuration: 4520000
     - name: Fri_BASE_Start
       guid: bf9ac0217ceeb1429ddb9050149bfcdb
       id: 1914315619
@@ -362,9 +346,9 @@ MonoBehaviour:
       - ElementName: Fri_BASE_Start
         ObjectType: 3
       Path: Default Work Unit\ENEMIES\Friends\Fri_BASE_Start
-      maxAttenuation: 0
-      maxDuration: 0
-      minDuration: 0
+      maxAttenuation: 20000000
+      maxDuration: -1
+      minDuration: -1
     - name: Fri_BASE_Stop
       guid: 4566f362c91fe44990057b0ef6aebbf3
       id: 841573473
@@ -394,6 +378,22 @@ MonoBehaviour:
       - ElementName: Fri_Down
         ObjectType: 3
       Path: Default Work Unit\ENEMIES\Friends\Fri_Down
+      maxAttenuation: 30000000
+      maxDuration: 6759239
+      minDuration: 4850000
+    - name: Fri_Hold
+      guid: 85df27bae2e46244ae76799517a502ad
+      id: 1153762078
+      PathAndIcons:
+      - ElementName: Default Work Unit
+        ObjectType: 12
+      - ElementName: ENEMIES
+        ObjectType: 4
+      - ElementName: Friends
+        ObjectType: 4
+      - ElementName: Fri_Hold
+        ObjectType: 3
+      Path: Default Work Unit\ENEMIES\Friends\Fri_Hold
       maxAttenuation: 0
       maxDuration: 0
       minDuration: 0
@@ -410,12 +410,12 @@ MonoBehaviour:
       - ElementName: Fri_Onset
         ObjectType: 3
       Path: Default Work Unit\ENEMIES\Friends\Fri_Onset
-      maxAttenuation: 0
-      maxDuration: 0
-      minDuration: 0
-    - name: Fri_UP
-      guid: 1f871dbf447bf14e88a8a23f24407d4b
-      id: 2916966842
+      maxAttenuation: 30000000
+      maxDuration: -1
+      minDuration: -1
+    - name: Fri_Spot
+      guid: dc40e03065ba5f4a9f16ef93056b6626
+      id: 2501615553
       PathAndIcons:
       - ElementName: Default Work Unit
         ObjectType: 12
@@ -423,25 +423,23 @@ MonoBehaviour:
         ObjectType: 4
       - ElementName: Friends
         ObjectType: 4
-      - ElementName: Fri_UP
+      - ElementName: Fri_Spot
         ObjectType: 3
-      Path: Default Work Unit\ENEMIES\Friends\Fri_UP
-      maxAttenuation: 0
-      maxDuration: 0
-      minDuration: 0
-    - name: Grief_Appear_Cutscene
-      guid: 5ec76c7cac050243a1ea9e6e24eb007e
-      id: 3923211281
+      Path: Default Work Unit\ENEMIES\Friends\Fri_Spot
+      maxAttenuation: 30000000
+      maxDuration: 10646659
+      minDuration: 3847339
+    - name: FullStopEnemies
+      guid: e299a8705e62644ab6444810b5ae4603
+      id: 2665399762
       PathAndIcons:
       - ElementName: Default Work Unit
         ObjectType: 12
       - ElementName: ENEMIES
         ObjectType: 4
-      - ElementName: GRIEF MONSTER
-        ObjectType: 4
-      - ElementName: Grief_Appear_Cutscene
+      - ElementName: FullStopEnemies
         ObjectType: 3
-      Path: Default Work Unit\ENEMIES\GRIEF MONSTER\Grief_Appear_Cutscene
+      Path: Default Work Unit\ENEMIES\FullStopEnemies
       maxAttenuation: 0
       maxDuration: 0
       minDuration: 0
@@ -458,12 +456,12 @@ MonoBehaviour:
       - ElementName: Grief_Attack
         ObjectType: 3
       Path: Default Work Unit\ENEMIES\GRIEF MONSTER\Grief_Attack
-      maxAttenuation: 0
-      maxDuration: 0
-      minDuration: 0
-    - name: Grief_Hold
-      guid: 95dc17448a0d4a4f89f1db94618a13cd
-      id: 3369700890
+      maxAttenuation: 30000000
+      maxDuration: 4892341
+      minDuration: 3957048
+    - name: Grief_BaseMove_START
+      guid: e19f01d756f46a4b9630e8d654f04fd5
+      id: 2826903308
       PathAndIcons:
       - ElementName: Default Work Unit
         ObjectType: 12
@@ -471,15 +469,15 @@ MonoBehaviour:
         ObjectType: 4
       - ElementName: GRIEF MONSTER
         ObjectType: 4
-      - ElementName: Grief_Hold
+      - ElementName: Grief_BaseMove_START
         ObjectType: 3
-      Path: Default Work Unit\ENEMIES\GRIEF MONSTER\Grief_Hold
-      maxAttenuation: 0
-      maxDuration: 0
-      minDuration: 0
-    - name: Grief_Onset
-      guid: c3a0a64d03e68948946df8bcd0876df4
-      id: 4109451574
+      Path: Default Work Unit\ENEMIES\GRIEF MONSTER\Grief_BaseMove_START
+      maxAttenuation: 30000000
+      maxDuration: -1
+      minDuration: -1
+    - name: Grief_BaseMove_STOP
+      guid: be7dfb198a9d9e4d98f7b715e2da2952
+      id: 3228817312
       PathAndIcons:
       - ElementName: Default Work Unit
         ObjectType: 12
@@ -487,12 +485,42 @@ MonoBehaviour:
         ObjectType: 4
       - ElementName: GRIEF MONSTER
         ObjectType: 4
-      - ElementName: Grief_Onset
+      - ElementName: Grief_BaseMove_STOP
         ObjectType: 3
-      Path: Default Work Unit\ENEMIES\GRIEF MONSTER\Grief_Onset
+      Path: Default Work Unit\ENEMIES\GRIEF MONSTER\Grief_BaseMove_STOP
       maxAttenuation: 0
       maxDuration: 0
       minDuration: 0
+    - name: Grief_ReachTheTop
+      guid: 350be62ba5b80244b3f01f5023a4e3e6
+      id: 1595833916
+      PathAndIcons:
+      - ElementName: Default Work Unit
+        ObjectType: 12
+      - ElementName: ENEMIES
+        ObjectType: 4
+      - ElementName: GRIEF MONSTER
+        ObjectType: 4
+      - ElementName: Grief_ReachTheTop
+        ObjectType: 3
+      Path: Default Work Unit\ENEMIES\GRIEF MONSTER\Grief_ReachTheTop
+      maxAttenuation: 30000000
+      maxDuration: 4592788
+      minDuration: 4211605
+    - name: Play_3D_EchoCall_Memory_playlist
+      guid: f6aa6d90c0b76f47a7cf5436c102ee9f
+      id: 2876045914
+      PathAndIcons:
+      - ElementName: Default Work Unit
+        ObjectType: 12
+      - ElementName: MEMORIES
+        ObjectType: 4
+      - ElementName: Play_3D_EchoCall_Memory_playlist
+        ObjectType: 3
+      Path: Default Work Unit\MEMORIES\Play_3D_EchoCall_Memory_playlist
+      maxAttenuation: 75000000
+      maxDuration: -1
+      minDuration: -1
     - name: Play_Amb_Outside
       guid: bd79bfdc0bc19a4dbfc052734b6c673e
       id: 121174090
@@ -507,31 +535,17 @@ MonoBehaviour:
       maxAttenuation: 0
       maxDuration: -1
       minDuration: -1
-    - name: Play_EchoCall_Memory_playlist
-      guid: f6aa6d90c0b76f47a7cf5436c102ee9f
-      id: 3108390310
-      PathAndIcons:
-      - ElementName: Default Work Unit
-        ObjectType: 12
-      - ElementName: MEMORIES
-        ObjectType: 4
-      - ElementName: Play_EchoCall_Memory_playlist
-        ObjectType: 3
-      Path: Default Work Unit\MEMORIES\Play_EchoCall_Memory_playlist
-      maxAttenuation: 60
-      maxDuration: -1
-      minDuration: -1
-    - name: Play_FS_JumpLand
+    - name: Play_FS_JumpToLand
       guid: 575ee6bae808734f890309fe4a98c30d
-      id: 3576124929
+      id: 1737921590
       PathAndIcons:
       - ElementName: Default Work Unit
         ObjectType: 12
       - ElementName: PLAYER
         ObjectType: 4
-      - ElementName: Play_FS_JumpLand
+      - ElementName: Play_FS_JumpToLand
         ObjectType: 3
-      Path: Default Work Unit\PLAYER\Play_FS_JumpLand
+      Path: Default Work Unit\PLAYER\Play_FS_JumpToLand
       maxAttenuation: 0
       maxDuration: -1
       minDuration: -1
@@ -561,8 +575,8 @@ MonoBehaviour:
         ObjectType: 3
       Path: Default Work Unit\PLAYER\Play_FS_System
       maxAttenuation: 0
-      maxDuration: -1
-      minDuration: -1
+      maxDuration: 1498871
+      minDuration: 1097895
     - name: Play_HMC_Music_System_Level1
       guid: 4550c08f26bede4a971734b3cc778fa6
       id: 2367316274
@@ -577,6 +591,18 @@ MonoBehaviour:
       maxAttenuation: 0
       maxDuration: -1
       minDuration: -1
+    - name: Play_HouseBreaking
+      guid: 60dc93e1bde29b4793d623c542c7d1d6
+      id: 212992177
+      PathAndIcons:
+      - ElementName: Default Work Unit
+        ObjectType: 12
+      - ElementName: Play_HouseBreaking
+        ObjectType: 3
+      Path: Default Work Unit\Play_HouseBreaking
+      maxAttenuation: 0
+      maxDuration: 4881405
+      minDuration: 4881405
     - name: Play_Push
       guid: a970e262b2ceaa40b91d413378c9cf7a
       id: 1749591466
@@ -603,8 +629,8 @@ MonoBehaviour:
         ObjectType: 3
       Path: Default Work Unit\Pushable Objects\Play_Push_BigObjects
       maxAttenuation: 0
-      maxDuration: 1.15281
-      minDuration: 0.595708
+      maxDuration: 1042027
+      minDuration: 820508
     - name: Play_Push_ToyObjects
       guid: 860ee2ce889eb54d85e846965c9ff815
       id: 3994783433
@@ -617,22 +643,8 @@ MonoBehaviour:
         ObjectType: 3
       Path: Default Work Unit\Pushable Objects\Play_Push_ToyObjects
       maxAttenuation: 0
-      maxDuration: 1.15281
-      minDuration: 0.595708
-    - name: Play_Rumble_Blend
-      guid: bff5bc6a54bcaa4dbbf15de015a84aea
-      id: 728827549
-      PathAndIcons:
-      - ElementName: Default Work Unit
-        ObjectType: 12
-      - ElementName: AMBIENCE
-        ObjectType: 4
-      - ElementName: Play_Rumble_Blend
-        ObjectType: 3
-      Path: Default Work Unit\AMBIENCE\Play_Rumble_Blend
-      maxAttenuation: 0
-      maxDuration: -1
-      minDuration: -1
+      maxDuration: 1042027
+      minDuration: 536882
     - name: Play_UI_ToneCall
       guid: 84691e0a507aa043a46e7607f8c837ac
       id: 3222526703
@@ -645,19 +657,19 @@ MonoBehaviour:
         ObjectType: 3
       Path: Default Work Unit\UI\Play_UI_ToneCall
       maxAttenuation: 0
-      maxDuration: 5.403701
-      minDuration: 3.977033
-    - name: Stop_EchoCall_Memory_playlist
+      maxDuration: 5403701
+      minDuration: 3977033
+    - name: Stop_3D_EchoCall_Memory_playlist
       guid: bebf29d00ffbef449b3bd794aee00c4d
-      id: 3307487220
+      id: 2940522268
       PathAndIcons:
       - ElementName: Default Work Unit
         ObjectType: 12
       - ElementName: MEMORIES
         ObjectType: 4
-      - ElementName: Stop_EchoCall_Memory_playlist
+      - ElementName: Stop_3D_EchoCall_Memory_playlist
         ObjectType: 3
-      Path: Default Work Unit\MEMORIES\Stop_EchoCall_Memory_playlist
+      Path: Default Work Unit\MEMORIES\Stop_3D_EchoCall_Memory_playlist
       maxAttenuation: 0
       maxDuration: 0
       minDuration: 0
@@ -666,7 +678,7 @@ MonoBehaviour:
     ParentPhysicalPath: 
     guid: 99676a34afe9c64ebf6e87f509590ec9
     GuidInternal: 
-    m_lastTime: -8586271723997318533
+    m_lastTime: -8586227743499389061
     List:
     - name: Amb_Intensity
       guid: fcd4b015c5407649905222394af6816f
@@ -730,17 +742,6 @@ MonoBehaviour:
       - ElementName: Friend_Speed
         ObjectType: 13
       Path: Default Work Unit\ENEMIES\Friend_Speed
-    - name: FS_Wettish
-      guid: 5a894a299d40014e99efb6614d562ea6
-      id: 1688601825
-      PathAndIcons:
-      - ElementName: Default Work Unit
-        ObjectType: 12
-      - ElementName: FS_Related
-        ObjectType: 4
-      - ElementName: FS_Wettish
-        ObjectType: 13
-      Path: Default Work Unit\FS_Related\FS_Wettish
     - name: Grief_Speed
       guid: a917ef3733a62543909ebe623f202bf4
       id: 4088545558
@@ -774,15 +775,15 @@ MonoBehaviour:
       - ElementName: Master_SFX_InMenuSlider
         ObjectType: 13
       Path: Default Work Unit\Master Sliders\Master_SFX_InMenuSlider
-    - name: MemoryCall_Volume_for_Animation
-      guid: d24a0cf6b245504995b4385613aeb3a7
-      id: 1254966522
+    - name: Meter_3DCall_Ducker
+      guid: 2bfe88b5194c0d408513b51a67fc2692
+      id: 1344540479
       PathAndIcons:
       - ElementName: Default Work Unit
         ObjectType: 12
-      - ElementName: MemoryCall_Volume_for_Animation
+      - ElementName: Meter_3DCall_Ducker
         ObjectType: 13
-      Path: Default Work Unit\MemoryCall_Volume_for_Animation
+      Path: Default Work Unit\Meter_3DCall_Ducker
     - name: Meter_Wind
       guid: 1d7d3e317c7cd442b78bd9589d763ce9
       id: 3084119761
@@ -796,7 +797,7 @@ MonoBehaviour:
     ParentPhysicalPath: 
     guid: 225213d7dbd1d042adc0930743567776
     GuidInternal: 
-    m_lastTime: -8586298718964527617
+    m_lastTime: -8586227743501138067
     List:
     - name: Playback_Rate
       guid: e37e38283ac11643b9c3db5c521624af
@@ -820,7 +821,7 @@ MonoBehaviour:
     ParentPhysicalPath: 
     guid: 5577163b42fb8b4598bf96f557afb3b9
     GuidInternal: 
-    m_lastTime: -8586298718964426849
+    m_lastTime: -8586227743503126925
     List:
     - name: SS_Air_Fear
       guid: 59062ef746431c4ea1b1dab46a05101e
@@ -916,7 +917,7 @@ MonoBehaviour:
     ParentPhysicalPath: 
     guid: 97bdcb0b5177774a85bb6ac940f8cc3f
     GuidInternal: 
-    m_lastTime: -8586298718963610659
+    m_lastTime: -8586227743499628919
     List:
     - name: Density_FA_SSGrain
       guid: 9ef2b363f3048748ba1a4d7694644b24
@@ -977,7 +978,7 @@ MonoBehaviour:
     ParentPhysicalPath: 
     guid: 4799b636530bef4180335a76ffb4e8cf
     GuidInternal: 
-    m_lastTime: -8586273482979495308
+    m_lastTime: -8586227743498489575
     List:
     - name: GameState
       guid: 72ba4114be77444ea2fe81173da12ede
@@ -989,17 +990,29 @@ MonoBehaviour:
         ObjectType: 9
       Path: Default Work Unit\GameState
       values:
-      - name: Endscene_Memory
+      - name: End_FullLullaby_Credits
         guid: 16a0e603c77c1343830a891c8af3ad57
-        id: 2916316574
+        id: 2902281238
         PathAndIcons:
-        - ElementName: Endscene_Memory
+        - ElementName: End_FullLullaby_Credits
           ObjectType: 8
-      - name: Exit_Memories
+      - name: Exit_Memories_HangUpMem
         guid: ab98dfb1754bd2468dcfa5c074b01fe8
-        id: 247658193
+        id: 2558751454
         PathAndIcons:
-        - ElementName: Exit_Memories
+        - ElementName: Exit_Memories_HangUpMem
+          ObjectType: 8
+      - name: Grave_MemoryCall
+        guid: b7c9dabffe2f0547aa119e55b41fbf42
+        id: 765772562
+        PathAndIcons:
+        - ElementName: Grave_MemoryCall
+          ObjectType: 8
+      - name: Grave_Silence
+        guid: bd9ccc2615b0784fbf8a0c6731182a1c
+        id: 3525878376
+        PathAndIcons:
+        - ElementName: Grave_Silence
           ObjectType: 8
       - name: Grief_Appears
         guid: 9ea6fb1f2e425f48b8aaec3ec9477c57
@@ -1007,11 +1020,23 @@ MonoBehaviour:
         PathAndIcons:
         - ElementName: Grief_Appears
           ObjectType: 8
+      - name: Grief_Chase
+        guid: 55866f60af877c48af3d4faf70c95575
+        id: 535181753
+        PathAndIcons:
+        - ElementName: Grief_Chase
+          ObjectType: 8
       - name: Hub
         guid: 18536fc692233e4e8c59299f04d26949
         id: 646625282
         PathAndIcons:
         - ElementName: Hub
+          ObjectType: 8
+      - name: Level_3_silence_Memory
+        guid: 4558914c42ea2844a362a302be9fe58f
+        id: 3845742627
+        PathAndIcons:
+        - ElementName: Level_3_silence_Memory
           ObjectType: 8
       - name: Memory_Lullaby
         guid: 7a8a326b92d73544be08b55b1149afa1
@@ -1019,11 +1044,11 @@ MonoBehaviour:
         PathAndIcons:
         - ElementName: Memory_Lullaby
           ObjectType: 8
-      - name: Menu
+      - name: Menu_Load
         guid: e30106b28c078343962c4b3ff2b9d1e8
-        id: 2607556080
+        id: 3222607803
         PathAndIcons:
-        - ElementName: Menu
+        - ElementName: Menu_Load
           ObjectType: 8
       - name: None
         guid: 68e4ee4a87a42f46b72063e552672523
@@ -1037,11 +1062,11 @@ MonoBehaviour:
         PathAndIcons:
         - ElementName: Outside
           ObjectType: 8
-      - name: Player_Died
-        guid: f029b9ef5424c84fa2387e88de6805b2
-        id: 2295196519
+      - name: The4ColdMemory_LowAmb
+        guid: 242bd361261d4e40a9e5eafc17901f14
+        id: 111690814
         PathAndIcons:
-        - ElementName: Player_Died
+        - ElementName: The4ColdMemory_LowAmb
           ObjectType: 8
       ValueGuids: []
       ValueIcons: []
@@ -1094,7 +1119,7 @@ MonoBehaviour:
     ParentPhysicalPath: 
     guid: b8020256874dd547a897ee702d5e3c95
     GuidInternal: 
-    m_lastTime: -8586273600402167595
+    m_lastTime: -8586227743502827094
     List:
     - name: Footstep_Material_Switcher
       guid: 7ed1be8f286a6b4fab62c9cc0a8c6437
@@ -1205,7 +1230,7 @@ MonoBehaviour:
     ParentPhysicalPath: 
     guid: 458f2b3b8d1c47469cadc4a0ffb99e99
     GuidInternal: 
-    m_lastTime: -8586298718968849425
+    m_lastTime: -8586227743499518971
     List: []
   ExpandedItems:
   - /HMC_GraduationGame_DADIU_JFK
